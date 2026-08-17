@@ -1,0 +1,25 @@
+# === Big data / output dirs ===
+__trash/
+
+# === Compiled / checkpoint artifacts ===
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*xrd/_trash/
+
+# === Database files (AGOX results) — large binary, regenerated ===
+*.db
+
+# === Log files (run output, not source) ===
+*.log
+
+# === Ray session dirs (large, ephemeral) ===
+ray/
+
+# === Big notebooks (embedded outputs, large) ===
+_analysist/main_analyst.ipynb
+_analysist/main_test.ipynb
+
+# === _run: track code + docs, skip large artifacts ===
+_run/*/*.png
+_run/*/backups/
