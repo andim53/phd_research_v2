@@ -23,35 +23,70 @@ COLORS = ['#FF0000', '#00FF00']
 # Matplotlib global rcParams — mirrors codes/07_plotting_style_and_label_
 # configuration.py and the inline rcParams block in run_analysis_indices.py
 # ---------------------------------------------------------------------------
+
 CUSTOM_RC_PARAMS = {
-    # Typography
-    'font.size': 12,
+    # Font & Text Styling
     'font.family': 'serif',
-    # Axes and borders
-    'axes.linewidth': 1.5,
+    'font.serif': ['DejaVu Serif', 'Times New Roman', 'Computer Modern'],
+    'font.size': 12,
+    'axes.labelsize': 14,
+    'axes.titlesize': 14,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    
+    # Axes & Box Frame
+    # 'axes.frameon': True,
+    'axes.linewidth': 1.0,
     'axes.edgecolor': 'black',
-    'axes.spines.top': True,
-    'axes.spines.right': True,
-    # Major ticks (outer "boxed" look)
-    'xtick.direction': 'out',
-    'ytick.direction': 'out',
-    'xtick.major.size': 5,
-    'ytick.major.size': 5,
-    'xtick.major.width': 1.5,
-    'ytick.major.width': 1.5,
+    'axes.facecolor': 'white',
+    
+    # Ticks Placement & Direction
+    'xtick.direction': 'in',
+    'ytick.direction': 'in',
     'xtick.top': True,
     'ytick.right': True,
-    # Minor ticks
-    'xtick.minor.visible': True,
-    'ytick.minor.visible': True,
-    'xtick.minor.size': 2,
-    'ytick.minor.size': 2,
-    'xtick.minor.width': 1.0,
-    'ytick.minor.width': 1.0,
-    # Miscellaneous
+    'xtick.major.size': 5,
+    'ytick.major.size': 5,
+    'xtick.major.width': 1.0,
+    'ytick.major.width': 1.0,
+    
+    # Grid Settings (Disabled as per reference image)
     'axes.grid': False,
-    'legend.frameon': True,
+    
+    # Figure Layout
+    'figure.autolayout': True,
+    'figure.dpi': 300,
 }
+
+# CUSTOM_RC_PARAMS = {
+#     # Typography
+#     'font.size': 12,
+#     'font.family': 'serif',
+#     # Axes and borders
+#     'axes.linewidth': 1.5,
+#     'axes.edgecolor': 'black',
+#     'axes.spines.top': True,
+#     'axes.spines.right': True,
+#     # Major ticks (outer "boxed" look)
+#     'xtick.direction': 'out',
+#     'ytick.direction': 'out',
+#     'xtick.major.size': 5,
+#     'ytick.major.size': 5,
+#     'xtick.major.width': 1.5,
+#     'ytick.major.width': 1.5,
+#     'xtick.top': True,
+#     'ytick.right': True,
+#     # Minor ticks
+#     'xtick.minor.visible': True,
+#     'ytick.minor.visible': True,
+#     'xtick.minor.size': 2,
+#     'ytick.minor.size': 2,
+#     'xtick.minor.width': 1.0,
+#     'ytick.minor.width': 1.0,
+#     # Miscellaneous
+#     'axes.grid': False,
+#     'legend.frameon': True,
+# }
 
 # Energy axis label used by every figure in the pipeline
 E_LABEL = r'$E_{i}-E_{glob}$ (eV/atom)'

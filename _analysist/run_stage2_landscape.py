@@ -43,29 +43,63 @@ E_LIMIT = (0.0 - 0.1, 1.5 + 0.1, 5)
 # main runner). Applied once at import time so every figure matches.
 # ---------------------------------------------------------------------------
 plt.rcParams.update({
-    'font.size': 12,
+    # Font & Text Styling
     'font.family': 'serif',
-    'axes.linewidth': 1.5,
+    'font.serif': ['DejaVu Serif', 'Times New Roman', 'Computer Modern'],
+    'font.size': 12,
+    'axes.labelsize': 14,
+    'axes.titlesize': 14,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    
+    # Axes & Box Frame
+    # 'axes.frameon': True,
+    'axes.linewidth': 1.0,
     'axes.edgecolor': 'black',
-    'axes.spines.top': True,
-    'axes.spines.right': True,
-    'xtick.direction': 'out',
-    'ytick.direction': 'out',
-    'xtick.major.size': 5,
-    'ytick.major.size': 5,
-    'xtick.major.width': 1.5,
-    'ytick.major.width': 1.5,
+    'axes.facecolor': 'white',
+    
+    # Ticks Placement & Direction
+    'xtick.direction': 'in',
+    'ytick.direction': 'in',
     'xtick.top': True,
     'ytick.right': True,
-    'xtick.minor.visible': True,
-    'ytick.minor.visible': True,
-    'xtick.minor.size': 2,
-    'ytick.minor.size': 2,
-    'xtick.minor.width': 1.0,
-    'ytick.minor.width': 1.0,
+    'xtick.major.size': 5,
+    'ytick.major.size': 5,
+    'xtick.major.width': 1.0,
+    'ytick.major.width': 1.0,
+    
+    # Grid Settings (Disabled as per reference image)
     'axes.grid': False,
-    'legend.frameon': True,
+    
+    # Figure Layout
+    'figure.autolayout': True,
+    'figure.dpi': 300,
 })
+
+# plt.rcParams.update({
+#     'font.size': 12,
+#     'font.family': 'serif',
+#     'axes.linewidth': 1.5,
+#     'axes.edgecolor': 'black',
+#     'axes.spines.top': True,
+#     'axes.spines.right': True,
+#     'xtick.direction': 'out',
+#     'ytick.direction': 'out',
+#     'xtick.major.size': 5,
+#     'ytick.major.size': 5,
+#     'xtick.major.width': 1.5,
+#     'ytick.major.width': 1.5,
+#     'xtick.top': True,
+#     'ytick.right': True,
+#     'xtick.minor.visible': True,
+#     'ytick.minor.visible': True,
+#     'xtick.minor.size': 2,
+#     'ytick.minor.size': 2,
+#     'xtick.minor.width': 1.0,
+#     'ytick.minor.width': 1.0,
+#     'axes.grid': False,
+#     'legend.frameon': True,
+# })
 
 
 # ---------------------------------------------------------------------------
@@ -121,7 +155,7 @@ def main() -> None:
         X_eigen, energies, z_data=None,
         save_path=save_path,
         animate_scatter=False,
-        figsize=(5, 3),
+        figsize=(3, 3),
         wspace=0.1,
         fontsize=10,
         e_limit=E_LIMIT,
