@@ -23,3 +23,8 @@ _analysist/main_test.ipynb
 # === _run: track code + docs, skip large artifacts ===
 _run/*/*.png
 _run/*/backups/
+
+# === Large results / output dirs (regenerated, not source) ===
+_analysist/0_analy/
+_analysist/1_result/
+_archive/
