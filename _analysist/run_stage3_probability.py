@@ -1,169 +1,173 @@
 #!/usr/bin/env python3
 """
-Stage 3 (standalone): Probability (statistical mechanics) for a single index.
+Stage 3 (standalone): Boltzmann probability (statistical mechanics) for a single index.
 
-Equivalent to step3_probability() in run_analysis_indices.py.
+Uses the per-atom relative-energy KDE + Boltzmann formulation from
+codes/76_plot_probability / the tutorial reference:
 
-Walks 1_result/<folder>/ for every *.db, loads all frames, computes binding
-energies, builds a Gaussian KDE over relative binding energy, and runs a
-Boltzmann / partition-function loop over five temperatures to produce:
+    Pi = [rho(E) * exp(-dE / kb T)] / Z
+
+Reads the combined trajectory produced by Stage 1:
+  0_analy/idx_N/1_xsf_traj/traj_N.traj
+and writes:
   0_analy/idx_N/2_im/binding_probability_vs_temperature.png
 
 Usage:
   /home/miniconda3/envs/agox_v2/bin/python run_stage3_probability.py --idx 22
 
-Environment: agox_v2 (AGOX 3.10.2, scipy, matplotlib)
+Environment: agox_v2 (ASE 3.25.0, AGOX 3.10.2, scipy, matplotlib)
 """
 import os
 import sys
 import argparse
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from agox.databases import Database
-from scipy.stats import gaussian_kde
 
-# ---------------------------------------------------------------------------
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
-RESULT_DIR = os.path.join(SCRIPT_DIR, '1_result')
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from ase.io import read
+from scipy.stats import gaussian_kde
+
+# ---------------------------------------------------------------------------
 OUT_DIR = os.path.join(SCRIPT_DIR, '0_analy')
 IM_DIR = '2_im'
+XSF_TRAJ_DIR = '1_xsf_traj'
 
-# folder_map — single-source mirror of run_analysis_indices.db_paths_for()
-FOLDER_MAP = {
-    22: '22_latt_0', 23: '23_latt_025', 24: '24_latt_50',
-    25: '25_latt_075', 26: '26_latt_100',
-    27: '27_fe_con0', 28: '28_fe_con5', 29: '29_fe_con10',
-    30: '30_fe_con15', 31: '31_fe_con20',
-    32: '32_dos', 33: '33_latt_25_mgo', 34: '34_latt_50_mgo',
-    35: '35_latt_75_mgo', 36: '36_latt_100_mgo',
-    67: '67_2ml', 68: '68_ratt_min1', 69: '69_ratt_min05',
-}
+# Temperatures and colours (matches the tutorial reference loop)
+TEMPS = [298.15, 348.60, 447.875, 547.15, 646.425]
+# plasma-like colour sequence (mirrors codes/76 style)
+COLORS_PLASMA = ['#0d0887', '#47039f', '#7301a8', '#9c176d', '#bd3752',
+                 '#d8546a', '#ed7953', '#fb9f4a', '#fdca42', '#f0f928']
 
 # Energy axis label — matches the researcher style used everywhere
 E_LABEL = r'$E_{i}-E_{glob}$ (eV/atom)'
 
+
 # ---------------------------------------------------------------------------
-# Researcher plotting style (mirrors codes/07 + the rcParams block in the
-# main runner). Applied once at import time so every figure matches.
+def calculate_boltzmann_probs(energies, kde_model, T):
+    """
+    Calculates normalized Pi = [rho(E) * exp(-dE/kbT)] / Z
+
+    Parameters
+    ----------
+    energies : ndarray
+        Per-atom relative energies (E_i - E_glob) in eV/atom.
+    kde_model : scipy.stats.gaussian_kde
+        Fitted KDE over the same energy grid.
+    T : float
+        Temperature in Kelvin.
+
+    Returns
+    -------
+    probs : ndarray
+        Normalized probabilities Pi on the same grid as `energies`.
+    """
+    kb = 8.6173e-5  # eV/K
+
+    # Adding epsilon to avoid zero
+    rho_i = kde_model.evaluate(energies) + 1e-15
+
+    # 2. Calculate Boltzmann Weights
+    relative_e = energies - np.min(energies)
+    exponent = -relative_e / (kb * T)
+    weights = np.exp(exponent)
+
+    # 3. Calculate Partition Function Z
+    # Z must be the sum of (Density * Weights)
+    numerator = rho_i * weights
+    Z = np.sum(numerator)
+
+    # 4. Return Normalized Probabilities (sum to 1 via Z), then scale
+    #    to a 0-1 range so the y-axis spans 1 (peak) to 0.
+    probs = numerator / Z
+    return probs / probs.max()
+
+
+# ---------------------------------------------------------------------------
+# Plotting style for Stage 3 figures — same rcParams used by the main
+# runner (codes/07 + run_analysis_indices).  Inherits the Stage 2 style
+# so every figure matches.
 # ---------------------------------------------------------------------------
 plt.rcParams.update({
     'font.size': 12,
     'font.family': 'serif',
-    'axes.linewidth': 1.5,
+    'axes.linewidth': 1.0,
     'axes.edgecolor': 'black',
-    'axes.spines.top': True,
-    'axes.spines.right': True,
-    'xtick.direction': 'out',
-    'ytick.direction': 'out',
-    'xtick.major.size': 5,
-    'xtick.major.size': 5,
-    'xtick.major.width': 1.5,
-    'ytick.major.width': 1.5,
+    'axes.facecolor': 'white',
+    'xtick.direction': 'in',
+    'ytick.direction': 'in',
     'xtick.top': True,
     'ytick.right': True,
-    'xtick.minor.visible': True,
-    'ytick.minor.visible': True,
-    'xtick.minor.size': 2,
-    'ytick.minor.size': 2,
-    'xtick.minor.width': 1.0,
-    'ytick.minor.width': 1.0,
+    'xtick.major.size': 5,
+    'ytick.major.size': 5,
+    'xtick.major.width': 1.0,
+    'ytick.major.width': 1.0,
     'axes.grid': False,
-    'legend.frameon': True,
+    'figure.autolayout': True,
+    'figure.dpi': 300,
 })
 
 
 # ---------------------------------------------------------------------------
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Stage 3: probability analysis for a single AGOX index")
+        description="Stage 3: Boltzmann probability analysis for one AGOX index")
     parser.add_argument('--idx', type=int, required=True,
                         help="Simulation index (e.g. 22)")
+    parser.add_argument('--e-max', type=float, default=None,
+                        help="Custom upper limit for the energy (x) axis in eV/atom. "
+                             "If omitted, uses the data maximum + 0.05.")
     args = parser.parse_args()
     idx = args.idx
 
-    if idx not in FOLDER_MAP:
-        print(f"Index {idx} not in folder_map.")
-        print(f"Known indices: {sorted(FOLDER_MAP.keys())}")
-        sys.exit(1)
+    dir_out = os.path.join(OUT_DIR, f'idx_{idx}')
+    traj_path = os.path.join(dir_out, XSF_TRAJ_DIR, f'traj_{idx}.traj')
 
-    dir_path = os.path.join(RESULT_DIR, FOLDER_MAP[idx])
-
-    if not os.path.isdir(dir_path):
-        print(f"Input directory not found: {dir_path}")
-        sys.exit(1)
+    if not os.path.exists(traj_path):
+        print(f"WARNING: {traj_path} missing — run Stage 1 first.")
+        sys.exit(0)
 
     print(f"Stage 3 — index {idx}")
-    print(f"  scanning: {dir_path}")
+    print(f"  reading : {traj_path}")
 
-    # --- gather EVERY .db under the index folder (all seeds) ---
-    db_files = []
-    for root, _, files in os.walk(dir_path):
-        for f in files:
-            if f.endswith('.db'):
-                db_files.append(os.path.join(root, f))
+    structures = read(traj_path, index=':')
 
-    if not db_files:
-        print(f"  -> no .db found for index {idx}, skipping probability")
-        sys.exit(0)
+    raw_energies = [atoms.get_potential_energy() for atoms in structures]
+    num_atoms = len(structures[0])
 
-    all_atoms = []
-    for db_file in db_files:
-        db = Database(filename=db_file)
-        db.restore_to_memory()
-        all_atoms.extend(db.restore_to_trajectory())
+    # Defining U = E_i - E_glob (normalized per atom)
+    energies = (np.array(raw_energies) - min(raw_energies)) / num_atoms
+    kde = gaussian_kde(energies)
 
-    # --- binding-energy constants (same as codes/76) ---
-    n_fe = 9
-    E_slab = -92.946489   # eV
-    mu_fe = -8.553673     # eV/atom
+    # --- Plotting ---
+    fig, ax = plt.subplots(figsize=(4, 3), dpi=120)
 
-    binding = np.array([
-        a.get_potential_energy()
-        for a in all_atoms
-        if hasattr(a, 'get_potential_energy')
-    ])
-    rel_eb = binding - np.min(binding)
+    # 1. Plot Boltzmann Probabilities for each Temp
+    for T, color in zip(TEMPS, COLORS_PLASMA):
+        probs = calculate_boltzmann_probs(energies, kde, T)
 
-    if len(rel_eb) < 2:
-        print(f"  -> only {len(rel_eb)} frame(s) found; "
-              f"need >= 2 for KDE, skipping probability")
-        sys.exit(0)
+        peak_idx = np.argmax(probs)
+        peak_energy = energies[peak_idx]
 
-    # --- Gaussian KDE over relative binding energy ---
-    kde = gaussian_kde(rel_eb)
-    num_points = 1000
-    grid = np.linspace(rel_eb.min(), rel_eb.max(), num_points)
-    density = kde(grid)
-    density = density / density.min()
+        note_label = f'{T} K'
+        ax.scatter(energies, probs, color=color, s=5, alpha=0.5,
+                   edgecolors='none', label=note_label)
 
-    # --- Boltzmann / partition-function loop over 5 temperatures ---
-    kB = 8.617333262e-5
-    temperatures = [298.15, 348.60, 447.875, 547.15, 646.425]
-    results = []
-    for T in temperatures:
-        beta = 1.0 / (kB * T)
-        G_levels = grid - kB * T * np.log(density + 1e-20)
-        delta_G = G_levels - np.min(G_levels)
-        bf = np.exp(-beta * (delta_G * n_fe))
-        Z = np.sum(bf)
-        P = bf / Z
-        results.append({'T': T, 'P': P})
-
-    # --- plot ---
-    fig, ax = plt.subplots(figsize=(7, 6))
-    for res in results:
-        ax.plot(grid, res['P'], label=f"{res['T']} K", lw=1.5)
     ax.set_xlabel(E_LABEL)
     ax.set_ylabel('Probability P(E)')
     ax.legend(frameon=False, loc='upper right')
+    ax.set_ylim(0, 1 + 0.05)
+    if args.e_max is not None:
+        ax.set_xlim(0, args.e_max)
+    else:
+        ax.set_xlim(0, energies.max() + 0.05)
     plt.tight_layout()
 
-    out_path = os.path.join(OUT_DIR, f'idx_{idx}', IM_DIR,
+    out_path = os.path.join(dir_out, IM_DIR,
                             'binding_probability_vs_temperature.png')
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     plt.savefig(out_path, dpi=300)

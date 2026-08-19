@@ -46,6 +46,15 @@ def plot_structure_landscape(
     black_seed_zero=False,
     seed_zero_top_zorder=False,
 
+    # Scatter point size (markers in the PCA scatter panel)
+    s=25,
+
+    # Normalization for the state-density panel
+    normalize_density=False,  # if True, scale density x-axis to [0, 1]
+
+    # Custom label for the state-density (x-axis on the density panel)
+    density_x_label='State Density\n(config./eV)',
+
     # Evaluation Flags
     plot_z_vs_e=False,
 ):
@@ -186,13 +195,13 @@ def plot_structure_landscape(
                 initial_idx = 1
                 initial_colors = color_src[:initial_idx] if z_data is not None else 'white'
                 sc = ax_scat.scatter(
-                    X_eigen[:initial_idx], scat_energies[:initial_idx], c=initial_colors, s=25,
+                    X_eigen[:initial_idx], scat_energies[:initial_idx], c=initial_colors, s=s,
                     cmap=cmap if z_data is not None else None, norm=norm,
                     edgecolors='black', linewidth=0.5, alpha=0.8, zorder=2
                 )
             else:
                 sc = ax_scat.scatter(
-                    X_eigen, scat_energies, c=color_src, s=25,
+                    X_eigen, scat_energies, c=color_src, s=s,
                     cmap=cmap if z_data is not None else None, norm=norm,
                     edgecolors='black', linewidth=0.5, alpha=0.8, zorder=2
                 )
@@ -211,26 +220,35 @@ def plot_structure_landscape(
     energy_grid = np.linspace(min_e, max_e, 200)
     total_density = np.zeros_like(energy_grid)
 
+    # Collect per-curve densities so we can normalize after the loop
+    density_curves = []
+
     for idx, (name, data_array) in enumerate(energy_datasets.items()):
         if len(data_array) > 1:
             kde = gaussian_kde(data_array)
             density = kde.evaluate(energy_grid)
             total_density += density
-            curve_color = sampled_colors[idx]
+            density_curves.append((name, density, sampled_colors[idx]))
 
-            if idx == 0 and seed_zero_top_zorder:
-                current_line_zorder = 10
-                current_fill_zorder = 9
-            else:
-                current_line_zorder = 4
-                current_fill_zorder = 3
+    # Optionally normalize every density curve to [0, 1] (peak = 1)
+    if normalize_density and density_curves:
+        global_max = max(d.max() for _, d, _ in density_curves)
+        if global_max > 0:
+            density_curves = [(n, d / global_max, c) for n, d, c in density_curves]
+            total_density = total_density / global_max
 
-            ax_dens.plot(density, energy_grid, color=curve_color, lw=dens_line_weight, zorder=current_line_zorder, label=name)
+    for name, density, curve_color in density_curves:
+        current_line_zorder = 4
+        current_fill_zorder = 3
 
-            if fill_density:
-                ax_dens.fill_betweenx(energy_grid, 0, density, color=curve_color, alpha=density_alpha, zorder=current_fill_zorder)
+        ax_dens.plot(density, energy_grid, color=curve_color, lw=dens_line_weight,
+                     zorder=current_line_zorder, label=name)
 
-    ax_dens.set_xlabel('State Density\n(config./eV)', fontsize=fontsize)
+        if fill_density:
+            ax_dens.fill_betweenx(energy_grid, 0, density, color=curve_color,
+                                  alpha=density_alpha, zorder=current_fill_zorder)
+
+    ax_dens.set_xlabel(density_x_label, fontsize=fontsize)
 
     if num_curves > 1:
         fig.legend(frameon=False, fontsize=fontsize-2, loc='center left', bbox_to_anchor=(1.02, 0.5))
