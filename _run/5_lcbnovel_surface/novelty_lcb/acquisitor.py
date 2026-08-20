@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """
-Custom novelty-based LCB acquisition function for AGOX.
+Organized, clean implementation of the Novelty-LCB acquisition function
+for AGOX.
 
 Implements:
 
     a(x) = sigma(x) + lambda * Novelty(x)   [to MAXIMIZE]
+
+    Novelty(x) = min_{i in DB} ||fingerprint(x) - fingerprint(x_i)||_2
 
 subject to:
 
@@ -12,14 +15,24 @@ subject to:
 
 Candidates outside the energy window are excluded (a(x) = -inf).
 
-Novelty(x) = min_{i in DB} ||fingerprint(x) - fingerprint(x_i)||_2
+**AGOX sorting convention:** AGOX sorts **ascending** (lowest value = best
+= selected first).  We therefore return **-a(x)** so that the candidate
+with the *largest* true acquisition value ends up with the most negative
+sorting value and is picked first.  Out-of-window candidates receive
++np.inf in the sorting space → excluded forever.
 
-Also provides:
+Novelty is computed as the minimum Euclidean distance in descriptor
+(fingerprint) feature space between the candidate and every structure
+already stored in the database.  When the database is empty, Novelty(x)=0
+for all candidates and the acquisitor reduces to pure uncertainty sampling
+within the energy window.
 
-    is_distinct(candidate, database, descriptor, threshold=0.1)
+Canonical import::
 
-for duplicate rejection using the same novelty distance.
+    from novelty_lcb import NoveltyLCBAcquisitor, is_distinct, fingerprint_distance
 """
+
+from __future__ import annotations
 
 import numpy as np
 from typing import List, Optional
@@ -27,8 +40,10 @@ from typing import List, Optional
 from agox.acquisitors.ABC_acquisitor import AcquisitorBaseClass
 from agox.candidates.standard import StandardCandidate
 from agox.databases.ABC_database import DatabaseBaseClass
+from agox.main import State
 from agox.models.ABC_model import ModelBaseClass
 from agox.models.descriptors.ABC_descriptor import DescriptorBaseClass
+from agox.observer import Observer
 
 
 # =============================================================================
@@ -37,52 +52,53 @@ from agox.models.descriptors.ABC_descriptor import DescriptorBaseClass
 
 class NoveltyLCBAcquisitor(AcquisitorBaseClass):
     """
-    LCB-based acquisition with a structural-novelty bonus and an
-    energy-window filter.
+    Lower-confidence-bound-style acquisition with a structural-novelty
+    bonus and an energy-window filter.  Selects candidates that are
+    simultaneously **uncertain** and **structurally dissimilar** to
+    everything seen so far, within a target energy window.
 
-    The acquisition function (to be MAXIMIZED — higher is better) is:
+    Acquisition function (to be MAXIMIZED — higher is better):
 
-        a(x) = sigma(x) + lambda * Novelty(x)
+        a(x) = σ(x) + λ · Novelty(x)
 
     where:
 
-        Novelty(x) = min_{i in DB} ||fingerprint(x) - fingerprint(x_i)||_2
+        Novelty(x) = min_{i ∈ DB} ||fingerprint(x) − fingerprint(x_i)||₂
 
-    Candidates whose predicted energy mu(x) falls outside the window
-    [E_target - delta_E, E_target + delta_E] are assigned a(x) = -inf
-    and are never selected.
+    The energy window is:
 
-    When the database is empty, Novelty(x) = 0 for all candidates and
-    the acquisitor reduces to pure uncertainty sampling within the
-    energy window.
+        E_target − ΔE  ≤  μ(x)  ≤  E_target + ΔE
 
-    Inherited observer wiring
-    -------------------------
-    This class inherits from AcquisitorBaseClass, which already wires
-    ``prioritize_candidates`` as an observer that reads from the
-    ``candidates`` cache key and writes to ``prioritized_candidates``.
-    The default ``gets``/``sets`` dictionaries and ``order`` are
-    forwarded via **kwargs — override them if you need different
-    cache keys or execution order.
+    Candidates whose predicted energy falls outside the window are
+    excluded (they receive +∞ in the sorting space).  When the database
+    is empty, Novelty(x) = 0 for all candidates and the acquisitor
+    reduces to pure uncertainty sampling within the energy window.
+
+    Because AGOX's ``AcquisitorBaseClass.sort_according_to_acquisition_function``
+    sorts **ascending** (lowest value = best = selected first), this module
+    returns the **negated** acquisition value from ``calculate_acquisition_function``
+    so that the candidate with the *largest* a(x) ends up with the most
+    negative sorting value and is picked first.
+
+    Out-of-window candidates receive ``+np.inf`` in the sorting space,
+    effectively excluding them forever.
 
     Parameters
     ----------
     model : ModelBaseClass
-        GPR / surrogate model that provides
-        ``predict_energy_and_uncertainty(candidate)``.
+        GPR / surrogate that provides ``predict_energy_and_uncertainty``.
     descriptor : DescriptorBaseClass
-        Fingerprint / descriptor used for the novelty distance
-        (e.g. ``Fingerprint``, ``SimpleFingerprint``, ``SOAP``).
+        Fingerprint / descriptor used for the novelty distance (e.g.
+        ``Fingerprint``, ``SimpleFingerprint``, ``SOAP``).
     database : DatabaseBaseClass
-        Database to compute novelty against.  The acquisitor attaches
-        to this database and automatically keeps an internal cache of
-        fingerprint feature vectors up to date.
+        Database to compute novelty against; also attached for live
+        updates so the novelty cache stays fresh as new structures arrive.
     target_energy : float
         Centre of the energy window (eV).
     delta_E : float, optional
         Half-width of the energy window (eV).  Default 0.5.
     novelty_weight : float, optional
-        Weight ``lambda`` multiplying the novelty term.  Default 1.0.
+        Weight λ multiplying the novelty term.  Default 1.0.
     **kwargs
         Passed through to ``AcquisitorBaseClass.__init__`` (``order``,
         ``gets``, ``sets``, ``surname``, …).
@@ -99,12 +115,11 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         delta_E: float = 0.5,
         novelty_weight: float = 1.0,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
 
         self.model = model
         self.descriptor = descriptor
-        self.database = database
         self.target_energy = target_energy
         self.delta_E = delta_E
         self.novelty_weight = novelty_weight
@@ -120,15 +135,15 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
     # ------------------------------------------------------------------ #
 
     def attach_to_database(self, database: DatabaseBaseClass) -> None:
-        """Attach to *database* and seed the internal feature cache."""
+        """Validate *database* and attach observer + seed feature cache."""
         if not isinstance(database, DatabaseBaseClass):
             raise TypeError(
                 f"Expected DatabaseBaseClass, got {type(database)}"
             )
 
-        print(f"[{self.name}] Attaching to database: {database}")
+        self.writer.write_header(self.name)
+        self.writer(f"Attaching to database: {database}")
 
-        # Observer method that the database dispatcher will call.
         self.add_observer_method(
             self._on_database_store,
             gets={},
@@ -138,7 +153,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         )
 
         self.database = database
-        self.attach(database)              # connect observer -> handler
+        self.attach(database)              # connect observer → handler
         self._rebuild_feature_cache()     # seed cache from existing DB
 
     # ------------------------------------------------------------------ #
@@ -152,11 +167,20 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             self._db_features = None
             return
 
-        feats = [self.descriptor.get_features(c).ravel() for c in candidates]
-        self._db_features = np.array(feats)
+        feats = []
+        for c in candidates:
+            try:
+                f = self.descriptor.get_features(c).ravel()
+            except Exception:
+                continue
+            feats.append(f)
+        self._db_features = (
+            np.array(feats) if feats else None
+        )
 
+    @Observer.observer_method
     def _on_database_store(
-        self, database: DatabaseBaseClass, state
+        self, database: DatabaseBaseClass, state: State
     ) -> None:
         """Called by the database dispatcher whenever new candidates
         are stored.  Extends the feature cache with the new entries."""
@@ -167,10 +191,12 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             return
 
         # Append features for genuinely new candidates.
-        new_feats = [
-            self.descriptor.get_features(c).ravel()
-            for c in all_c[len(self._db_features):]
-        ]
+        new_feats = []
+        for c in all_c[len(self._db_features):]:
+            try:
+                new_feats.append(self.descriptor.get_features(c).ravel())
+            except Exception:
+                continue
         if new_feats:
             self._db_features = np.vstack(
                 [self._db_features, np.array(new_feats)]
@@ -183,17 +209,26 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
     def calculate_acquisition_function(
         self, candidates: List[StandardCandidate]
     ) -> np.ndarray:
-        """Evaluate ``a(x) = sigma(x) + lambda * Novelty(x)`` for every
-        candidate, subject to the energy-window constraint.
+        """Evaluate the (negated) novelty-LCB acquisition function.
+
+        AGOX sorts **ascending** — lowest value = best = selected first.
+        We therefore return ``-a(x)`` so that the candidate with the
+        *largest* a(x) ends up with the most negative value and is
+        picked first.
+
+        Out-of-window candidates receive ``+np.inf`` which sorts last.
 
         Returns
         -------
         np.ndarray, shape (n_candidates,)
-            Acquisition values — **higher is better**.  Candidates
-            outside the energy window receive ``-inf``.
+            Negated acquisition values.  Higher *true* a(x) → more
+            negative here → selected first.  Out-of-window candidates
+            get ``+np.inf``.
         """
         n = len(candidates)
-        values = np.full(n, -np.inf)
+        # Start with +inf: out-of-window candidates keep this value,
+        # which sorts them last (never selected).
+        values = np.full(n, np.inf)
 
         db_feats = self._db_features  # may be None
 
@@ -205,7 +240,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
                 lo = self.target_energy - self.delta_E
                 hi = self.target_energy + self.delta_E
                 if E < lo or E > hi:
-                    continue  # values[i] stays -inf
+                    continue  # values[i] stays +inf → excluded
 
             # --- novelty ---------------------------------------------- #
             cand_feat = self.descriptor.get_features(cand).ravel()
@@ -216,8 +251,9 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             else:
                 novelty = 0.0
 
-            # a(x) = sigma + lambda * Novelty  (higher = better)
-            values[i] = sigma + self.novelty_weight * novelty
+            # True acquisition: a(x) = sigma + lambda * Novelty  (higher better)
+            # Negate it so AGOX's ascending sort picks the best.
+            values[i] = -(sigma + self.novelty_weight * novelty)
 
             # stash metadata for printing / analysis
             cand.add_meta_information("model_energy", E)
@@ -235,13 +271,18 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
     # ------------------------------------------------------------------ #
 
     def print_information(
-        self, candidates: List[StandardCandidate],
+        self,
+        candidates: List[StandardCandidate],
         acquisition_values: np.ndarray,
     ) -> None:
-        """Print a table of acquisition values for debugging / analysis."""
+        """Print a table of acquisition values for debugging / analysis.
+
+        Shows the *true* (positive) a(x) = σ + λ·Novelty, not the
+        negated value used for sorting.
+        """
         for i, cand in enumerate(candidates):
             val = acquisition_values[i]
-            if np.isinf(val) and val < 0:
+            if np.isinf(val) and val > 0:
                 self.writer(
                     f"  [{i:3d}] OUTSIDE ENERGY WINDOW — excluded"
                 )
@@ -250,9 +291,20 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             E = cand.get_meta_information("model_energy")
             s = cand.get_meta_information("uncertainty")
             nov = cand.get_meta_information("novelty")
+
+            if E is None or s is None or nov is None:
+                # Model not trained yet; show raw sorting value
+                self.writer(
+                    f"  [{i:3d}] (model not ready) sorting_val={val:.4f}"
+                )
+                continue
+
+            # The true (positive) acquisition value:
+            true_a = s + self.novelty_weight * nov
+
             self.writer(
                 f"  [{i:3d}] E={E:9.4f}  σ={s:8.3f}  "
-                f"novelty={nov:8.3f}  a(x)={val:9.4f}"
+                f"novelty={nov:8.3f}  a(x)={true_a:9.4f}"
             )
 
     # ------------------------------------------------------------------ #
@@ -279,10 +331,9 @@ def is_distinct(
     structure already in *database*, as measured by the minimum Euclidean
     distance in descriptor (fingerprint) feature space.
 
-    This is the same novelty measure used by
-    ``NoveltyLCBAcquisitor`` and can be used as a pre-storage duplicate
-    filter to avoid accumulating structurally similar variants of the
-    same local minimum.
+    This is the same novelty measure used by ``NoveltyLCBAcquisitor`` and
+    can be used as a pre-storage duplicate filter to avoid accumulating
+    structurally similar variants of the same local minimum.
 
     Example
     -------
@@ -348,3 +399,16 @@ def fingerprint_distance(
     fa = descriptor.get_features(a).ravel()
     fb = descriptor.get_features(b).ravel()
     return float(np.linalg.norm(fa - fb))
+
+
+# =============================================================================
+# Convenience: canonical import path
+# =============================================================================
+# The old monolithic file at the project root still exists for backwards
+# compatibility.  New code should import from here (the package) instead:
+#
+#     from novelty_lcb import NoveltyLCBAcquisitor, is_distinct, fingerprint_distance
+#
+# The package's __init__.py re-exports these three names, so both forms
+# work.  The root-level file novelty_lcb_acquisitor.py is kept as a thin
+# backward-compatibility shim that imports from the package.
