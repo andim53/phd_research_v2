@@ -35,6 +35,7 @@ Canonical import::
 from __future__ import annotations
 
 import numpy as np
+from functools import partial
 from typing import List, Optional
 
 from agox.acquisitors.ABC_acquisitor import AcquisitorBaseClass
@@ -49,6 +50,21 @@ from agox.observer import Observer
 # =============================================================================
 # Novelty-LCB Acquisitor
 # =============================================================================
+
+# Module-level LCB acquisition surface used for surrogate relaxation.
+# These are *free functions* so that the calculator passed to
+# ParallelRelaxPostprocess pickles cleanly (bound methods would drag the
+# acquisitor's sqlite database connection into the object graph).
+
+def lcb_acquisition_energy(E, sigma, kappa=1.0):
+    """LCB energy surface used for surrogate relaxation (to minimise)."""
+    return E - kappa * sigma
+
+
+def lcb_acquisition_force(E, F, sigma, sigma_force, kappa=1.0):
+    """Force surface corresponding to :func:`lcb_acquisition_energy`."""
+    return F - kappa * sigma_force
+
 
 class NoveltyLCBAcquisitor(AcquisitorBaseClass):
     """
@@ -114,6 +130,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         target_energy: float,
         delta_E: float = 0.5,
         novelty_weight: float = 1.0,
+        kappa: float = 1.0,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -123,6 +140,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         self.target_energy = target_energy
         self.delta_E = delta_E
         self.novelty_weight = novelty_weight
+        self.kappa = kappa
 
         # Cached feature array: shape (n_db, n_features), or None.
         self._db_features: Optional[np.ndarray] = None
@@ -265,6 +283,39 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             )
 
         return values
+
+    # ------------------------------------------------------------------ #
+    #  Acquisition calculator (for surrogate relaxation)                 #
+    # ------------------------------------------------------------------ #
+
+    def get_acquisition_calculator(self):
+        """Return an ASE calculator for the acquisition surface.
+
+        This is consumed by :class:`agox.postprocessors.ParallelRelaxPostprocess`
+        (and friends) to pre-relax candidates on the cheap surrogate before
+        the expensive DFT evaluation.
+
+        The novelty bonus is the *discrete* minimum Euclidean distance to the
+        database in descriptor space, which is not differentiable w.r.t. atomic
+        positions, so it cannot contribute a well-defined force.  We therefore
+        relax candidates on the uncertainty-weighted lower-confidence-bound
+        surface ``E - kappa*sigma`` (the LCB part of Novelty-LCB), whose energy
+        and force gradients come analytically from the GPR model.
+
+        IMPORTANT: the acquisition functions are passed as ``functools.partial``
+        objects over *module-level* functions that close over only the scalar
+        ``kappa``.  Bound methods (``self._acquisition_energy``) would capture the
+        whole acquisitor instance -- including its sqlite-backed ``database`` --
+        into the calculator's pickle graph, which breaks Ray ``ray.put``
+        serialization (``cannot pickle 'sqlite3.Connection' object``).
+        """
+        from agox.acquisitors.LCB import LowerConfidenceBoundCalculator
+
+        return LowerConfidenceBoundCalculator(
+            self.model,
+            partial(lcb_acquisition_energy, kappa=self.kappa),
+            partial(lcb_acquisition_force, kappa=self.kappa),
+        )
 
     # ------------------------------------------------------------------ #
     #  Printing                                                           #

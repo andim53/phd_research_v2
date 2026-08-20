@@ -21,10 +21,27 @@ _analysist/main_analyst.ipynb
 _analysist/main_test.ipynb
 
 # === _run: track code + docs, skip large artifacts ===
-_run/*/*.png
+_run/**/*.png
 _run/*/backups/
+
+# === Generated AGOX simulation artifacts (regenerable; code/docs kept, data excluded) ===
+# Raw results, logs, and structure files
+*.txt
+*.out
+*.csv
+*.xsf
+
+# Run-output directories (nested sampling / novelty filter / generated structures)
+generated_structures/
+ns_output_allseeds/
+novel_output/
+side_by_side/
+
+# Ray/dask transient dotfiles
+.d[0-9]*
 
 # === Large results / output dirs (regenerated, not source) ===
 _analysist/0_analy/
 _analysist/1_result/
+_analysist/_style_sanity.png
 _archive/

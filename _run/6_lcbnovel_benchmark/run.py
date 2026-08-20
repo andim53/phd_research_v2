@@ -220,7 +220,7 @@ def build_stack(acq_type, db_path, seed):
 
     # Evaluator kwargs
     evaluator_kwargs = dict(
-        calc=sys_ij["calc"],
+        calculator=sys_ij["calc"],
         gets={"get_key": "prioritized_candidates"},
         optimizer_kwargs={"logfile": None},
         optimizer_run_kwargs={"fmax": OPT_FMAX, "steps": OPT_STEPS},
