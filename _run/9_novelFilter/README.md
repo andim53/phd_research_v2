@@ -87,4 +87,35 @@ Structures come from `thr_<v>/novel_structures/*.xsf` (rank-ordered);
 energies from `thr_<v>/novel_structures_summary.csv` (xsf carries no energy).
 Options: `--thresholds` to select a subset, `--e-max` for a common energy axis,
 `--normalize-density`. Run all 7 thresholds to see how the landscape and
-probability evolve as the filter goes 0.25 → 2.0.
+probability evolve as the filter goes 0.25 → 2.0. Add `--prefix force_` (and
+point `--outdir` at the force-filter output) to analyse the force-filtered sets
+instead of the novel-only sets.
+
+## Force filter + nested novel filter (`run_force_novel_filter.py`)
+The raw AGOX structures are surrogate-relaxed with single-point DFT energies and
+large residual forces (the original run used only ~1 DFT step). A **force filter**
+keeps only structures whose `max|F|` over the 25 mobile Fe atoms (excluding the
+fixed MgO substrate) is below a threshold; a **novel filter** (fixed threshold
+1.0) is then applied inside to keep only distinct minima:
+```
+/home/think/miniconda3/envs/agox_v2/bin/python run_force_novel_filter.py --outdir ./force_output
+```
+Sweeps force thresholds `[0.5,1,1.5,2,2.5,3]` eV/Å, writing `force_<v>/`
+folders + `force_comparison.csv`. Then analyse them with:
+```
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_thresholds.py \
+    --outdir ./force_output --prefix force_
+```
+
+## Example structures separated by each threshold
+`save_example_pairs.py` finds, for each threshold, the pair of kept structures
+whose fingerprint distance is **closest to the threshold value** (i.e. two
+structures separated by ~the threshold distance) and saves both as XSF:
+```
+/home/think/miniconda3/envs/agox_v2/bin/python save_example_pairs.py --outdir ./novel_output
+```
+Writes to `novel_output/example_pairs/thr_<v>/pair_A_rank<r>_E<e>.xsf` and
+`pair_B_rank<r>_E<e>.xsf` (two files per threshold), plus
+`pairs_summary.csv` (threshold, indices, energies, pair distance). Since kept
+structures are all pairwise > threshold, the closest pair sits just above the
+threshold — e.g. thr 0.5 → distance 0.5000, thr 1.0 → 1.0002, thr 2.0 → 2.0001.

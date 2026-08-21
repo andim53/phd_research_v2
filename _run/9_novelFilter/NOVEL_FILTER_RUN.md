@@ -313,6 +313,82 @@ Key notes for interpreting the "evolution":
 Options: `--thresholds` (subset, folder-name suffixes), `--e-max` (common energy
 axis across all thresholds so panels are directly comparable), `--normalize-density`.
 
+## 8d. Example structures separated by each threshold (`save_example_pairs.py`)
+
+The novelty filter keeps structures whose minimum distance to the kept set is
+STRICTLY greater than the threshold, so the closest pair among a threshold's
+kept structures always sits just ABOVE the threshold value. This script finds,
+for each threshold, that closest pair (the two structures separated by ~the
+threshold distance) and saves both XSFs:
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python save_example_pairs.py --outdir ./novel_output
+```
+
+Writes `novel_output/example_pairs/thr_<v>/pair_A_rank<r>_E<e>.xsf` +
+`pair_B_rank<r>_E<e>.xsf` (two files per threshold) and `pairs_summary.csv`.
+
+Verified results (closest kept pair per threshold):
+| threshold | pair (rank A ↔ B) | energies (eV) | pair distance |
+|---|---|---|---|
+| 0.25 | 24 ↔ 33 | −435.453 ↔ −435.263 | 0.2502 |
+| 0.50 | 172 ↔ 229 | −430.542 ↔ −429.011 | 0.5000 |
+| 0.75 | 6 ↔ 11 | −434.477 ↔ −433.872 | 0.7503 |
+| 1.00 | 10 ↔ 28 | −432.689 ↔ −426.915 | 1.0002 |
+| 1.25 | 20 ↔ 52 | −422.607 ↔ −414.777 | 1.2534 |
+| 1.50 | 11 ↔ 15 | −421.186 ↔ −419.346 | 1.5007 |
+| 2.00 | 6 ↔ 13 | −419.512 ↔ −415.363 | 2.0001 |
+
+Each pair distance lands essentially on its threshold (0.25→0.2502, 0.5→0.5000,
+…, 2.0→2.0001), confirming the interpretation: these two structures are the pair
+closest to being merged into one, i.e. the two distinct structures that are
+separated by about the threshold. As the threshold rises, the chosen pair moves
+to higher-energy, more structurally-diverse structures (the near-duplicate
+low-energy basin is progressively discarded).
+
+---
+
+## 8e. Force filter + nested novel filter (`run_force_novel_filter.py`)
+
+Because the raw structures are surrogate-relaxed with single-point DFT energies
+(large residual forces — the original evaluator used only ~1 DFT step), a
+**force filter** is applied BEFORE the novel filter to keep only the structures
+closest to being genuine minima. The force measure is `max|F|` over the 25
+mobile **Fe** atoms only — the 50-atom MgO substrate is fixed by the original
+constraints and its forces are excluded. A **novel filter** (fixed threshold
+1.0) is then applied inside each force threshold to keep only distinct minima.
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python run_force_novel_filter.py --outdir ./force_output
+# then analyse each force-filtered set:
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_thresholds.py \
+    --outdir ./force_output --prefix force_
+```
+
+`run_analysis_thresholds.py` gained a `--prefix` flag so it can discover
+`force_<v>/` folders as well as the default `thr_<v>/`.
+
+Verified results (raw dataset 1297 structures, novel thr 1.0):
+| force thr (eV/Å) | force survivors | novel distinct kept | kept E range (eV) |
+|---|---|---|---|
+| 0.5 | 27 (2.1%) | 6 | −418.6 … −417.1 |
+| 1.0 | 338 (26.1%) | 44 | −436.9 … −404.1 |
+| 1.5 | 786 (60.6%) | 87 | −436.9 … −391.5 |
+| 2.0 | 1006 (77.6%) | 124 | −436.9 … −391.5 |
+| 2.5 | 1086 (83.7%) | 138 | −436.9 … −391.5 |
+| 3.0 | 1133 (87.4%) | 139 | −436.9 … −391.5 |
+
+Key observations:
+- The median max|Fe force| across the raw set is ~1.30 eV/Å (min 0.18, max 10.1),
+  confirming few structures are near-converged.
+- At the tightest threshold (0.5 eV/Å) the global minimum (−436.9) does NOT
+  survive — the ground-state geometry in the raw DB is not well-relaxed. The
+  most relaxed structures cluster around −418 eV.
+- As the force threshold loosens, more structures (and the true ground state)
+  enter, and the novel filter still collapses them to distinct minima.
+- All 6 force thresholds produced landscape + probability figures under
+  `force_output/analysis/force_<v>/` (12 figures total).
+
 ---
 
 ## 9. Pitfalls & key learnings

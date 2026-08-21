@@ -200,9 +200,12 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--outdir", default=os.path.join(_HERE, "novel_output"),
                    help="Run output dir containing thr_<v>/ folders (default novel_output)")
+    p.add_argument("--prefix", default="thr_",
+                   help="Folder-name prefix to discover (e.g. 'thr_' for novel, "
+                        "'force_' for force-filtered sets). Default 'thr_'.")
     p.add_argument("--thresholds", default=None,
                    help="Comma-separated thresholds to analyse (folder name suffixes, "
-                        "e.g. '0.25,1,2'). Default: all thr_*/ folders found.")
+                        "e.g. '0.25,1,2'). Default: all <prefix>* folders found.")
     p.add_argument("--e-max", type=float, default=None,
                    help="Common upper energy limit (eV/atom) for all landscape & "
                         "probability plots. If omitted, each threshold uses its own max.")
@@ -211,14 +214,14 @@ def main():
     args = p.parse_args()
 
     if args.thresholds:
-        thr_names = [f"thr_{v.strip()}" for v in args.thresholds.split(",") if v.strip()]
+        thr_names = [f"{args.prefix}{v.strip()}" for v in args.thresholds.split(",") if v.strip()]
     else:
         thr_names = sorted(
             d for d in os.listdir(args.outdir)
-            if d.startswith("thr_") and os.path.isdir(os.path.join(args.outdir, d))
+            if d.startswith(args.prefix) and os.path.isdir(os.path.join(args.outdir, d))
         )
     if not thr_names:
-        raise SystemExit(f"No thr_<v>/ folders under {args.outdir!r}")
+        raise SystemExit(f"No {args.prefix}* folders under {args.outdir!r}")
 
     print(f"Analysing {len(thr_names)} thresholds: {thr_names}")
 
