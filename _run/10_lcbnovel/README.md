@@ -51,6 +51,40 @@ noise). Far from training data → high σ (the surrogate is unsure); near or be
 training points → low σ. It is the surrogate's own estimate of what it does **not**
 yet know about the landscape at x.
 
+### How the KMeansSampler is used
+The KMeansSampler sits **between the collector and the acquisitor**: it thins the
+pool of *already-evaluated* (relaxed + DFT-scored) structures down to a small,
+diverse representative set before the acquisitor scores them.
+
+In `main.py`:
+
+    sampler = KMeansSampler(descriptor=descriptor, database=database, sample_size=SAMPLE_SIZE)   # SAMPLE_SIZE = 20
+
+**What it actually does** (AGOX `samplers/kmeans.py`):
+1. Takes the **finished structures** in the database (the ones that have been
+   relaxed and DFT-evaluated — NOT the raw generator candidates).
+2. Computes each structure's fingerprint features (the same 720-dim descriptor).
+3. Clusters them with sklearn `KMeans` in that feature space.
+4. **Keeps the lowest-energy member of each cluster** (`select_from_clusters`).
+
+**Is there an energy criterion?** Yes. Two, in fact:
+- A `max_energy=5` eV filter (`KMeansEnergyFilter`) drops any structure more than
+  5 eV above the current lowest-energy structure *before* clustering.
+- Within each cluster, the **lowest-energy** structure is the one selected as the
+  cluster's representative.
+
+**How many clusters?** It is **automatic** — you do not choose the cluster count.
+It is derived from how many structures exist and your `sample_size`:
+
+    n_clusters = 1 + min(sample_size - 1, floor(len(energies) / 5))
+
+so it is capped at `sample_size` (20 here) and grows only as the database grows.
+The result is a sample of at most `sample_size` structures — one representative per
+structural basin — which is then handed to the Novelty-LCB acquisitor. This prevents
+a basin full of near-duplicate structures from dominating the novelty/uncertainty
+scoring. (Note: the acquisitor's energy-window filter is separate from the sampler's
+`max_energy`; they are independent mechanisms.)
+
 ### Q3 — How is a candidate actually picked? Lowest a(x)?
 AGOX sorts candidates **ascending** (lowest value = best = selected first). So the
 code returns the **negated** acquisition value `-a(x)`, and the candidate with the

@@ -232,3 +232,39 @@ explanation. Confirmed via clarify: replace the Note block with a proper
 
 ### Time
 ~10 min.
+
+---
+
+## 2026-08-22 — Session 1f: Explain KMeansSampler in README.md
+
+### Goal (user request)
+Owner added a Note in `README.md` (after Q2) asking how the KMeansSampler is actually
+used in the script, whether there is an energy criterion, and how the number of
+clusters is decided. Confirmed via clarify: add a new subsection right after Q2 inside
+the "How the Novelty-LCB works" section, concise-but-complete with key code lines.
+
+### Actions taken
+- Read AGOX source `samplers/kmeans.py` + `main.py` wiring to ground the answer.
+- Replaced the Note block with a new "### How the KMeansSampler is used" subsection:
+  - Role: diversity-preserving down-selection BETWEEN the collector and the acquisitor,
+    over already-evaluated (relaxed + DFT-scored) structures, not raw candidates.
+  - In main.py: `KMeansSampler(descriptor, database, sample_size=SAMPLE_SIZE)` (SAMPLE_SIZE=20).
+  - Mechanism: sklearn KMeans on 720-dim features; keep lowest-energy member per cluster.
+  - Energy criterion: `max_energy=5` eV filter (KMeansEnergyFilter) + lowest-energy per cluster.
+  - Number of clusters: automatic, `n_clusters = 1 + min(sample_size-1, floor(N/5))`,
+    capped at sample_size; grows with DB size. No manual cluster count.
+
+### Results
+- README.md now explains the KMeansSampler, grounded in the actual AGOX source.
+- Note block removed; new subsection inserted in the right place (after Q2, before Q3).
+
+### Decisions & reasoning
+- Grounded all claims in `agox/samplers/kmeans.py` and `main.py` so the README is
+  truthful and traceable.
+- Matched the existing Q1/Q2/Q3 style and placement (owner's choice).
+
+### Open items / next steps
+- Unchanged: calibrate energy window, then launch heavy HPC search.
+
+### Time
+~10 min.
