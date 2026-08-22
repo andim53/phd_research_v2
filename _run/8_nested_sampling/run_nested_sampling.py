@@ -39,6 +39,7 @@ from agox.models.GPR.priors import Repulsive
 # Nested sampling package
 from nested_sampling.nested_sampler import NestedSampler
 from nested_sampling.utils import K_B
+from nested_sampling.state_density import analyze_state_density, analyze_saved_output
 
 
 # =============================================================================
@@ -96,7 +97,8 @@ def build_gpr(traj):
         + Noise(0.01, (0.01, 0.01))
     )
 
-    gpr = GPR(descriptor=descriptor, kernel=kernel, prior=Repulsive())
+    gpr = GPR(descriptor=descriptor, kernel=kernel, prior=Repulsive(),
+              use_ray=True)
     print(f"  Training on {len(traj)} structures...")
     gpr.train(traj)
     print("  GPR training done.")
@@ -118,11 +120,48 @@ def main():
                    help="Nested sampling iterations, default 300")
     p.add_argument("--perturb", type=float, default=0.01,
                    help="Perturbation amplitude (A), default 0.01")
+    p.add_argument("--perturb-symbols", default="Fe",
+                   help="Symbol(s) of atoms to perturb (deposition layer), "
+                        "default 'Fe'; all other atoms stay fixed")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
                    help="Random seed for the sampler RNG")
+    p.add_argument("--analysis-dir", default=None,
+                   help="Directory for the state-density/landscape analysis "
+                        "outputs (default: <--output>/analysis)")
+    p.add_argument("--no-analysis", action="store_true",
+                   help="Skip the state-density / landscape analysis that runs "
+                        "automatically after sampling")
+    p.add_argument("--analyze-only", default=None, metavar="RUN_OUTPUT_DIR",
+                   help="Re-run the state-density / landscape analysis on an "
+                        "already-finished run's output directory (must contain "
+                        "posterior_structures/ and posterior_summary.csv). "
+                        "Skips data loading, GPR training and sampling. "
+                        "Requires --output for the analysis destination.")
     args = p.parse_args()
+
+    # --- 0. Standalone re-analysis of a saved run ----------------------------
+    if args.analyze_only:
+        analysis_dir = args.analysis_dir or os.path.join(args.output, "analysis")
+        print("=" * 70)
+        print("Standalone analysis of a saved nested-sampling run")
+        print(f"  run output   : {args.analyze_only}")
+        print(f"  analysis dir : {analysis_dir}")
+        print("=" * 70)
+        # training set (structures + DFT energies) for comparison
+        structures, energies, _ = load_all_seeds(DATASET_DIR, DB_PATTERN)
+        print(f"  Training set: {len(structures)} structures")
+        analyze_saved_output(
+            run_output_dir=args.analyze_only,
+            training_structures=structures,
+            training_energies=energies,
+            output_dir=analysis_dir,
+            normalize_density=False,
+            e_max=None,
+        )
+        print("\nDone (standalone analysis).")
+        return
 
     # --- 1. Load the combined multi-seed dataset -----------------------------
     print("=" * 70)
@@ -159,12 +198,28 @@ def main():
         beta=beta,
         temperature=args.temp,
         perturb=args.perturb,
+        perturb_symbols=args.perturb_symbols,
         rng=np.random.default_rng(args.rng),
     )
 
     sampler.initialize()
     sampler.run(n_iterations=args.n_iters, progress_every=20)
     sampler.save(args.output)
+
+    # --- 4. State-density / landscape analysis -------------------------------
+    if not args.no_analysis:
+        analysis_dir = args.analysis_dir or os.path.join(args.output, "analysis")
+        print("\nRunning state-density / landscape analysis of results...")
+        analyze_state_density(
+            posterior_structures=sampler.posterior_samples,
+            training_structures=structures,
+            gpr=gpr,
+            output_dir=analysis_dir,
+            normalize_density=False,
+            e_max=None,
+        )
+    else:
+        print("\nSkipping state-density analysis (--no-analysis).")
 
     print(f"\nDone. Results written to {args.output}")
 

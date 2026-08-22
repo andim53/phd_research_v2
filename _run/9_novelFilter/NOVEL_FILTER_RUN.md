@@ -140,6 +140,10 @@ cd /home/think/Desktop/research/_run/9_novelFilter
     --threshold 1.0 --temp 300 --output ./novel_output --rng 42
 ```
 
+My Note: 
+This '--temp 300' and '--rng 42'; what is that? What is it used for? Why is it necessary?
+What do you mean by 'partition function over 164 distinct structures at 300 K: Z = 1.063335e+00  (log Z = 0.0614)'? What is it used for? What is partition function use in this case? Why use log Z?
+
 Threshold sweep (one output folder of ALL kept `.xsf` per threshold):
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python run_filter.py \
@@ -211,6 +215,9 @@ change with the filter parameter.
 ## 8. Outputs (in `--output`, here `novel_output/`)
 
 When run as a sweep, outputs are organised per threshold:
+
+Note: 
+What do you mean by run as a 'sweep'?
 
 ```
 novel_output/
@@ -353,13 +360,27 @@ low-energy basin is progressively discarded).
 Because the raw structures are surrogate-relaxed with single-point DFT energies
 (large residual forces — the original evaluator used only ~1 DFT step), a
 **force filter** is applied BEFORE the novel filter to keep only the structures
-closest to being genuine minima. The force measure is `max|F|` over the 25
-mobile **Fe** atoms only — the 50-atom MgO substrate is fixed by the original
-constraints and its forces are excluded. A **novel filter** (fixed threshold
-1.0) is then applied inside each force threshold to keep only distinct minima.
+closest to being genuine minima. The force measure is over the 25 mobile **Fe**
+atoms only — the 50-atom MgO substrate is fixed by the original constraints and
+its forces are excluded. A **novel filter** (fixed threshold 1.0) is then
+applied inside each force threshold to keep only distinct minima.
+
+### Force metric (selectable)
+The force measure over the mobile Fe atoms is chosen with `--force-metric`:
+- `max`  (default) — `max|F|` over Fe atoms, i.e. the worst-atom residual force
+  (strictest; a structure passes only if EVERY Fe atom is well-relaxed).
+- `mean` — `mean|F|` over Fe atoms, i.e. the average residual force (a single
+  badly-converged atom is tolerated if the rest are relaxed).
+
+The metric is recorded in each `force_<v>/filter_summary.txt` and reflected in
+the summary CSV column name (`max_F_eV_per_Ang` or `mean_F_eV_per_Ang`).
 
 ```bash
+# default (max force)
 /home/think/miniconda3/envs/agox_v2/bin/python run_force_novel_filter.py --outdir ./force_output
+# mean force
+/home/think/miniconda3/envs/agox_v2/bin/python run_force_novel_filter.py \
+    --outdir ./force_output_mean --force-metric mean
 # then analyse each force-filtered set:
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_thresholds.py \
     --outdir ./force_output --prefix force_
@@ -368,7 +389,7 @@ constraints and its forces are excluded. A **novel filter** (fixed threshold
 `run_analysis_thresholds.py` gained a `--prefix` flag so it can discover
 `force_<v>/` folders as well as the default `thr_<v>/`.
 
-Verified results (raw dataset 1297 structures, novel thr 1.0):
+Verified results (raw dataset 1297 structures, novel thr 1.0) — **max** metric:
 | force thr (eV/Å) | force survivors | novel distinct kept | kept E range (eV) |
 |---|---|---|---|
 | 0.5 | 27 (2.1%) | 6 | −418.6 … −417.1 |
@@ -378,16 +399,28 @@ Verified results (raw dataset 1297 structures, novel thr 1.0):
 | 2.5 | 1086 (83.7%) | 138 | −436.9 … −391.5 |
 | 3.0 | 1133 (87.4%) | 139 | −436.9 … −391.5 |
 
+**mean** metric (median mean-Fe-force ≈ 0.33 eV/Å — far more structures are
+"well-converged on average"):
+| force thr (eV/Å) | force survivors | novel distinct kept | kept E range (eV) |
+|---|---|---|---|
+| 0.5 | 1059 (81.6%) | 109 | −436.9 … −391.5 |
+| 1.0 | 1161 (89.5%) | 144 | −436.9 … −391.5 |
+
 Key observations:
-- The median max|Fe force| across the raw set is ~1.30 eV/Å (min 0.18, max 10.1),
-  confirming few structures are near-converged.
-- At the tightest threshold (0.5 eV/Å) the global minimum (−436.9) does NOT
-  survive — the ground-state geometry in the raw DB is not well-relaxed. The
-  most relaxed structures cluster around −418 eV.
+- The median max|Fe force| across the raw set is ~1.30 eV/Å (min 0.18, max 10.1);
+  the median mean|Fe force| is ~0.33 eV/Å. So the `max` metric is far stricter
+  than `mean` — e.g. at 0.5 eV/Å, `max` keeps only 27 structures while `mean`
+  keeps 1059.
+- At the tightest `max` threshold (0.5 eV/Å) the global minimum (−436.9) does
+  NOT survive — the ground-state geometry in the raw DB is not well-relaxed.
+  Under the `mean` metric the global minimum survives even at 0.5 eV/Å (its
+  mean Fe force is ~0.23 eV/Å) — one or a few Fe atoms carry a large residual
+  force even though the average is small.
 - As the force threshold loosens, more structures (and the true ground state)
   enter, and the novel filter still collapses them to distinct minima.
-- All 6 force thresholds produced landscape + probability figures under
-  `force_output/analysis/force_<v>/` (12 figures total).
+- All force thresholds produced landscape + probability figures under
+  `force_output/analysis/force_<v>/` (12 figures for the `max` sweep; run the
+  analysis on `force_output_mean` for the `mean` sweep).
 
 ---
 

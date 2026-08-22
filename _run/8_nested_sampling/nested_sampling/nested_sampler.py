@@ -33,6 +33,7 @@ class NestedSampler:
         temperature: float = 300.0,
         perturb: float = 0.01,
         rng: np.random.Generator = None,
+        perturb_symbols: str = "Fe",
     ):
         self.gpr = gpr
         self.db_structures = db_structures
@@ -42,6 +43,19 @@ class NestedSampler:
         self.temperature = temperature
         self.perturb = perturb
         self.rng = rng or np.random.default_rng()
+        self.perturb_symbols = perturb_symbols
+
+        # Indices of the atoms to perturb (the deposition layer). A single list is
+        # computed from the (uniform-composition) dataset and reused for every draw.
+        symbols = np.array(db_structures[0].get_chemical_symbols())
+        self.perturb_indices = np.where(np.isin(symbols, [perturb_symbols]))[0]
+        if len(self.perturb_indices) == 0:
+            raise ValueError(
+                f"No atoms with symbol '{perturb_symbols}' found in the dataset."
+            )
+        print(f"[NestedSampler] Perturbing {len(self.perturb_indices)} atoms of "
+              f"symbol '{perturb_symbols}' (amplitude {perturb:.4f} A); "
+              f"all other atoms are left fixed.")
 
         # Energy reference: shift so minimum training energy is 0
         self.E_ref = db_energies.min()
@@ -65,12 +79,18 @@ class NestedSampler:
     # -- Prior sampling --
 
     def sample_from_prior(self) -> Atoms:
-        """Draw from empirical DB distribution + optional perturbation."""
+        """Draw from empirical DB distribution + optional perturbation.
+
+        Perturbation is applied ONLY to the deposition-species atoms (the
+        ``perturb_indices``), e.g. Fe; the substrate and every other atom are left
+        in their database positions (fixed).
+        """
         idx = self.rng.integers(0, len(self.db_structures))
         base = self.db_structures[idx].copy()
         if self.perturb > 0:
-            noise = self.rng.normal(0, self.perturb, base.positions.shape)
-            base.positions += noise
+            noise = self.rng.normal(0, self.perturb,
+                                    (len(self.perturb_indices), 3))
+            base.positions[self.perturb_indices] += noise
         return base
 
     # -- Log-likelihood --
@@ -260,20 +280,25 @@ class NestedSampler:
                    np.column_stack([[i, self.log_Z] for i in range(len(self.Z_history))]),
                    delimiter=',', header='iteration,log_Z', comments='')
 
-        # Posterior samples (physical only)
+        # Posterior samples (physical only), all of them + summary CSV so the
+        # analysis can be re-run standalone without re-training the GPR.
         phys_pairs = [(w, s) for w, s in zip(self.posterior_log_weights, self.posterior_samples)
                       if abs(self.gpr.predict_energy(s)) < 1e4]
         if phys_pairs:
             phys_pairs.sort(key=lambda x: x[0], reverse=True)
             xsf_dir = out / "posterior_structures"
             xsf_dir.mkdir(exist_ok=True)
+            summary_rows = []
+            from ase.io import write
             for i, (lw, s) in enumerate(phys_pairs):
-                if i >= 20:
-                    break
                 w = np.exp(lw) if lw > -700 else 0.0
                 E = self.gpr.predict_energy(s)
-                from ase.io import write
                 write(xsf_dir / f"posterior_{i:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
+                summary_rows.append((i, E, w, lw))
+            np.savetxt(out / "posterior_summary.csv", np.asarray(summary_rows, dtype=float),
+                       delimiter=',',
+                       header='rank,energy_eV,weight,log_weight', comments='')
+            print(f"  Saved {len(phys_pairs)} posterior structures to {xsf_dir}")
 
         np.savetxt(out / "final_live_energies.csv",
                    self.live_energies.reshape(-1, 1),

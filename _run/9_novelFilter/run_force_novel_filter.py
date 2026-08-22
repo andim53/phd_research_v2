@@ -102,12 +102,20 @@ def load_raw_structures(dataset_dir: str, pattern: str):
     return structures, energies, forces, origins
 
 
-def fe_forces(atoms, forces):
-    """Return the force magnitude (max |F|) over the mobile Fe atoms only."""
+def fe_forces(atoms, forces, metric="max"):
+    """Return the force magnitude over the mobile Fe atoms only.
+
+    metric : str
+        'max'  -> max |F| over Fe atoms (worst-atom force; strictest)
+        'mean' -> mean |F| over Fe atoms (average residual force)
+    """
     fe_idx = [i for i, s in enumerate(atoms.get_chemical_symbols()) if s == "Fe"]
     if not fe_idx:
         return np.nan
-    return np.abs(forces[fe_idx]).max()
+    mag = np.abs(forces[fe_idx])
+    if metric == "mean":
+        return float(np.mean(mag))
+    return float(np.max(mag))
 
 
 def build_features(descriptor, structures) -> np.ndarray:
@@ -120,6 +128,10 @@ def main():
                    help="Dataset dir containing seed_*/1_db/db_*.db")
     p.add_argument("--force-thresholds", default=",".join(map(str, FORCE_THRESHOLDS)),
                    help=f"Comma-separated force thresholds (eV/A). Default {FORCE_THRESHOLDS}")
+    p.add_argument("--force-metric", choices=["max", "mean"], default="max",
+                   help="Force measure over the mobile Fe atoms: 'max' = max|F| "
+                        "(worst atom, strictest, default) or 'mean' = mean|F| "
+                        "(average residual force).")
     p.add_argument("--novel-threshold", type=float, default=NOVEL_THRESHOLD,
                    help=f"Novel (fingerprint) threshold applied inside each force "
                         f"threshold. Default {NOVEL_THRESHOLD}")
@@ -142,8 +154,10 @@ def main():
     print(f"  Composition: {formula}")
 
     # --- 2. Per-structure force measure (mobile Fe only) --------------------
-    fe_fmax = np.array([fe_forces(a, f) for a, f in zip(structures, forces)])
-    print(f"\nMax|Fe force|: min={np.nanmin(fe_fmax):.3f}  "
+    metric = args.force_metric
+    fe_fmax = np.array([fe_forces(a, f, metric) for a, f in zip(structures, forces)])
+    print(f"\n{'Max' if metric=='max' else 'Mean'}|Fe force|: "
+          f"min={np.nanmin(fe_fmax):.3f}  "
           f"median={np.nanmedian(fe_fmax):.3f}  max={np.nanmax(fe_fmax):.3f} eV/A")
     print("  (substrate Mg/O forces excluded; only mobile Fe atoms count)")
 
@@ -191,7 +205,8 @@ def main():
         os.makedirs(ns_dir, exist_ok=True)
 
         with open(os.path.join(out_dir, "novel_structures_summary.csv"), "w") as fh:
-            fh.write("rank,dataset_index,energy_eV,source,max_F_eV_per_Ang\n")
+            fh.write("rank,dataset_index,energy_eV,source,"
+                     f"{'max' if metric=='max' else 'mean'}_F_eV_per_Ang\n")
             for rank, gi in enumerate(kept_global):
                 fname = f"novel_{rank:04d}_E{E_kept[rank]:.3f}.xsf"
                 write(os.path.join(ns_dir, fname), structures[gi])
@@ -199,6 +214,7 @@ def main():
                          f"{fe_fmax[gi]:.6f}\n")
 
         with open(os.path.join(out_dir, "filter_summary.txt"), "w") as fh:
+            fh.write(f"force_metric                : {metric}\n")
             fh.write(f"force_threshold_eV_per_Ang  : {fthr}\n")
             fh.write(f"novel_threshold             : {args.novel_threshold}\n")
             fh.write(f"input_structures            : {len(structures)}\n")
