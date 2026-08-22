@@ -268,3 +268,48 @@ the "How the Novelty-LCB works" section, concise-but-complete with key code line
 
 ### Time
 ~10 min.
+
+---
+
+## 2026-08-22 — Session 1g: Assessment for local-minimum sampling in README.md
+
+### Goal (user request)
+Owner added a Note in `README.md` (inside the KMeansSampler section) asking, in the
+context of **local-minimum sampling**: what "5 eV above the lowest-energy structure"
+means and how it affects the database; whether the current Novelty-LCB works for
+local-minimum sampling; what is wrong / right / improvable. Confirmed via clarify:
+replace the Note with an in-place subsection and give a **deep dive** (full worked
+analysis of the local-minimum vs global-search mismatch, with references to the
+`_run/8_nested_sampling` and `_run/9_novelFilter` downstream tools).
+
+### Actions taken
+- Replaced the Note block with a new "### Assessment for local-minimum sampling"
+  subsection inside the KMeansSampler section covering:
+  - DB effect of max_energy=5 filter: does NOT delete from DB; only gates which
+    structures are eligible for sampling (excludes >5 eV above running lowest).
+  - Fit of Novelty-LCB: partly — the novelty term aids basin diversity.
+  - What is right: diversity, KMeans one-rep-per-basin, downstream tools
+    (9_novelFilter dedup + 8_nested_sampling) already provide local-minimum stats.
+  - What is wrong/limited: global-search heuristic not a minima sampler; uncalibrated
+    window; novelty saturates as DB grows; DB not a clean minima set; novelty vs raw DB
+    (near-duplicates) not vs a representative set.
+  - Improvements: calibrate window; compare novelty against deduplicated set; separate
+    "discover basins" (AGOX) from "weight basins" (NS/novel-filter); optional basin
+    bookkeeping at acquisition time.
+
+### Results
+- README.md now has a grounded assessment for local-minimum sampling, referencing the
+  sibling `_run/8` and `_run/9` pipelines.
+- Note block removed; subsection placed in the right spot.
+
+### Decisions & reasoning
+- Deep-dive chosen by owner; grounded in `agox/samplers/kmeans.py`, `main.py`, and the
+  actual downstream tools so the critique is concrete, not generic.
+- Framed the recommended workflow as AGOX-to-discover + novel-filter/nested-sampling
+  to-weight, matching the division of labour across this project's sibling runs.
+
+### Open items / next steps
+- Unchanged: calibrate energy window, then launch heavy HPC search.
+
+### Time
+~10 min.

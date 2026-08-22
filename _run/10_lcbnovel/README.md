@@ -70,6 +70,81 @@ In `main.py`:
 **Is there an energy criterion?** Yes. Two, in fact:
 - A `max_energy=5` eV filter (`KMeansEnergyFilter`) drops any structure more than
   5 eV above the current lowest-energy structure *before* clustering.
+
+### Assessment for local-minimum sampling
+This subsection addresses the goal of **local-minimum sampling** (enumerating and
+weighting the distinct metastable basins of Fe-on-MgO, rather than only chasing the
+global minimum) and asks whether the current Novelty-LCB pipeline serves it.
+
+**What "5 eV above the lowest-energy structure" actually does — and its DB effect.**
+The `KMeansEnergyFilter(max_energy=5)` does **not** delete anything from the database.
+The Database stores every evaluated candidate regardless of energy. The filter only
+governs which structures are *eligible to be sampled* (fed onward to the acquisitor as
+the next candidate pool): any structure more than 5 eV above the running lowest-energy
+structure is excluded from clustering and therefore cannot be picked as the next
+search point. Its practical effect is to keep the active search focused on the
+low-energy part of the landscape, and (combined with `select_from_clusters`) to make
+each picked basin representative the lowest-energy member of its cluster.
+
+**Does Novelty-LCB fit local-minimum sampling?** Partly — and the part that helps is
+the **novelty term**. Because `Novelty(x)` is the min distance to everything already
+seen, maximising it actively pushes the search into structurally distinct regions,
+which is exactly what discovers *different* local minima (basins) rather than
+re-optimising one. So as a basin-diversity mechanism it is genuinely better than
+plain LCB.
+
+**What is right.**
+- Novelty rewards structural diversity → multiple basins can be found.
+- The KMeansSampler keeps one representative per cluster, so a single basin full of
+  near-duplicate relaxations does not monopolise the sample.
+- The downstream tools already exist for the actual local-minimum/partition-function
+  step: `_run/9_novelFilter` (greedy dedup → a distinct-basin set + Boltzmann
+  weights) and `_run/8_nested_sampling` (GPR surrogate + nested sampling for the
+  partition function / evidence over that set). The AGOX search's real job is to
+  *populate the DB with diverse structures*; the local-minimum statistics are then
+  computed post-hoc by those tools.
+
+**What is wrong / limited (the mismatch).**
+1. **It is a global-search heuristic, not a local-minimum sampler.** Novelty-LCB
+   maximises `σ + λ·Novelty` inside an energy window. There is an inherent tension:
+   novelty (and σ) push toward *unexplored, often high-energy* regions, while the
+   energy window tries to hold the search in a low band. The acquisitor does not
+   explicitly enumerate basins or balance weight across them; it just picks the
+   most-uncertain-and-novel in-window candidate each round.
+2. **Uncalibrated window.** `target_energy=0.0, ΔE=1.0` is a placeholder. If the real
+   energy band is far from 0, either everything is excluded or (if the window is wide)
+   nothing meaningful is constrained. This must be calibrated (short standard-LCB run)
+   before the numbers mean anything.
+3. **Novelty saturates as the DB grows.** Novelty is the min distance to **all** DB
+   structures. Early on it is large; as the DB fills, the nearest neighbour shrinks,
+   so the novelty bonus decays and the search drifts back toward pure uncertainty
+   sampling. The measure is also computed in raw 720-dim space without
+   normalisation (matching `_run/9_novelFilter`), so distances are dominated by the
+   largest-magnitude descriptor components.
+4. **The DB itself is not a clean minima set.** Every DFT evaluation is stored, and
+   relaxations repeatedly land in the same basins → the DB accumulates near-duplicates.
+   A raw DB is therefore a poor input to local-minimum statistics unless it is first
+   deduplicated (which is exactly what `_run/9_novelFilter` does).
+5. **Novelty vs a representative set.** Because novelty compares against *every*
+   stored structure, a near-duplicate of a known basin can still look "novel enough"
+   if it is slightly perturbed. Comparing against a **deduplicated representative set**
+   (one per basin) would make novelty reflect distance to distinct minima.
+
+**What can be improved.**
+- **Calibrate the energy window** first (map the real band with standard LCB, set
+  target=centre, ΔE≈0.5–1.0).
+- **Compare novelty against a deduplicated set** (e.g. the `_run/9_novelFilter` output)
+  instead of the raw DB, so the bonus measures distance to distinct minima.
+- **Use the search to build diversity, then post-process for local-minimum
+  statistics**: run AGOX to fill the DB, dedup with `_run/9_novelFilter` to get the
+  distinct-basin set, then run `_run/8_nested_sampling` for the partition
+  function / free energy / DOS. This cleanly separates "discover basins" (AGOX) from
+  "weight basins" (NS / novel filter) — the intended division of labour across this
+  project's sibling runs.
+- Optionally add explicit basin bookkeeping at acquisition time (store only distinct
+  relaxed minima, or track cluster representatives) to keep the DB lean for the
+  downstream statistical step.
+
 - Within each cluster, the **lowest-energy** structure is the one selected as the
   cluster's representative.
 
