@@ -432,3 +432,38 @@ subsection (absolute-energy point, code behaviour with E vs 0, physical meaning 
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-22 — Session 1k: Explain 'continue from previous DB' in README.md
+
+### Goal (user request)
+Owner added a Note in `README.md` asking whether AGOX checks/continues from a
+previous DB on re-run. Confirmed via clarify: replace the Note in-place with a
+concise "Does AGOX continue from a previous database?" subsection.
+
+### Actions taken
+- Read AGOX source `databases/database.py` to ground the answer:
+  - `__init__(initialize=False, call_initialize=True)` default; `os.remove` only if
+    `initialize=True`.
+  - `_initialize()` checks if the `structures` table exists; does not recreate if
+    present; `_init_storage()` loads existing rows into memory.
+- Replaced the Note with a subsection answering "yes, it continues", explaining:
+  - initialize=False => existing DB not deleted on open.
+  - _initialize restores stored candidates (novelty vs get_all_candidates).
+  - Implications: re-run same seed resumes/extends the DB; to restart fresh you must
+    delete the db file (or use a new path) — AGOX won't clear it by default.
+
+### Results
+- README.md now explains the resume-from-existing-DB behavior, grounded in database.py.
+
+### Decisions & reasoning
+- Grounded in the actual AGOX Database.__init__/_initialize source so the answer is
+  precise (resume vs restart semantics).
+- Kept it concise and in place (owner's choice).
+
+### Open items / next steps
+- Unchanged: launch heavy HPC search; (optional) verify downstream integration.
+
+### Time
+~5 min.

@@ -157,6 +157,29 @@ works on the **absolute** total energy, so `target_energy` must be set to a real
 energy in the band — which is why this project calibrates it from the LCB-only
 dataset (`target = −411.6 eV, ΔE = 25 eV`).
 
+### Does AGOX continue from a previous database?
+Yes — with the default settings, AGOX **continues from an existing DB rather than
+starting empty**. `main.py` opens the database with
+`Database(filename=db_path, order=5)`, which uses the defaults `initialize=False`
+and `call_initialize=True`:
+
+- `initialize=False` means an existing DB file is **not** deleted on open (the code
+  only calls `os.remove(filename)` when `initialize=True`).
+- `_initialize()` then checks whether the `structures` table already exists. If it
+  does, it does **not** recreate it; it loads the stored rows into memory
+  (`_init_storage()` → `storage_dict`), so the previously explored candidates are
+  restored.
+- The GPR and the Novelty-LCB acquisitor rebuild from those restored candidates —
+  in particular, the novelty distance is computed against `get_all_candidates()`, so
+  it continues to reflect everything seen so far.
+
+**Implications for `main.py`:**
+- **Resume / extend a run:** re-run the same seed and the search continues from the
+  existing `db_<seed>.db`, accumulating more evaluations on top of the old ones.
+- **Restart fresh:** you must **delete** the existing `db_<seed>.db` (or use a new
+  output path) — otherwise the run silently continues from the previous DB instead
+  of starting over. AGOX will not clear it for you by default.
+
 3. **Novelty saturates as the DB grows.** Novelty is the min distance to **all** DB
    structures. Early on it is large; as the DB fills, the nearest neighbour shrinks,
    so the novelty bonus decays and the search drifts back toward pure uncertainty
