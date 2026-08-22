@@ -136,6 +136,27 @@ non-restrictive and the search is governed by the novelty + uncertainty terms. T
 target only the stable (low-energy) local minima instead, narrow the window to the
 low band (e.g. target ≈ −432, ΔE ≈ 3). These values are written into `main.py`.
 
+### What if `target_energy = 0`?
+Setting `target_energy = 0` does **not** mean "search around an energy of 0". The
+window `[target_energy − ΔE, target_energy + ΔE]` is compared against the GPR's
+**absolute predicted total energy** `E` of a candidate (the code tests
+`E < lo or E > hi`). For this system the predicted and DFT total energies are all
+around **−400 eV** (band ≈ [−436.9, −386.3] eV, never near 0), because the total
+energy of a 75-atom Fe/MgO slab is a large negative number.
+
+With `target_energy = 0, ΔE = 1.0`, the window becomes `[−1, +1]` eV. Since no
+candidate's predicted energy is anywhere near 0, **every candidate is excluded** — it
+gets `+∞` in the sorting space and is never selected, so the search would effectively
+pick nothing and stall. With a wider `ΔE` (e.g. 400) the window `[−400, 400]` would
+start to overlap the band, but that is a roundabout way to reproduce a sensible
+window and is easy to get wrong.
+
+The 0-eV reference only makes sense if your energies are **relative** to some
+reference (e.g. a per-atom formation energy or a shifted E_ref). This acquisitor
+works on the **absolute** total energy, so `target_energy` must be set to a real
+energy in the band — which is why this project calibrates it from the LCB-only
+dataset (`target = −411.6 eV, ΔE = 25 eV`).
+
 3. **Novelty saturates as the DB grows.** Novelty is the min distance to **all** DB
    structures. Early on it is large; as the DB fills, the nearest neighbour shrinks,
    so the novelty bonus decays and the search drifts back toward pure uncertainty

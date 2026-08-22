@@ -396,3 +396,39 @@ command, expected output, and how to interpret the numbers to set the window.
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-22 — Session 1j: Explain 'target_energy = 0' in README.md
+
+### Goal (user request)
+Owner added a Note in `README.md` (after the calibration block) asking what happens
+if the energy window is set to 0 — does it search around energy 0? Confirmed via
+clarify: replace the Note in-place with a concise "What if target_energy = 0?"
+subsection (absolute-energy point, code behaviour with E vs 0, physical meaning of 0).
+
+### Actions taken
+- Replaced the Note with a "### What if `target_energy = 0`?" subsection:
+  - The window [target - dE, target + dE] is compared against the GPR's ABSOLUTE
+    predicted total energy E (code tests E < lo or E > hi).
+  - Fe/MgO total energies are ~-400 eV (band [-436.9, -386.3], never near 0).
+  - With target=0, dE=1.0 the window [-1, +1] excludes every candidate (+inf in
+    sorting space) -> the search stalls.
+  - Wider dE (e.g. 400) would overlap the band but is roundabout.
+  - 0-eV only makes sense for RELATIVE energies; this acquisitor uses absolute total
+    energy, so target_energy must be a real band energy (hence the calibration).
+
+### Results
+- README.md now explains the target_energy=0 pitfall, grounded in the code's
+  absolute-energy window logic.
+
+### Decisions & reasoning
+- Grounded in the acquisitor's actual comparison (absolute predicted E) so the
+  warning is precise, not generic.
+- Kept it concise and placed in the calibration context (owner's choice).
+
+### Open items / next steps
+- Unchanged: launch heavy HPC search; (optional) verify downstream integration.
+
+### Time
+~5 min.
