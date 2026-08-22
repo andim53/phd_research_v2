@@ -361,3 +361,38 @@ README assessment and main.py.
 
 ### Time
 ~15 min.
+
+---
+
+## 2026-08-22 — Session 1i: Add energy_stats.py tutorial to TUTORIAL.md
+
+### Goal (user request)
+Include a tutorial for `energy_stats.py` in `TUTORIAL.md`. Confirmed via clarify: add
+a dedicated subsection inside Step 5 ("Using energy_stats.py") with the exact run
+command, expected output, and how to interpret the numbers to set the window.
+
+### Actions taken
+- Added "### Using `energy_stats.py`" subsection inside Step 5:
+  - Purpose of the script (reads ./dataset DBs, prints energy distribution).
+  - Exact run command (`/home/think/miniconda3/envs/agox_v2/bin/python energy_stats.py`).
+  - Expected output block (the actual 1297-structure stats: min/max/mean/median +
+    p1..p99).
+  - How to set the window: broad (target ≈ −411.6, ΔE = 25) vs narrow low-energy
+    (target ≈ p25 −432, ΔE ≈ 3); write into main.py; re-run on dataset/system change.
+- Fixed stale TUTORIAL pitfall #3 (was "Uncalibrated window placeholder 0.0/1.0") to
+  reflect the calibrated absolute-energy window.
+
+### Results
+- TUTORIAL.md now documents energy_stats.py end-to-end.
+- Pitfall #3 consistent with the calibrated values.
+
+### Decisions & reasoning
+- Kept the tutorial inside Step 5 (owner's choice) so the calibration + its verification
+  tool live together.
+- Included the actual expected output so a reader can confirm a correct run at a glance.
+
+### Open items / next steps
+- Unchanged: launch heavy HPC search; (optional) verify downstream integration.
+
+### Time
+~5 min.
