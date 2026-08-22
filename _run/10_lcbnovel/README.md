@@ -38,9 +38,8 @@ cluster.
 # 2. Local smoke of the real slab builder (builds the 25-Fe / MgO structure only)
 /home/think/miniconda3/envs/agox_v2/bin/python -c "from main import build_slabs, build_environment; s,d,st=build_slabs(); print(s.get_chemical_formula(), len(s), st)"
 
-# 3. Launch the heavy search on the HPC cluster (one job per seed)
-pjsub j_novel.sh                    # seed 3
-pjsub -x SEED=5 j_novel.sh          # a specific seed
+# 3. Launch the heavy search on the HPC cluster (uses gpaw_env; one pjsub job)
+pjsub j_novel.sh                    # runs the seed set in the script (edit SEED=3 to change)
 ```
 
 ## Key decisions & tradeoffs
@@ -51,7 +50,7 @@ pjsub -x SEED=5 j_novel.sh          # a specific seed
 | `novelty_lcb` package | copied from run 7 (reused, not rewritten) | It already contains the serialization fix; lowest risk |
 | Serialization fix | module-level free funcs + `functools.partial` in `get_acquisition_calculator()` | Bound methods drag the sqlite-backed `Database` into the Ray-put graph; free funcs capture only scalar `kappa` |
 | Energy window | placeholder `target=0.0, ΔE=1.0` | **Uncalibrated** — must map the real band with a short standard-LCB run first |
-| Compute | HPC PJM batch, 64-core GPAW | SubprocessGPAW LCAO/dzp needs a cluster node; one seed per job for scale-out |
+| Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
 ## Status

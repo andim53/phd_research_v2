@@ -150,3 +150,41 @@ whole scaffold (code + docs + AGENTS.md), message
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-22 — Session 1d: Correction — HPC env + pjsub usage
+
+### Goal (user correction)
+1. Use **`gpaw_env`** for the HPC pjsub heavy run (not `agox_v2`).
+2. Use **`pjsub j_novel.sh`** only — do **not** use `pjsub -x SEED=5 j_novel.sh`.
+3. Remove the explanatory comment block from `j_novel.sh` (no long notes in the script).
+
+Note: this **reverses** a decision recorded in Session 1 (which switched the batch
+script to `agox_v2` and added a comment about the env mismatch). This entry is the
+current, correct behaviour.
+
+### Actions taken
+- Rewrote `j_novel.sh`: no top comment block; `conda activate gpaw_env`; seed set by
+  editing `SEED=3` at the top (hand-edited, run as `pjsub j_novel.sh`); `N_ITERATIONS=100`.
+- Updated `README.md`: usage + decisions-table compute row (`gpaw_env`, `pjsub j_novel.sh`,
+  seed via editing `SEED=`).
+- Updated `README.AI.md`: pjsub usage + dependencies (local `agox_v2` vs HPC `gpaw_env`).
+- Updated `TUTORIAL.md`: Step 4 (pjsub + seed editing + gpaw_env), pitfall #4 (env split),
+  prerequisites (HPC uses `gpaw_env`).
+- `AGENTS.md`: local env note unchanged (correct — agox_v2 is the local dev/test env).
+
+### Results
+- All docs now consistent: local dev/test = `agox_v2`; HPC pjsub = `gpaw_env`;
+  launch via `pjsub j_novel.sh` with seed hand-edited in the script.
+
+### Decisions & reasoning
+- Keep the **local** smoke test / compile on `agox_v2` (that's this machine's env);
+  only the **HPC** batch run uses `gpaw_env`. The two serve different purposes.
+- Follow the owner's preference: no `-x` flag, no verbose comment block in `.sh`.
+
+### Open items / next steps
+- Unchanged: calibrate energy window, then launch heavy HPC search.
+
+### Time
+~10 min.

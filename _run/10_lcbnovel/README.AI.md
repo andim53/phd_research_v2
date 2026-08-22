@@ -52,9 +52,8 @@ $PY -c "from main import build_slabs; s,d,st=build_slabs(); print(s.get_chemical
 # Single seed locally (NOT with GPAW — SubprocessGPAW needs a cluster node)
 $PY main.py --seed 3 --n-iterations 2 --out-root ./output
 
-# HPC launch (one seed per job)
-pjsub j_novel.sh                 # seed 3 (default)
-pjsub -x SEED=5 j_novel.sh       # specific seed
+# HPC launch (uses gpaw_env; edit SEED=3 in j_novel.sh to change the seed)
+pjsub j_novel.sh
 ```
 
 ### `main.py` CLI
@@ -68,7 +67,8 @@ pjsub -x SEED=5 j_novel.sh       # specific seed
 
 ## 4. Dependencies & environment
 
-- Conda env **`agox_v2`** (AGOX 3.10.2, ASE 3.25.0, GPAW, Ray).
+- Conda env **`agox_v2`** (AGOX 3.10.2, ASE 3.25.0, GPAW, Ray) — **local** dev/test.
+- HPC pjsub heavy run uses **`gpaw_env`** (set in `j_novel.sh`).
 - `matplotlib.use("Agg")` before plotting in headless runs (smoke test does this).
 - Ray is started internally by AGOX (parallel pool); harmless stderr noise expected.
 - For GPR hyperparameter optimisation, `use_ray=False` avoids Ray actors on low-RAM

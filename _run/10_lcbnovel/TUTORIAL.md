@@ -6,7 +6,8 @@ launch the heavy search. Written so a fresh agent (or you) can redo the work.
 ## Prerequisites
 
 - Conda env **`agox_v2`** (AGOX 3.10.2 + ASE 3.25.0 + GPAW + Ray).
-  Python: `/home/think/miniconda3/envs/agox_v2/bin/python`.
+  Python: `/home/think/miniconda3/envs/agox_v2/bin/python`.  **Local** dev/test.
+- HPC pjsub heavy run uses **`gpaw_env`** (set in `j_novel.sh`).
 - AGOX Fe/MgO upstream code: `_run/7_lcbnovel_mgofe/` (the buggy-but-most-complete
   attempt to repair from).
 - HPC cluster with PJM batch (for the heavy run) — `pjsub`, 64-core GPAW nodes.
@@ -57,11 +58,12 @@ passes `functools.partial(...)` over **module-level** functions (not bound metho
 
 ## Step 4 — Launch the heavy search on HPC
 
-One PJM job per seed (scale-out by array submission). Each seed builds its own stack.
+Run `pjsub j_novel.sh`. The seed is set by editing `SEED=3` at the top of
+`j_novel.sh` (the owner prefers this over passing `-x SEED=N`). The job activates
+`gpaw_env` (NOT `agox_v2`).
 
 ```bash
-pjsub j_novel.sh                  # seed 3
-pjsub -x SEED=5 j_novel.sh        # any specific seed
+pjsub j_novel.sh            # runs the seed set in the script (edit SEED=3 to change)
 # monitor: pjstat   |   cancel: pjdel
 ```
 
@@ -99,8 +101,9 @@ Once real DBs exist, the established downstream pipeline applies:
    `calculator`, not `calc`. `main.py` passes it positionally to avoid this.
 3. **Uncalibrated energy window** — placeholder `0.0/1.0` excludes candidates until
    calibrated (Step 5). Always calibrate first.
-4. **Env mismatch** — original `j_novel.sh` used `gpaw_env`; this project needs
-   `agox_v2`. Already fixed in `j_novel.sh`.
+4. **Env split — local vs HPC.** Local dev/test (smoke test, compile, slab build)
+   uses `agox_v2`; the HPC pjsub heavy run uses `gpaw_env` (set in `j_novel.sh`).
+   Don't confuse the two: `j_novel.sh` must keep `conda activate gpaw_env`.
 5. **Base `python3` has no AGOX** — always use `/home/think/miniconda3/envs/agox_v2/bin/python`.
 6. **`use_ray` on low-RAM nodes** — GPR defaults to `use_ray=True` (spawns one Ray
    actor per CPU); on a small machine this can OOM. On the 64-core HPC node Ray is
