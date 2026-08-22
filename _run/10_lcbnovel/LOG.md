@@ -188,3 +188,47 @@ current, correct behaviour.
 
 ### Time
 ~10 min.
+
+---
+
+## 2026-08-22 — Session 1e: Explain Novelty-LCB method in README.md
+
+### Goal (user request)
+Owner added a Note block in `README.md` asking three conceptual questions about the
+method: (1) what Novelty(x) is and whether it uses the 720-dim descriptor or PCA,
+(2) what σ(x) is and how it is computed, (3) how a candidate is picked from a(x) and
+how this compares to regular LCB in GOFEE. Owner asked to replace the Note with an
+explanation. Confirmed via clarify: replace the Note block with a proper
+"How the Novelty-LCB works" section in README.md, concise-but-complete, grounded in code.
+
+### Actions taken
+- Replaced the raw Note block (lines 18-23) in `README.md` with a new
+  "## How the Novelty-LCB works" section answering all three questions, each citing
+  the relevant code path in `novelty_lcb/acquisitor.py`:
+  - Q1: Novelty(x) = min Euclidean distance in descriptor space; computed with the
+    FULL 720-dim Fingerprint (no PCA); `descriptor.get_features(cand).ravel()` +
+    `np.linalg.norm(db_feats - cand_feat, axis=1)`; empty DB => novelty 0.
+  - Q2: σ(x) = GPR predictive std from `model.predict_energy_and_uncertainty`; kernel
+    posterior uncertainty vs training points in 720-dim space.
+  - Q3: AGOX sorts ascending, so code returns `-a(x)`; largest true a(x) picked first;
+    out-of-window => +inf never selected; candidates pre-relaxed on LCB surface
+    `E - kappa*sigma` (novelty has no force), then evaluated by GPAW.
+  - Comparison: regular LCB = `mu - kappa*sigma` minimized (energy-exploit/explore);
+    Novelty-LCB = `sigma + lambda*Novelty` maximized inside an energy window
+    (diversity-focused); both share the LCB relaxation surface + GPR/Fingerprint stack.
+
+### Results
+- README.md now has a self-contained, code-grounded explanation of the method.
+- Verified the section reads correctly and the Note block is gone.
+
+### Decisions & reasoning
+- Grounded every claim in the actual `acquisitor.py` implementation (not generic
+  descriptions) so the README stays truthful and traceable to the code.
+- Kept it in README.md (owner's choice) so a human reader gets the explanation in
+  context without jumping to a separate doc.
+
+### Open items / next steps
+- Unchanged: calibrate energy window, then launch heavy HPC search.
+
+### Time
+~10 min.

@@ -15,6 +15,65 @@ restricted to an energy window `E_target ± ΔE`, so the search is pushed toward
 configurations that are simultaneously **uncertain** and **structurally distinct**
 from everything already seen — rather than just re-optimising the same basins.
 
+## How the Novelty-LCB works
+
+The acquisition function (implemented in `novelty_lcb/acquisitor.py`,
+`calculate_acquisition_function`) is
+
+    a(x) = σ(x) + λ · Novelty(x),    to be MAXIMIZED
+
+subject to an energy-window constraint: only candidates whose predicted energy
+`μ(x)` lies within `[E_target − ΔE, E_target + ΔE]` are considered; all others are
+excluded.
+
+### Q1 — What is Novelty(x)? How is it computed? 720-dim or PCA?
+Novelty(x) is the structural novelty of candidate x: the **minimum Euclidean
+distance in descriptor (fingerprint) feature space** between x and every structure
+already in the database,
+
+    Novelty(x) = min_{i ∈ DB} ‖f(x) − f(x_i)‖₂
+
+It is computed with the **full 720-dimensional Fingerprint descriptor** — no PCA, no
+dimensionality reduction. The code calls `descriptor.get_features(cand).ravel()`
+(shape `(1, 720)` for Fe/MgO) and then `np.linalg.norm(db_feats - cand_feat, axis=1)`
+before taking the minimum. A high value means the structure is unlike anything seen,
+so the search is pushed into unexplored basins. When the database is empty,
+Novelty = 0 and the acquisitor reduces to pure uncertainty sampling. This is the same
+raw 720-dim distance used by `is_distinct` and the novel-filter in
+`_run/9_novelFilter/`, so thresholds compose.
+
+### Q2 — What is σ(x)? Uncertainty based on what?
+σ(x) is the **predictive standard deviation of the GPR surrogate** at x — the
+Gaussian-process posterior uncertainty in its predicted energy. It comes from
+`model.predict_energy_and_uncertainty(cand)` and is **kernel-based**: it reflects how
+far x sits from the training structures in the 720-dim feature space (plus the kernel
+noise). Far from training data → high σ (the surrogate is unsure); near or between
+training points → low σ. It is the surrogate's own estimate of what it does **not**
+yet know about the landscape at x.
+
+### Q3 — How is a candidate actually picked? Lowest a(x)?
+AGOX sorts candidates **ascending** (lowest value = best = selected first). So the
+code returns the **negated** acquisition value `-a(x)`, and the candidate with the
+most negative value (i.e. the **largest true a(x)**) is selected first. Candidates
+outside the energy window get `+∞` in the sorting space and are never selected.
+
+The picked candidates are not evaluated by DFT directly: they are first **pre-relaxed
+on the LCB surrogate surface** `E − κ·σ` (`get_acquisition_calculator()` →
+`LowerConfidenceBoundCalculator`), then the survivors are evaluated by GPAW. Novelty
+is a discrete min-distance with no well-defined force, so it cannot drive relaxation —
+hence relaxation uses the LCB part only, with `κ = 2.0`.
+
+### How it compares to regular LCB in GOFEE
+- **Regular GOFEE LCB** (`LowerConfidenceBoundAcquisitor`): acquisition =
+  `μ(x) − κ·σ(x)`, **minimized** — it trades off exploiting low predicted energy (μ)
+  against exploring uncertain regions (σ).
+- **Novelty-LCB here**: acquisition = `σ(x) + λ·Novelty(x)`, **maximized**, constrained
+  to an energy window. Instead of minimizing energy, it seeks regions the surrogate is
+  unsure about **and** that are structurally new, while staying within a chosen energy
+  band. It is a diversity-focused variant, not an energy-minimizer.
+- **Shared piece:** both relax candidates on the same LCB surface `E − κ·σ`, and both
+  use the same GPR/Fingerprint stack.
+
 Run 7 never actually ran: its output log shows it crashed at seed 3 on a Ray
 serialization error (`cannot pickle 'sqlite3.Connection'`), and it was never
 re-launched after the acquisitor fix. **This project is the repair**: it ships the
