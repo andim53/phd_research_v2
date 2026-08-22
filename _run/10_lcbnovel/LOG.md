@@ -313,3 +313,51 @@ analysis of the local-minimum vs global-search mismatch, with references to the
 
 ### Time
 ~10 min.
+
+---
+
+## 2026-08-22 — Session 1h: Calibrate energy window from LCB-only dataset
+
+### Goal (user request)
+Owner added a Note in `README.md` (inside the local-minimum assessment): they added a
+previous LCB-only run of the same system at `./dataset`, and asked how to decide
+`target_energy` from it. Confirmed via clarify: recommend **band-centre strategy**
+(target ≈ −411.6 eV, ΔE ≈ 25 eV, broad low-selectivity) and apply it to BOTH the
+README assessment and main.py.
+
+### Actions taken
+- Inspected `./dataset` (13 seeds 3-15 + stop_16/trash). Wrote a temp energy-stats
+  script, ran it under `agox_v2`:
+  - 1297 structures, Mg25O25Fe25 (75 atoms), composition uniform.
+  - E_min −436.91, E_max −386.29, mean −424.17, median −428.93.
+  - p1..p99 ≈ [−436.8, −391.6]; band centre ≈ −411.6 eV.
+- Updated `main.py`: `NOVELTY_TARGET_ENERGY = −411.6`, `NOVELTY_DELTA_E = 25.0`
+  (was placeholder 0.0 / 1.0), with a comment citing the dataset source.
+- Updated `README.md` assessment: point #2 rewritten ("window is on absolute energy"),
+  added "How to set target_energy (from the LCB-only dataset)" with the stats + the
+  chosen window; updated "What can be improved"; updated decisions-table Energy-window
+  row; updated Status (calibration done; HPC launch still open).
+- Updated `TUTORIAL.md` Step 5 to reflect calibration is done from the dataset.
+- Updated `README.AI.md` pitfall #3 (absolute-energy window, calibrated values).
+- Kept the energy-stats helper as a permanent utility `energy_stats.py` (used to
+  re-verify calibration); removed the temp underscore script.
+
+### Results
+- Energy window calibrated and written into main.py; all docs consistent.
+- Verified `main.py` compiles (py_compile OK).
+
+### Decisions & reasoning
+- **Band-centre, wide ΔE (25 eV)** chosen by owner: non-restrictive window so novelty
+  + uncertainty drive the search; covers ~all of p1..p99. (Narrow low-band option
+  documented for stricter local-minimum targeting.)
+- Kept the window definition fact (absolute E, not relative) explicit — this is the
+  key reason target_energy must be a real energy, not 0.
+
+### Open items / next steps
+- [ ] Launch the heavy Fe/MgO search on HPC (pjsub j_novel.sh) — still the main pending
+      science step.
+- [ ] (Optional) verify `_run/8_nested_sampling` / `_run/9_novelFilter` integration
+      with this project's DB output.
+
+### Time
+~15 min.

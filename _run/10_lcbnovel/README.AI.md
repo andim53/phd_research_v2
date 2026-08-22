@@ -99,9 +99,11 @@ These are regenerable artifacts and are gitignored (`.gitignore` excludes `*.db`
    Validate with `smoke_test_serialization.py`.
 2. **`LocalOptimizationEvaluator.__init__() missing 'calculator'`** — wiring bug:
    the kwargs key must be `calculator`, not `calc`. `main.py` passes it positionally.
-3. **Uncalibrated energy window** (`target=0.0, ΔE=1.0`) — may exclude most/all
-   candidates. Must map the real energy band first (TUTORIAL step 5) before trusting
-   Novelty-LCB results. Placeholder values are intentional, flagged as TODO.
+3. **Energy window is on absolute energy** — the Novelty-LCB window compares against
+   predicted `E` (`E < lo or E > hi`, `target_energy ± ΔE`), so `target_energy` must be
+   a real energy in the band, not 0. Calibrated in `main.py` to `target=−411.6, ΔE=25`
+   from the LCB-only `./dataset` (see `energy_stats.py`). If you change the system,
+   re-calibrate.
 4. **GPAW needs HPC** — `SubprocessGPAW(..., ncores=64, mode=lcao, basis=dzp)` targets a
    64-core cluster node. Do not run the full `main.py` locally with GPAW.
 5. **Composition uniformity** — all candidates must share one stoichiometry/atom count

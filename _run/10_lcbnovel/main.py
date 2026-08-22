@@ -72,12 +72,14 @@ HETERO_RATTLE_AMPLITUDE = 1.5
 # ==== Model ====
 BK = 0.01
 
-# ==== Novelty-LCB (CALIBRATE before trusting results) ====
-# Placeholder window from run 7. Run a short standard-LCB search first to map
-# the energy band, then set target_energy to the band centre and delta_E to
-# ~0.5-1.0 eV half-width.
-NOVELTY_TARGET_ENERGY = 0.0      # eV  -- TODO: calibrate for Fe/MgO
-NOVELTY_DELTA_E = 1.0            # eV  -- half-width of energy window
+# ==== Novelty-LCB energy window (CALIBRATED from LCB-only dataset) ====
+# Source: previous LCB-only run of the same system in ./dataset
+# (13 seeds, 1297 structures, Mg25O25Fe25). Band = [-436.9, -386.3] eV,
+# centre = -411.6 eV, p1..p99 ≈ [-436.8, -391.6].
+# Broad low-selectivity window: target = band centre, delta_E = 25 eV.
+#   -> window ≈ [-436.6, -386.6], covering ~all of p1..p99.
+NOVELTY_TARGET_ENERGY = -411.6    # eV -- band centre (see ./dataset energy stats)
+NOVELTY_DELTA_E = 25.0            # eV -- half-width (broad, low-selectivity)
 NOVELTY_WEIGHT = 1.5             # lambda in a(x) = sigma + lambda*Novelty
 KAPPA = 2.0                      # LCB kappa (surrogate relaxation surface)
 

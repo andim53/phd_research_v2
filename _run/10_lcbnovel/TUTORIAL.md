@@ -70,17 +70,22 @@ pjsub j_novel.sh            # runs the seed set in the script (edit SEED=3 to ch
 Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
 `output_seed_<N>.txt` (GPAW log), `generated_structures/`.
 
-## Step 5 — CALIBRATE the Novelty-LCB energy window (before trusting results)
+## Step 5 — Energy-window calibration (done from the LCB-only dataset)
 
-The placeholder window `target_energy=0.0, delta_E=1.0` (in `main.py`) is a TODO and
-may exclude most/all candidates. Procedure:
+The Novelty-LCB window is defined on **absolute predicted energy** `E`, so
+`target_energy` must be a real energy in the band, not 0. This project calibrated it
+from the previous LCB-only run of the same system in `./dataset`:
 
-1. Run a short **standard-LCB** search (switch `NoveltyLCBAcquisitor` → the stock
-   `LowerConfidenceBoundAcquisitor`, or run 7's alternative) to map the energy band
-   that AGOX actually explores.
-2. Read the range of candidate energies from the resulting DB.
-3. Set `NOVELTY_TARGET_ENERGY` = band centre, `NOVELTY_DELTA_E` ≈ 0.5–1.0 eV half-width.
-4. Re-launch. **Do not draw conclusions from Novelty-LCB results before calibration.**
+- Read `dataset/seed_*/1_db/db_*.db` (13 seeds, 1297 structures, Mg25O25Fe25):
+  `E_min = −436.91 eV`, `E_max = −386.29 eV`, band centre ≈ −411.6 eV,
+  p1..p99 ≈ [−436.8, −391.6].
+- Set `NOVELTY_TARGET_ENERGY = −411.6`, `NOVELTY_DELTA_E = 25.0` (broad,
+  low-selectivity window ≈ [−436.6, −386.6], covering essentially all of p1..p99).
+  These values are already written into `main.py`.
+
+To re-verify or change the calibration, re-run the energy-stats read on the dataset,
+or map a new band from a fresh short run. To target only stable (low-energy) local
+minima, narrow the window to the low band (e.g. target ≈ −432, ΔE ≈ 3).
 
 ## Step 6 — Analyse results (downstream, optional)
 

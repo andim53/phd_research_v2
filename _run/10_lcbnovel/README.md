@@ -111,10 +111,31 @@ plain LCB.
    energy window tries to hold the search in a low band. The acquisitor does not
    explicitly enumerate basins or balance weight across them; it just picks the
    most-uncertain-and-novel in-window candidate each round.
-2. **Uncalibrated window.** `target_energy=0.0, ΔE=1.0` is a placeholder. If the real
-   energy band is far from 0, either everything is excluded or (if the window is wide)
-   nothing meaningful is constrained. This must be calibrated (short standard-LCB run)
-   before the numbers mean anything.
+2. **Energy window must be calibrated to a real energy.** The window is defined on
+   absolute predicted energy `E` (the code tests `E < lo or E > hi` against
+   `target_energy ± ΔE`), so `target_energy` must be a real energy in the band, not 0.
+   This is now done from the previous LCB-only dataset (below).
+
+**How to set `target_energy` (from the LCB-only dataset in `./dataset`).**
+The Novelty-LCB window is compared against the **absolute predicted energy** `E` of a
+candidate. Reading the 13-seed LCB-only run (`dataset/seed_*/1_db/db_*.db`,
+1297 structures, Mg25O25Fe25) gives the energy band:
+
+    E_min = −436.91 eV   E_max = −386.29 eV
+    band centre ≈ −411.6 eV
+    p1 ≈ −436.8, p25 ≈ −432.0, p50 ≈ −428.9, p75 ≈ −418.1, p95 ≈ −398.3, p99 ≈ −391.6
+
+For this work (broad, low-selectivity window so most of the searched landscape is
+eligible), set `target_energy` to the **band centre** and `delta_E` to a wide
+half-width:
+
+    target_energy = −411.6 eV,  delta_E = 25 eV   ->  window ≈ [−436.6, −386.6]
+
+This covers essentially the full p1..p99 range, so the energy-window constraint is
+non-restrictive and the search is governed by the novelty + uncertainty terms. To
+target only the stable (low-energy) local minima instead, narrow the window to the
+low band (e.g. target ≈ −432, ΔE ≈ 3). These values are written into `main.py`.
+
 3. **Novelty saturates as the DB grows.** Novelty is the min distance to **all** DB
    structures. Early on it is large; as the DB fills, the nearest neighbour shrinks,
    so the novelty bonus decays and the search drifts back toward pure uncertainty
@@ -131,8 +152,9 @@ plain LCB.
    (one per basin) would make novelty reflect distance to distinct minima.
 
 **What can be improved.**
-- **Calibrate the energy window** first (map the real band with standard LCB, set
-  target=centre, ΔE≈0.5–1.0).
+- **Energy window now calibrated** to the LCB-only band (`target = −411.6 eV,
+  ΔE = 25 eV`, broad low-selectivity). For a stricter local-minimum focus, narrow to
+  the low band (e.g. target ≈ −432, ΔE ≈ 3).
 - **Compare novelty against a deduplicated set** (e.g. the `_run/9_novelFilter` output)
   instead of the raw DB, so the bonus measures distance to distinct minima.
 - **Use the search to build diversity, then post-process for local-minimum
@@ -217,7 +239,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 | Base project | `7_lcbnovel_mgofe` | Fe/MgO is the target physical system; run 7 is the most complete attempt |
 | `novelty_lcb` package | copied from run 7 (reused, not rewritten) | It already contains the serialization fix; lowest risk |
 | Serialization fix | module-level free funcs + `functools.partial` in `get_acquisition_calculator()` | Bound methods drag the sqlite-backed `Database` into the Ray-put graph; free funcs capture only scalar `kappa` |
-| Energy window | placeholder `target=0.0, ΔE=1.0` | **Uncalibrated** — must map the real band with a short standard-LCB run first |
+| Energy window | `target=−411.6 eV, ΔE=25 eV` (broad) | Calibrated from the LCB-only dataset in `./dataset` (band centre ≈ −411.6, p1..p99 ≈ [−436.8, −391.6]) |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
@@ -227,7 +249,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 - [x] `main.py` faithfully re-wired (same physics as run 7)
 - [x] Serialization smoke test **PASSES** (crash root cause verified fixed)
 - [ ] Heavy Fe/MgO search launched on HPC (see `TUTORIAL.md` step 4)
-- [ ] Energy-window calibrated from a short standard-LCB run (see `TUTORIAL.md` step 5)
+- [x] Energy-window calibrated from the LCB-only dataset in `./dataset` (target=−411.6, ΔE=25)
 
 See `TUTORIAL.md` for the full reproduction and repair guide, `LOG.md` for what
 has been done, and `README.AI.md` for the agent-facing spec.
