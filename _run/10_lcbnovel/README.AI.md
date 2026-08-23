@@ -19,11 +19,13 @@ human-facing `README.md`.
 10_lcbnovel/
 ├── main.py                     # Entry point: per-seed AGOX run (CLI)
 ├── main_benchmark.py           # EMT benchmark: regular LCB vs Novelty-LCB (auto window)
+├── main_benchmark_sweep.py     # Sweep: kappa x novelty_weight impact on Novelty-LCB
 ├── test_window_logic.py        # Isolated unit tests of the auto window logic
 ├── energy_stats.py             # Energy distribution of the LCB-only dataset
 ├── smoke_test_serialization.py # Cheap local validation of the serialization fix
 ├── j_novel.sh                  # PJM batch script (HPC launch, one seed per job)
 ├── j_benchmark.sh              # PJM batch script for the EMT benchmark (HPC)
+├── j_benchmark_sweep.sh        # PJM batch script for the kappa x lambda sweep (HPC)
 ├── benchmark_results/          # Benchmark output (JSON + PNG; regenerable)
 ├── novelty_lcb/                # PROVEN package (copied from run 7, contains fix)
 │   ├── __init__.py             #   re-exports NoveltyLCBAcquisitor, is_distinct, fingerprint_distance
@@ -63,6 +65,10 @@ pjsub j_novel.sh
 # EMT benchmark (regular vs Novelty-LCB auto window) — needs a RAM-rich node / HPC
 $PY main_benchmark.py      # local
 pjsub j_benchmark.sh           # on HPC
+
+# Sweep benchmark (kappa x novelty_weight) — needs a RAM-rich node / HPC
+$PY main_benchmark_sweep.py      # local
+pjsub j_benchmark_sweep.sh       # on HPC
 ```
 
 ### `main.py` CLI

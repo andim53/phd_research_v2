@@ -774,3 +774,37 @@ on the same system as main_benchmark.py (Ni8/Au(4,4,2) fcc100, EMT).
 
 ### Time
 ~20 min.
+
+---
+
+## 2026-08-22 — Session 1s: Document the sweep benchmark in README/README.AI/TUTORIAL
+
+### Goal (user request)
+Add a note about the kappa x novelty_weight sweep benchmark to the README and TUTORIAL.
+Confirmed via clarify:
+- README.md: sweep item in "How to use it" (step 5) + a decisions-table row.
+- TUTORIAL.md: sub-block within Step 6 (after the main benchmark).
+- README.AI.md: file-layout + entry-point commands (consistency).
+
+### Actions taken
+- README.md: added step 5 (sweep commands, local + `pjsub j_benchmark_sweep.sh`) and a
+  "Sweep benchmark" decisions-table row.
+- TUTORIAL.md: added "### Kappa x novelty_weight sweep (optional)" inside Step 6 with
+  the grid, commands, outputs, and a RAM/Ray caveat.
+- README.AI.md: added `main_benchmark_sweep.py` + `j_benchmark_sweep.sh` to the file
+  layout and the entry-point command block.
+
+### Results
+- Sweep benchmark now documented consistently across README.md, TUTORIAL.md, README.AI.md.
+
+### Decisions & reasoning
+- Kept the sweep as a sub-block of Step 6 (not a new top-level step) so the two
+  benchmarks live together (owner's choice).
+- Matched the existing benchmark note style.
+
+### Open items / next steps
+- Submit `pjsub j_benchmark_sweep.sh` on HPC to run the sweep.
+- Launch the heavy Fe/MgO search (j_novel.sh).
+
+### Time
+~10 min.

@@ -122,8 +122,27 @@ plus aggregate stats and plots. Outputs to `benchmark_results/`
 `per_atom=True` → cap `E_min/N + 0.1` per atom (40-atom Au+Ni cell → ~4 eV above
 global min). No manual calibration / regular-LCB-first step.
 
-> **Caveat:** the benchmark uses AGOX's parallel components (Ray pool), so it needs
-> enough RAM — it cannot complete on a heavily-loaded small node (see pitfalls #4/#6).
+### Kappa x novelty_weight sweep (optional)
+
+`main_benchmark_sweep.py` studies the **impact of kappa and novelty_weight** on
+Novelty-LCB, on the same Ni8/Au(4,4,2)-EMT system (it reuses the `main_benchmark.py`
+helpers). It sweeps a grid:
+
+- `kappa ∈ [0.5, 1.0, 2.0, 4.0]` × `novelty_weight ∈ [0.0, 0.5, 1.0, 1.5, 2.0]`
+  = **20 combos**, Novelty-LCB only, **1 seed per combo** (seed 41), N_ITERATIONS=30.
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main_benchmark_sweep.py   # local (RAM-rich)
+pjsub j_benchmark_sweep.sh                                               # on HPC
+```
+
+Outputs to `benchmark_results/sweep_kappa_lambda/`: `sweep_results.json`,
+`sweep_heatmaps.png` (distinct / best-E / duplicates as kappa×lambda heatmaps),
+`sweep_curves.png` (metrics vs lambda, one line per kappa), `sweep_discovery.png`
+(all discovery curves).
+
+> **Caveat:** same as the main benchmark — uses AGOX's parallel components (Ray
+> pool), so it needs enough RAM; run on a RAM-rich node / HPC.
 
 ## Step 7 — Analyse results (downstream, optional)
 

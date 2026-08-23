@@ -287,6 +287,11 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 #    Ni8/Au(4,4,2) fcc100. Run on a RAM-rich node / HPC (AGOX Ray pool).
 /home/think/miniconda3/envs/agox_v2/bin/python main_benchmark.py    # local
 pjsub j_benchmark.sh                                                 # on HPC
+
+# 5. (Optional) Sweep benchmark: impact of kappa x novelty_weight on Novelty-LCB,
+#    same Ni8/Au(4,4,2) system. Run on a RAM-rich node / HPC.
+/home/think/miniconda3/envs/agox_v2/bin/python main_benchmark_sweep.py
+pjsub j_benchmark_sweep.sh
 ```
 
 ## Key decisions & tradeoffs
@@ -298,6 +303,7 @@ pjsub j_benchmark.sh                                                 # on HPC
 | Serialization fix | module-level free funcs + `functools.partial` in `get_acquisition_calculator()` | Bound methods drag the sqlite-backed `Database` into the Ray-put graph; free funcs capture only scalar `kappa` |
 | Energy window | auto global-min (`energy_above_min=1.0 eV/atom`, per_atom) | Anchors to the live DB minimum, searches above it in eV/atom — size-independent, no manual calibration / regular-LCB-first step needed |
 | Benchmark | `main_benchmark.py` (Ni8/Au EMT) + `j_benchmark.sh` (HPC) | Compares regular LCB vs Novelty-LCB (auto global-min window) on a fast EMT surface; needs a RAM-rich node / HPC for the AGOX Ray pool |
+| Sweep benchmark | `main_benchmark_sweep.py` + `j_benchmark_sweep.sh` (HPC) | Sweeps kappa x novelty_weight on Novelty-LCB to study their impact (20 combos, 1 seed each) |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
