@@ -658,3 +658,41 @@ Prepare an HPC batch script for `main_benchmark.py`.
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-22 — Session 1p: Document the benchmark in README/TUTORIAL/README.AI
+
+### Goal (user request)
+Add a note about the EMT benchmark (`main_benchmark.py` + `job.sh`) to the README and
+TUTORIAL. Confirmed via clarify:
+- README.md: benchmark item in "How to use it" + a decisions-table row.
+- TUTORIAL.md: new top-level "Step 6 — EMT benchmark (optional)"; analysis step
+  renumbered to Step 7.
+- README.AI.md: mention in layout + entry points + a pitfall (consistency).
+- Include the RAM/Ray caveat (benchmark needs a RAM-rich node / HPC for the AGOX pool).
+
+### Actions taken
+- README.md: added benchmark commands to "How to use it" (local + `pjsub job.sh`) and
+  a "Benchmark" decisions-table row.
+- TUTORIAL.md: added Step 6 (EMT benchmark) with commands, metrics, the auto-window
+  values (0.1 eV/atom, 40-atom cell -> ~4 eV), and a RAM/Ray caveat; renumbered the
+  downstream-analysis step to Step 7.
+- README.AI.md: added `main_benchmark.py`, `test_window_logic.py`, `energy_stats.py`,
+  `job.sh`, `benchmark_results/` to the file layout; benchmark commands to entry
+  points; pitfall #6 (benchmark needs RAM for the Ray pool).
+
+### Results
+- Benchmark now documented consistently across README.md, TUTORIAL.md, README.AI.md.
+- No stale step references in README (analysis already referenced without a step number).
+
+### Decisions & reasoning
+- Kept the note concise and placed near the existing usage/steps so it reads in context.
+- Renumbered the analysis step to Step 7 to keep the tutorial sequential.
+
+### Open items / next steps
+- Submit `pjsub job.sh` on HPC to run the benchmark.
+- Launch the heavy Fe/MgO search (j_novel.sh).
+
+### Time
+~10 min.

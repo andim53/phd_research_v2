@@ -282,6 +282,11 @@ cluster.
 
 # 3. Launch the heavy search on the HPC cluster (uses gpaw_env; one pjsub job)
 pjsub j_novel.sh                    # runs the seed set in the script (edit SEED=3 to change)
+
+# 4. (Optional) EMT benchmark: regular LCB vs Novelty-LCB (auto global-min window),
+#    Ni8/Au(4,4,2) fcc100. Run on a RAM-rich node / HPC (AGOX Ray pool).
+/home/think/miniconda3/envs/agox_v2/bin/python main_benchmark.py    # local
+pjsub job.sh                                                        # on HPC
 ```
 
 ## Key decisions & tradeoffs
@@ -292,6 +297,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 | `novelty_lcb` package | copied from run 7 (reused, not rewritten) | It already contains the serialization fix; lowest risk |
 | Serialization fix | module-level free funcs + `functools.partial` in `get_acquisition_calculator()` | Bound methods drag the sqlite-backed `Database` into the Ray-put graph; free funcs capture only scalar `kappa` |
 | Energy window | auto global-min (`energy_above_min=1.0 eV/atom`, per_atom) | Anchors to the live DB minimum, searches above it in eV/atom — size-independent, no manual calibration / regular-LCB-first step needed |
+| Benchmark | `main_benchmark.py` (Ni8/Au EMT) + `job.sh` (HPC) | Compares regular LCB vs Novelty-LCB (auto global-min window) on a fast EMT surface; needs a RAM-rich node / HPC for the AGOX Ray pool |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 

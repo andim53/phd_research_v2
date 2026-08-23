@@ -97,7 +97,35 @@ modes are equivalent up to scaling by N.
 band is ≈ [−436.9, −386.3] eV (centre ≈ −411.6 eV); see `energy_stats.py` to map it.
 This mode is not needed for the default run.
 
-## Step 6 — Analyse results (downstream, optional)
+## Step 6 — EMT benchmark (optional)
+
+`main_benchmark.py` compares **regular LCB** vs **Novelty-LCB** (using the auto
+global-minimum per-atom window) on the Ni8 / Au(4,4,2) fcc100 surface with the EMT
+calculator. It is a fast, low-cost way to validate the auto-window acquisitor end to
+end (5 seeds, N_ITERATIONS=30, same seeds for both acquisitors).
+
+```bash
+# Local (needs a RAM-rich node — the AGOX ParallelCollector/RelaxPostprocess use a
+# Ray pool that OOMs on a low-RAM machine with Ray ActorUnavailableError)
+/home/think/miniconda3/envs/agox_v2/bin/python main_benchmark.py
+
+# On HPC:
+pjsub job.sh
+```
+
+What it compares (metrics, same as run 6): distinct configurations (fingerprint
+clustering), best energy, energy range, duplicate evaluations, discovery curves,
+plus aggregate stats and plots. Outputs to `benchmark_results/`
+(`benchmark_results.json`, `benchmark_comparison.png`, `benchmark_differences.png`).
+
+**Novelty-LCB window in the benchmark:** `energy_above_min = 0.1` eV/atom,
+`per_atom=True` → cap `E_min/N + 0.1` per atom (40-atom Au+Ni cell → ~4 eV above
+global min). No manual calibration / regular-LCB-first step.
+
+> **Caveat:** the benchmark uses AGOX's parallel components (Ray pool), so it needs
+> enough RAM — it cannot complete on a heavily-loaded small node (see pitfalls #4/#6).
+
+## Step 7 — Analyse results (downstream, optional)
 
 Once real DBs exist, the established downstream pipeline applies:
 - `_run/9_novelFilter/` — greedy novelty/dedup filter + partition function.

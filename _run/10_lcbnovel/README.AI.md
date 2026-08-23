@@ -18,8 +18,13 @@ human-facing `README.md`.
 ```
 10_lcbnovel/
 ├── main.py                     # Entry point: per-seed AGOX run (CLI)
+├── main_benchmark.py           # EMT benchmark: regular LCB vs Novelty-LCB (auto window)
+├── test_window_logic.py        # Isolated unit tests of the auto window logic
+├── energy_stats.py             # Energy distribution of the LCB-only dataset
 ├── smoke_test_serialization.py # Cheap local validation of the serialization fix
 ├── j_novel.sh                  # PJM batch script (HPC launch, one seed per job)
+├── job.sh                      # PJM batch script for the EMT benchmark (HPC)
+├── benchmark_results/          # Benchmark output (JSON + PNG; regenerable)
 ├── novelty_lcb/                # PROVEN package (copied from run 7, contains fix)
 │   ├── __init__.py             #   re-exports NoveltyLCBAcquisitor, is_distinct, fingerprint_distance
 │   ├── acquisitor.py           #   NoveltyLCBAcquisitor + free-func LCB calculator
@@ -54,6 +59,10 @@ $PY main.py --seed 3 --n-iterations 2 --out-root ./output
 
 # HPC launch (uses gpaw_env; edit SEED=3 in j_novel.sh to change the seed)
 pjsub j_novel.sh
+
+# EMT benchmark (regular vs Novelty-LCB auto window) — needs a RAM-rich node / HPC
+$PY main_benchmark.py      # local
+pjsub job.sh               # on HPC
 ```
 
 ### `main.py` CLI
@@ -112,6 +121,12 @@ These are regenerable artifacts and are gitignored (`.gitignore` excludes `*.db`
 5. **Composition uniformity** — all candidates must share one stoichiometry/atom count
    for a single global `Fingerprint` descriptor. The Fe/MgO setup is uniform by
    construction (MgO substrate fixed, Fe deposited).
+6. **Benchmark needs RAM for the Ray pool** — `main_benchmark.py` uses AGOX's
+   `ParallelCollector`/`ParallelRelaxPostprocess` (Ray pool). On a low-RAM node it
+   fails with Ray `ActorUnavailableError` (environmental). Run it on a RAM-rich node
+   or HPC (`pjsub job.sh`). `USE_RAY=False` in the benchmark reduces GPR actors but
+   does not remove the parallel pool. `test_window_logic.py` covers the window logic
+   standalone (no Ray).
 
 ## 7. Provenance / references
 
