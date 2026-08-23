@@ -728,3 +728,49 @@ Rename the benchmark batch script from `job.sh` to `j_benchmark.sh`.
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-22 — Session 1r: Add kappa x novelty_weight sweep benchmark
+
+### Goal (user request)
+Create a new benchmark (new .py + .sh) studying the impact of kappa and novelty_weight,
+on the same system as main_benchmark.py (Ni8/Au(4,4,2) fcc100, EMT).
+
+### Confirmed design (via clarify)
+- Sweep: full grid kappa in [0.5,1.0,2.0,4.0] x novelty_weight in [0.0,0.5,1.0,1.5,2.0]
+  = 20 combos, Novelty-LCB only.
+- 1 seed per combo (seed 41), N_ITERATIONS=30.
+- Metrics: distinct configs, best E, duplicates, discovery curves + heatmaps/curves
+  vs kappa & novelty_weight.
+
+### Actions taken
+- Wrote `main_benchmark_sweep.py`:
+  - Reuses main_benchmark.py helpers (build_system, build_stack, run_single,
+    compute_discovery_curve) so the system is identical.
+  - run_combo() overrides mb.KAPPA / mb.NOVELTY_WEIGHT / window / OUTDIR, runs one
+    Novelty-LCB search, restores originals (try/finally).
+  - Outputs to benchmark_results/sweep_kappa_lambda/: sweep_results.json,
+    sweep_heatmaps.png (3 heatmaps), sweep_curves.png (per-kappa lines), 
+    sweep_discovery.png (all discovery curves).
+  - 1 fixed seed per combo.
+- Wrote `j_benchmark_sweep.sh` (PJM batch, gpaw_env, 64-core, elapse 02:00:00).
+
+### Validation
+- py_compile OK.
+- Import sanity: 20 combos, correct grid, reuses main_benchmark helpers, OUTDIR correct.
+- Full execution deferred to HPC (needs the AGOX Ray pool; same RAM caveat as
+  main_benchmark).
+
+### Decisions & reasoning
+- Reused main_benchmark helpers for identical system/metrics (minimal duplication).
+- Grid sweep (not one-at-a-time) to see kappa/lambda interactions.
+- 1 seed per combo for speed (20 combos).
+
+### Open items / next steps
+- Submit `pjsub j_benchmark_sweep.sh` on HPC to run the sweep.
+- (Docs) optionally add the sweep to README/README.AI/TUTORIAL.
+- Launch the heavy Fe/MgO search (j_novel.sh).
+
+### Time
+~20 min.
