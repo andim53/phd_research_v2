@@ -621,3 +621,40 @@ global-minimum window) on the Ni8 / Au(4,4,2) fcc100 surface using EMT.
 
 ### Time
 ~20 min.
+
+---
+
+## 2026-08-22 — Session 1o: Add job.sh (HPC batch for the EMT benchmark)
+
+### Goal (user request)
+Prepare an HPC batch script for `main_benchmark.py`.
+
+### Confirmed design (via clarify)
+- **Name:** `job.sh` at 10_lcbnovel root, same PJM style as `j_novel.sh`.
+- **Env:** `gpaw_env` (user's choice). NOTE: benchmark uses EMT+AGOX (no GPAW); the
+  script documents the assumption that the HPC's gpaw_env has AGOX/ASE/EMT. On this
+  machine there is no `gpaw_env` (only agox, agox_v2, flapw-build, pymat_xrd), so the
+  script targets the HPC.
+- **Structure:** single job, all seeds x 2 acquisitors, N_ITERATIONS=30 (fast EMT).
+- **Cores:** 64 (same as j_novel.sh). Elapse 02:00:00.
+
+### Actions taken
+- Wrote `job.sh` (PJM batch): 64-core, gpaw_env, `OMP_NUM_THREADS=1 python
+  ./main_benchmark.py`, echo of start/end times. Comment notes the AGOX env assumption
+  and fallback to agox_v2 if gpaw_env lacks AGOX.
+
+### Validation
+- No HPC submission possible from this node. Script follows the same structure as the
+  working `j_novel.sh`. Shell syntax is simple (no executable to compile).
+
+### Decisions & reasoning
+- Kept gpaw_env per user choice, with a clear comment documenting the AGOX assumption
+  (the benchmark needs AGOX/EMT, not GPAW).
+- Single job (all seeds) because EMT is fast; 64 cores for the AGOX parallel pool.
+
+### Open items / next steps
+- Submit `pjsub job.sh` on HPC to run the benchmark.
+- Launch the heavy Fe/MgO search (j_novel.sh) with the per-atom auto window.
+
+### Time
+~5 min.
