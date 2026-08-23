@@ -569,3 +569,55 @@ so choosing the window height is easy on the scale of 1-2 eV/atom.
 
 ### Time
 ~20 min.
+
+---
+
+## 2026-08-22 — Session 1n: Add main_benchmark.py (Ni8/Au EMT, regular vs Novelty-LCB auto window)
+
+### Goal (user request)
+Create `main_benchmark.py` comparing regular LCB vs Novelty-LCB (with the new auto
+global-minimum window) on the Ni8 / Au(4,4,2) fcc100 surface using EMT.
+
+### Confirmed design (via clarify)
+- Shape: same as run 6 — SEED_LIST=[41,101,201,301,401], N_ITERATIONS=30, per-seed db,
+  aggregate + plots.
+- Metrics: reuse run 6 verbatim (distinct configs, best E, energy range, duplicates,
+  discovery curves, stats, plots).
+- Contrast: same seeds + full stack, only the acquisitor differs.
+- Package: import the local `novelty_lcb` (has energy_above_min/per_atom).
+- Novelty window: `energy_above_min = 0.1` eV/atom, `per_atom=True`
+  (40-atom Au+Ni cell -> cap 4 eV above global min). Outputs to `benchmark_results/`.
+
+### Actions taken
+- Wrote `main_benchmark.py` modeled on `_run/6_lcbnovel_benchmark/run.py`:
+  - build_system/build_stack (regular vs novelty), get_distinct_configurations,
+    run_single, compute_discovery_curve, aggregate + stats + JSON + plots.
+  - Novelty-LCB wired with `energy_above_min=NOVELTY_ENERGY_ABOVE_MIN`,
+    `per_atom=NOVELTY_ENERGY_PER_ATOM`.
+  - Added `USE_RAY = False` config for the GPR (avoid per-CPU Ray actors).
+- `py_compile` OK.
+- Smoke: build_stack for both acquisitors reaches the parallel pool — but a full run
+  cannot complete on this node (memory pressure -> Ray ActorUnavailableError, because
+  ParallelCollector/ParallelRelaxPostprocess use Ray pools). This is environmental and
+  inherent to AGOX Parallel components; the benchmark is intended to run on the HPC
+  cluster (64-core, ample RAM). USE_RAY + a JSON NOTE document this.
+
+### Validation
+- Compile OK.
+- Window logic for the auto global-min per-atom path is already covered by
+  `test_window_logic.py` (16/16 PASS).
+- Full benchmark execution deferred to a node with enough RAM (HPC).
+
+### Decisions & reasoning
+- Reused run-6 metrics/structure to keep the comparison directly comparable.
+- Chose 0.1 eV/atom for a meaningful 4 eV cap on the 40-atom cell (documented).
+- USE_RAY=False reduces actor count but does not fully remove Ray (parallel components
+  need the pool); note added that the benchmark needs adequate RAM.
+
+### Open items / next steps
+- Run `main_benchmark.py` on the HPC cluster (or a RAM-rich node).
+- (Optional) add a benchmark_results/ entry to .gitignore (PNG/JSON are regenerable).
+- Launch the heavy Fe/MgO search with the per-atom auto window.
+
+### Time
+~20 min.
