@@ -77,10 +77,16 @@ BK = 0.01
 # searches a fixed amount ABOVE it: candidates with predicted E > E_min + X are
 # excluded; E < E_min is allowed so a new, lower global minimum can be found.
 # This removes the need to run a regular-LCB search first to calibrate the window.
-#   window = (-inf, E_min + X]   (X = NOVELTY_ENERGY_ABOVE_MIN, in eV)
-# A modest X (e.g. 5-10 eV) keeps the search near the ground-state basin; a larger
-# X is more permissive. Set to None to fall back to the centered target_energy±delta_E mode.
-NOVELTY_ENERGY_ABOVE_MIN = 5.0   # eV -- search window height above the live global min
+#   window = (-inf, E_min + X]   (X = NOVELTY_ENERGY_ABOVE_MIN)
+# With NOVELTY_ENERGY_PER_ATOM=True (default), X is in eV/atom: the window is
+# (E_min/N) + X per atom, i.e. 1-2 eV/atom is a sensible, size-independent choice.
+# With per_atom=False, X is in total eV (e.g. 5-10 eV for this 75-atom system).
+# Set energy_above_min to None to fall back to the centered target_energy±delta_E mode.
+NOVELTY_ENERGY_ABOVE_MIN = 1.0   # eV/atom (per-atom mode default) -- window height above the live global min
+# Per-atom mode: when True, NOVELTY_ENERGY_ABOVE_MIN is interpreted in eV/atom
+# (both predicted E and E_min divided by the atom count N). Makes choosing the
+# window size easier (e.g. 0.5-2 eV/atom). Requires a fixed composition / atom count.
+NOVELTY_ENERGY_PER_ATOM = True   # interpret NOVELTY_ENERGY_ABOVE_MIN as eV per atom
 NOVELTY_WEIGHT = 1.5             # lambda in a(x) = sigma + lambda*Novelty
 KAPPA = 2.0                      # LCB kappa (surrogate relaxation surface)
 
@@ -183,12 +189,14 @@ def build_stack(environment, slab_deposition, db_path, seed):
 
     # Acquisitor -- Novelty-LCB (FIXED package: serialization-safe calculator)
     # Auto global-minimum mode: target is the live DB minimum; searches
-    # NOVELTY_ENERGY_ABOVE_MIN eV above it. No manual calibration needed.
+    # NOVELTY_ENERGY_ABOVE_MIN (eV or eV/atom if NOVELTY_ENERGY_PER_ATOM) above it.
+    # No manual calibration needed.
     acquisitor = NoveltyLCBAcquisitor(
         model=model,
         descriptor=descriptor,
         database=database,
         energy_above_min=NOVELTY_ENERGY_ABOVE_MIN,
+        per_atom=NOVELTY_ENERGY_PER_ATOM,
         novelty_weight=NOVELTY_WEIGHT,
         kappa=KAPPA,
         order=3,

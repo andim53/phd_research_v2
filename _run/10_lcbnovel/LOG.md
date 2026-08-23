@@ -520,3 +520,52 @@ over how much energy ABOVE that minimum to search.
 
 ### Time
 ~25 min.
+
+---
+
+## 2026-08-22 — Session 1m: Per-atom energy window mode (energy_above_min in eV/atom)
+
+### Goal (user request)
+Add a parameter to use energy **per atom** for the energy-above-global-min window,
+so choosing the window height is easy on the scale of 1-2 eV/atom.
+
+### Confirmed design (via clarify)
+- **Boolean flag** `per_atom` (default False) — backward compatible; total-eV stays
+  default.
+- **Strict per-atom**: divide BOTH the candidate predicted E and the global min E_min
+  by N, then compare `E/N <= E_min/N + X`.
+- **Full scope**: acquisitor.py + main.py + docs + per-atom test cases + commit.
+
+### Actions taken (code)
+- `novelty_lcb/acquisitor.py`:
+  - `__init__`: added `per_atom: bool = False`; updated docstring.
+  - Added `_n_atoms()` helper (atom count from DB candidates; falls back to 1).
+  - Window logic: when `energy_above_min` set and `per_atom=True`, compare
+    `(E/N) <= (E_min/N) + X` (X in eV/atom); otherwise total-eV as before.
+- `main.py`: added `NOVELTY_ENERGY_PER_ATOM = True` (default on for this project) and
+  set `NOVELTY_ENERGY_ABOVE_MIN = 1.0` eV/atom; wired `per_atom=NOVELTY_ENERGY_PER_ATOM`.
+
+### Validation
+- `py_compile` main.py + novelty_lcb/acquisitor.py: OK.
+- `test_window_logic.py` now 16/16 PASS, incl. per-atom cases:
+  - `_n_atoms` returns 75 from DB.
+  - per-atom cap: E/N above cap excluded, E/N below cap included, below-global-min allowed.
+  - equivalence: per_atom X (1.0 eV/atom) == total X (75 eV) give identical accept/reject
+    for fixed N — confirms the math.
+- `smoke_test_serialization.py` still cannot run this session (Ray ActorUnavailableError,
+  node memory pressure — environmental).
+
+### Decisions & reasoning
+- Per-atom makes the window size-independent (0.5-2 eV/atom), which is easier to reason
+  about and transferable across system sizes.
+- Default flipped to per_atom=True for this project (fixed 75-atom composition), with a
+  clear per-atom value (1.0 eV/atom). Total-eV mode remains available.
+- For fixed N, per-atom and total modes are mathematically equivalent (verified by the
+  equivalence test), so enabling per_atom by default changes only the unit of X.
+
+### Open items / next steps
+- Re-run `smoke_test_serialization.py` when memory frees.
+- Launch the heavy Fe/MgO search on HPC with the per-atom auto window.
+
+### Time
+~20 min.

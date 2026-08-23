@@ -116,14 +116,22 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         Half-width of the energy window (eV). Only used in the **centered** mode.
         Default 0.5.
     energy_above_min : float, optional
-        If given (not ``None``), enables the **auto global-minimum** mode: the
-        window becomes ``(-inf, E_min + energy_above_min]``, where ``E_min`` is the
-        live lowest DFT energy currently in the database (recomputed each
-        acquisition round). No prior calibration / regular-LCB run is needed.
-        Candidates with predicted energy above ``E_min + energy_above_min`` are
-        excluded; energies below ``E_min`` are allowed so a new, lower global
-        minimum can still be discovered. When ``None``, falls back to the centered
+        If given (not ``None``), enables the **auto global-minimum** mode: the window
+        becomes ``(-inf, E_min + energy_above_min]`` (or the per-atom equivalent when
+        ``per_atom=True``), where ``E_min`` is the live lowest DFT energy currently in
+        the database (recomputed each acquisition round). No prior calibration /
+        regular-LCB run is needed. Candidates with predicted energy above the cap are
+        excluded; energies below ``E_min`` are allowed so a new, lower global minimum
+        can still be discovered. When ``None``, falls back to the centered
         ``target_energy ± delta_E`` mode. Default ``None``.
+    per_atom : bool, optional
+        If ``True`` and ``energy_above_min`` is set, the window is computed in energy
+        per atom (eV/atom): both the candidate predicted energy ``E`` and the global
+        minimum ``E_min`` are divided by the number of atoms ``N`` before comparing,
+        so ``energy_above_min`` is interpreted as eV per atom. This makes the window
+        scale-independent of system size and lets values like 0.5-2 eV/atom be chosen
+        directly. Requires every candidate to have the same atom count ``N`` (true for
+        this fixed-composition Fe/MgO dataset). Default ``False`` (total eV).
     novelty_weight : float, optional
         Weight λ multiplying the novelty term.  Default 1.0.
     **kwargs
@@ -143,6 +151,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         novelty_weight: float = 1.0,
         kappa: float = 1.0,
         energy_above_min: Optional[float] = None,
+        per_atom: bool = False,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -154,6 +163,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         self.novelty_weight = novelty_weight
         self.kappa = kappa
         self.energy_above_min = energy_above_min
+        self.per_atom = per_atom
 
         # Cached feature array: shape (n_db, n_features), or None.
         self._db_features: Optional[np.ndarray] = None
@@ -257,6 +267,20 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             return None
         return float(min(energies))
 
+    def _n_atoms(self) -> int:
+        """Number of atoms in a candidate (assumed uniform across the DB).
+
+        Uses the template/candidate length; falls back to 1 if unavailable so the
+        per-atom comparison degenerates gracefully to total-energy.
+        """
+        try:
+            cands = self.database.get_all_candidates()
+            if cands and len(cands) > 0:
+                return len(cands[0])
+        except Exception:
+            pass
+        return 1
+
     # ------------------------------------------------------------------ #
     #  Acquisition function                                               #
     # ------------------------------------------------------------------ #
@@ -299,7 +323,15 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
                 if e_min is None:
                     # No minima yet: no cap (search freely until the first one).
                     in_window = True
+                elif self.per_atom:
+                    # Per-atom mode: divide both candidate E and E_min by N,
+                    # so energy_above_min is in eV/atom.
+                    n = self._n_atoms()
+                    in_window = (E / n) <= (e_min / n) + self.energy_above_min
+                    if not in_window:
+                        continue  # values[i] stays +inf → excluded
                 else:
+                    # Total-energy mode (default).
                     in_window = E <= e_min + self.energy_above_min
                     if not in_window:
                         continue  # values[i] stays +inf → excluded

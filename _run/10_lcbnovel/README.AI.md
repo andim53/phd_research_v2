@@ -99,12 +99,14 @@ These are regenerable artifacts and are gitignored (`.gitignore` excludes `*.db`
    Validate with `smoke_test_serialization.py`.
 2. **`LocalOptimizationEvaluator.__init__() missing 'calculator'`** — wiring bug:
    the kwargs key must be `calculator`, not `calc`. `main.py` passes it positionally.
-3. **Energy window mode** — the default is the **auto global-minimum** mode: the window
-   is `(-inf, E_min + X]` where `E_min` is the live lowest DFT energy in the DB and `X`
-   = `energy_above_min` (in `main.py`, `NOVELTY_ENERGY_ABOVE_MIN`, default 5 eV). No
-   prior regular-LCB calibration is needed. Backward-compatible centered mode
-   (`target_energy ± ΔE`) is available by setting `energy_above_min=None`. The window
-   compares against predicted absolute energy `E` (`E < lo or E > hi`).
+3. **Energy window mode** — the default is the **auto global-minimum** mode. With
+   `per_atom=True` (default), the window is `(-inf, E_min/N + X]` per atom, where `E_min`
+   is the live lowest DFT energy in the DB, `N` the atom count, and `X` =
+   `energy_above_min` (in `main.py`, `NOVELTY_ENERGY_ABOVE_MIN`, default 1.0 eV/atom).
+   Per-atom is size-independent (choose 0.5–2 eV/atom directly). Set `per_atom=False`
+   to use total eV. Backward-compatible centered mode (`target_energy ± ΔE`) is
+   available by setting `energy_above_min=None`. The window compares against predicted
+   absolute energy `E`.
 4. **GPAW needs HPC** — `SubprocessGPAW(..., ncores=64, mode=lcao, basis=dzp)` targets a
    64-core cluster node. Do not run the full `main.py` locally with GPAW.
 5. **Composition uniformity** — all candidates must share one stoichiometry/atom count

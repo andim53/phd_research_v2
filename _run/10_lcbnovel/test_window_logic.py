@@ -24,13 +24,18 @@ class MockDescriptor:
 
 
 class MockDB:
-    def __init__(self, energies):
+    def __init__(self, energies, n_atoms=75):
         self._e = energies
+        self._n_atoms = n_atoms
     def get_all_candidates(self):
-        class C: pass
+        class C:
+            def __len__(self):
+                return self._n
         out = []
         for e in self._e:
-            c = C(); c.get_potential_energy = (lambda e=e: e); out.append(c)
+            c = C(); c._n = self._n_atoms
+            c.get_potential_energy = (lambda e=e: e)
+            out.append(c)
         return out
 
 
@@ -40,14 +45,15 @@ class MockCand:
     def add_meta_information(self, k, v): self.meta[k] = v
 
 
-def make_acq(energy_above_min=None, target=None, delta_E=1.0, db_energies=[]):
+def make_acq(energy_above_min=None, target=None, delta_E=1.0, db_energies=[], per_atom=False, n_atoms=75):
     acq = object.__new__(NoveltyLCBAcquisitor)
     acq.model = MockModel()
     acq.descriptor = MockDescriptor()
-    acq.database = MockDB(db_energies)
+    acq.database = MockDB(db_energies, n_atoms=n_atoms)
     acq.target_energy = target
     acq.delta_E = delta_E
     acq.energy_above_min = energy_above_min
+    acq.per_atom = per_atom
     acq.novelty_weight = 1.0
     acq.kappa = 2.0
     acq._db_features = None
@@ -93,6 +99,30 @@ ok &= check("centered: in-window incl, outside excl",
 acq4 = make_acq(target=None, delta_E=None, db_energies=[-400.0])
 vals = acq4.calculate_acquisition_function([MockCand(1.0), MockCand(999.0)])
 ok &= check("none: no constraint, both included", not np.isinf(vals[0]) and not np.isinf(vals[1]), True)
+
+# ---- Mode 4: per-atom mode ----
+# DB global min = -436.9, N = 75, per-atom window cap = -436.9/75 + 1.0 = -5.8253 (per atom)
+# A candidate with E=-360 total -> E/N = -4.8 > -5.8253 -> EXCLUDED
+# A candidate with E=-440 total -> E/N = -5.8667 <= -5.8253 -> INCLUDED
+acq5 = make_acq(energy_above_min=1.0, per_atom=True, db_energies=[-436.9], n_atoms=75)
+ok &= check("per_atom: n_atoms from DB", acq5._n_atoms(), 75)
+vals = acq5.calculate_acquisition_function([MockCand(-360.0)])
+ok &= check("per_atom: E/N=-4.8 excluded (>cap)", np.isinf(vals[0]), True)
+vals = acq5.calculate_acquisition_function([MockCand(-440.0)])
+ok &= check("per_atom: E/N=-5.8667 included (<=cap)", not np.isinf(vals[0]), True)
+# Below global min still allowed in per-atom mode
+vals = acq5.calculate_acquisition_function([MockCand(-445.0)])
+ok &= check("per_atom: below global min allowed", not np.isinf(vals[0]), True)
+
+# ---- Mode 5: per_atom == total equivalent for fixed N ----
+# With per_atom=True, X_per_atom*N should give the same accept/reject as total mode
+# with X_total = X_per_atom*N. Here X_per_atom=1.0, N=75 -> X_total=75.
+acq_total = make_acq(energy_above_min=75.0, per_atom=False, db_energies=[-436.9], n_atoms=75)
+acq_pa = make_acq(energy_above_min=1.0, per_atom=True, db_energies=[-436.9], n_atoms=75)
+for E in [-360.0, -370.0, -436.9, -440.0]:
+    v_t = acq_total.calculate_acquisition_function([MockCand(E)])
+    v_p = acq_pa.calculate_acquisition_function([MockCand(E)])
+    ok &= check(f"equiv: E={E} per_atom==total", np.isinf(v_t[0]) == np.isinf(v_p[0]), True)
 
 print("\nRESULT:", "PASS" if ok else "FAIL")
 sys.exit(0 if ok else 1)

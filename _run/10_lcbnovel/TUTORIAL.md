@@ -72,18 +72,24 @@ Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
 
 ## Step 5 — Energy-window: auto global-minimum mode (default)
 
-The Novelty-LCB window now defaults to the **auto global-minimum** mode, so no manual
-calibration / prior regular-LCB run is needed. The acquisitor anchors the window to the
-live lowest DFT energy in the DB (`E_min`) and searches a set amount above it:
+The Novelty-LCB window now defaults to the **auto global-minimum** mode in **energy
+per atom**, so no manual calibration / prior regular-LCB run is needed. The acquisitor
+anchors the window to the live lowest DFT energy in the DB (`E_min`), divides by the
+atom count `N`, and searches a set amount above it:
 
-    window = (-inf, E_min + X]   with  X = NOVELTY_ENERGY_ABOVE_MIN (main.py, default 5 eV)
+    window (per atom) = (-inf, E_min/N + X]   with X = NOVELTY_ENERGY_ABOVE_MIN (default 1.0 eV/atom)
 
 `E_min` is recomputed each acquisition round from the current DB, so it tracks new
 minima as they are found; there is no lower bound, so a new lower global minimum can
 still be discovered.
 
-**Choosing X.** A modest `X` (e.g. 5–10 eV) keeps the search near the ground-state
-basin; a larger `X` is more permissive. Set `NOVELTY_ENERGY_ABOVE_MIN` in `main.py`.
+**Choosing X (per-atom).** Values are size-independent — choose directly in eV/atom
+(e.g. 0.5 eV/atom = tight, 2 eV/atom = permissive). Set `NOVELTY_ENERGY_ABOVE_MIN` in
+`main.py`.
+
+**Total-eV mode (alternative).** Set `NOVELTY_ENERGY_PER_ATOM = False` to interpret X
+in total eV (e.g. 5–10 eV for this 75-atom system). For a fixed N, per-atom and total
+modes are equivalent up to scaling by N.
 
 **Manual centered mode (alternative).** Set `energy_above_min = None` and pass
 `target_energy`/`delta_E` to reproduce the old centered window
@@ -108,9 +114,10 @@ Once real DBs exist, the established downstream pipeline applies:
    free functions. Validate with the smoke test.
 2. **`LocalOptimizationEvaluator` missing `calculator`** — kwargs key must be
    `calculator`, not `calc`. `main.py` passes it positionally to avoid this.
-3. **Energy window mode** — default is auto global-minimum (`(-inf, E_min + X]`, `X` =
-   `NOVELTY_ENERGY_ABOVE_MIN`, default 5 eV), so no manual calibration is needed. To use
-   the old centered mode, set `energy_above_min = None` and pass `target_energy`/`delta_E`.
+3. **Energy window mode** — default is auto global-minimum in per-atom eV (`(-inf,
+   E_min/N + X]`, `X` = `NOVELTY_ENERGY_ABOVE_MIN`, default 1.0 eV/atom), so no manual
+   calibration is needed. Set `NOVELTY_ENERGY_PER_ATOM=False` for total eV. To use the
+   old centered mode, set `energy_above_min = None` and pass `target_energy`/`delta_E`.
 4. **Env split — local vs HPC.** Local dev/test (smoke test, compile, slab build)
    uses `agox_v2`; the HPC pjsub heavy run uses `gpaw_env` (set in `j_novel.sh`).
    Don't confuse the two: `j_novel.sh` must keep `conda activate gpaw_env`.

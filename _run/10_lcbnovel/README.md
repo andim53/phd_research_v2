@@ -119,17 +119,23 @@ plain LCB.
    (`target_energy ± ΔE`) is also available for backward compatibility (see below).
 
 **How the auto global-minimum window works (default).**
-With `energy_above_min = X` (in `main.py`, `NOVELTY_ENERGY_ABOVE_MIN`), the acquisitor
-computes the live lowest DFT energy `E_min` from the current database each acquisition
-round and accepts any candidate with predicted energy `E ≤ E_min + X`:
+With `energy_above_min = X` (in `main.py`, `NOVELTY_ENERGY_ABOVE_MIN`) and
+`per_atom=True` (default, `NOVELTY_ENERGY_PER_ATOM`), the window is computed in
+**energy per atom**: the acquisitor divides the candidate's predicted energy `E` and
+the live global minimum `E_min` by the atom count `N`, and accepts any candidate with
+`E/N ≤ E_min/N + X` (X in eV/atom):
 
-    window = (-inf, E_min + X]
+    window (per atom) = (-inf, E_min/N + X]      with X in eV/atom
 
 - `E_min` updates as new, lower minima are found, so the window tracks the search.
 - There is **no lower bound** — a candidate with `E < E_min` is still accepted, so a
   genuinely new global minimum can be discovered.
-- A modest `X` (e.g. 5–10 eV) keeps the search near the ground-state basin; a larger
-  `X` is more permissive.
+- **Per-atom values are size-independent**, so choosing X is easy (e.g. 0.5–2 eV/atom)
+  and does not depend on how many atoms the system has. This requires a fixed
+  composition / atom count (true for the 75-atom Fe/MgO dataset). Set
+  `per_atom=False` (`NOVELTY_ENERGY_PER_ATOM=False`) to use **total eV** instead
+  (e.g. 5–10 eV for this system). For a fixed N, per-atom and total modes are
+  equivalent up to scaling by N.
 
 **Manual centered mode (alternative, for reference).**
 The old centered window `[target_energy − ΔE, target_energy + ΔE]` remains available
@@ -285,7 +291,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 | Base project | `7_lcbnovel_mgofe` | Fe/MgO is the target physical system; run 7 is the most complete attempt |
 | `novelty_lcb` package | copied from run 7 (reused, not rewritten) | It already contains the serialization fix; lowest risk |
 | Serialization fix | module-level free funcs + `functools.partial` in `get_acquisition_calculator()` | Bound methods drag the sqlite-backed `Database` into the Ray-put graph; free funcs capture only scalar `kappa` |
-| Energy window | auto global-min (`energy_above_min=5 eV`) | Anchors to the live DB minimum, searches above it — no manual calibration / regular-LCB-first step needed |
+| Energy window | auto global-min (`energy_above_min=1.0 eV/atom`, per_atom) | Anchors to the live DB minimum, searches above it in eV/atom — size-independent, no manual calibration / regular-LCB-first step needed |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
@@ -295,7 +301,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 - [x] `main.py` faithfully re-wired (same physics as run 7)
 - [x] Serialization smoke test **PASSES** (crash root cause verified fixed)
 - [ ] Heavy Fe/MgO search launched on HPC (see `TUTORIAL.md` step 4)
-- [x] Energy window = auto global-min mode (`energy_above_min=5 eV`), no manual calibration
+- [x] Energy window = auto global-min mode (`energy_above_min=1.0 eV/atom`, per_atom), no manual calibration
 
 See `TUTORIAL.md` for the full reproduction and repair guide, `LOG.md` for what
 has been done, and `README.AI.md` for the agent-facing spec.
