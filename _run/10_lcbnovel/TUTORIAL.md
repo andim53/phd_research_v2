@@ -70,53 +70,26 @@ pjsub j_novel.sh            # runs the seed set in the script (edit SEED=3 to ch
 Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
 `output_seed_<N>.txt` (GPAW log), `generated_structures/`.
 
-## Step 5 — Energy-window calibration (done from the LCB-only dataset)
+## Step 5 — Energy-window: auto global-minimum mode (default)
 
-The Novelty-LCB window is defined on **absolute predicted energy** `E`, so
-`target_energy` must be a real energy in the band, not 0. This project calibrated it
-from the previous LCB-only run of the same system in `./dataset`.
+The Novelty-LCB window now defaults to the **auto global-minimum** mode, so no manual
+calibration / prior regular-LCB run is needed. The acquisitor anchors the window to the
+live lowest DFT energy in the DB (`E_min`) and searches a set amount above it:
 
-### Using `energy_stats.py`
+    window = (-inf, E_min + X]   with  X = NOVELTY_ENERGY_ABOVE_MIN (main.py, default 5 eV)
 
-`energy_stats.py` reads every AGOX database under `./dataset` (`seed_3`–`seed_15`) and
-prints the DFT energy distribution — this is the source of the calibration.
+`E_min` is recomputed each acquisition round from the current DB, so it tracks new
+minima as they are found; there is no lower bound, so a new lower global minimum can
+still be discovered.
 
-Run it:
+**Choosing X.** A modest `X` (e.g. 5–10 eV) keeps the search near the ground-state
+basin; a larger `X` is more permissive. Set `NOVELTY_ENERGY_ABOVE_MIN` in `main.py`.
 
-```bash
-cd /home/think/Desktop/research/_run/10_lcbnovel
-/home/think/miniconda3/envs/agox_v2/bin/python energy_stats.py
-```
-
-Expected output (as of 2026-08-22):
-
-```
-seeds found: ['seed_10', 'seed_11', 'seed_12', 'seed_13', 'seed_14', 'seed_15',
-              'seed_3', 'seed_4', 'seed_5', 'seed_6', 'seed_7', 'seed_8', 'seed_9'] count: 13
-n structures: 1297
-composition distinct: 1  (Mg25O25Fe25, 75 atoms)
-E min: -436.9093
-E max: -386.2923
-E mean: -424.1654
-E median: -428.9337
-p01: -436.7998  p05: -435.1068  p25: -431.9946  p50: -428.9337
-p75: -418.1307  p95: -398.2660  p99: -391.6424
-```
-
-(Ray/AGOX startup noise on stderr is expected and harmless.)
-
-**How to use these numbers to set the window.** The window is
-`[target_energy − ΔE, target_energy + ΔE]` compared against absolute predicted energy:
-
-- **Broad, low-selectivity (chosen here):** `target_energy` = band centre ≈ −411.6 eV,
-  `delta_E` = 25 eV → window ≈ [−436.6, −386.6], covering essentially all of p1..p99.
-  The energy constraint is then non-restrictive, so novelty + uncertainty drive the search.
-- **Narrow, low-energy local-minimum focus:** `target_energy` ≈ p25 (−432.0 eV),
-  `delta_E` ≈ 3 eV → window ≈ [−435, −429], restricted to the stable minima band.
-
-Write the chosen values into `main.py` as `NOVELTY_TARGET_ENERGY` / `NOVELTY_DELTA_E`.
-If you ever expand the dataset or switch systems, re-run `energy_stats.py` and re-derive
-the band before trusting Novelty-LCB results.
+**Manual centered mode (alternative).** Set `energy_above_min = None` and pass
+`target_energy`/`delta_E` to reproduce the old centered window
+`[target_energy − ΔE, target_energy + ΔE]`. For reference, the LCB-only `./dataset`
+band is ≈ [−436.9, −386.3] eV (centre ≈ −411.6 eV); see `energy_stats.py` to map it.
+This mode is not needed for the default run.
 
 ## Step 6 — Analyse results (downstream, optional)
 
@@ -135,10 +108,9 @@ Once real DBs exist, the established downstream pipeline applies:
    free functions. Validate with the smoke test.
 2. **`LocalOptimizationEvaluator` missing `calculator`** — kwargs key must be
    `calculator`, not `calc`. `main.py` passes it positionally to avoid this.
-3. **Energy window is on absolute energy** — it compares against predicted `E`
-   (`target_energy ± ΔE`), so `target_energy` must be a real energy in the band, not 0.
-   Calibrated to `−411.6 / 25` via `energy_stats.py` (Step 5); re-calibrate if you
-   change the system or dataset.
+3. **Energy window mode** — default is auto global-minimum (`(-inf, E_min + X]`, `X` =
+   `NOVELTY_ENERGY_ABOVE_MIN`, default 5 eV), so no manual calibration is needed. To use
+   the old centered mode, set `energy_above_min = None` and pass `target_energy`/`delta_E`.
 4. **Env split — local vs HPC.** Local dev/test (smoke test, compile, slab build)
    uses `agox_v2`; the HPC pjsub heavy run uses `gpaw_env` (set in `j_novel.sh`).
    Don't confuse the two: `j_novel.sh` must keep `conda activate gpaw_env`.

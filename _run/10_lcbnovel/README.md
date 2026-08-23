@@ -111,30 +111,32 @@ plain LCB.
    energy window tries to hold the search in a low band. The acquisitor does not
    explicitly enumerate basins or balance weight across them; it just picks the
    most-uncertain-and-novel in-window candidate each round.
-2. **Energy window must be calibrated to a real energy.** The window is defined on
-   absolute predicted energy `E` (the code tests `E < lo or E > hi` against
-   `target_energy ± ΔE`), so `target_energy` must be a real energy in the band, not 0.
-   This is now done from the previous LCB-only dataset (below).
+2. **Energy window mode.** The window is defined on **absolute predicted energy** `E`
+   (the code tests `E < lo or E > hi`). The default is now the **auto global-minimum
+   mode**: the window is anchored to the live lowest DFT energy in the DB (`E_min`) and
+   searches a set amount `X` above it (`(-inf, E_min + X]`), so **no manual
+   calibration / prior regular-LCB run is needed**. A manual centered mode
+   (`target_energy ± ΔE`) is also available for backward compatibility (see below).
 
-**How to set `target_energy` (from the LCB-only dataset in `./dataset`).**
-The Novelty-LCB window is compared against the **absolute predicted energy** `E` of a
-candidate. Reading the 13-seed LCB-only run (`dataset/seed_*/1_db/db_*.db`,
-1297 structures, Mg25O25Fe25) gives the energy band:
+**How the auto global-minimum window works (default).**
+With `energy_above_min = X` (in `main.py`, `NOVELTY_ENERGY_ABOVE_MIN`), the acquisitor
+computes the live lowest DFT energy `E_min` from the current database each acquisition
+round and accepts any candidate with predicted energy `E ≤ E_min + X`:
 
-    E_min = −436.91 eV   E_max = −386.29 eV
-    band centre ≈ −411.6 eV
-    p1 ≈ −436.8, p25 ≈ −432.0, p50 ≈ −428.9, p75 ≈ −418.1, p95 ≈ −398.3, p99 ≈ −391.6
+    window = (-inf, E_min + X]
 
-For this work (broad, low-selectivity window so most of the searched landscape is
-eligible), set `target_energy` to the **band centre** and `delta_E` to a wide
-half-width:
+- `E_min` updates as new, lower minima are found, so the window tracks the search.
+- There is **no lower bound** — a candidate with `E < E_min` is still accepted, so a
+  genuinely new global minimum can be discovered.
+- A modest `X` (e.g. 5–10 eV) keeps the search near the ground-state basin; a larger
+  `X` is more permissive.
 
-    target_energy = −411.6 eV,  delta_E = 25 eV   ->  window ≈ [−436.6, −386.6]
-
-This covers essentially the full p1..p99 range, so the energy-window constraint is
-non-restrictive and the search is governed by the novelty + uncertainty terms. To
-target only the stable (low-energy) local minima instead, narrow the window to the
-low band (e.g. target ≈ −432, ΔE ≈ 3). These values are written into `main.py`.
+**Manual centered mode (alternative, for reference).**
+The old centered window `[target_energy − ΔE, target_energy + ΔE]` remains available
+by setting `energy_above_min = None` and passing `target_energy`/`delta_E`. From the
+LCB-only dataset (`./dataset`, band ≈ [−436.9, −386.3] eV, centre ≈ −411.6 eV), a
+broad centered window would be `target_energy = −411.6 eV, delta_E = 25 eV`
+→ `[−436.6, −386.6]`. This mode is not needed for the default run.
 
 ### What if `target_energy = 0`?
 Setting `target_energy = 0` does **not** mean "search around an energy of 0". The
@@ -196,9 +198,9 @@ and `call_initialize=True`:
    (one per basin) would make novelty reflect distance to distinct minima.
 
 **What can be improved.**
-- **Energy window now calibrated** to the LCB-only band (`target = −411.6 eV,
-  ΔE = 25 eV`, broad low-selectivity). For a stricter local-minimum focus, narrow to
-  the low band (e.g. target ≈ −432, ΔE ≈ 3).
+- **Energy window is now auto global-min mode** (`energy_above_min=5 eV`), so no manual
+  calibration is needed; tune `energy_above_min` to control how far above the ground
+  state to search.
 - **Compare novelty against a deduplicated set** (e.g. the `_run/9_novelFilter` output)
   instead of the raw DB, so the bonus measures distance to distinct minima.
 - **Use the search to build diversity, then post-process for local-minimum
@@ -283,7 +285,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 | Base project | `7_lcbnovel_mgofe` | Fe/MgO is the target physical system; run 7 is the most complete attempt |
 | `novelty_lcb` package | copied from run 7 (reused, not rewritten) | It already contains the serialization fix; lowest risk |
 | Serialization fix | module-level free funcs + `functools.partial` in `get_acquisition_calculator()` | Bound methods drag the sqlite-backed `Database` into the Ray-put graph; free funcs capture only scalar `kappa` |
-| Energy window | `target=−411.6 eV, ΔE=25 eV` (broad) | Calibrated from the LCB-only dataset in `./dataset` (band centre ≈ −411.6, p1..p99 ≈ [−436.8, −391.6]) |
+| Energy window | auto global-min (`energy_above_min=5 eV`) | Anchors to the live DB minimum, searches above it — no manual calibration / regular-LCB-first step needed |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
@@ -293,7 +295,7 @@ pjsub j_novel.sh                    # runs the seed set in the script (edit SEED
 - [x] `main.py` faithfully re-wired (same physics as run 7)
 - [x] Serialization smoke test **PASSES** (crash root cause verified fixed)
 - [ ] Heavy Fe/MgO search launched on HPC (see `TUTORIAL.md` step 4)
-- [x] Energy-window calibrated from the LCB-only dataset in `./dataset` (target=−411.6, ΔE=25)
+- [x] Energy window = auto global-min mode (`energy_above_min=5 eV`), no manual calibration
 
 See `TUTORIAL.md` for the full reproduction and repair guide, `LOG.md` for what
 has been done, and `README.AI.md` for the agent-facing spec.

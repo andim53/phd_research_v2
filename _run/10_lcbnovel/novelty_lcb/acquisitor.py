@@ -109,10 +109,21 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
     database : DatabaseBaseClass
         Database to compute novelty against; also attached for live
         updates so the novelty cache stays fresh as new structures arrive.
-    target_energy : float
-        Centre of the energy window (eV).
+    target_energy : float, optional
+        Centre of the energy window (eV). Only used in the **centered** mode
+        (when ``energy_above_min`` is ``None``). Default ``None`` (no constraint).
     delta_E : float, optional
-        Half-width of the energy window (eV).  Default 0.5.
+        Half-width of the energy window (eV). Only used in the **centered** mode.
+        Default 0.5.
+    energy_above_min : float, optional
+        If given (not ``None``), enables the **auto global-minimum** mode: the
+        window becomes ``(-inf, E_min + energy_above_min]``, where ``E_min`` is the
+        live lowest DFT energy currently in the database (recomputed each
+        acquisition round). No prior calibration / regular-LCB run is needed.
+        Candidates with predicted energy above ``E_min + energy_above_min`` are
+        excluded; energies below ``E_min`` are allowed so a new, lower global
+        minimum can still be discovered. When ``None``, falls back to the centered
+        ``target_energy ± delta_E`` mode. Default ``None``.
     novelty_weight : float, optional
         Weight λ multiplying the novelty term.  Default 1.0.
     **kwargs
@@ -127,10 +138,11 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         model: ModelBaseClass,
         descriptor: DescriptorBaseClass,
         database: DatabaseBaseClass,
-        target_energy: float,
+        target_energy: Optional[float] = None,
         delta_E: float = 0.5,
         novelty_weight: float = 1.0,
         kappa: float = 1.0,
+        energy_above_min: Optional[float] = None,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -141,6 +153,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
         self.delta_E = delta_E
         self.novelty_weight = novelty_weight
         self.kappa = kappa
+        self.energy_above_min = energy_above_min
 
         # Cached feature array: shape (n_db, n_features), or None.
         self._db_features: Optional[np.ndarray] = None
@@ -221,6 +234,30 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             )
 
     # ------------------------------------------------------------------ #
+    #  Global-minimum energy (for auto window mode)                       #
+    # ------------------------------------------------------------------ #
+
+    def _global_min_energy(self) -> Optional[float]:
+        """Live lowest DFT energy currently stored in the database (eV).
+
+        Returns ``None`` if the database has no finite-energy candidates yet.
+        """
+        candidates = self.database.get_all_candidates()
+        if not candidates:
+            return None
+        energies = []
+        for c in candidates:
+            try:
+                e = c.get_potential_energy()
+            except Exception:
+                continue
+            if e is not None and np.isfinite(e):
+                energies.append(e)
+        if not energies:
+            return None
+        return float(min(energies))
+
+    # ------------------------------------------------------------------ #
     #  Acquisition function                                               #
     # ------------------------------------------------------------------ #
 
@@ -254,11 +291,28 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             E, sigma = self.model.predict_energy_and_uncertainty(cand)
 
             # --- energy window filter --------------------------------- #
-            if self.target_energy is not None:
+            if self.energy_above_min is not None:
+                # Auto global-minimum mode: window = (-inf, E_min + X].
+                # E_min is the live lowest DFT energy in the DB. No lower bound,
+                # so a new, lower global minimum can still be discovered.
+                e_min = self._global_min_energy()
+                if e_min is None:
+                    # No minima yet: no cap (search freely until the first one).
+                    in_window = True
+                else:
+                    in_window = E <= e_min + self.energy_above_min
+                    if not in_window:
+                        continue  # values[i] stays +inf → excluded
+            elif self.target_energy is not None:
+                # Centered mode: window = [target - delta_E, target + delta_E].
                 lo = self.target_energy - self.delta_E
                 hi = self.target_energy + self.delta_E
-                if E < lo or E > hi:
+                in_window = lo <= E <= hi
+                if not in_window:
                     continue  # values[i] stays +inf → excluded
+            else:
+                # No window constraint.
+                in_window = True
 
             # --- novelty ---------------------------------------------- #
             cand_feat = self.descriptor.get_features(cand).ravel()
@@ -277,10 +331,7 @@ class NoveltyLCBAcquisitor(AcquisitorBaseClass):
             cand.add_meta_information("model_energy", E)
             cand.add_meta_information("uncertainty", sigma)
             cand.add_meta_information("novelty", novelty)
-            cand.add_meta_information(
-                "in_window",
-                self.target_energy is None or (lo <= E <= hi),
-            )
+            cand.add_meta_information("in_window", in_window)
 
         return values
 

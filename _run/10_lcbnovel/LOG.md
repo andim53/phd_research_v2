@@ -467,3 +467,56 @@ concise "Does AGOX continue from a previous database?" subsection.
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-22 — Session 1l: Auto global-minimum energy window (remove regular-LCB-first step)
+
+### Goal (user request)
+Previously the Novelty-LCB window needed a manually-set `target_energy`, requiring a
+regular-LCB run first to calibrate the band. User asked to make a parameter so the
+target energy is **automatically the global minimum** of the current DB, with control
+over how much energy ABOVE that minimum to search.
+
+### Confirmed design (via clarify)
+- **Backward compatible:** add `energy_above_min` param; when set, use auto global-min
+  mode; when `None`, fall back to centered `target_energy ± delta_E`.
+- **Cap only the top:** window = `(-inf, E_min + X]`; allow E < E_min so a new lower
+  minimum can still be found.
+- **Live global min:** recomputed from the current DB each acquisition round.
+- **One parameter:** `energy_above_min` (X, eV above the live min).
+
+### Actions taken (code)
+- `novelty_lcb/acquisitor.py`:
+  - `__init__`: added `energy_above_min: Optional[float] = None`; `target_energy` now
+    defaults to `None` (backward compatible). Updated docstring.
+  - Added `_global_min_energy()` helper — live lowest finite DFT energy in the DB.
+  - `calculate_acquisition_function`: window logic now branches:
+    auto mode (`(-inf, E_min+X]`, no cap when DB empty), centered mode
+    (`target ± delta_E`), or no constraint. `in_window` meta-info updated.
+- `main.py`: replaced `NOVELTY_TARGET_ENERGY`/`NOVELTY_DELTA_E` with
+  `NOVELTY_ENERGY_ABOVE_MIN = 5.0`; acquisitor wired with `energy_above_min=...`.
+
+### Validation
+- `py_compile` main.py + novelty_lcb/*.py: OK.
+- Added `test_window_logic.py` (isolated, no Ray/AGOX): 8/8 PASS
+  (auto cap, allow-below-min, empty-DB no-cap, live E_min tracking, centered
+  backward-compat, no-constraint).
+- NOTE: `smoke_test_serialization.py` could not complete this session — it fails on
+  the documented Ray `ActorUnavailableError` under node memory pressure (1.1 GB free,
+  swap full). This is environmental, not caused by this change; the isolated window
+  test validates the code change directly.
+
+### Decisions & reasoning
+- Backward compatible + additive keeps the proven centered mode available while making
+  the new auto mode the default path (removes the two-step regular-LCB-first cost).
+- Cap-only-top is the right semantics for "search X eV above the global minimum": it
+  still lets the search improve the global minimum.
+
+### Open items / next steps
+- Re-run `smoke_test_serialization.py` when the node has free memory (verify the full
+  AGOX path still constructs).
+- Launch the heavy Fe/MgO search on HPC (pjsub j_novel.sh) with the auto window.
+
+### Time
+~25 min.

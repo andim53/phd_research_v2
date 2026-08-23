@@ -72,14 +72,15 @@ HETERO_RATTLE_AMPLITUDE = 1.5
 # ==== Model ====
 BK = 0.01
 
-# ==== Novelty-LCB energy window (CALIBRATED from LCB-only dataset) ====
-# Source: previous LCB-only run of the same system in ./dataset
-# (13 seeds, 1297 structures, Mg25O25Fe25). Band = [-436.9, -386.3] eV,
-# centre = -411.6 eV, p1..p99 ≈ [-436.8, -391.6].
-# Broad low-selectivity window: target = band centre, delta_E = 25 eV.
-#   -> window ≈ [-436.6, -386.6], covering ~all of p1..p99.
-NOVELTY_TARGET_ENERGY = -411.6    # eV -- band centre (see ./dataset energy stats)
-NOVELTY_DELTA_E = 25.0            # eV -- half-width (broad, low-selectivity)
+# ==== Novelty-LCB energy window (AUTO global-minimum mode) ====
+# The window is anchored to the LIVE global minimum found in the database and
+# searches a fixed amount ABOVE it: candidates with predicted E > E_min + X are
+# excluded; E < E_min is allowed so a new, lower global minimum can be found.
+# This removes the need to run a regular-LCB search first to calibrate the window.
+#   window = (-inf, E_min + X]   (X = NOVELTY_ENERGY_ABOVE_MIN, in eV)
+# A modest X (e.g. 5-10 eV) keeps the search near the ground-state basin; a larger
+# X is more permissive. Set to None to fall back to the centered target_energy±delta_E mode.
+NOVELTY_ENERGY_ABOVE_MIN = 5.0   # eV -- search window height above the live global min
 NOVELTY_WEIGHT = 1.5             # lambda in a(x) = sigma + lambda*Novelty
 KAPPA = 2.0                      # LCB kappa (surrogate relaxation surface)
 
@@ -181,12 +182,13 @@ def build_stack(environment, slab_deposition, db_path, seed):
     )
 
     # Acquisitor -- Novelty-LCB (FIXED package: serialization-safe calculator)
+    # Auto global-minimum mode: target is the live DB minimum; searches
+    # NOVELTY_ENERGY_ABOVE_MIN eV above it. No manual calibration needed.
     acquisitor = NoveltyLCBAcquisitor(
         model=model,
         descriptor=descriptor,
         database=database,
-        target_energy=NOVELTY_TARGET_ENERGY,
-        delta_E=NOVELTY_DELTA_E,
+        energy_above_min=NOVELTY_ENERGY_ABOVE_MIN,
         novelty_weight=NOVELTY_WEIGHT,
         kappa=KAPPA,
         order=3,
