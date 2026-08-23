@@ -696,3 +696,35 @@ TUTORIAL. Confirmed via clarify:
 
 ### Time
 ~10 min.
+
+---
+
+## 2026-08-22 — Session 1q: Rename job.sh -> j_benchmark.sh
+
+### Goal (user request)
+Rename the benchmark batch script from `job.sh` to `j_benchmark.sh`.
+
+### Actions taken
+- `git mv job.sh j_benchmark.sh` (preserves history).
+- Updated the script's internal header comment (`pjsub j_benchmark.sh`).
+- Updated all live-doc references:
+  - README.md: `pjsub j_benchmark.sh` + decisions-table row.
+  - TUTORIAL.md: `pjsub j_benchmark.sh`.
+  - README.AI.md: file-layout line, entry-point command, pitfall #6.
+  - LOG.md historical entries keep the old name `job.sh` (append-only — this entry
+    records the rename).
+
+### Results
+- No `job.sh` remains in live docs; `j_benchmark.sh` is the sole benchmark batch script.
+- git detects the rename (R).
+
+### Decisions & reasoning
+- Kept LOG.md history unchanged (append-only rule); documented the rename here.
+- Used `git mv` so the file's history is preserved.
+
+### Open items / next steps
+- Submit `pjsub j_benchmark.sh` on HPC to run the benchmark.
+- Launch the heavy Fe/MgO search (j_novel.sh).
+
+### Time
+~5 min.

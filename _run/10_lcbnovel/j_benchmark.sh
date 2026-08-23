@@ -1,7 +1,7 @@
 #!/bin/sh
 # PJM batch script for the Ni8/Au(4,4,2) EMT benchmark
 # (regular LCB vs Novelty-LCB auto global-minimum window).
-# Submit:  pjsub job.sh    |  monitor: pjstat    |  cancel: pjdel
+# Submit:  pjsub j_benchmark.sh |  monitor: pjstat  |  cancel: pjdel
 
 ##PJM -L rscgrp=a-pj24001864
 #PJM -L rscgrp=a-batch

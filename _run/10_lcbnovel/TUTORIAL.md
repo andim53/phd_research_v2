@@ -110,7 +110,7 @@ end (5 seeds, N_ITERATIONS=30, same seeds for both acquisitors).
 /home/think/miniconda3/envs/agox_v2/bin/python main_benchmark.py
 
 # On HPC:
-pjsub job.sh
+pjsub j_benchmark.sh
 ```
 
 What it compares (metrics, same as run 6): distinct configurations (fingerprint

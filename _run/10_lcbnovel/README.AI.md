@@ -23,7 +23,7 @@ human-facing `README.md`.
 ├── energy_stats.py             # Energy distribution of the LCB-only dataset
 ├── smoke_test_serialization.py # Cheap local validation of the serialization fix
 ├── j_novel.sh                  # PJM batch script (HPC launch, one seed per job)
-├── job.sh                      # PJM batch script for the EMT benchmark (HPC)
+├── j_benchmark.sh              # PJM batch script for the EMT benchmark (HPC)
 ├── benchmark_results/          # Benchmark output (JSON + PNG; regenerable)
 ├── novelty_lcb/                # PROVEN package (copied from run 7, contains fix)
 │   ├── __init__.py             #   re-exports NoveltyLCBAcquisitor, is_distinct, fingerprint_distance
@@ -62,7 +62,7 @@ pjsub j_novel.sh
 
 # EMT benchmark (regular vs Novelty-LCB auto window) — needs a RAM-rich node / HPC
 $PY main_benchmark.py      # local
-pjsub job.sh               # on HPC
+pjsub j_benchmark.sh           # on HPC
 ```
 
 ### `main.py` CLI
@@ -124,7 +124,7 @@ These are regenerable artifacts and are gitignored (`.gitignore` excludes `*.db`
 6. **Benchmark needs RAM for the Ray pool** — `main_benchmark.py` uses AGOX's
    `ParallelCollector`/`ParallelRelaxPostprocess` (Ray pool). On a low-RAM node it
    fails with Ray `ActorUnavailableError` (environmental). Run it on a RAM-rich node
-   or HPC (`pjsub job.sh`). `USE_RAY=False` in the benchmark reduces GPR actors but
+   or HPC (`pjsub j_benchmark.sh`). `USE_RAY=False` in the benchmark reduces GPR actors but
    does not remove the parallel pool. `test_window_logic.py` covers the window logic
    standalone (no Ray).
 
