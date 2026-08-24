@@ -325,6 +325,25 @@ kept separate from `_runs/` so raw runs are never mixed with their analysis. The
 repo-root `.gitignore` anticipates the layout `0_analy/` (staging), `1_result/`
 (final), and `main_analyst.ipynb` / `main_test.ipynb` (notebooks).
 
+A self-contained analysis runner lives at `_analysist/run_analysis_indices.py`
+(mirrors the sibling `_analysist/run_analysis_indices.py`, adapted to this project).
+It runs the 3-stage pipeline (database → PCA landscape → Boltzmann probability) for
+the Fe/MgO heavy-run indices **71** and **72** (the flat benchmark dirs 73/74 are
+excluded — their layout doesn't fit the `seed_*/1_db` structure). It imports only
+the `_analysist/scripts/` deps copied next to it
+(`process_database.py`, `plot_structure_landscape.py`, `calculate_relative_energy.py`),
+so it is callable in place:
+
+```bash
+cd /home/think/Desktop/research/_run/10_lcbnovel/_analysist
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py   # all indices (71, 72)
+```
+
+Outputs go to `_analysist/0_analy/idx_<N>/` (trajectories, xsf, csv, landscape +
+probability figures). `0_analy/` and `1_result/` are gitignored (regenerable); the
+runner + `scripts/` are tracked.
+
 ## Key decisions & tradeoffs
 
 | Decision | Choice | Why |

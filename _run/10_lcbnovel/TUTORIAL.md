@@ -88,6 +88,37 @@ separate from raw runs. The repo-root `.gitignore` anticipates
 `0_analy/` (staging), `1_result/` (final), and `main_analyst.ipynb` /
 `main_test.ipynb` (notebooks). Analysis outputs are regenerable/gitignored.
 
+## Step 4c — Analyse the Fe/MgO heavy-run results (idx 71, 72)
+
+A self-contained analysis runner lives at `_analysist/run_analysis_indices.py`
+(mirrors the sibling `/home/think/Desktop/research/_analysist/run_analysis_indices.py`,
+adapted to this project; imports only the `_analysist/scripts/` deps copied next to
+it). It runs the 3-stage pipeline on the Fe/MgO heavy runs **71** and **72**:
+① `process_database` (AGOX `.db` → trajectory/xsf/csv, `start_iter=10`),
+② PCA landscape, ③ Boltzmann probability vs temperature.
+
+```bash
+cd /home/think/Desktop/research/_run/10_lcbnovel/_analysist
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py   # all (71, 72)
+# optional: --e-max 0.8 --normalize-density --skip-probability
+```
+
+The `FOLDER_MAP` points each index at the DB root that holds `seed_*/1_db/`
+(`71_novel_runEWindow/output`, `72_novel_AutoGlob_1eVperAtomAboveGlob/output`).
+**73/74 are excluded** — their flat `benchmark_results/` layout has no `seed_*` dirs,
+so `process_database` would find nothing; those benchmarks have their own analysis
+(DISCUSSION.md, benchmark_results JSON). Outputs → `0_analy/idx_<N>/`:
+`1_xsf_traj/traj_<N>.traj`, `data_<N>.csv`, `progression_*.png`, `2_im/conf_space.png`,
+`2_im/binding_probability_vs_temperature.png`.
+
+> **Git note:** this project is part of the parent repo
+> (`/home/think/Desktop/research`), whose `.gitignore`'s `_analysist/0_analy/` rules
+> target the *parent's* `_analysist` — not this nested one. A project-level
+> `.gitignore` was added so `_analysist/0_analy/` and `_analysist/1_result/` (and
+> `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) stay untracked; only the runner +
+> `_analysist/scripts/` code is committed.
+
 ## Step 5 — Energy-window: auto global-minimum mode (default)
 
 The Novelty-LCB window now defaults to the **auto global-minimum** mode in **energy

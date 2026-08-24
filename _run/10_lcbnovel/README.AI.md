@@ -44,7 +44,13 @@ human-facing `README.md`.
 │   ├── 2_mgofe_Seed3_Iter500/  #   bare per-seed run
 │   ├── 3_mgofe_Seed3_Iter700/  #   bare per-seed run
 │   └── 73_novel_benchEMT/      #   full benchmark project (doc trio + main_benchmark*.py + j_benchmark*.sh)
-└── _analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
+├── _analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
+│   ├── run_analysis_indices.py #   self-contained analysis runner (3-stage pipeline, idx 71/72)
+│   ├── scripts/                #   copied deps: process_database.py, plot_structure_landscape.py,
+│   │                           #     calculate_relative_energy.py
+│   ├── 0_analy/                #   analysis outputs (gitignored, regenerable)
+│   └── 1_result/               #   raw run results 71-74 (gitignored, regenerable)
+└── .gitignore                  # ignores _analysist/0_analy, _analysist/1_result, *.db/*.png/*.traj/...
 ```
 
 ### 2a. `_runs/` and `_analysist/`
@@ -60,6 +66,15 @@ human-facing `README.md`.
   Expected layout (matching the repo-root `.gitignore`): `0_analy/` (staging),
   `1_result/` (final), `main_analyst.ipynb`, `main_test.ipynb`. Outputs are
   regenerable/gitignored.
+- **`_analysist/run_analysis_indices.py`** — self-contained analysis runner (mirrors
+  the sibling `/home/think/Desktop/research/_analysist/run_analysis_indices.py`,
+  adapted to this project). Imports only the local `_analysist/scripts/` deps
+  (`process_database.py`, `plot_structure_landscape.py`, `calculate_relative_energy.py`).
+  Scoped to the Fe/MgO heavy-run indices **71** and **72** via `FOLDER_MAP`
+  (`71_novel_runEWindow/output`, `72_novel_AutoGlob_1eVperAtomAboveGlob/output`; each
+  holds `seed_3/1_db/db_3.db`). The flat benchmark dirs 73/74 are intentionally
+  excluded (no `seed_*` layout). Stages: ① `process_database` (DB→traj/xsf/csv),
+  ② PCA landscape, ③ Boltzmann probability. Outputs → `0_analy/idx_<N>/`.
 
 ## 3. Entry points & commands
 
@@ -89,6 +104,11 @@ pjsub j_benchmark.sh           # on HPC
 # Sweep benchmark (kappa x novelty_weight) — needs a RAM-rich node / HPC
 $PY main_benchmark_sweep.py      # local
 pjsub j_benchmark_sweep.sh       # on HPC
+
+# Analyse Fe/MgO heavy-run results (idx 71, 72) — self-contained in _analysist
+cd _analysist
+$PY run_analysis_indices.py --idx 71          # single index
+$PY run_analysis_indices.py                    # all (71, 72)
 ```
 
 ### `main.py` CLI

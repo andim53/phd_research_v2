@@ -868,3 +868,75 @@ note (AGENTS.md), clarifying each step.
 
 ### Time
 ~20 min.
+
+---
+
+## 2026-08-25 — Session: Analysis runner for Fe/MgO heavy runs (idx 71, 72) in _analysist
+
+### Goal (user request)
+User added results (71-74) to `_analysist/1_result/` and asked Calyx to make an
+analysis code like the sibling `/home/think/Desktop/research/_analysist/run_analysis_indices.py`,
+copy the necessary py dependencies into `_analysist/` for easy calling, and clarify
+each step.
+
+### Clarify (confirmed)
+- **Scope:** support indices 71 & 72 only (the Fe/MgO heavy runs), which match the
+  reference `seed_*/1_db` layout. Benchmarks 73/74 use a flat `benchmark_results/`
+  layout (no `seed_*` dirs) that `process_database` cannot consume; excluded.
+- **Deps:** copy only the 3 needed modules into `_analysist/scripts/` —
+  `process_database.py`, `plot_structure_landscape.py`, `calculate_relative_energy.py`.
+- **Name:** keep `run_analysis_indices.py` (mirror the sibling).
+- **DB root:** map idx 71 -> `71_novel_runEWindow/output`, idx 72 ->
+  `72_novel_AutoGlob_1eVperAtomAboveGlob/output` (each holds `seed_3/1_db/db_3.db`).
+- **Git:** add a project `.gitignore` (ignore `_analysist/0_analy/`,
+  `_analysist/1_result/`, `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) and commit only
+  code+docs. Update README/README.AI/TUTORIAL. Commit now.
+
+### Actions taken
+1. Copied the 3 dependency modules into `_analysist/scripts/`.
+2. Wrote `_analysist/run_analysis_indices.py` — mirrors the sibling runner (3-stage
+   pipeline: ① `process_database`, ② PCA landscape, ③ Boltzmann probability), scoped
+   to GROUPS `novel_lcb_femgo: [71, 72]` with `FOLDER_MAP` pointing each index at its
+   `output/` DB root. Added a `--idx` single-index shorthand. Corrected the docstring
+   env/paths to this machine (`/home/think/miniconda3/envs/agox_v2`).
+3. Verified end-to-end under `agox_v2`: ran idx 71 and idx 72 — all 3 stages
+   completed, producing `0_analy/idx_{71,72}/` (`traj_<N>.traj`, `data_<N>.csv`,
+   `progression_*.png`, `2_im/conf_space.png`,
+   `2_im/binding_probability_vs_temperature.png`). `py_compile` clean.
+4. Found the project is part of the **parent** repo (`/home/think/Desktop/research`),
+   whose `.gitignore` `_analysist/0_analy/` rules target the parent's `_analysist`,
+   not this nested one — so nested `_analysist/0_analy` + `1_result` (and `.traj`)
+   were leaking as untracked. Added project-level `.gitignore` to exclude them +
+   regenerable types. Verified only `run_analysis_indices.py` + `scripts/*` remain
+   trackable under `_analysist`.
+5. Updated docs: README.md (`_analysist` section + run instructions), README.AI.md
+   (file-layout tree + §2a note + entry-point command), TUTORIAL.md (new Step 4c with
+   the git-note about the nested `.gitignore`).
+
+### Results
+- `_analysist/run_analysis_indices.py` + `_analysist/scripts/{process_database,
+  plot_structure_landscape, calculate_relative_energy}.py` created and verified (idx
+  71, 72 both ran clean, real outputs produced).
+- Git: analysis code is the only trackable content under `_analysist`; outputs and
+  results are gitignored via the new project `.gitignore`.
+
+### Decisions & reasoning
+- Scoped to 71/72 because the reference pipeline's stage-1 (`process_database`) needs
+  a `seed_*/1_db` layout; the flat benchmark dirs 73/74 don't fit and already have
+  their own analysis. (Earlier clarify also confirmed 71/72 only.)
+- Kept the runner self-contained (local `scripts/` deps only) so it is callable in
+  place without touching the parent `_analysist`.
+- Added `--idx` shorthand for convenience; kept all sibling CLI flags (`--e-max`,
+  `--normalize-density`, `--skip-probability`, `--indices`).
+- Project `.gitignore` added because the parent's `_analysist` rules don't reach this
+  nested dir; only code+docs are tracked per the workflow.
+
+### Open items / next steps
+- Interpret the produced landscape/probability figures for runs 71 (energy-window)
+  vs 72 (auto-global-min) — e.g. how the energy-window mode shapes the explored basin
+  distribution vs the auto-global-min mode.
+- (Optional) extend the runner to the benchmark dirs (73/74) if a flat-DB stage-1
+  aggregator is wanted later.
+
+### Time
+~25 min.

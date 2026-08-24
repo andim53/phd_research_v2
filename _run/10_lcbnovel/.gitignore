@@ -1,0 +1,16 @@
+# === _analysist: results & analysis outputs (regenerable, excluded) ===
+# Raw results and intermediate analysis are regenerable artifacts — keep only
+# code + docs tracked. The analysis runner + its scripts/ deps ARE tracked.
+_analysist/0_analy/
+_analysist/1_result/
+
+# === Regenerable artifact types (defensive; parent repo also ignores these) ===
+*.db
+*.png
+*.traj
+*.xsf
+*.csv
+*.out
+*.log
+__pycache__/
+*.pyc
