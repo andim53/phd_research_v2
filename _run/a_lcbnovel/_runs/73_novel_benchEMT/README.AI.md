@@ -5,7 +5,7 @@ human-facing `README.md`.
 
 ## 1. Project identity
 
-- **Dir:** `/home/think/Desktop/research/_run/10_lcbnovel/_runs/73_novel_benchEMT/`
+- **Dir:** `/home/think/Desktop/research/_run/a_lcbnovel/_runs/73_novel_benchEMT/`
 - **Purpose:** Extended grid EMT benchmark comparing **Novelty-LCB** (auto
   global-minimum window) vs **Regular LCB** on Ni8/Au(4,4,2) fcc100, over a
   **10-seed × 5-iteration × 4-novelty-weight** grid = **250 AGOX runs**.
@@ -30,14 +30,14 @@ human-facing `README.md`.
 ├── LOG.md                      # Curated, append-only action log
 ├── TUTORIAL.md                 # Reproduce guide with pitfalls
 ├── DISCUSSION.md               # Results discussion (after the run)
-└── AGENTS.md                   # Governing rules (parent 10_lcbnovel)
+└── AGENTS.md                   # Governing rules (parent a_lcbnovel)
 ```
 
 ## 3. Entry points & commands
 
 ```bash
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
-cd /home/think/Desktop/research/_run/10_lcbnovel/_runs/73_novel_benchEMT
+cd /home/think/Desktop/research/_run/a_lcbnovel/_runs/73_novel_benchEMT
 
 # Compile-check
 $PY -m py_compile main_benchmark.py
@@ -130,7 +130,7 @@ All outputs are regenerable artifacts and gitignored.
 
 ## 7. Provenance / references
 
-- Parent project: `_run/10_lcbnovel/` (Novelty-LCB Fe/MgO, AGENTS.md governing rules).
+- Parent project: `_run/a_lcbnovel/` (Novelty-LCB Fe/MgO, AGENTS.md governing rules).
 - Earlier single-config benchmark: `_analysist/1_result/73_novel_benchEMT/`
   (5 seeds, 30 iterations, λ=1.5 — the run this grid extends).
 - Related sweep: `_analysist/1_result/74_novel_benchSweep/`

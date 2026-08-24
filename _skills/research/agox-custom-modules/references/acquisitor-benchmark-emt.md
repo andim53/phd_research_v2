@@ -3,7 +3,7 @@
 Reusable recipe for comparing a custom acquisitor (e.g. `NoveltyLCBAcquisitor`) against
 a stock AGOX one (`LowerConfidenceBoundAcquisitor`) on a **cheap EMT surrogate system**,
 so you can iterate on acquisition behaviour without burning DFT. Grounded in
-`_run/10_lcbnovel/main_benchmark.py` (Ni8 / Au(4,4,2) fcc100, EMT) and its ancestor
+`_run/a_lcbnovel/main_benchmark.py` (Ni8 / Au(4,4,2) fcc100, EMT) and its ancestor
 `_run/6_lcbnovel_benchmark/run.py`.
 
 ## When to use

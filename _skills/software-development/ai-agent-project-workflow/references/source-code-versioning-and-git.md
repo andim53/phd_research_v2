@@ -1,6 +1,6 @@
 # Source-code versioning + git safety (research projects)
 
-Two durable conventions/gotchas learned maintaining project 10_lcbnovel. Both apply
+Two durable conventions/gotchas learned maintaining project a_lcbnovel. Both apply
 to the user's `_run/<NN>_<name>` research projects.
 
 ## 1. Source-code versioning convention (user-established standing rule)
@@ -43,7 +43,7 @@ The `_run/<NN>_<name>` project is usually **not its own git repo** — it lives 
   `git add -A`.
 - The **parent `.gitignore`'s path rules do not reach a nested project dir**. E.g. the
   parent ignores `_analysist/0_analy/` at its own level, but a nested
-  `_run/10_lcbnovel/_analysist/0_analy/` still shows as untracked. Add a **project-level
+  `_run/a_lcbnovel/_analysist/0_analy/` still shows as untracked. Add a **project-level
   `.gitignore`** (with its own `_analysist/0_analy/`, `_analysist/1_result/`,
   `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) so regenerable outputs stay out of the commit.
 - **Before committing, verify the staged set** (`git diff --cached --stat`) contains

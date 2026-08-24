@@ -1,7 +1,7 @@
 # AGENTS.md — Governing Rules for AI Agents Working on This Project
 
 This file is the **governing process** for any AI agent working in
-`/home/think/Desktop/research/_run/10_lcbnovel/`. Read it first, every time, before
+`/home/think/Desktop/research/_run/a_lcbnovel/`. Read it first, every time, before
 doing anything. It codifies the AI-Agent Project Workflow that the project owner set
 down. It is complementary to, not a replacement for, `README.AI.md` (the machine
 spec) and `LOG.md` (the action log).
@@ -84,66 +84,6 @@ In this project that file is `TUTORIAL.md`.
    the git history stay in step.
 7. **Code + docs tracked; regenerable data excluded.** Follow the repo's `.gitignore`
    conventions (output dirs, `*.db`, `*.xsf`, `*.png`, logs are regenerable artifacts).
-
-## 3a. Run directories: `_runs/` and `_analysist/`
-
-Heavy runs and their analysis live in two sibling directories, separate from the
-project-root code/docs.
-
-### `_runs/` — self-contained run directories
-
-Each HPC run (or benchmark) gets its **own self-contained directory** under
-`_runs/`, so a job can be launched and, later, understood in isolation. It carries
-**everything** that run needs — job script, main script(s), and copies of `scripts/`
-and `novelty_lcb/` — and does **not** depend on files in the project root.
-
-```
-_runs/
-├── <NN>_<descriptor>/            # e.g. 1_mgofe_Seed3_Iter300
-│   ├── j_*.sh                    #   PJM batch script (one seed/job; edit SEED=, N_ITERATIONS=)
-│   ├── main*.py                  #   entry point(s) for that run
-│   ├── scripts/                  #   copied slab/generator builders (self-contained)
-│   ├── novelty_lcb/              #   copied package (self-contained)
-│   └── (output/ seed_<N>/ db files, generated on HPC)
-└── <NN>_<descriptor>/            # full benchmark projects may add the doc trio
-    ├── README.md / README.AI.md / LOG.md / TUTORIAL.md / AGENTS.md
-    ├── j_*.sh / main*.py
-    ├── scripts/ / novelty_lcb/
-    └── benchmark_results/ (regenerable)
-```
-
-Naming convention: **`<NN>_<descriptor>`** — a running two-digit index plus a
-short descriptive suffix that captures the run's identity (e.g.
-`4_mgofe_Seed3_Iter900`, `73_novel_benchEMT`). This keeps runs ordered and
-unambiguous.
-
-Documentation policy:
-- **HPC per-seed Fe/MgO runs** (one seed per job, e.g. `1_mgofe_Seed3_Iter300`)
-  are **bare code dirs**: `j_*.sh` + `main.py` + `scripts/` + `novelty_lcb/` and
-  their regenerable outputs. They do **not** get a per-run README/LOG/TUTORIAL.
-- **Standalone benchmark projects** (e.g. `73_novel_benchEMT`) are full projects
-  and carry the **complete doc trio** (README + README.AI + LOG + TUTORIAL, and an
-  AGENTS.md if the owner asks) inside their own dir.
-
-Everything under `_runs/` is **tracked in git** (code + docs), subject to the same
-regenerable-data exclusions.
-
-### `_analysist/` — analysed results
-
-Analysed/intermediate results live in `_analysist/`, kept separate from both the
-project root and `_runs/` so raw runs are never mixed with their analysis.
-
-Expected layout (matching the repo-root `.gitignore`):
-```
-_analysist/
-├── 0_analy/               # intermediate analysis / staging
-├── 1_result/              # final analysed results
-├── main_analyst.ipynb     # analysis notebook (gitignored if large)
-└── main_test.ipynb        # scratch/testing notebook (gitignored)
-```
-
-Analysis outputs are regenerable artifacts and are gitignored; only the
-analysis code/notebooks the owner chooses to track are tracked.
 8. **Do not modify another profile's skills/plugins/cron/memories** unless the owner
    explicitly directs it.
 

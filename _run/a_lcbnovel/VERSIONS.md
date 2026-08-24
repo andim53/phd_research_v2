@@ -1,4 +1,4 @@
-# VERSIONS — Project 10_lcbnovel source code version manifest
+# VERSIONS — Project a_lcbnovel source code version manifest
 
 Every in-scope source file carries a module-level `__version__ = "X.Y.Z"` (semver).
 This table is the single-source manifest of current versions. **Update this table

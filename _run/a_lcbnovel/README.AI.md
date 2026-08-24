@@ -1,11 +1,11 @@
-# README for AI Agents — Project 10 (`10_lcbnovel`)
+# README for AI Agents — Project 10 (`a_lcbnovel`)
 
 Machine-readable spec for agents working on this project. This complements the
 human-facing `README.md`.
 
 ## 1. Project identity
 
-- **Dir:** `/home/think/Desktop/research/_run/10_lcbnovel/`
+- **Dir:** `/home/think/Desktop/research/_run/a_lcbnovel/`
 - **Purpose:** Faithful repair + re-host of the Fe/MgO Novelty-LCB AGOX search from
   `_run/7_lcbnovel_mgofe`, under the AI-Agent Project Workflow.
 - **Physics:** 25 mobile Fe atoms deposited on a fixed MgO(001) substrate
@@ -16,7 +16,7 @@ human-facing `README.md`.
 ## 2. File layout
 
 ```
-10_lcbnovel/
+a_lcbnovel/
 ├── main.py                     # Entry point: per-seed AGOX run (CLI)
 ├── main_benchmark.py           # EMT benchmark: regular LCB vs Novelty-LCB (auto window)
 ├── main_benchmark_sweep.py     # Sweep: kappa x novelty_weight impact on Novelty-LCB
@@ -95,7 +95,7 @@ Every in-scope source file carries a module-level `__version__ = "X.Y.Z"` (semve
 
 ```bash
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
-cd /home/think/Desktop/research/_run/10_lcbnovel
+cd /home/think/Desktop/research/_run/a_lcbnovel
 
 # Validate serialization fix (cheap, no GPAW) — MUST pass before a real run
 $PY smoke_test_serialization.py

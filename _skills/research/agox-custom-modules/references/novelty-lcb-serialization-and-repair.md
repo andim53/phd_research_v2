@@ -1,6 +1,6 @@
 # Novelty-LCB serialization fix + faithful-repair workflow (session 2026-08-22)
 
-Condensed from project `_run/10_lcbnovel` (faithful repair of `_run/7_lcbnovel_mgofe`).
+Condensed from project `_run/a_lcbnovel` (faithful repair of `_run/7_lcbnovel_mgofe`).
 Complements the main example in `agox-custom-acquisitor-example.md`; reuse the
 validation probe `scripts/validate_acquisitor_serialization.py` in this skill.
 

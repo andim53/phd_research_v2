@@ -4,7 +4,7 @@ Unified AGOX Analysis Pipeline for selected simulation indices.
 
 Mirrors the sibling analysis runner at
 /home/think/Desktop/research/_analysist/run_analysis_indices.py, adapted to
-project 10_lcbnovel. This copy is self-contained: it imports only the local
+project a_lcbnovel. This copy is self-contained: it imports only the local
 scripts/ dependencies (process_database.py, plot_structure_landscape.py,
 calculate_relative_energy.py) copied next to it.
 
@@ -28,7 +28,7 @@ All arguments from the individual run_stage{1,2,3}.py scripts are supported:
 Group:
   novel_lcb_femgo : 71, 72
 
-Run from /home/think/Desktop/research/_run/10_lcbnovel/_analysist with the
+Run from /home/think/Desktop/research/_run/a_lcbnovel/_analysist with the
 agox_v2 conda env:
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --indices novel_lcb_femgo --e-max 0.8

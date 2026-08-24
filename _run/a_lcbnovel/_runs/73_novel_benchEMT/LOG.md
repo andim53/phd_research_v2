@@ -38,7 +38,7 @@ launched on the HPC cluster (PJM, 64-core), NOT this session. Dual logging reque
 1. Copied `novelty_lcb/` package (acquisitor.py, utils.py, common.py,
    benchmark_helpers.py, __init__.py) and `scripts/` builders
    (build_mgo_stack, build_fe_stack, build_heteroStruct, hetero_struct_randomize,
-   plot_structure) from `7_lcbnovel_mgofe/` into `10_lcbnovel/`.
+   plot_structure) from `7_lcbnovel_mgofe/` into `a_lcbnovel/`.
    → `REUSE the proven package` (user decision), lowest risk.
 2. Wrote `main.py` — faithful to run 7's physics (A_MGO, A_FE, dist_z, supercell (5,5,1),
    kpts (1,1,1), 1 MgO layer + 1 Fe layer, kappa=2, N_iterations=100) with:
@@ -120,19 +120,19 @@ AI, LOG, TUTORIAL); it **references** (does not replace) `README.AI.md` and `LOG
 
 ### Goal (user-confirmed via clarify)
 1. Add a git-commit rule to `AGENTS.md`: commit after every change.
-2. Make the initial git commit for the whole `10_lcbnovel` scaffold.
+2. Make the initial git commit for the whole `a_lcbnovel` scaffold.
 
 Confirmed: the rule reads "commit after every change, but confirm with the owner first
 when it's a milestone or has side effects"; the initial commit is ONE commit for the
 whole scaffold (code + docs + AGENTS.md), message
-`10_lcbnovel: Novelty-LCB Fe/MgO scaffold (repair of run 7) + governing AGENTS.md`.
+`a_lcbnovel: Novelty-LCB Fe/MgO scaffold (repair of run 7) + governing AGENTS.md`.
 
 ### Actions taken
 - Edited `AGENTS.md`: replaced the old "Do not commit without asking" rule with a
   new "Commit after every change" rule (confirm with owner for milestones/side
   effects), and renumbered the following rules.
 - (This file) appended this Session 1c entry.
-- Staged and committed the whole `10_lcbnovel/` directory as one commit.
+- Staged and committed the whole `a_lcbnovel/` directory as one commit.
 
 ### Results
 - `AGENTS.md` now mandates committing every change.
@@ -630,7 +630,7 @@ global-minimum window) on the Ni8 / Au(4,4,2) fcc100 surface using EMT.
 Prepare an HPC batch script for `main_benchmark.py`.
 
 ### Confirmed design (via clarify)
-- **Name:** `job.sh` at 10_lcbnovel root, same PJM style as `j_novel.sh`.
+- **Name:** `job.sh` at a_lcbnovel root, same PJM style as `j_novel.sh`.
 - **Env:** `gpaw_env` (user's choice). NOTE: benchmark uses EMT+AGOX (no GPAW); the
   script documents the assumption that the HPC's gpaw_env has AGOX/ASE/EMT. On this
   machine there is no `gpaw_env` (only agox, agox_v2, flapw-build, pymat_xrd), so the

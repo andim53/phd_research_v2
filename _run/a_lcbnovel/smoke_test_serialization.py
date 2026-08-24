@@ -1,5 +1,5 @@
 """
-Cheap local serialization smoke test for project 10_lcbnovel.
+Cheap local serialization smoke test for project a_lcbnovel.
 
 Verifies the run-7 crash is fixed at the code level WITHOUT any heavy compute:
 

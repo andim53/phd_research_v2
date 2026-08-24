@@ -31,7 +31,7 @@ large compute job.
 ## Step 2 — Compile-check
 
 ```bash
-cd /home/think/Desktop/research/_run/10_lcbnovel/_runs/73_novel_benchEMT
+cd /home/think/Desktop/research/_run/a_lcbnovel/_runs/73_novel_benchEMT
 /home/think/miniconda3/envs/agox_v2/bin/python -m py_compile main_benchmark.py
 ```
 

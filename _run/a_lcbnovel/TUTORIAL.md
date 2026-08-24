@@ -23,7 +23,7 @@ the failed run and never re-tested. So the task is to (a) copy the fixed package
 
 ```bash
 SRC=/home/think/Desktop/research/_run/7_lcbnovel_mgofe
-DST=/home/think/Desktop/research/_run/10_lcbnovel
+DST=/home/think/Desktop/research/_run/a_lcbnovel
 mkdir -p $DST/novelty_lcb $DST/scripts
 cp $SRC/novelty_lcb/*.py $DST/novelty_lcb/
 cp $SRC/scripts/{build_mgo_stack,build_fe_stack,build_heteroStruct,hetero_struct_randomize,plot_structure}.py $DST/scripts/
@@ -32,7 +32,7 @@ cp $SRC/scripts/{build_mgo_stack,build_fe_stack,build_heteroStruct,hetero_struct
 ## Step 2 — Compile-check
 
 ```bash
-cd /home/think/Desktop/research/_run/10_lcbnovel
+cd /home/think/Desktop/research/_run/a_lcbnovel
 /home/think/miniconda3/envs/agox_v2/bin/python -m py_compile main.py novelty_lcb/*.py scripts/*.py
 ```
 
@@ -65,7 +65,7 @@ Each heavy run lives in its own **self-contained directory** under `_runs/`, nam
 passing `-x SEED=N`). The job activates `gpaw_env` (NOT `agox_v2`).
 
 ```bash
-cd /home/think/Desktop/research/_run/10_lcbnovel/_runs/<NN>_<descriptor>   # e.g. 1_mgofe_Seed3_Iter300
+cd /home/think/Desktop/research/_run/a_lcbnovel/_runs/<NN>_<descriptor>   # e.g. 1_mgofe_Seed3_Iter300
 # edit SEED= / N_ITERATIONS= in j_*.sh if needed
 pjsub j_*.sh            # e.g. j_novEperAtom.sh — runs the seed set in the script
 # monitor: pjstat   |   cancel: pjdel
@@ -98,7 +98,7 @@ it). It runs the 3-stage pipeline on the Fe/MgO heavy runs **71** and **72**:
 ② PCA landscape, ③ Boltzmann probability vs temperature.
 
 ```bash
-cd /home/think/Desktop/research/_run/10_lcbnovel/_analysist
+cd /home/think/Desktop/research/_run/a_lcbnovel/_analysist
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py   # all (71, 72)
 # optional: --e-max 0.8 --normalize-density --skip-probability

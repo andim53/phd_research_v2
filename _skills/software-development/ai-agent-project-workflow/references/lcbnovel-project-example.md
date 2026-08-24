@@ -54,7 +54,7 @@ Rules of Operation that were validated in this session and belong in every AGENT
 ## Git history pattern
 
 - One initial commit for the whole scaffold (all code + docs + AGENTS.md), descriptive
-  message: `10_lcbnovel: Novelty-LCB Fe/MgO scaffold (repair of run 7) + governing AGENTS.md`.
+  message: `a_lcbnovel: Novelty-LCB Fe/MgO scaffold (repair of run 7) + governing AGENTS.md`.
 - Follow-up commits per change batch (e.g. env/pjsub correction): 5 files, one commit.
 - Confirm with owner on milestone-size commits; commit promptly otherwise.
 

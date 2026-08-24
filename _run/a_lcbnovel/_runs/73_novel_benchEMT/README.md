@@ -66,7 +66,7 @@ This grid benchmark answers those questions with 250 AGOX runs.
 
 ```bash
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
-cd /home/think/Desktop/research/_run/10_lcbnovel/_runs/73_novel_benchEMT
+cd /home/think/Desktop/research/_run/a_lcbnovel/_runs/73_novel_benchEMT
 
 # Local (needs a RAM-rich node — the AGOX ParallelCollector/RelaxPostprocess use a Ray
 # pool that OOMs on a low-RAM machine with Ray ActorUnavailableError)

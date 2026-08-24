@@ -1,7 +1,7 @@
 """
 AGOX Workflow: Novelty-LCB search of Fe deposition on MgO(001).
 
-Faithful repair of _run/7_lcbnovel_mgofe/main.py for project 10_lcbnovel.
+Faithful repair of _run/7_lcbnovel_mgofe/main.py for project a_lcbnovel.
 
 - Constructs a matched Fe/MgO hetero-interface (Fe slab deposited on an MgO
   (001) substrate, MgO substrate atoms FIXED, only Fe atoms mobile).

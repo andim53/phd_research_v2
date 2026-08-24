@@ -335,7 +335,7 @@ the `_analysist/scripts/` deps copied next to it
 so it is callable in place:
 
 ```bash
-cd /home/think/Desktop/research/_run/10_lcbnovel/_analysist
+cd /home/think/Desktop/research/_run/a_lcbnovel/_analysist
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py   # all indices (71, 72)
 ```

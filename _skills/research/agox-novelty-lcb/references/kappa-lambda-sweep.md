@@ -5,7 +5,7 @@ Novelty-LCB tuning knobs over the same EMT surface as the baseline benchmark, an
 reusable "import + override module config" pattern for reusing a sibling benchmark's
 helpers without duplicating them.
 
-Reference implementation (in `/home/think/Desktop/research/_run/10_lcbnovel/`):
+Reference implementation (in `/home/think/Desktop/research/_run/a_lcbnovel/`):
 - `main_benchmark_sweep.py` — the sweep driver.
 - `j_benchmark_sweep.sh` — PJM batch script (gpaw_env, 64-core, elapse 02:00:00).
 - Reuses `main_benchmark.py` (`build_system`, `build_stack`, `run_single`,
