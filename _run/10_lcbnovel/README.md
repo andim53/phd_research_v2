@@ -344,6 +344,13 @@ Outputs go to `_analysist/0_analy/idx_<N>/` (trajectories, xsf, csv, landscape +
 probability figures). `0_analy/` and `1_result/` are gitignored (regenerable); the
 runner + `scripts/` are tracked.
 
+**Source-code versioning.** Every in-scope source file (root `main*.py`,
+`novelty_lcb/`, `scripts/`, test/smoke/energy_stats, `_analysist/` runner+scripts)
+carries a module-level `__version__ = "X.Y.Z"` (semver). `VERSIONS.md` is the
+manifest of current versions. Any edit to a file bumps its patch version (minor for
+API/behavior changes), updates `VERSIONS.md`, and is recorded in `LOG.md`. See
+`README.AI.md` §2b.
+
 ## Key decisions & tradeoffs
 
 | Decision | Choice | Why |

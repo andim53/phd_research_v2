@@ -24,6 +24,10 @@ Run:
     /home/think/miniconda3/envs/agox_v2/bin/python main_benchmark.py
 """
 
+
+
+__version__ = "1.0.0"
+
 import matplotlib
 
 matplotlib.use("Agg")

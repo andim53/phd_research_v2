@@ -11,6 +11,10 @@ Run:
 Output (as of 2026-08-22): 1297 structures, Mg25O25Fe25 (75 atoms),
 E in [-436.91, -386.29] eV, band centre = -411.6 eV, p1..p99 = [-436.8, -391.6].
 """
+
+
+__version__ = "1.0.0"
+
 import glob
 import numpy as np
 from collections import Counter

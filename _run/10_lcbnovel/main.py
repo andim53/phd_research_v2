@@ -22,6 +22,10 @@ Usage:
     ... --seed-start 3 --seed-end 105
 """
 
+
+
+__version__ = "1.0.0"
+
 import argparse
 import os
 

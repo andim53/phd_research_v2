@@ -234,6 +234,11 @@ Once real DBs exist, the established downstream pipeline applies:
    `scripts/`, and `novelty_lcb/` under `_runs/<NN>_<descriptor>/`; do not rely on
    the project root when launching from HPC. If a run's code diverges, copy the
    needed files into the run dir rather than importing from the parent.
+9. **Bump `__version__` on every edit** — every in-scope source file carries a
+   module-level `__version__ = "X.Y.Z"` (semver; baseline 1.0.0). When you edit a
+   file, bump its patch version (minor for API/behavior changes), update the
+   `VERSIONS.md` manifest, and record the old→new version in `LOG.md`. Keep the
+   `__version__` line after any `from __future__` import (else `SyntaxError`).
 
 ## Verification checklist
 
@@ -243,3 +248,4 @@ Once real DBs exist, the established downstream pipeline applies:
 - [ ] (HPC) one seed completes without a Ray serialization error
 - [ ] Energy window calibrated before interpreting Novelty-LCB results
 - [ ] Run dirs follow `<NN>_<descriptor>` naming with no spaces; `_runs/` is git-tracked, `_analysist/` outputs are gitignored
+- [ ] Every in-scope source file has a module-level `__version__`; `VERSIONS.md` is current and matches; `LOG.md` records the old→new version

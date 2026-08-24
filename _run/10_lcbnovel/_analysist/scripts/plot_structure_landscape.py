@@ -1,3 +1,7 @@
+
+
+__version__ = "1.0.0"
+
 from typing import List, Optional
 import matplotlib.colors as mcolors
 import matplotlib.patheffects as patheffects

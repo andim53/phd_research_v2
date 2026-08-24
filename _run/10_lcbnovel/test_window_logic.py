@@ -5,6 +5,10 @@ heavy AGOX/ParallelRelax/Ray machinery (which OOMs on this node). Builds the
 acquisitor via object.__new__ + attribute assignment to bypass the strict
 DatabaseBaseClass type check / observer attach in __init__.
 """
+
+
+__version__ = "1.0.0"
+
 import os, sys, numpy as np
 _HERE = os.path.abspath(os.path.dirname(__file__))
 if _HERE not in sys.path:

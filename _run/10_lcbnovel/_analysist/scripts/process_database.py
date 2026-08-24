@@ -1,3 +1,7 @@
+
+
+__version__ = "1.0.0"
+
 from typing import Optional, List, Dict
 from pathlib import Path
 import pandas as pd

@@ -34,6 +34,10 @@ agox_v2 conda env:
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --indices novel_lcb_femgo --e-max 0.8
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71 --normalize-density
 """
+
+
+__version__ = "1.0.0"
+
 import os
 import sys
 import argparse
@@ -78,8 +82,10 @@ ALL_INDICES = [i for g in GROUPS.values() for i in g]
 # (the actual .db files sit at <root>/seed_<N>/1_db/db_<N>.db).
 # ---------------------------------------------------------------------------
 FOLDER_MAP = {
+    19: '19_kappa2_iter100_trajNoSave_repSeedDat0_5x5',
     71: '71_novel_runEWindow/output',
     72: '72_novel_AutoGlob_1eVperAtomAboveGlob/output',
+
 }
 
 # ---------------------------------------------------------------------------

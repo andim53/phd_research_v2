@@ -39,6 +39,7 @@ human-facing `README.md`.
 ├── LOG.md                      # Curated, append-only action log
 ├── transcript.log              # Raw tool-call / run-output transcript
 ├── TUTORIAL.md                 # Reproduce + repair guide with pitfalls
+├── VERSIONS.md                 # Version manifest: every source file's __version__
 ├── _runs/                      # Self-contained run dirs (HPC per-seed runs + benchmarks)
 │   ├── 1_mgofe_Seed3_Iter300/  #   bare per-seed run (j_*.sh + main.py + scripts/ + novelty_lcb/)
 │   ├── 2_mgofe_Seed3_Iter500/  #   bare per-seed run
@@ -75,6 +76,20 @@ human-facing `README.md`.
   holds `seed_3/1_db/db_3.db`). The flat benchmark dirs 73/74 are intentionally
   excluded (no `seed_*` layout). Stages: ① `process_database` (DB→traj/xsf/csv),
   ② PCA landscape, ③ Boltzmann probability. Outputs → `0_analy/idx_<N>/`.
+
+### 2b. Source-code versioning
+
+Every in-scope source file carries a module-level `__version__ = "X.Y.Z"` (semver).
+`VERSIONS.md` is the single-source manifest of current versions.
+
+- **Bump rule:** patch (`1.0.0 → 1.0.1`) on every code edit; minor (`1.0.1 → 1.1.0`)
+  on API/behavior changes.
+- **When you edit a file, bump its `__version__`, update `VERSIONS.md`, and record
+  the old→new version in `LOG.md`.** In-scope files are the root `main*.py`,
+  `novelty_lcb/`, `scripts/`, test/smoke/energy_stats, and `_analysist/`
+  runner+scripts. Duplicated snapshots under `_runs/` and `dataset/` are **not**
+  individually versioned (see `VERSIONS.md`).
+- `__version__` sits after the shebang/docstring and any `from __future__` import.
 
 ## 3. Entry points & commands
 

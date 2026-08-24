@@ -1,3 +1,7 @@
+
+
+__version__ = "1.0.0"
+
 from typing import Iterable, List, Tuple
 from ase.atoms import Atoms
 

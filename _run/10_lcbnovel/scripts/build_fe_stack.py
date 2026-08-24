@@ -1,3 +1,7 @@
+
+
+__version__ = "1.0.0"
+
 from ase import Atoms
 from ase.io import write
 import numpy as np

@@ -27,6 +27,10 @@ Run:
     /home/think/miniconda3/envs/agox_v2/bin/python smoke_test_serialization.py
 """
 
+
+
+__version__ = "1.0.0"
+
 import os
 import sys
 import pickle

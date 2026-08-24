@@ -940,3 +940,72 @@ each step.
 
 ### Time
 ~25 min.
+
+---
+
+## 2026-08-25 — Session: Add source-code versioning (__version__) across the project
+
+### Goal (user request)
+"Edit the project 10_lcbnovel. For all the code, include a version param. Any
+changes into the code will also update the code version. The LOG md file will also
+track the codes version for every changes. Clarify for every changes."
+
+### Clarify (confirmed)
+- **Scope:** version the **source code only** — root `main*.py`, `novelty_lcb/`,
+  `scripts/`, test/smoke/energy_stats, and `_analysist/` runner+scripts (20 files).
+  Duplicated snapshots under `_runs/1|2|3|73` and `dataset/` are **not** individually
+  versioned.
+- **Scheme:** per-file module-level `__version__ = "X.Y.Z"` (semver), baseline 1.0.0.
+- **Bump:** patch on every edit, minor for API/behavior changes; `LOG.md` records each
+  file's old→new version.
+- **Manifest:** add a project-level `VERSIONS.md` table listing every file's current
+  version.
+- **Initial pass:** set all in-scope files to `1.0.0` now and log it.
+
+### Actions taken
+1. Surveyed tracked `.py` files (~90) and confirmed the in-scope source set (20 files).
+2. Added a module-level `__version__ = "1.0.0"` to each of the 20 in-scope files,
+   placed after the shebang/module docstring and **after any `from __future__`
+   import** (4 files: `novelty_lcb/{acquisitor,benchmark_helpers,common,utils}.py`).
+   Note: `scripts/build_*_stack.py`, `hetero_struct_randomize.py`, `plot_structure.py`
+   and `_analysist/scripts/calculate_relative_energy.py` already had a
+   **function-local** `__version__` (0.0.1 / 0.2) in HEAD — left those as-is and added
+   a proper module-level `1.0.0`.
+3. Verified: all 20 compile (`py_compile` OK); `smoke_test_serialization.py` and
+   `test_window_logic.py` still PASS (no runtime regression).
+4. Created `VERSIONS.md` manifest (single-source table of all 20 files → 1.0.0, plus
+   versioning rules and the out-of-scope note).
+5. Documented the convention: README.md (versioning note), README.AI.md (§2b +
+   VERSIONS.md in the file-layout tree), TUTORIAL.md (pitfall 9 + verification item).
+
+### Results — Code versions (initial baseline, all 1.0.0)
+The following files now carry `__version__ = "1.0.0"`:
+`main.py`, `main_benchmark.py`, `main_benchmark_sweep.py`, `energy_stats.py`,
+`smoke_test_serialization.py`, `test_window_logic.py`,
+`novelty_lcb/__init__.py`, `novelty_lcb/acquisitor.py`,
+`novelty_lcb/benchmark_helpers.py`, `novelty_lcb/common.py`, `novelty_lcb/utils.py`,
+`scripts/build_fe_stack.py`, `scripts/build_heteroStruct.py`,
+`scripts/build_mgo_stack.py`, `scripts/hetero_struct_randomize.py`,
+`scripts/plot_structure.py`, `_analysist/run_analysis_indices.py`,
+`_analysist/scripts/calculate_relative_energy.py`,
+`_analysist/scripts/plot_structure_landscape.py`,
+`_analysist/scripts/process_database.py`.
+(Initial baseline — no prior module-level version to diff against.)
+
+### Decisions & reasoning
+- Module-level `__version__` (semver) so each file self-describes its version and can
+  be read/imported programmatically; placed after `from __future__` to keep valid
+  Python.
+- Kept function-local legacy `__version__` markers untouched (they are internal to a
+  function, not the module version).
+- Scope limited to source (not the duplicated `_runs/`/`dataset/` snapshots) per the
+  confirmed decision, to avoid a huge mechanical churn on self-contained copies.
+- `VERSIONS.md` added as the single-source manifest so future edits update one table.
+
+### Open items / next steps
+- (Process) from now on, any code edit bumps the file's `__version__` (patch; minor
+  for API/behavior), updates `VERSIONS.md`, and is recorded in `LOG.md`.
+- (User) launch heavy Fe/MgO searches; run the 73/74 benchmarks on HPC.
+
+### Time
+~30 min.
