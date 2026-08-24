@@ -59,7 +59,7 @@ This grid benchmark answers those questions with 250 AGOX runs.
 | `N_ITERATIONS_LIST` | 100, 200, 300, 400, 500 | Iterations per run |
 | `NOVELTY_WEIGHT_LIST` | 2.0, 3.0, 4.0, 5.0 | λ in `σ + λ·Novelty` |
 | `KAPPA` | 2.0 | LCB / relaxation-surface parameter |
-| `NOVELTY_ENERGY_ABOVE_MIN` | 0.1 eV/atom (per_atom) | Window height above live global min (≈ +4 eV on 40 atoms) |
+| `NOVELTY_ENERGY_ABOVE_MIN` | 1.0 eV/atom (per_atom) | Window height above live global min (≈ +40 eV on 40 atoms) |
 | `DUP_THRESHOLD` | 1.5 | Fingerprint-distance cutoff for "distinct configuration" |
 
 ## How to use it

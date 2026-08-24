@@ -57,7 +57,7 @@ pjsub j_benchmark.sh           # monitor: pjstat  |  cancel: pjdel
 | `N_ITERATIONS_LIST` | 100, 200, 300, 400, 500 | iterations per run |
 | `NOVELTY_WEIGHT_LIST` | 2.0, 3.0, 4.0, 5.0 | λ in `σ + λ·Novelty` |
 | `KAPPA` | 2.0 | LCB / relaxation-surface parameter |
-| `NOVELTY_ENERGY_ABOVE_MIN` | 0.1 eV/atom | auto-window height above live global min |
+| `NOVELTY_ENERGY_ABOVE_MIN` | 1.0 eV/atom | auto-window height above live global min |
 | `NOVELTY_ENERGY_PER_ATOM` | True | interpret energy_above_min in eV/atom |
 | `DUP_THRESHOLD` | 1.5 | distinct-configuration fingerprint cutoff |
 | `SAMPLE_SIZE` | 10 | KMeansSampler sample size |
@@ -117,7 +117,7 @@ All outputs are regenerable artifacts and gitignored.
 2. **`LocalOptimizationEvaluator.__init__() missing 'calculator'`** — kwargs key must
    be `calculator`, not `calc`; `main_benchmark.py` passes it in `evaluator_kwargs`.
 3. **Energy window mode** — auto global-minimum, per-atom: window `(-inf, E_min/N + X]`
-   with `X` = `NOVELTY_ENERGY_ABOVE_MIN` (0.1 eV/atom → ≈ +4 eV on the 40-atom cell).
+   with `X` = `NOVELTY_ENERGY_ABOVE_MIN` (1.0 eV/atom → ≈ +40 eV on the 40-atom cell).
    No manual calibration / regular-LCB-first step.
 4. **Benchmark needs RAM for the Ray pool** — `ParallelCollector` /
    `ParallelRelaxPostprocess` use Ray; on a low-RAM node this fails with

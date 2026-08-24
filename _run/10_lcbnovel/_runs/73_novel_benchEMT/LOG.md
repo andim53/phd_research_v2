@@ -891,3 +891,46 @@ commit all the Run-73 changes (code + docs + LOG) as one commit.
 
 ### Time
 ~5 min.
+
+---
+
+## 2026-08-24 — Run 73: Record owner change — energy_above_min 0.1 → 1.0 eV/atom
+
+### Goal (user request)
+The owner edited `main_benchmark.py` directly and asked to record the change. Diff vs
+the last commit shows a single edit: `NOVELTY_ENERGY_ABOVE_MIN` changed from **0.1** to
+**1.0** eV/atom (auto global-minimum window height). Confirmed via clarify: append a
+LOG.md entry, update the docs that reference 0.1, then commit.
+
+### What the change does
+- The auto-window cap widens from `E_min/N + 0.1` to `E_min/N + 1.0` eV/atom.
+  On the 40-atom Au+Ni cell that is ≈ +4 eV → **≈ +40 eV** above the live global
+  minimum. A far more permissive (much less energy-restrictive) window, letting the
+  novelty/uncertainty terms range over a wider energy band above the ground state.
+- `NOVELTY_ENERGY_PER_ATOM = True` unchanged; KAPPA / grid / 250-run total unchanged.
+
+### Actions taken
+- Confirmed via `git diff` the only tracked change is line 99 (`NOVELTY_ENERGY_ABOVE_MIN
+  = 0.1` → `1.0`).
+- Updated docs that referenced 0.1 eV/atom to 1.0 eV/atom (≈ +40 eV):
+  - `README.md` — config table row (`1.0 eV/atom (per_atom)`, `≈ +40 eV on 40 atoms`).
+  - `README.AI.md` — config table row + pitfall 3 (`1.0 eV/atom → ≈ +40 eV`).
+  - `TUTORIAL.md` — Step 1 window description + Step 3 config list.
+- Appended this LOG.md entry.
+
+### Results
+- Code + three docs now consistent at `NOVELTY_ENERGY_ABOVE_MIN = 1.0` eV/atom.
+- Compile check: `py_compile main_benchmark.py` → **OK** (verified after the owner edit).
+
+### Decisions & reasoning
+- Kept LOG.md historical entries (append-only rule) that mention 0.1 — they record the
+  original single-config run; this new entry records the owner's change.
+- The regenerable `benchmark_results/` JSON still records the old 0.1 value from the
+  earlier run; it is untracked and will be regenerated on the next run.
+
+### Open items / next steps
+- Submit the 250-run benchmark on HPC (`pjsub j_benchmark.sh`); monitor with `pjstat`.
+- After completion, analyse `benchmark_results.json` and update `DISCUSSION.md`.
+
+### Time
+~5 min.

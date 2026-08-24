@@ -21,7 +21,7 @@ sampler, relaxer and evaluator — only the acquisitor differs:
 
 - **Regular LCB**: `μ(x) − κ·σ(x)`, minimized.
 - **Novelty-LCB**: `σ(x) + λ·Novelty(x)`, maximized, within an **auto global-minimum
-  energy window** `E/N ≤ E_min/N + X` (per atom, `X` = 0.1 eV/atom).
+  energy window** `E/N ≤ E_min/N + X` (per atom, `X` = 1.0 eV/atom).
 
 It sweeps a grid of `SEED_LIST` (10 seeds) × `N_ITERATIONS_LIST` (100–500) ×
 `NOVELTY_WEIGHT_LIST` (2.0–5.0). Regular LCB runs once per (iterations × seed);
@@ -45,7 +45,7 @@ The grid is set by top-level constants at the top of `main_benchmark.py`:
 - `SEED_LIST = [41,101,201,301,401,501,601,701,801,901]`
 - `N_ITERATIONS_LIST = [100,200,300,400,500]`
 - `NOVELTY_WEIGHT_LIST = [2.0,3.0,4.0,5.0]`
-- `KAPPA = 2.0`, `NOVELTY_ENERGY_ABOVE_MIN = 0.1` (per_atom), `DUP_THRESHOLD = 1.5`.
+- `KAPPA = 2.0`, `NOVELTY_ENERGY_ABOVE_MIN = 1.0` (per_atom), `DUP_THRESHOLD = 1.5`.
 
 Edit these lists to change the grid. They are read directly by the loop in `main()`.
 

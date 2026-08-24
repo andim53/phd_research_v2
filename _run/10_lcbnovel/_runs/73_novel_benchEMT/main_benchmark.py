@@ -96,7 +96,7 @@ KAPPA = 2.0
 # --- Novelty-LCB (auto global-minimum window, per-atom) ---
 # window (per atom) = (-inf, E_min/N + X], X = NOVELTY_ENERGY_ABOVE_MIN (eV/atom)
 # Ni8/Au(4,4,2): 8 Ni + 32 Au = 40 atoms -> cap = 0.1*40 = 4 eV above global min.
-NOVELTY_ENERGY_ABOVE_MIN = 0.1        # eV/atom -- per-atom window height above global min
+NOVELTY_ENERGY_ABOVE_MIN = 1.0        # eV/atom -- per-atom window height above global min
 NOVELTY_ENERGY_PER_ATOM = True        # interpret energy_above_min in eV/atom
 
 # --- Shared search settings (run-6 defaults) ---
