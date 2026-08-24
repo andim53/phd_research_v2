@@ -99,7 +99,7 @@ OPT_STEPS = 1
 # use_ray=False runs GPR hyperparameter optimization single-process (no Ray actors).
 # Required on low-RAM nodes (the default use_ray=True spawns one actor per CPU and
 # OOMs -> ActorUnavailableError). No effect on the sampling math.
-USE_RAY = False
+USE_RAY = True
 
 # --- Analysis ---
 DUP_THRESHOLD = 1.5   # fingerprint-distance threshold for "distinct configuration"
