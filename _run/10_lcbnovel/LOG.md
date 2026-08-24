@@ -808,3 +808,63 @@ Confirmed via clarify:
 
 ### Time
 ~10 min.
+
+---
+
+## 2026-08-25 — Session: Introduce `_runs/` and `_analysist/` into the docs
+
+### Goal (user request)
+User added `_runs/` (self-contained run dirs for HPC runs + benchmarks) and
+`_analysist/` (analysed results) to the project. Asked Calyx to introduce these two
+dirs into the project note (README.md), the tutorials (TUTORIAL.md), and the AGENTS
+note (AGENTS.md), clarifying each step.
+
+### Clarify (confirmed)
+- Run naming: `<NN>_<descriptor>` (running index + descriptive suffix, e.g.
+  `4_mgofe_Seed3_Iter900`, `73_novel_benchEMT`).
+- Run-doc policy: HPC per-seed Fe/MgO runs are **bare code dirs** (j_*.sh + main.py +
+  scripts/ + novelty_lcb/ + regenerable output, no per-run docs); standalone
+  benchmarks (e.g. 73_novel_benchEMT) carry the full doc trio in their own dir.
+- Trailing-space run dir `3_mgofe_Seed3_Iter700 ` → **rename** via git mv (drop the
+  space), update git tracking.
+- Defaults taken for the two unanswered questions: edit all four docs (README.md,
+  README.AI.md, TUTORIAL.md, AGENTS.md) for consistency; document the expected
+  `_analysist/` layout (0_analy/, 1_result/, main_analyst.ipynb, main_test.ipynb).
+
+### Actions taken
+1. `git mv` renamed `_runs/3_mgofe_Seed3_Iter700 ` → `_runs/3_mgofe_Seed3_Iter700`
+   (all 13 tracked files; removes the trailing-space path hazard).
+2. AGENTS.md: added §3a "Run directories: `_runs/` and `_analysist/`" — layout
+   diagram, `<NN>_<descriptor>` naming, bare-vs-full run-doc policy, git-tracking
+   rule, and expected `_analysist/` layout.
+3. README.AI.md: added `_runs/` (with the 4 existing dirs annotated) and
+   `_analysist/` to the file-layout tree + a §2a "`_runs/` and `_analysist/`" note.
+4. README.md: added a "Where heavy runs actually live" callout under How-to-use, a
+   new "Run directories: `_runs/` and `_analysist/`" section, a decisions-table row
+   ("Run organization"), and a Status checkbox.
+5. TUTORIAL.md: rewrote Step 4 (launch) to `cd` into `_runs/<NN>_<descriptor>/` and
+   `pjsub` its own job script; added Step 4b (analysed results → `_analysist/`);
+   added a pointer from Step 6 to `_runs/73_novel_benchEMT`; added pitfalls 7
+   (trailing-space run-dir names) and 8 (keep run dirs self-contained); added a
+   verification-checklist item.
+
+### Results
+- All four docs now consistently describe the `_runs/` / `_analysist/` organisation,
+  the naming convention, and the bare-vs-full run-doc policy.
+- Trailing-space run dir renamed cleanly via git mv.
+
+### Decisions & reasoning
+- Docs kept consistent across the trio + AGENTS.md (the workflow requires all three
+  deliverables to agree with the code layout).
+- Run-dir naming documented as `<NN>_<descriptor>` so new runs are ordered and
+  unambiguous; matched the existing `1/2/3_...` and `73_novel_benchEMT` examples.
+- `_analysist/` layout mirrors what the repo-root `.gitignore` already anticipates
+  (0_analy/, 1_result/, main_analyst.ipynb, main_test.ipynb).
+
+### Open items / next steps
+- (User) add new run dirs under `_runs/` as new HPC runs are launched.
+- Submit `pjsub j_benchmark_sweep.sh` on HPC to run the sweep.
+- Launch the heavy Fe/MgO search (j_novel.sh).
+
+### Time
+~20 min.

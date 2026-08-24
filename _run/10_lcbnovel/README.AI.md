@@ -38,8 +38,28 @@ human-facing `README.md`.
 ├── README.AI.md                # This file (agent spec)
 ├── LOG.md                      # Curated, append-only action log
 ├── transcript.log              # Raw tool-call / run-output transcript
-└── TUTORIAL.md                 # Reproduce + repair guide with pitfalls
+├── TUTORIAL.md                 # Reproduce + repair guide with pitfalls
+├── _runs/                      # Self-contained run dirs (HPC per-seed runs + benchmarks)
+│   ├── 1_mgofe_Seed3_Iter300/  #   bare per-seed run (j_*.sh + main.py + scripts/ + novelty_lcb/)
+│   ├── 2_mgofe_Seed3_Iter500/  #   bare per-seed run
+│   ├── 3_mgofe_Seed3_Iter700/  #   bare per-seed run
+│   └── 73_novel_benchEMT/      #   full benchmark project (doc trio + main_benchmark*.py + j_benchmark*.sh)
+└── _analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
 ```
+
+### 2a. `_runs/` and `_analysist/`
+
+- **`_runs/`** — self-contained run directories. Each HPC run (or benchmark) is its
+  own dir, holding **everything** it needs (job script, main script, and copies of
+  `scripts/` and `novelty_lcb/`), independent of the project root. Naming:
+  **`<NN>_<descriptor>`** (e.g. `4_mgofe_Seed3_Iter900`). **HPC per-seed Fe/MgO runs**
+  are bare code dirs (no per-run docs); **standalone benchmarks** (e.g.
+  `73_novel_benchEMT`) carry the full doc trio inside their own dir. Tracked in git
+  (code + docs), subject to the regenerable-data exclusions.
+- **`_analysist/`** — analysed/intermediate results, kept separate from `_runs/`.
+  Expected layout (matching the repo-root `.gitignore`): `0_analy/` (staging),
+  `1_result/` (final), `main_analyst.ipynb`, `main_test.ipynb`. Outputs are
+  regenerable/gitignored.
 
 ## 3. Entry points & commands
 

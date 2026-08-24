@@ -58,17 +58,35 @@ passes `functools.partial(...)` over **module-level** functions (not bound metho
 
 ## Step 4 — Launch the heavy search on HPC
 
-Run `pjsub j_novel.sh`. The seed is set by editing `SEED=3` at the top of
-`j_novel.sh` (the owner prefers this over passing `-x SEED=N`). The job activates
-`gpaw_env` (NOT `agox_v2`).
+Each heavy run lives in its own **self-contained directory** under `_runs/`, named
+`<NN>_<descriptor>` (e.g. `1_mgofe_Seed3_Iter300`). `cd` into the run dir, then
+`pjsub` its job script. The seed and iteration count are set by editing `SEED=` and
+`N_ITERATIONS=` at the top of that run's `j_*.sh` (the owner prefers this over
+passing `-x SEED=N`). The job activates `gpaw_env` (NOT `agox_v2`).
 
 ```bash
-pjsub j_novel.sh            # runs the seed set in the script (edit SEED=3 to change)
+cd /home/think/Desktop/research/_run/10_lcbnovel/_runs/<NN>_<descriptor>   # e.g. 1_mgofe_Seed3_Iter300
+# edit SEED= / N_ITERATIONS= in j_*.sh if needed
+pjsub j_*.sh            # e.g. j_novEperAtom.sh — runs the seed set in the script
 # monitor: pjstat   |   cancel: pjdel
 ```
 
+The `_runs/<NN>_<descriptor>/` dir carries everything the job needs (its own
+`main.py`, `scripts/`, `novelty_lcb/`), so it is fully isolated from the project
+root. For a new run, copy the latest per-seed dir, bump the `<NN>` index, and adjust
+the `SEED=` / `N_ITERATIONS=` in its job script. Standalone benchmarks
+(e.g. `73_novel_benchEMT`) are full projects under `_runs/` with their own
+README/LOG/TUTORIAL.
+
 Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
-`output_seed_<N>.txt` (GPAW log), `generated_structures/`.
+`output_seed_<N>.txt` (GPAW log), `generated_structures/` — all regenerable.
+
+## Step 4b — Where analysed results go
+
+Analysed/intermediate results go in **`_analysist/`** (sibling of `_runs/`), kept
+separate from raw runs. The repo-root `.gitignore` anticipates
+`0_analy/` (staging), `1_result/` (final), and `main_analyst.ipynb` /
+`main_test.ipynb` (notebooks). Analysis outputs are regenerable/gitignored.
 
 ## Step 5 — Energy-window: auto global-minimum mode (default)
 
@@ -98,6 +116,11 @@ band is ≈ [−436.9, −386.3] eV (centre ≈ −411.6 eV); see `energy_stats.
 This mode is not needed for the default run.
 
 ## Step 6 — EMT benchmark (optional)
+
+> The **extended** grid benchmark (10 seeds × iter 100–500 × λ 2–5 = 250 runs) lives
+> as its own full project at **`_runs/73_novel_benchEMT/`** (see its README). The
+> steps below describe the parent-project benchmark (`main_benchmark.py` /
+> `main_benchmark_sweep.py`), which run from the project root.
 
 `main_benchmark.py` compares **regular LCB** vs **Novelty-LCB** (using the auto
 global-minimum per-atom window) on the Ni8 / Au(4,4,2) fcc100 surface with the EMT
@@ -172,6 +195,14 @@ Once real DBs exist, the established downstream pipeline applies:
 6. **`use_ray` on low-RAM nodes** — GPR defaults to `use_ray=True` (spawns one Ray
    actor per CPU); on a small machine this can OOM. On the 64-core HPC node Ray is
    fine and expected.
+7. **Trailing space in run-dir names** — a run dir was accidentally created as
+   `_runs/3_mgofe_Seed3_Iter700 ` (trailing space). This is error-prone with paths
+   and scripts; keep run-dir names free of spaces (`<NN>_<descriptor>`). The space
+   was removed via `git mv`.
+8. **Keep each run dir self-contained** — always give a run its own `main*.py`,
+   `scripts/`, and `novelty_lcb/` under `_runs/<NN>_<descriptor>/`; do not rely on
+   the project root when launching from HPC. If a run's code diverges, copy the
+   needed files into the run dir rather than importing from the parent.
 
 ## Verification checklist
 
@@ -180,3 +211,4 @@ Once real DBs exist, the established downstream pipeline applies:
 - [ ] Local structure build produces a 75-atom Mg25O25Fe25 slab
 - [ ] (HPC) one seed completes without a Ray serialization error
 - [ ] Energy window calibrated before interpreting Novelty-LCB results
+- [ ] Run dirs follow `<NN>_<descriptor>` naming with no spaces; `_runs/` is git-tracked, `_analysist/` outputs are gitignored

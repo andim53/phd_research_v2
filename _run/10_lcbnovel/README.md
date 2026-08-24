@@ -294,6 +294,37 @@ pjsub j_benchmark.sh                                                 # on HPC
 pjsub j_benchmark_sweep.sh
 ```
 
+> **Where heavy runs actually live.** The per-seed HPC runs and benchmarks are kept in
+> **`_runs/`** as self-contained directories (job script + main script + copies of
+> `scripts/` and `novelty_lcb/`), named `<NN>_<descriptor>` (e.g.
+> `1_mgofe_Seed3_Iter300`, `73_novel_benchEMT`). The root-level `j_*.sh` / `main*.py`
+> are the parent project's own copies; to launch a concrete run, `cd` into the
+> matching `_runs/<NN>_<descriptor>/` and `pjsub j_*.sh` there (edit `SEED=` /
+> `N_ITERATIONS=` inside that script). Analysed results go in **`_analysist/`** — see
+> the "Run directories" section below.
+
+## Run directories: `_runs/` and `_analysist/`
+
+Two sibling directories keep concrete runs separate from the project root.
+
+**`_runs/` — self-contained run directories.** Each HPC run or benchmark is its own
+directory under `_runs/`, holding everything that run needs (job script, main
+script, copies of `scripts/` and `novelty_lcb/`) so it is launchable in isolation.
+Naming follows **`<NN>_<descriptor>`** — a running index plus a short descriptive
+suffix (e.g. `1_mgofe_Seed3_Iter300`, `2_mgofe_Seed3_Iter500`,
+`3_mgofe_Seed3_Iter700`, `73_novel_benchEMT`).
+
+- **HPC per-seed Fe/MgO runs** (one seed per job) are **bare code dirs**: just
+  `j_*.sh` + `main.py` + `scripts/` + `novelty_lcb/` (plus their generated
+  `output/`). No per-run docs.
+- **Standalone benchmarks** (e.g. `73_novel_benchEMT`) are full projects with their
+  own README/README.AI/LOG/TUTORIAL and `main_benchmark*.py` / `j_benchmark*.sh`.
+
+**`_analysist/` — analysed results.** Analysed and intermediate results go here,
+kept separate from `_runs/` so raw runs are never mixed with their analysis. The
+repo-root `.gitignore` anticipates the layout `0_analy/` (staging), `1_result/`
+(final), and `main_analyst.ipynb` / `main_test.ipynb` (notebooks).
+
 ## Key decisions & tradeoffs
 
 | Decision | Choice | Why |
@@ -305,6 +336,7 @@ pjsub j_benchmark_sweep.sh
 | Benchmark | `main_benchmark.py` (Ni8/Au EMT) + `j_benchmark.sh` (HPC) | Compares regular LCB vs Novelty-LCB (auto global-min window) on a fast EMT surface; needs a RAM-rich node / HPC for the AGOX Ray pool |
 | Sweep benchmark | `main_benchmark_sweep.py` + `j_benchmark_sweep.sh` (HPC) | Sweeps kappa x novelty_weight on Novelty-LCB to study their impact (20 combos, 1 seed each) |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
+| Run organization | `_runs/<NN>_<descriptor>/` (self-contained) + `_analysist/` (results) | Keep each HPC run/benchmark isolated from the project root and from its analysis; `_runs` is git-tracked, `_analysist` outputs are gitignored |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
 ## Status
@@ -314,6 +346,7 @@ pjsub j_benchmark_sweep.sh
 - [x] Serialization smoke test **PASSES** (crash root cause verified fixed)
 - [ ] Heavy Fe/MgO search launched on HPC (see `TUTORIAL.md` step 4)
 - [x] Energy window = auto global-min mode (`energy_above_min=1.0 eV/atom`, per_atom), no manual calibration
+- [x] Run dirs organized under `_runs/` (HPC per-seed runs + `73_novel_benchEMT`) and analysis under `_analysist/`
 
 See `TUTORIAL.md` for the full reproduction and repair guide, `LOG.md` for what
 has been done, and `README.AI.md` for the agent-facing spec.
