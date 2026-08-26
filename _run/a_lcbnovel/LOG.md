@@ -1284,3 +1284,53 @@ using the same system as the `66_MgOFe_20B` project. Clarify each step.
 
 ### Time
 ~30 min.
+
+
+---
+
+## 2026-08-26 — Session: Add generator test script (test_generators.py)
+
+### Goal (user request, confirmed via clarify)
+In the root project, test each of the Generators of main.py by generating candidate
+structures. Write a test code.
+
+### Clarify (confirmed)
+- **Generators:** all three — HeteroStructRandomize, RattleGenerator, and
+  GlobalPermutationGenerator. Since the permutation generator only activates with B
+  doping (NUM_ATOMS_ADD>0), the test builds the B6Fe25 doped system.
+- **Output:** write candidate structures as .xsf into a new dir `_tmp/` in the root
+  project dir, with a simplified generator name in each filename.
+- **Location:** test script in the root project dir, following the same environment as
+  main.py.
+- **Invocation:** mirror the 63_w1b/66_MgOFe_20B pattern — generators[0] built from
+  scratch, then Rattle + Permutation chained via FixedSampler from the hetero candidate.
+- **Count:** 10 samples per generator, controllable via `--n-samples`.
+
+### Actions taken
+1. Wrote `test_generators.py` (v1.0.0) at the project root: builds the substrate +
+   deposition slabs via main.py's `build_slabs`, applies B doping via
+   `add_adsorbate_to_hollows`, builds the environment via main.py's
+   `build_environment`, constructs all 3 generators (same wiring as `build_stack`),
+   then loops N samples writing `hetero_/rattle_/permut_candidate_<i>.xsf` to `_tmp/`.
+   CLI flags: `--n-samples`, `--seed`, `--out-dir`, `--num-b`.
+2. `py_compile` OK; ran `--n-samples 1 --num-b 6` and a full `--n-samples 10 --num-b 6`
+   in the background -> 30 xsf files (10 per generator), all valid (81-atom B6Fe25+MgO).
+3. `.gitignore`: added `_tmp/` and `generated_structures/` (scratch/test outputs).
+4. `VERSIONS.md`: added `test_generators.py` 1.0.0.
+
+### Results
+- `test_generators.py` runs and produces 10 x 3 = 30 candidate .xsf files under `_tmp/`
+  (hetero/rattle/permut), exercising all three generators on the B6Fe25 system.
+- `_tmp/` and its .xsf are gitignored; only the script is tracked.
+
+### Decisions & reasoning
+- Reused main.py's `build_slabs`/`build_environment`/generator wiring directly so the
+  test exercises the exact same environment and generator config as the real search.
+- Enabled B doping so the GlobalPermutationGenerator is meaningfully tested (Fe<->B
+  swaps), matching run a10's B6Fe25 system.
+
+### Open items / next steps
+- (User) adjust `--n-samples`/`--num-b` as desired; the script is reusable.
+
+### Time
+~20 min.

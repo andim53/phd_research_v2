@@ -21,6 +21,7 @@ Versioning rules:
 | `energy_stats.py` | 1.0.0 |
 | `smoke_test_serialization.py` | 1.0.0 |
 | `test_window_logic.py` | 1.0.0 |
+| `test_generators.py` | 1.0.0 |
 | `novelty_lcb/__init__.py` | 1.0.0 |
 | `novelty_lcb/acquisitor.py` | 1.0.0 |
 | `novelty_lcb/benchmark_helpers.py` | 1.0.0 |

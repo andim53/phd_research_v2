@@ -14,3 +14,7 @@ _analysist/1_result/
 *.log
 __pycache__/
 *.pyc
+
+# === Scratch/test output ===
+_tmp/
+generated_structures/
