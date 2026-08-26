@@ -1,6 +1,6 @@
 # Maintaining / evolving a project's docs and layout
 
-Worked pattern (learned maintaining project 10, `a_lcbnovel`) for when the user adds
+Worked pattern (learned maintaining project 10, `10_lcbnovel`) for when the user adds
 or reorganizes directories/config inside an existing AI-Agent project and asks you to
 "introduce" them into the docs. This is a recurring task distinct from green-field
 scaffolding.

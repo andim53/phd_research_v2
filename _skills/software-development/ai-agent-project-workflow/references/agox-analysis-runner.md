@@ -1,6 +1,6 @@
 # Adding an analysis runner to `_analysist` (AGOX results)
 
-Worked pattern (learned maintaining project 10, `a_lcbnovel`) for when the user drops
+Worked pattern (learned maintaining project 10, `10_lcbnovel`) for when the user drops
 run results into `_analysist/1_result/` and asks for "an analysis code like
 <sibling>/run_analysis_indices.py". The sibling runner lives at
 `/home/think/Desktop/research/_analysist/run_analysis_indices.py`.
@@ -26,7 +26,7 @@ run results into `_analysist/1_result/` and asks for "an analysis code like
    `sweep_kappa_lambda/kX_lY/*.db`) have no `seed_*` layout and `process_database`
    finds nothing — either exclude them (they usually carry their own DISCUSSION.md /
    results JSON) or add a custom flat-DB stage-1 aggregator. Confirm the scope choice
-   via clarify (in the a_lcbnovel session the user chose to support only the Fe/MgO
+   via clarify (in the 10_lcbnovel session the user chose to support only the Fe/MgO
    heavy runs 71/72 and exclude the EMT benchmarks 73/74).
 4. **Keep the sibling CLI surface** (`--indices`, `--e-max`, `--normalize-density`,
    `--skip-probability`) and add a `--idx` single-index shorthand; correct any

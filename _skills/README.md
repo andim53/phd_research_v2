@@ -5,14 +5,27 @@ projects: Fe/MgO AGOX global optimisation, GPR / Novelty-LCB / nested sampling /
 novel-filter, GPAW, and the AI-Agent project workflow).
 
 Copied from the live skill store (`~/.hermes/skills/`) preserving the category
-layout. This is a **one-time snapshot**, not auto-synced — refresh by re-copying.
+layout. This is a **snapshot**, not auto-synced — refresh by re-copying the skills
+that already exist here (see the "Sync" section below).
 
 ## Snapshot info
 
-- **Snapshot date:** 2026-08-25
+- **Snapshot date:** 2026-08-27 (refreshed from the 2026-08-25 initial snapshot)
 - **Source:** `/home/think/.hermes/skills/`
-- **Count:** 20 skills (108 + 6 + 6 = 120 files), full dirs incl. `references/`,
+- **Count:** 22 skills (117 + 6 + 13 + 2 = 139 files), full dirs incl. `references/`,
   `templates/`, `scripts/`.
+  - research: 18 skills, 117 files
+  - mlops: 1 skill, 6 files
+  - software-development: 1 skill, 13 files
+  - devops: 2 skills, 2 files
+
+## Sync
+
+Only the skills that **already exist** here are synced from the live store (changed
+`SKILL.md` overwritten + new `references/`/`scripts/`/`templates/` added). Brand-new
+live skills are **not** added. `devops/api-rate-limiter` is a local custom skill (not
+in the live store) and is kept as-is. `devops/sdlc-review` is a new addition copied
+from the live store.
 
 ## Layout
 
@@ -39,8 +52,11 @@ _skills/
 │   └── simulation-analysis/       #   AGOX simulation/database analysis
 ├── mlops/
 │   └── agox-gpr-analysis/         #   AGOX .db + GPR model training
-└── software-development/
-    └── ai-agent-project-workflow/ #   README/LOG/TUTORIAL/AGENTS + versioning
+├── software-development/
+│   └── ai-agent-project-workflow/ #   README/LOG/TUTORIAL/AGENTS + versioning
+└── devops/
+    ├── api-rate-limiter/          #   local custom: API quota 429 backoff retry
+    └── sdlc-review/               #   Kanban handoffs / SDLC review routing
 ```
 
 ## Related

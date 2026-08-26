@@ -1,7 +1,7 @@
 # Novelty-LCB acquisitor: energy-window modes & AGOX wiring facts
 
 Session-specific detail on the `NoveltyLCBAcquisitor` (`novelty_lcb/acquisitor.py`)
-used in `_run/a_lcbnovel/`. These are the durable behaviors a future session needs
+used in `_run/10_lcbnovel/`. These are the durable behaviors a future session needs
 when running or extending a Novelty-LCB AGOX search.
 
 ## 1. Energy window is on ABSOLUTE predicted energy
@@ -80,4 +80,4 @@ with `ray.exceptions.ActorUnavailableError` (documented, environmental). To vali
 the acquisitor window logic in isolation (no Ray/AGOX stack), build the acquisitor via
 `object.__new__(NoveltyLCBAcquisitor)` + attribute assignment with mock
 model/descriptor/database and call `calculate_acquisition_function` directly — see
-`test_window_logic.py` in `_run/a_lcbnovel/`.
+`test_window_logic.py` in `_run/10_lcbnovel/`.

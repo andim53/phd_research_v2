@@ -18,7 +18,7 @@ Run:
 
 Exit 0 = PASS. Adapt the imports at the top to point at YOUR acquisitor package.
 
-Derived from project `_run/a_lcbnovel/smoke_test_serialization.py` (2026-08-22).
+Derived from project `_run/10_lcbnovel/smoke_test_serialization.py` (2026-08-22).
 """
 
 import os

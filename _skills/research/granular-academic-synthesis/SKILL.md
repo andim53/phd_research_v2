@@ -134,7 +134,7 @@ Guidelines for each analytical sentence:
 
 After assembling the full output (analytical body + References/BibTeX block):
 
-1. Resolve the Obsidian vault directory: `/home/think/MEGA/Obsidian-Notes/wiki-research`.
+1. Resolve the Obsidian vault directory: `/home/think/MEGA/Obsidian-Notes/wiki/wiki-research`.
 2. Create the output as a new markdown file in the `raw/syntheses/` subdirectory:
    `raw/syntheses/<topic_or_prompt_slug>_synthesis.md`.
    - Use a slugified version of the topic/prompt (lowercase, spaces replaced with hyphens, punctuation stripped).
@@ -221,4 +221,4 @@ Before returning the response, run this checklist:
 - [ ] The block contains entries for all primary and all cited secondary papers.
 - [ ] All BibTeX keys match the `nameYear` convention established in Step 3.
 - [ ] No analytical sentence is left without a source clipping.
-- [ ] Output is written to `/home/think/MEGA/Obsidian-Notes/wiki-research/raw/syntheses/<slug>_synthesis.md`.
+- [ ] Output is written to `/home/think/MEGA/Obsidian-Notes/wiki/wiki-research/raw/syntheses/<slug>_synthesis.md`.

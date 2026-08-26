@@ -3,7 +3,7 @@
 The user's standing pattern for writing up a benchmark run is a full, per-graph
 writeup grounded in the actual result numbers (JSON), not a summary of intent. This
 applies to the Novelty-LCB / Regular-LCB EMT benchmark family (`73_novel_benchEMT`,
-`74_novel_benchSweep`, and the extended grid under `_run/a_lcbnovel/_runs/`).
+`74_novel_benchSweep`, and the extended grid under `_run/10_lcbnovel/_runs/`).
 
 ## File naming
 
