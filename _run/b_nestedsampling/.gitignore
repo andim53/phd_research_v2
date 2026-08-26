@@ -1,0 +1,24 @@
+# === _analysist: results & analysis outputs (regenerable, excluded) ===
+_analysist/0_analy/
+_analysist/1_result/
+
+# === Regenerable artifact types (defensive; parent repo also ignores these) ===
+*.db
+*.png
+*.traj
+*.xsf
+*.csv
+*.out
+*.log
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# === Nested-sampling run outputs (regenerable) ===
+ns_output_*/
+ns_output_allseeds/
+
+# === Scratch/test output ===
+_tmp/
+_archives/
+generated_structures/
