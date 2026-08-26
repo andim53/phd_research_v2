@@ -1118,3 +1118,62 @@ README.AI, TUTORIAL) and the `agox-novelty-lcb` skill to match.
 
 ### Time
 ~25 min.
+
+
+---
+
+## 2026-08-26 — Session: Add kappa-sweep runs (a4/a5/a6) under _runs/ + --kappa CLI flag
+
+### Goal (user request, confirmed via clarify)
+Create new `_runs/` dirs using the same setup as `a1_mgofe_Seed3_Iter500` (which the
+user cited; the active base is `a2_mgofe_Seed3_Iter500`, kappa=2.0) but with different
+kappa values: runs for kappa 3, 4, and 5. Clarify each step.
+
+### Clarify (confirmed)
+- **Dirs:** named `a[num]_mgofe_Seed3_Iter500_[kappa]` -> `a4_mgofe_Seed3_Iter500_k3`,
+  `a5_mgofe_Seed3_Iter500_k4`, `a6_mgofe_Seed3_Iter500_k5` (continues the a-series).
+- **Iterations/seed:** 500, seed 3 (same as the a2 base).
+- **Kappa setting:** "just like what we do in Iteration. Include parameter then put the
+  kappa." -> add a `KAPPA=` variable to `j_novEperAtom.sh` and pass it through to
+  `main.py` as a new `--kappa` CLI flag, mirroring `N_ITERATIONS`/`--n-iterations`.
+  This required editing root `main.py` (new CLI arg + threading kappa into
+  `build_stack` -> acquisitor). Minor version bump 1.0.0 -> 1.1.0.
+- **Docs:** each new run carries a per-run `README.md` + `TUTORIAL.md` (per AGENTS policy).
+- **Sync:** propagate the updated `main.py` (1.1.0) into all existing run dirs
+  (a1/a2/a3/73) to keep run copies current per policy.
+- **Commit:** yes.
+
+### Actions taken
+1. Root `main.py`: added `--kappa` CLI flag (default `KAPPA`), threaded `kappa` through
+   `build_stack(..., kappa=KAPPA)` into the acquisitor, updated docstring usage. Bumped
+   `__version__` 1.0.0 -> 1.1.0. `py_compile` OK; `--help` shows the new flag.
+2. `VERSIONS.md`: `main.py` 1.0.0 -> 1.1.0.
+3. Synced updated `main.py` into `_runs/a1_mgofe_Seed3_Iter300/`,
+   `a2_mgofe_Seed3_Iter500/`, `a3_mgofe_Seed3_Iter700/`, `73_novel_benchEMT/`
+   (verified all at 1.1.0).
+4. Created `_runs/a4_mgofe_Seed3_Iter500_k3/`, `a5_mgofe_Seed3_Iter500_k4/`,
+   `a6_mgofe_Seed3_Iter500_k5/` by copying the full a2 structure (main.py 1.1.0 +
+   novelty_lcb + scripts + README + TUTORIAL). Corrected the dir index after an initial
+   mis-numbering (a3/a4/a5 -> a4/a5/a6).
+5. Set `KAPPA=3/4/5` and `--kappa "${KAPPA}"` in each new `j_novEperAtom.sh`.
+6. Rewrote each new run's `README.md` + `TUTORIAL.md` to be specific to its kappa,
+   with a sibling-difference table (a2=2.0, a4=3, a5=4, a6=5).
+
+### Results
+- `main.py --help` shows `--kappa KAPPA` (default 2.0); compiles clean.
+- Three new self-contained run dirs a4/a5/a6, each with the versioned stack and a
+  `KAPPA=` in its batch script. All run copies of `main.py` now at 1.1.0.
+
+### Decisions & reasoning
+- Made kappa a CLI flag (like iterations) rather than editing `main.py` per run, so the
+  run dirs stay syncable with the single versioned root `main.py` and the value is
+  explicit in the `.sh` (per the user's "just like iteration" guidance).
+- Named the sweep a4/a5/a6 to continue the a-series unambiguously and label each with
+  its kappa suffix.
+
+### Open items / next steps
+- (User) launch the a4/a5/a6 kappa-sweep runs on HPC (`pjsub j_novEperAtom.sh`).
+- (User) run the 73/74 benchmarks on HPC.
+
+### Time
+~25 min.

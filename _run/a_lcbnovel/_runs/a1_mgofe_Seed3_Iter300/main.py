@@ -17,14 +17,14 @@ so the search can be scaled out across many independent runs.
 
 Usage:
     /home/think/miniconda3/envs/agox_v2/bin/python main.py --seed 3 \
-        --n-iterations 100 --out-root ./output
+        --n-iterations 100 --kappa 3.0 --out-root ./output
     # or a range:
     ... --seed-start 3 --seed-end 105
 """
 
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import os
@@ -155,7 +155,7 @@ def build_environment(slab_substrate, slab_deposition):
     )
 
 
-def build_stack(environment, slab_deposition, db_path, seed):
+def build_stack(environment, slab_deposition, db_path, seed, kappa=KAPPA):
     """Construct the full, wired AGOX stack for one seed."""
     # Generators
     n_rattle = len(slab_deposition)
@@ -202,7 +202,7 @@ def build_stack(environment, slab_deposition, db_path, seed):
         energy_above_min=NOVELTY_ENERGY_ABOVE_MIN,
         per_atom=NOVELTY_ENERGY_PER_ATOM,
         novelty_weight=NOVELTY_WEIGHT,
-        kappa=KAPPA,
+        kappa=kappa,
         order=3,
     )
 
@@ -238,6 +238,8 @@ def main():
     ap.add_argument("--seed-end", type=int, default=104,
                     help="Inclusive upper bound of seed range.")
     ap.add_argument("--n-iterations", type=int, default=N_ITERATIONS)
+    ap.add_argument("--kappa", type=float, default=KAPPA,
+                    help="LCB kappa for the surrogate relaxation surface (default KAPPA=2.0).")
     ap.add_argument("--out-root", type=str, default="./output",
                     help="Root dir; per-seed subdirs out_root/seed_<N>/{0_result,1_db}.")
     args = ap.parse_args()
@@ -263,7 +265,8 @@ def main():
             os.makedirs(d, exist_ok=True)
 
         env = build_environment(slab_substrate.copy(), slab_deposition.copy())
-        agox, _ = build_stack(env, slab_deposition, f"{db_dir}/db_{seed}.db", seed)
+        agox, _ = build_stack(env, slab_deposition, f"{db_dir}/db_{seed}.db", seed,
+                              kappa=args.kappa)
         agox.run(N_iterations=args.n_iterations)
 
 
