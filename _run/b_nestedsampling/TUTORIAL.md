@@ -132,6 +132,25 @@ papers (Pártay 2021 / Yang 2024) and the wiki's `nested-sampling` page — wher
   −6.1 and F = +0.235 / +0.300 / +0.530 eV — Z grows and F becomes less negative as
   T rises (physically correct).
 
+## Step 8c — GPR accuracy vs energy range
+`gpr_accuracy.py` evaluates how accurately the GPR predicts structure energies as a
+function of the energy range (energy above the global minimum, in eV/atom, binned
+into equal-width windows). It trains one GPR on all 1297 structures and computes
+in-sample MAE / RMSE / R² per bin (metrics in eV/atom):
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --bin-width 0.1 --output ./gpr_accuracy_out
+```
+- `--bin-width` — energy-bin width (eV/atom), default 0.1 (auto ≈7 bins over the
+  ~0.675 eV/atom range).
+- `--output` — output dir; writes `gpr_accuracy_by_energy_range.csv` +
+  `gpr_accuracy_by_energy_range.png` + a printed table.
+- `--use-ray` — use AGOX Ray for training (default single-process).
+- **Note:** these are *in-sample* residuals (interpolation points), so MAE/RMSE are
+  very small (~0.001 eV/atom) and R²≈1.0. That reflects training-set fit, not
+  out-of-sample generalization. For a generalization estimate, cross-validation
+  would be needed (not implemented here).
+
 ## Step 9 — Tuning checklist
 - **Finer evidence / lower variance:** raise `--n-live` (resolution ∝ 1/√K).
 - **Broader exploration (higher-E weight):** raise `--temp`.

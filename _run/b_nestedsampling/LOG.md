@@ -333,3 +333,40 @@ it; bump `main.py` **1.1.0 → 1.1.1** (patch, doc-only) and sync VERSIONS/LOG.
 - This LOG entry records the change (append-only).
 
 **Time:** 2026-08-26 ~23:36–23:38 JST.
+
+---
+
+## Session 2026-08-26 — Build GPR accuracy-vs-energy-range analysis (`gpr_accuracy.py`)
+
+**Goal (user-confirmed via clarify):** Create a new code that extracts the GPR
+model's prediction accuracy (MAE, RMSE, R²) as a function of the energy range —
+this is the task logged in PROMPTS.md (flag 20260826_2333).
+
+**Clarify decisions (all user-confirmed):**
+1. Energy range = energy above the minimum, in **eV/atom**, binned into equal-width
+   windows (default bin width 0.1 eV/atom → ~7 bins over the ~0.675 eV/atom range).
+2. Train one GPR on all 1297 structures; evaluate **in-sample** residuals per bin.
+3. Self-contained `gpr_accuracy.py` at project root.
+4. Outputs: per-bin CSV + matplotlib plot (MAE/RMSE/R² vs range) + printed table.
+
+**Actions taken:**
+- Wrote `gpr_accuracy.py` (new, 1.0.0): loads all seeds, trains GPR (same AGOX
+  recipe as main.py), predicts in-sample energies, bins by dE/atom above min,
+  computes MAE/RMSE/R² per bin + overall, writes CSV + plot.
+- CLI: `--bin-width` (default 0.1), `--output` (default ./gpr_accuracy_out),
+  `--use-ray`.
+- Docs: VERSIONS.md (+gpr_accuracy.py), README.md (+usage section),
+  TUTORIAL.md (Step 8c).
+
+**Results / verification (real output):**
+- `py_compile` under agox_v2: OK.
+- Ran `gpr_accuracy.py --output ./_tmp/gpr_accuracy_out`: **ACC_EXIT=0**.
+- 1297 structures, 7 bins (0–0.675 eV/atom), overall MAE=0.0007 RMSE=0.0010
+  R²=1.0000 eV/atom. CSV + PNG written and verified.
+- **Note:** in-sample errors are tiny (interpolation points) — reflects training
+  fit, not out-of-sample generalization. Cross-validation not implemented.
+
+**Open items:** cross-validation mode (out-of-sample) if the user wants a
+generalization estimate.
+
+**Time:** 2026-08-26 ~23:38–23:45 JST.

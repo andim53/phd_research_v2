@@ -54,6 +54,19 @@ top-down pass, per Pártay 2021 / Yang 2024). The partition function, free energ
 Writes `samples.csv` (re-runnable), `thermodynamics.csv`, and per-T posterior dirs
 `posterior_T{KKK}/`.
 
+## Usage (GPR accuracy vs energy range)
+`gpr_accuracy.py` trains the GPR on the combined 1297-structure dataset and reports
+in-sample prediction accuracy (MAE, RMSE, R²) as a function of the energy range
+(energy above the minimum, eV/atom, binned):
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --bin-width 0.1 --output ./gpr_accuracy_out
+```
+Outputs: `gpr_accuracy_by_energy_range.csv` (per-bin metrics), a matplotlib plot
+`gpr_accuracy_by_energy_range.png`, and a printed table. In-sample errors are tiny
+(~0.001 eV/atom) because these are interpolation points; for an out-of-sample
+generalization estimate, use cross-validation (not currently implemented).
+
 ## Usage (standalone re-analysis of a finished run)
 ```
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
