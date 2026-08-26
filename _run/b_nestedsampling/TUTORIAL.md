@@ -165,6 +165,16 @@ into equal-width windows). Two modes:
   output dir. Works in in-sample and CV modes. Example:
   `/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py --fez
   --uncertainty --output ./gpr_accuracy_fez_out`.
+- `--rattle` — rattling-distance sensitivity: how much positional disorder the GPR
+  kernel can tolerate. Rattles `--rattle-symbols` atoms (default Fe) of a sample of
+  DB structures at several `--rattle-dist` amplitudes (comma list, default
+  0.05,0.1,0.2,0.5,1.0 Å), predicts, and reports accuracy (MAE/RMSE/R²) and (with
+  `--uncertainty`) mean model std vs rattling distance. Writes
+  `gpr_accuracy_by_rattle.csv` (+ `uncertainty_by_rattle.csv`), a
+  `gpr_accuracy_by_rattle.png` plot, and a `DISCUSSION.md`. In-sample only.
+  Unphysical extrapolations (|E|>1e4 eV) are excluded and counted. Example:
+  `/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py --rattle
+  --uncertainty --rattle-dist 0.05,0.1,0.2,0.5,1.0 --output ./gpr_accuracy_rattle_out`.
 - **Interpretation:** in-sample errors are tiny (MAE~0.001 eV/atom, R²≈1.0,
   interpolation points) and the model std is likewise small (~0.001 eV/atom). CV
   gives the truthful out-of-sample picture: 5-fold CV overall MAE=0.0040

@@ -660,3 +660,53 @@ run from the project root) before `## What was run` in each of:
 **Note:** files are under gitignored `_tmp/` (not committed).
 
 **Time:** 2026-08-27 ~01:05–01:10 JST.
+
+---
+
+## Session 2026-08-27 — Add rattling-distance sensitivity analysis to gpr_accuracy.py (flag 20260827_0024)
+
+**Goal (user-confirmed via clarify):** Add an analysis of different rattling
+distances vs GPR performance (accuracy and uncertainty): take DB structures, rattle
+them under different ranges, predict their energy — to check how much rattling the
+kernel can handle. Include a way to choose which atoms to rattle.
+
+**Clarify decisions (all user-confirmed):**
+1. New opt-in `--rattle` flag (own CSV + plot + DISCUSSION.md).
+2. `--rattle-dist` comma-separated amplitudes (default 0.05,0.1,0.2,0.5,1.0 Å).
+3. `--rattle-symbols` flag (default Fe) to choose which atoms to rattle.
+4. Sample a fixed number of DB structures (default 200, `--rattle-n`), several
+   rattled copies each (`--rattle-copies`, default 5), pool errors per amplitude.
+5. In-sample mode only (train one GPR on all 1297, rattle+predict).
+
+**Actions taken:**
+- `gpr_accuracy.py` (1.3.0 → 1.4.0, minor): added `--rattle`, `--rattle-dist`,
+  `--rattle-symbols`, `--rattle-n`, `--rattle-copies`; new `rattle_structure()`
+  helper (Gaussian displacement of selected atoms); rattling block trains one GPR,
+  rattles the sample per amplitude, computes MAE/RMSE/R² (+ model std with
+  `--uncertainty`), writes `gpr_accuracy_by_rattle.csv`
+  (+ `uncertainty_by_rattle.csv`), a plot, and a `DISCUSSION.md`.
+- **Physical filter:** rattled predictions with |E|>1e4 eV (unphysical off-manifold
+  extrapolation) are excluded and counted (`n_unphysical` column) — matches the
+  documented `--perturb` pitfall.
+- Docs: VERSIONS.md (1.4.0), README.md, TUTORIAL.md (Step 8c).
+
+**Results / verification (real output):**
+- `py_compile` under agox_v2: OK.
+- Ran `--rattle --uncertainty --rattle-n 100 --rattle-copies 3` (fast verify):
+  **RATTLE_EXIT=0**.
+  - 0.05 Å: MAE 0.0083 (0 unphys); 0.10 Å: MAE 0.034 (0); 0.20 Å: MAE 0.30 (1 unphys);
+    0.50 Å: MAE 20.2 (214/300 unphys); 1.00 Å: MAE 94.0 (296/300 unphys).
+  - Model std grows: 0.0019 → 0.0045 → 0.0156 → 0.0772 → 0.1246 eV/atom.
+- **Key finding:** the GPR kernel tolerates small rattling (~0.05–0.1 Å) with mild
+  degradation, but degrades catastrophically beyond ~0.2 Å as rattled structures
+  leave the training manifold (many unphysical extrapolations). This quantifies the
+  safe perturbation scale for nested sampling.
+- CSV + plot + DISCUSSION.md written and verified.
+
+**Note:** The PROMPTS.md flag 20260827_0024 Fixed-grammar block was updated (an
+external edit expanded the prompt with "rattle them under different range",
+"Fe only rattled / choose which atoms", "how much the kernel can handle"). The
+expanded requirements match what was implemented (--rattle-symbols, --rattle-dist,
+etc.). Fixed-grammar cleaned accordingly.
+
+**Time:** 2026-08-27 ~01:10–01:30 JST.

@@ -74,6 +74,11 @@ the minimum, eV/atom, binned):
 # Add accuracy (+ uncertainty) vs delta Fe_z (Fe island height), ~0.5 A bins
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --fez --uncertainty --bin-width 0.1 --output ./gpr_accuracy_fez_out
+
+# Rattling-distance sensitivity: how much positional disorder the kernel tolerates
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --rattle --uncertainty --rattle-dist 0.05,0.1,0.2,0.5,1.0 \
+    --rattle-symbols Fe --output ./gpr_accuracy_rattle_out
 ```
 Outputs: `gpr_accuracy_by_energy_range*.csv` (per-bin metrics) + matplotlib plot
 + printed table. In CV mode it also writes `cv_fold_summary_<K>folds.csv`
@@ -90,6 +95,17 @@ uncertainty) vs **delta Fe_z** (the Fe island height = max(Fe z) − min(Fe z),
 Å), binned ~0.5 Å. Writes `gpr_accuracy_by_fe_z.csv` (+ `uncertainty_by_fe_z.csv`
 with `--uncertainty`), a `gpr_accuracy_by_fe_z.png` plot, and a `DISCUSSION.md`
 in the output dir. Works in in-sample and CV modes.
+
+With `--rattle`, additionally reports accuracy (and, with `--uncertainty`,
+uncertainty) vs **rattling distance** (Gaussian displacement of `--rattle-symbols`
+atoms, default Fe). A sample of DB structures is rattled at several amplitudes and
+predicted with the GPR. Writes `gpr_accuracy_by_rattle.csv`
+(+ `uncertainty_by_rattle.csv` with `--uncertainty`), a
+`gpr_accuracy_by_rattle.png` plot, and a `DISCUSSION.md`. In-sample mode only.
+Flags: `--rattle-dist` (comma amplitudes, default 0.05,0.1,0.2,0.5,1.0),
+`--rattle-symbols` (default Fe), `--rattle-n` (sample size, default 200),
+`--rattle-copies` (default 5). Predictions with |E|>1e4 eV (unphysical
+extrapolation) are excluded and counted.
 
 Observed (real output, 5-fold CV): overall MAE=0.0040 RMSE=0.0067 R²=0.998 eV/atom —
 error grows toward higher-energy bins (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom),

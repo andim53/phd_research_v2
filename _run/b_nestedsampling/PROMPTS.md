@@ -84,8 +84,10 @@ Include an analysis of different ratteling distances (take the structure from th
 
 ```
 Include an analysis of different rattling distances versus GPR performance
-(accuracy and uncertainty): take structures from the database, rattle them, then
-predict their energy.
+(accuracy and uncertainty): take structures from the database, rattle them under
+different ranges, then predict their energy. I want to check how much rattling
+distance the kernel can handle (rattle only Fe by default; provide a way to choose
+which atoms to rattle). Clarify each step.
 ```
 
 # FLAG: 20260826_2354
