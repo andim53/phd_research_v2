@@ -918,3 +918,35 @@ parameters as `_analysist/1_result/1_no_prior_control` but on the B-doped datase
 gross outliers. Not executed locally (HPC job).
 
 **Time:** 2026-08-27 ~02:50–03:00 JST.
+
+---
+
+## Session 2026-08-27 — Create HPC run dir b3_gpr_accuracy_boron_cv50
+
+**Goal (user-confirmed via clarify):** Create a new `_runs/` dir for `gpr_accuracy.py`
+on the **boron system**, using the same parameters as `_runs/b1_gpr_accuracy_cv10_bin005`.
+
+**Clarify decisions (all user-confirmed):**
+1. Same command as b1: `--cv --cv-folds 50 --fez --uncertainty --bin-width 0.1`
+   (fez-only), on the B-doped dataset.
+2. Run dir name: `b3_gpr_accuracy_boron_cv50`.
+3. Deps: latest `gpr_accuracy.py` (v1.4.0) + `dataset_boron/`→`dataset/` +
+   `j_b3_*.sh` + README/TUTORIAL, self-contained.
+
+**Actions taken:**
+- Created `_runs/b3_gpr_accuracy_boron_cv50/`; copied `gpr_accuracy.py` (v1.4.0) +
+  `dataset_boron/` → `dataset/` (5 B-doped seeds).
+- Wrote `j_b3_gpr_accuracy_boron_cv50.sh` (bare PJM, 24 cores, gpaw_env) running the
+  fez CV-50 invocation.
+- Wrote per-run `README.md` + `TUTORIAL.md`.
+
+**Results / verification:**
+- `gpr_accuracy.py` (v1.4.0) compiles under agox_v2; `sh -n` OK.
+- Dataset: 496 structures, Fe25Mg25O25B7 (82 atoms), E/atom −5.87..−0.23. Note the
+  descriptor dim will differ from the plain 720 (B adds species/bond types).
+- git dry-run: code + docs tracked; `.db`/`.png` excluded.
+
+**Note:** 50-fold CV = 50 GPR trainings (slow, HPC). Some boron seeds have high-energy
+outliers (|E|<1e4 filter handles). Not executed locally.
+
+**Time:** 2026-08-27 ~03:00–03:08 JST.
