@@ -207,3 +207,32 @@ the job; a note documents that it can be added back.
 - HPC job not run (NS-only run is launchable via `pjsub j_nestedsampling.sh`).
 
 **Time:** 2026-08-26 ~20:40–20:55 JST.
+
+---
+
+## Session 2026-08-26 — TUTORIAL.md: answer the `Q:` on "sample the PES once"
+
+**Goal (user request):** Update `TUTORIAL.md` to include an answer to the `Q:` note
+dropped into the "Discussion — parameters in the nested-sampling literature" section.
+
+**The question:** "When you say they sample the PES once, does that mean they apply
+for 0 K for their sampling based on the current code?"
+
+**Action:** Wrote a code-grounded answer directly below the `Q:` (fixed the "tehy"
+typo in the quoted question).
+
+**Answer (summary):** **No.** In the papers (Pártay 2021 / Yang 2024), the NS
+sampling is **temperature-independent** — β never appears in the algorithm; it is a
+single top-down pass constrained only by a decreasing energy limit `U_limit`.
+Temperature enters only in post-processing via `Z(β)=Σ w_i exp(−β E_i)`, so 0 K is
+only the `T→0` post-processing extreme, not the sampling temperature. By contrast,
+this project's `nested_sampling/nested_sampler.py` puts β **inside** the likelihood
+(`log L = -beta*(E - E_ref)`, `beta = 1/(K_B*--temp)`), i.e. single-temperature NS
+(default 300 K) with temperature-specific Z/posterior. Matching the papers would move
+β into post-processing — the open modelling gap (also the wiki
+`★[[nested-sampling-validation]]★` subject).
+
+**Files changed:** `TUTORIAL.md` only (no code change → no version bump; VERSIONS.md
+unchanged).
+
+**Time:** 2026-08-26 ~20:55–21:00 JST.

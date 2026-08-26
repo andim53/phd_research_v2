@@ -204,6 +204,49 @@ Sources: Pártay, Csányi & Bernstein, "Nested sampling for materials", EPJ B 94
   i.e. single-temperature NS — a major modelling difference and the reason our
   evidence Z is T-dependent.
 
+Q: When you say they sample the PES once, does that mean they apply for 0 K for their sampling based on the current code?
+
+**Answer:** No — "sample the PES once" does **not** mean 0 K sampling. In the
+papers, the sampling itself is **temperature-independent**: β never appears in the
+NS algorithm. The distinction matters, and it is the crux of the "major difference"
+noted above.
+
+1. **In the papers (Pártay 2021 / Yang 2024):** the run is a single top-down pass
+   over configuration space constrained only by a monotonically *decreasing* energy
+   limit `U_limit`. It starts at high-energy "gas-like" configurations and, over
+   10⁵–10⁷ iterations, descends toward the global minimum. There is **no β anywhere
+   during sampling**. Temperature enters only in **post-processing**: from one sample
+   set `{E_i}` and its configuration-space weights `{w_i}` you evaluate
+   `Z(β) = Σ_i w_i exp(−β E_i)` at **any** temperature. So:
+   - The sample set is temperature-agnostic and spans the whole energy range — it is
+     **not** a 0 K ensemble.
+   - 0 K appears only as the post-processing limit `T→0` (`β→∞`), where `Z(β)` is
+     dominated by the single lowest-energy sample (the global minimum). The sampling
+     is not "done at 0 K"; it merely makes the 0 K ground state the final, deepest
+     level of the top-down pass.
+   - This is the key advantage: one NS run yields `Z(T)`, free energy, heat capacity,
+     etc. across all temperatures.
+
+2. **In this project's code (`main.py` + `nested_sampling/nested_sampler.py`):** we
+   do the **opposite**. In `nested_sampler.py`, `log_likelihood` is
+   ```
+   log L = -self.beta * (E - self.E_ref),   with beta = 1/(K_B * --temp)
+   ```
+   so β is **inside the likelihood**: we run a **single-temperature** (fixed-β) NS,
+   where low-energy structures are Boltzmann-weighted at that one temperature
+   (default `--temp 300 K`). Our evidence `Z` and posterior are therefore
+   **temperature-specific** — not temperature-free. This is exactly the "major
+   difference" flagged in the table above.
+
+To answer directly: **No.** The papers' "sample the PES once" is a temperature-*free*
+sample (0 K enters only as a post-processing extreme), whereas our current code
+samples at one fixed temperature and cannot reuse the sample set across temperatures.
+Matching the papers would mean moving β out of the likelihood into post-processing
+(computing `Z(β)` from the saved energy+weight history) — the open modelling gap
+discussed at the end of this section (and the subject of the wiki's
+`★[[nested-sampling-validation]]★` page).
+
+
 ### Mapping to our flags
 | Literature | Our flag | Notes |
 |---|---|---|
