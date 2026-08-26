@@ -63,3 +63,37 @@ VERSIONS, AGENTS, PROMPTS, `.gitignore`, plus `_runs/`, `_analysist/`, `_archive
   end-to-end.
 
 **Time:** 2026-08-26 ~20:00–20:15 JST.
+
+---
+
+## Session 2026-08-26 (follow-up) — Smoke run of the migrated pipeline
+
+**Goal (user-confirmed):** Run a tiny local smoke test of the migrated project to
+confirm the pipeline works end-to-end in the new dir.
+
+**Action:**
+```
+cd /home/think/Desktop/research/_run/b_nestedsampling
+agox_v2 python run_nested_sampling.py --temp 300 --n-live 30 --n-iters 20 \
+    --perturb 0.01 --perturb-symbols Fe --output /tmp/ns_smoke_bns --rng 42
+```
+
+**Result: SMOKE_EXIT=0 — full pipeline succeeded.**
+- Loaded 1297-structure dataset, trained GPR, ran 20 iters / 30 live.
+- Confirmed Fe-only perturbation ("Perturbing 25 atoms of symbol 'Fe'").
+- `E_ref = -436.9093 eV`; `unphys: 0`; posterior 20 physical / 20 total.
+- Evidence: Z = 2.08e-72 (log Z = -165.06) at only 20 iters (expected tiny).
+- All outputs written: evidence_history.csv, final_live_energies.csv,
+  log_evidence.csv, posterior_summary.csv, 20 posterior XSFs, and 5 analysis PNGs
+  (training/posterior conf_space + Boltzmann probability + comparison density).
+- Output (in /tmp, gitignored) verified present.
+
+**Note:** a conda plugin error report appeared in the process stream during the
+run, but it was non-fatal side-process noise — the Python pipeline exited 0 and
+produced all outputs. (Pre-existing `use_ray=False` in `run_nested_sampling.py`
+means the `ActorUnavailableError` class is structurally avoided.)
+
+**Open items:** none for migration. Future concrete `_runs/` runs (e.g. the
+literature-scale `--n-live 500 --n-iters 5000` and T-scan) still pending on HPC.
+
+**Time:** 2026-08-26 ~20:17–20:20 JST.
