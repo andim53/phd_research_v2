@@ -819,3 +819,39 @@ also update TUTORIAL.md.
   comma list (e.g. `Fe,B`) can include B.
 
 **Time:** 2026-08-27 ~01:58–02:02 JST.
+
+---
+
+## Session 2026-08-27 — Create HPC run dir b1_gpr_accuracy_cv10_bin005
+
+**Goal (user-confirmed via clarify):** Create a self-contained run dir under
+`_runs/` for `gpr_accuracy.py` with bigger parameters (higher CV, lower bin),
+covering the two reference systems (`gpr_acc_cv_uncert_out` = energy-range CV+uncert,
+`gpr_acc_fez_cv3_out` = fez CV+uncert), with all deps for independent HPC running.
+
+**Clarify decisions (all user-confirmed):**
+1. One run dir covering BOTH systems (energy-range CV+uncertainty AND fez
+   CV+uncertainty) in a single job/script.
+2. Params: `--cv-folds 10` (vs 3), `--bin-width 0.05` (vs 0.1).
+3. Copy the full dataset/ dir (13 seed DBs, ~23 MB, gitignored) → self-contained.
+4. Include per-run README.md + TUTORIAL.md.
+5. Run dir name: `b1_gpr_accuracy_cv10_bin005`.
+
+**Actions taken:**
+- Created `_runs/b1_gpr_accuracy_cv10_bin005/`; copied latest `gpr_accuracy.py`
+  (v1.4.0) + full `dataset/` (13 DBs).
+- Wrote `j_gpr_accuracy_cv10_bin005.sh` (bare PJM script, 24 cores, `gpaw_env`)
+  that runs both invocations:
+  - `--cv --cv-folds 10 --uncertainty --bin-width 0.05 --output ./out_energy_range`
+  - `--cv --cv-folds 10 --fez --uncertainty --bin-width 0.05 --output ./out_fez`
+- Wrote per-run `README.md` + `TUTORIAL.md`.
+
+**Results / verification:**
+- `gpr_accuracy.py` (v1.4.0) compiles under agox_v2; `sh -n` OK.
+- 13 dataset DBs present.
+- git dry-run: only code + docs tracked (35 files); seed `.db` excluded.
+
+**Note:** 10-fold CV = ~10 GPR trainings per invocation (slower than 3-fold ref).
+Run not executed locally (HPC job). Outputs land in `out_energy_range/` + `out_fez/`.
+
+**Time:** 2026-08-27 ~02:30–02:40 JST.
