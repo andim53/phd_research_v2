@@ -9,6 +9,10 @@ NestedSampler from the `nested_sampling` package on the combined dataset.
 Run with the agox_v2 conda env:
     /home/think/miniconda3/envs/agox_v2/bin/python main.py [options]
 
+    /home/think/miniconda3/envs/agox_v2/bin/python main.py \
+    --temperature-free --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 --output ./ns_output_tfree --rng 42
+
 This script relies on:
   - the `nested_sampling` package in this directory (imported as a package)
   - the AGOX / ASE stack installed in the agox_v2 conda env
@@ -16,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import os
 import sys

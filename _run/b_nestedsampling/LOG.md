@@ -314,3 +314,22 @@ RMSE, R^2) ... as a function of the energy range."
 future GPR accuracy-vs-energy-range analysis task. **Code not built** (per user).
 
 **Time:** 2026-08-26 ~23:33–23:36 JST.
+
+---
+
+## Session 2026-08-26 — Commit unexpected main.py docstring addition (T-free run example)
+
+**Context:** While committing the PROMPTS.md processing, an **uncommitted edit to
+`main.py`'s module docstring** was found in the working tree (not made by this
+session's agent): it adds the temperature-free run command as a usage example.
+
+**Decision (user-confirmed via clarify):** Keep the docstring addition and commit
+it; bump `main.py` **1.1.0 → 1.1.1** (patch, doc-only) and sync VERSIONS/LOG.
+
+**Actions taken:**
+- `main.py`: kept the docstring example (temperature-free run); bumped
+  `__version__` 1.1.0 → 1.1.1.
+- `VERSIONS.md`: `main.py` row → 1.1.1.
+- This LOG entry records the change (append-only).
+
+**Time:** 2026-08-26 ~23:36–23:38 JST.
