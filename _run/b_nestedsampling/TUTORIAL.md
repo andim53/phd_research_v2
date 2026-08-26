@@ -152,11 +152,20 @@ into equal-width windows). Two modes:
 - `--use-ray` — use AGOX Ray for training (default single-process).
 - `--cv` / `--cv-folds N` — opt-in K-fold CV (default 5), stratified by energy bin;
   writes pooled `..._cv<K>folds.csv` + `cv_fold_summary_<K>folds.csv`.
+- `--uncertainty` — also report the GPR's own predictive uncertainty (posterior
+  std from `predict_energy_and_uncertainty`) averaged per energy bin. Writes
+  `uncertainty_by_energy_range.csv`, adds a `mean_model_std_eV_per_atom` column to
+  the accuracy CSV, and draws per-bin 1σ model-std error bars on the plot. In
+  in-sample mode it is the trained model's std on the training set; in CV mode it
+  is the average std of the held-out predictions pooled across folds.
 - **Interpretation:** in-sample errors are tiny (MAE~0.001 eV/atom, R²≈1.0,
-  interpolation points). CV gives the truthful out-of-sample picture: 5-fold CV
-  overall MAE=0.0040 RMSE=0.0067 R²=0.998 eV/atom, with error **increasing toward
-  higher-energy bins** (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom) — the GPR
-  generalizes worse at the energy extremes (fewer structures, more extrapolation).
+  interpolation points) and the model std is likewise small (~0.001 eV/atom). CV
+  gives the truthful out-of-sample picture: 5-fold CV overall MAE=0.0040
+  RMSE=0.0067 R²=0.998 eV/atom, with error **increasing toward higher-energy bins**
+  (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom). In CV mode the model's self-reported
+  std tracks the actual error (mean ~0.0046 eV/atom for 3-fold) and also rises at
+  the energy extremes (std ~0.016–0.019 eV/atom where R² drops to ~0.5–0.2) — the
+  GPR is both less accurate AND more uncertain at the energy extremes.
 
 ## Step 9 — Tuning checklist
 - **Finer evidence / lower variance:** raise `--n-live` (resolution ∝ 1/√K).

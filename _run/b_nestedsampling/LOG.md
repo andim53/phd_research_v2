@@ -427,3 +427,58 @@ Processed per AGENTS.md §3b.
 - Removed the now-redundant empty-flag stub.
 
 **Time:** 2026-08-26 ~23:54–23:56 JST.
+
+---
+
+## Session 2026-08-26/27 — Add uncertainty analysis to gpr_accuracy.py (flag 20260826_2354)
+
+**Goal (user-confirmed via clarify):** Add an uncertainty analysis to
+`gpr_accuracy.py` showing the GPR's uncertainty across energy levels, with a graph
+and CSV, behind a new run flag.
+
+**Clarify decisions (all user-confirmed):**
+1. Uncertainty = the GPR's own predictive std (from
+   `predict_energy_and_uncertainty`), averaged per energy bin.
+2. Opt-in `--uncertainty` flag.
+3. Extend the existing graph with per-bin mean model-std error bars.
+4. Separate `uncertainty_by_energy_range.csv` + add a `mean_model_std_eV_per_atom`
+   column to the main accuracy CSV.
+
+**Actions taken:**
+- `gpr_accuracy.py` (1.1.0 → 1.2.0, minor): added `--uncertainty`; in-sample mode
+  computes per-structure model std; CV mode collects the std of each held-out
+  prediction and pools it; new `bin_mean_std()` helper; writes
+  `uncertainty_by_energy_range.csv` + adds the std column to the accuracy CSV +
+  per-bin 1σ error bars on the plot; prints overall mean model std.
+- Docs: VERSIONS.md (1.2.0), README.md, TUTORIAL.md (Step 8c).
+
+**Results / verification (real output):**
+- `py_compile` under agox_v2: OK.
+- In-sample `--uncertainty`: **UNC_EXIT=0**, overall mean model std = 0.0011
+  eV/atom; accuracy CSV gained the std column; uncertainty CSV written; plot saved.
+- CV `--cv 3 --uncertainty`: **CVUNC_EXIT=0**, overall mean model std = 0.0046
+  eV/atom; std tracks the held-out error and rises at the energy extremes (std
+  ~0.016–0.019 eV/atom where R² drops to ~0.5–0.2), i.e. the GPR is both less
+  accurate AND more uncertain at the energy extremes.
+
+**Time:** 2026-08-27 ~00:10–00:25 JST.
+
+---
+
+## Session 2026-08-27 — Process new PROMPTS.md entry (rattling-distance analysis)
+
+**Context:** A new user prompt was found in PROMPTS.md with an empty `# FLAG:`:
+"Include an analysis of different ratteling distances ... vs the GPR performance
+(accuracy and uncertainty)." Processed per AGENTS.md §3b.
+
+**Actions taken:**
+- Assigned flag `20260827_0024` (local time when processed).
+- Split into `## Original` / `## Fixed grammar` (fixed "ratteling"→"rattling",
+  trailing dangling comma, restructured for clarity).
+- Folded into Grammar notes as new concept 5 (misspelling / dangling punctuation).
+- Removed the now-redundant empty-flag stub.
+
+**Note:** this logs a future task (rattling-distance sensitivity vs GPR accuracy/
+uncertainty). Not built yet.
+
+**Time:** 2026-08-27 ~00:24–00:26 JST.

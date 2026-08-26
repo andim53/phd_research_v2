@@ -66,10 +66,20 @@ the minimum, eV/atom, binned):
 # K-fold cross-validation (opt-in): out-of-sample generalization estimate
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --cv --cv-folds 5 --bin-width 0.1 --output ./gpr_accuracy_cv_out
+
+# Add the GPR's own predictive uncertainty (posterior std) per energy bin
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --uncertainty --bin-width 0.1 --output ./gpr_accuracy_uncert_out
 ```
 Outputs: `gpr_accuracy_by_energy_range*.csv` (per-bin metrics) + matplotlib plot
 + printed table. In CV mode it also writes `cv_fold_summary_<K>folds.csv`
 (fold-averaged MAE) and names outputs `..._cv<K>folds.*`.
+
+With `--uncertainty`, additionally writes `uncertainty_by_energy_range.csv`
+(per-bin mean GPR predictive std) and adds a `mean_model_std_eV_per_atom` column
+to the accuracy CSV + per-bin 1σ model-std error bars on the plot. In in-sample
+mode this is the trained model's std on the training set; in CV mode it is the
+average std of the held-out predictions pooled across folds.
 
 Observed (real output, 5-fold CV): overall MAE=0.0040 RMSE=0.0067 R²=0.998 eV/atom —
 error grows toward higher-energy bins (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom),

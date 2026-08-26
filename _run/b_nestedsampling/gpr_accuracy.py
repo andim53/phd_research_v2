@@ -29,13 +29,21 @@ Metrics (eV/atom, per bin and overall):
 
 Also writes a CSV + a matplotlib plot of MAE / RMSE / R^2 vs the energy range.
 
+Optional uncertainty analysis (--uncertainty): reports the GPR's own predictive
+uncertainty (posterior std from predict_energy_and_uncertainty), averaged per
+energy bin, as a function of the energy range. In in-sample mode this is the std
+of the single trained model on the training set; in CV mode it is the average std
+of the held-out predictions pooled across folds. Writes
+uncertainty_by_energy_range.csv and adds a mean_model_std column to the accuracy
+CSV, plus per-bin model-std error bars on the plot.
+
 Run with the agox_v2 conda env:
     /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py [options]
 """
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -200,6 +208,13 @@ def main():
                         "accuracy estimate.")
     p.add_argument("--cv-folds", type=int, default=5,
                    help="Number of CV folds (default 5).")
+    p.add_argument("--uncertainty", action="store_true",
+                   help="Also report the GPR's own predictive uncertainty "
+                        "(posterior std from predict_energy_and_uncertainty), "
+                        "averaged per energy bin. Writes "
+                        "uncertainty_by_energy_range.csv and adds a "
+                        "mean_model_std column to the accuracy CSV + error bars "
+                        "on the plot.")
     args = p.parse_args()
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -223,6 +238,7 @@ def main():
 
         # pooled held-out predictions + per-fold metrics
         pooled_dE, pooled_err = [], []
+        pooled_std = [] if args.uncertainty else None
         fold_metrics = []
         for f in range(args.cv_folds):
             tr_idx = np.where(folds != f)[0]
@@ -232,7 +248,11 @@ def main():
                   f"test {len(te_idx)}")
             gpr = build_gpr(tr, use_ray=args.use_ray)
             for i in te_idx:
-                e_pred = gpr.predict_energy(structures[i])
+                if pooled_std is not None:
+                    e_pred, unc = gpr.predict_energy_and_uncertainty(structures[i])
+                    pooled_std.append(np.asarray(unc).ravel()[0] / n_atoms)
+                else:
+                    e_pred = gpr.predict_energy(structures[i])
                 pooled_dE.append(dE_per_atom[i])
                 pooled_err.append((e_pred - E_DFT[i]) / n_atoms)
             # per-fold overall error
@@ -241,6 +261,8 @@ def main():
             fold_metrics.append(float(np.mean(np.abs(fe))))
         pooled_dE = np.array(pooled_dE)
         pooled_err = np.array(pooled_err)
+        if pooled_std is not None:
+            pooled_std = np.array(pooled_std)
 
         # pooled per-bin metrics
         rows, overall, edges, n_bins = bin_metrics(
@@ -275,6 +297,14 @@ def main():
         E_DFT = np.asarray([a.get_potential_energy() for a in structures])
         dE_per_atom = (E_DFT - E_DFT.min()) / n_atoms
         err_per_atom = (E_pred - E_DFT) / n_atoms
+        std_per_atom = None
+        if args.uncertainty:
+            print("  Computing model uncertainty (predict_energy_and_uncertainty)...")
+            std_pts = []
+            for a in structures:
+                _, unc = gpr.predict_energy_and_uncertainty(a)
+                std_pts.append(np.asarray(unc).ravel()[0] / n_atoms)
+            std_per_atom = np.array(std_pts)
         rows, overall, edges, n_bins = bin_metrics(
             dE_per_atom, err_per_atom, args.bin_width, n_atoms)
         title = (f"GPR accuracy vs energy range  (in-sample, bin width = "
@@ -284,6 +314,42 @@ def main():
         _write_csv(csv_path, rows)
         plot_name = "gpr_accuracy_by_energy_range.png"
         print(f"  Saved CSV: {csv_path}")
+
+    # 3. Uncertainty analysis (if requested)
+    std_per_bin = None
+    overall_std = None
+    if args.uncertainty:
+        # unify (dE, model-std) point arrays across modes
+        if args.cv:
+            dE_pts, std_pts = pooled_dE, pooled_std
+        else:
+            dE_pts, std_pts = dE_per_atom, std_per_atom
+        std_per_bin = bin_mean_std(dE_pts, std_pts, edges, n_bins)
+        overall_std = float(np.mean(std_pts))
+
+        # separate uncertainty CSV
+        unc_path = out / "uncertainty_by_energy_range.csv"
+        with open(unc_path, "w") as f:
+            f.write("bin_lo_eV_per_atom,bin_hi_eV_per_atom,"
+                    "mean_model_std_eV_per_atom\n")
+            for k, r in enumerate(rows):
+                f.write(f"{r['bin_lo_eV_per_atom']:.6f},"
+                        f"{r['bin_hi_eV_per_atom']:.6f},{std_per_bin[k]:.8f}\n")
+        print(f"  Saved uncertainty CSV: {unc_path}")
+        print(f"  Overall mean model std = {overall_std:.4f} eV/atom")
+
+        # add mean_model_std column to the accuracy CSV (rewrite)
+        acc_header = ("bin_lo_eV_per_atom,bin_hi_eV_per_atom,n_structures,"
+                      "MAE_eV_per_atom,RMSE_eV_per_atom,R2,"
+                      "mean_model_std_eV_per_atom\n")
+        with open(csv_path, "w") as f:
+            f.write(acc_header)
+            for k, r in enumerate(rows):
+                f.write(f"{r['bin_lo_eV_per_atom']:.6f},"
+                        f"{r['bin_hi_eV_per_atom']:.6f},{r['n_structures']},"
+                        f"{r['MAE_eV_per_atom']:.8f},"
+                        f"{r['RMSE_eV_per_atom']:.8f},{r['R2']:.8f},"
+                        f"{std_per_bin[k]:.8f}\n")
 
     # 4. Print table
     print("\n" + "=" * 70)
@@ -325,6 +391,11 @@ def main():
     ax2.plot(centers, r2, "-^", color="tab:green", label="R²")
     ax2.set_ylim(-1, 1.05)
 
+    # uncertainty: per-bin mean model std as error bars on MAE (if requested)
+    if std_per_bin is not None:
+        ax1.errorbar(centers, mae, yerr=std_per_bin, fmt="none", ecolor="tab:red",
+                     capsize=3, alpha=0.6, label="Model std (1σ)")
+
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="best", fontsize=8)
@@ -342,6 +413,8 @@ def main():
           f"MAE={overall['MAE_eV_per_atom']:.4f} "
           f"RMSE={overall['RMSE_eV_per_atom']:.4f} "
           f"R2={overall['R2']:.4f}")
+    if std_per_bin is not None:
+        print(f"  mean model std = {overall_std:.4f} eV/atom")
     print(f"\nDone. Outputs in {out}")
 
 
@@ -354,6 +427,21 @@ def _write_csv(csv_path, rows):
             f.write(f"{r['bin_lo_eV_per_atom']:.6f},{r['bin_hi_eV_per_atom']:.6f},"
                     f"{r['n_structures']},{r['MAE_eV_per_atom']:.8f},"
                     f"{r['RMSE_eV_per_atom']:.8f},{r['R2']:.8f}\n")
+
+
+def bin_mean_std(dE, std, edges, n_bins):
+    """Per-bin mean of a per-point quantity (e.g. model std), aligned with bin_metrics rows."""
+    dE = np.asarray(dE, dtype=float)
+    std = np.asarray(std, dtype=float)
+    means = []
+    for b in range(n_bins):
+        e0, e1 = edges[b], edges[b + 1]
+        m = (dE >= e0) & (dE < e1)
+        if int(m.sum()) == 0:
+            means.append(float("nan"))
+        else:
+            means.append(float(np.mean(std[m])))
+    return means
 
 
 if __name__ == "__main__":
