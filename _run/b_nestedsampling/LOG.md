@@ -633,3 +633,30 @@ concepts from all flags), per AGENTS.md §3b.
 **Result / verification:** `grep -c "^## Grammar notes"` = 1; all 5 flags present.
 
 **Time:** 2026-08-27 ~01:02–01:05 JST.
+
+---
+
+## Session 2026-08-27 — Add the actual running script to all DISCUSSION.md (flag 20260827_0059)
+
+**Goal (user-confirmed via clarify):** For all DISCUSSION.md under `_tmp/`, include
+the actual running script (exact command line) that produced each run.
+
+**Clarify decisions (all user-confirmed):**
+1. Full exact command line (python gpr_accuracy.py + all flags + --output), in a
+   dedicated `## Running script` section.
+2. Apply to all 6 DISCUSSION.md files.
+
+**Action:** Added a `## Running script` section (with the exact producing command,
+run from the project root) before `## What was run` in each of:
+- `_tmp/gpr_accuracy_out/DISCUSSION.md` (in-sample)
+- `_tmp/gpr_accuracy_cv_out/DISCUSSION.md` (--cv --cv-folds 5)
+- `_tmp/gpr_acc_uncert_out/DISCUSSION.md` (--uncertainty)
+- `_tmp/gpr_acc_cv_uncert_out/DISCUSSION.md` (--cv 3 --uncertainty)
+- `_tmp/gpr_acc_fez_out/DISCUSSION.md` (--fez --uncertainty)
+- `_tmp/gpr_acc_fez_cv3_out/DISCUSSION.md` (--cv 3 --fez --uncertainty)
+
+**Result / verification:** `grep -c "^## Running script"` = 1 in all 6 files.
+
+**Note:** files are under gitignored `_tmp/` (not committed).
+
+**Time:** 2026-08-27 ~01:05–01:10 JST.
