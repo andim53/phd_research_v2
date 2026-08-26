@@ -611,3 +611,25 @@ Processed per AGENTS.md §3b.
 to include the actual running script/command that produced each. Not yet applied.
 
 **Time:** 2026-08-27 ~00:59–01:02 JST.
+
+---
+
+## Session 2026-08-27 — Consolidate PROMPTS.md into a single shared Grammar notes section
+
+**Goal (user request):** Fix PROMPTS.md so it does not create multiple `## Grammar
+notes` tags — there should be exactly ONE shared Grammar notes section (generalized
+concepts from all flags), per AGENTS.md §3b.
+
+**Action (user-confirmed via clarify):** Rewrote PROMPTS.md to:
+- Keep exactly ONE `## Grammar notes` section, placed at the top after the intro,
+  holding the 7 deduplicated generalized concepts (formatting/machine-readable,
+  incomplete clauses, non-idiomatic phrasing, misplaced comma, misspelling/dangling
+  punctuation, terminology/clarity, missing noun/dangling pronoun).
+- Reduce each flag entry to only its `## Original` + `## Fixed grammar` blocks
+  (removed the per-flag duplicate Grammar notes blocks).
+- Keep all 5 flags in descending order (newest 20260827_0059 at top → oldest
+  20260826_2333 at bottom).
+
+**Result / verification:** `grep -c "^## Grammar notes"` = 1; all 5 flags present.
+
+**Time:** 2026-08-27 ~01:02–01:05 JST.
