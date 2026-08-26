@@ -158,6 +158,57 @@ analysis code/notebooks the owner chooses to track are tracked.
 
 ---
 
+## 3b. PROMPTS.md — the prompt log + grammar concept system
+
+`PROMPTS.md` is the project's **prompt log**: every prompt the owner adds for future
+work, each marked with a **flag code** and cleaned into a consistent grammar. It is a
+deliverable the agent must keep current alongside README/LOG/TUTORIAL.
+
+### Format of each prompt entry
+
+- **Flag heading.** Every prompt gets a first-level heading `# FLAG: <code>` above it,
+  where `<code>` is derived from the local timestamp as **`YYYYMMDD_HHMM`**
+  (year, month, day, hour, **minute** — e.g. `20260826_1437`). Newer prompts sit
+  **above** older ones.
+- **Two grammar blocks** under each flag:
+  - `## Original (before grammar fix)` — the owner's raw text, preserved verbatim.
+  - `## Fixed grammar (after)` — the same prompt with the grammar corrected.
+- **One shared `## Grammar notes` section** covering the whole file (see below) — do
+  **not** create a new notes section per prompt.
+
+### The grammar notes are concept-based, not per-prompt
+
+When a prompt is added, its grammar fixes are folded into the **single existing**
+`## Grammar notes` section. Notes are organized as **generalized concepts** (each with
+the concrete instances from the flagged prompts underneath), so recurring mistakes are
+named once and recognized across prompts. The current concepts are:
+
+1. **Incomplete clauses** — an instruction missing its verb, object, or noun (e.g.
+   "Make for kappa 3, 4, and 5" → add the object "Make runs ..."; "Make a new _runs"
+   → add the noun "directory").
+2. **Redundant / near-duplicate words** — stacked words with the same meaning (e.g.
+   "kappa number" → "kappa value"; "system and setup" → pick one or define both).
+3. **Vague / ambiguous value listing** — values that read as a range or start point
+   rather than a fixed set (e.g. "NOVELTY_WEIGHT, starting from 2.0, 3.0, 4.0" →
+   "NOVELTY_WEIGHT values: 2.0, 3.0, and 4.0").
+4. **Non-idiomatic phrasing** — unnatural preposition/filler around common actions
+   (e.g. "Clarify for every step" → "Clarify each step").
+5. **Formatting that breaks machine-readable content** — paths/identifiers split
+   mid-token (e.g. a path broken inside "research"); keep them on one line and in
+   backticks.
+
+### Agent duties
+
+- When the owner adds a prompt (or one is dropped in with an empty flag), assign its
+  flag code from the local time, fix the grammar into the "after" block, and **fold the
+  fixes into the existing Grammar notes** (adding a new concept only if the mistake is
+  genuinely new, otherwise reusing/strengthening an existing one).
+- Keep the new prompt **above** older ones.
+- Treat `PROMPTS.md` as a tracked deliverable: update it when prompted, and keep its
+  grammar notes consistent with what is actually in the prompts.
+
+---
+
 ## 4. Environment (invariant)
 
 - Python: `/home/think/miniconda3/envs/agox_v2/bin/python` (AGOX 3.10.2 + ASE 3.25.0 +

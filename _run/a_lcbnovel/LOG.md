@@ -1177,3 +1177,56 @@ kappa values: runs for kappa 3, 4, and 5. Clarify each step.
 
 ### Time
 ~25 min.
+
+
+---
+
+## 2026-08-26 — Session: Add novelty_weight-sweep runs (a7/a8/a9) under _runs/ + --novelty-weight CLI flag
+
+### Goal (user request, FLAG 20260826_1437, confirmed via clarify)
+Create new `_runs/` dirs using the same system/setup as `a5_mgofe_Seed3_Iter500_k4`
+but with different `NOVELTY_WEIGHT` values: 2.0, 3.0, and 4.0. Clarify each step.
+
+### Clarify (confirmed)
+- **Kappa setting:** add a `--novelty-weight` CLI flag to root `main.py` (default
+  NOVELTY_WEIGHT=1.5), mirroring the `--kappa` pattern, and sync the root `main.py`.
+- **Dirs:** named `a[num]_mgofe_Seed3_Iter500_k4_nw[num]` ->
+  `a7_mgofe_Seed3_Iter500_k4_nw2`, `a8_..._nw3`, `a9_..._nw4`.
+- **Seed/iter/kappa:** seed 3, 500 iterations, kappa 4 (inherited from a5).
+- **Sync:** propagate the updated `main.py` into all existing run dirs (a1-a6, 73) per
+  AGENTS "keep run copies current" policy.
+- **Version bump:** 1.1.0 -> 1.1.1 (user's choice).
+
+### Actions taken
+1. Root `main.py`: added `--novelty-weight` CLI flag, threaded `novelty_weight` through
+   `build_stack(..., novelty_weight=NOVELTY_WEIGHT)` into the acquisitor, updated
+   docstring usage. Bumped `__version__` 1.1.0 -> 1.1.1. `py_compile` OK; `--help`
+   shows the new flag.
+2. `VERSIONS.md`: `main.py` 1.1.0 -> 1.1.1.
+3. Synced updated `main.py` into `_runs/a1..a6/` and `_runs/73_novel_benchEMT/`
+   (verified all at 1.1.1).
+4. Created `_runs/a7_mgofe_Seed3_Iter500_k4_nw2/`, `a8_mgofe_Seed3_Iter500_k4_nw3/`,
+   `a9_mgofe_Seed3_Iter500_k4_nw4/` by copying the full a5 structure (main.py 1.1.1 +
+   novelty_lcb + scripts + README + TUTORIAL).
+5. Set `NOVELTY_WEIGHT=2/3/4` and `--novelty-weight "${NOVELTY_WEIGHT}"` in each new
+   `j_novEperAtom.sh` (kept KAPPA=4).
+6. Rewrote each new run's `README.md` + `TUTORIAL.md` to be specific to its
+   `NOVELTY_WEIGHT`, with a sibling-difference table (a5=1.5, a7=2.0, a8=3.0, a9=4.0).
+
+### Results
+- `main.py --help` shows `--novelty-weight NOVELTY_WEIGHT` (default 1.5); compiles clean.
+- Three new self-contained run dirs a7/a8/a9, each with the versioned stack and a
+  `NOVELTY_WEIGHT=` in its batch script. All run copies of `main.py` now at 1.1.1.
+
+### Decisions & reasoning
+- Made novelty_weight a CLI flag (like kappa/iterations) so run dirs stay syncable with
+  the single versioned root `main.py`, and the value is explicit in each `.sh`.
+- Named the sweep a7/a8/a9 with a `_nw<v>` suffix and kept `_k4` to record the inherited
+  kappa, so each run's treatment is fully self-describing.
+
+### Open items / next steps
+- (User) launch the a7/a8/a9 novelty_weight-sweep runs on HPC (`pjsub j_novEperAtom.sh`).
+- (User) run the 73/74 benchmarks on HPC.
+
+### Time
+~25 min.

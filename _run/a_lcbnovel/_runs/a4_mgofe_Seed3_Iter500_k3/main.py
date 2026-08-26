@@ -17,14 +17,14 @@ so the search can be scaled out across many independent runs.
 
 Usage:
     /home/think/miniconda3/envs/agox_v2/bin/python main.py --seed 3 \
-        --n-iterations 100 --kappa 3.0 --out-root ./output
+        --n-iterations 100 --kappa 3.0 --novelty-weight 2.0 --out-root ./output
     # or a range:
     ... --seed-start 3 --seed-end 105
 """
 
 
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import argparse
 import os
@@ -155,7 +155,8 @@ def build_environment(slab_substrate, slab_deposition):
     )
 
 
-def build_stack(environment, slab_deposition, db_path, seed, kappa=KAPPA):
+def build_stack(environment, slab_deposition, db_path, seed, kappa=KAPPA,
+                novelty_weight=NOVELTY_WEIGHT):
     """Construct the full, wired AGOX stack for one seed."""
     # Generators
     n_rattle = len(slab_deposition)
@@ -201,7 +202,7 @@ def build_stack(environment, slab_deposition, db_path, seed, kappa=KAPPA):
         database=database,
         energy_above_min=NOVELTY_ENERGY_ABOVE_MIN,
         per_atom=NOVELTY_ENERGY_PER_ATOM,
-        novelty_weight=NOVELTY_WEIGHT,
+        novelty_weight=novelty_weight,
         kappa=kappa,
         order=3,
     )
@@ -240,6 +241,8 @@ def main():
     ap.add_argument("--n-iterations", type=int, default=N_ITERATIONS)
     ap.add_argument("--kappa", type=float, default=KAPPA,
                     help="LCB kappa for the surrogate relaxation surface (default KAPPA=2.0).")
+    ap.add_argument("--novelty-weight", type=float, default=NOVELTY_WEIGHT,
+                    help="Novelty weight lambda in a(x)=sigma+lambda*Novelty (default NOVELTY_WEIGHT=1.5).")
     ap.add_argument("--out-root", type=str, default="./output",
                     help="Root dir; per-seed subdirs out_root/seed_<N>/{0_result,1_db}.")
     args = ap.parse_args()
@@ -266,7 +269,7 @@ def main():
 
         env = build_environment(slab_substrate.copy(), slab_deposition.copy())
         agox, _ = build_stack(env, slab_deposition, f"{db_dir}/db_{seed}.db", seed,
-                              kappa=args.kappa)
+                              kappa=args.kappa, novelty_weight=args.novelty_weight)
         agox.run(N_iterations=args.n_iterations)
 
 

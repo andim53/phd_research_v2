@@ -15,7 +15,7 @@ Versioning rules:
 
 | File | Version |
 |---|---|
-| `main.py` | 1.1.0 |
+| `main.py` | 1.1.1 |
 | `main_benchmark.py` | 1.0.0 |
 | `main_benchmark_sweep.py` | 1.0.0 |
 | `energy_stats.py` | 1.0.0 |
