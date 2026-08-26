@@ -286,3 +286,31 @@ with Z(β)/free-energy/posterior evaluated in post-processing at any temperature
 **Open items:** none for the feature. HPC run of T-free mode not launched.
 
 **Time:** 2026-08-26 ~21:00–21:10 JST.
+
+---
+
+## Session 2026-08-26 — Process PROMPTS.md (log prompt for GPR accuracy analysis)
+
+**Goal (user-confirmed via clarify):** Process `/home/think/Desktop/research/_run/b_nestedsampling/PROMPTS.md` — assign the flag code, split the prompt into Original/Fixed grammar blocks, fold fixes into the Grammar notes. Do **not** build the GPR analysis code yet.
+
+**The prompt (from PROMPTS.md, originally with an empty `# FLAG:`):** "Make a new
+code for this project ... the kernel GPR accuracy analysis code ... extract the
+performance of the GPR model under different energy range ... accuracy (use MAE,
+RMSE, R^2) ... as a function of the energy range."
+
+**Actions taken:**
+- Assigned flag `20260826_2333` (local time when processed).
+- Preserved the original verbatim (including the broken line-wraps) under
+  `## Original (before grammar fix)`.
+- Wrote `## Fixed grammar (after)`: repaired the split path
+  (`/home/thin k/...` → `/home/think/Desktop/research/_run/b_nestedsampling/`),
+  the split "It' s" → "It's", "under different energy range" → "under different
+  energy ranges", and "(use MAE, RMSE, R^2)" → "(using MAE, RMSE, R^2)".
+- Folded the fixes into the shared `## Grammar notes` as generalized concepts
+  (broken machine-readable tokens/paths; incomplete clauses; non-idiomatic
+  phrasing), matching AGENTS.md §3b.
+
+**Result:** PROMPTS.md now contains a properly flagged, grammar-fixed entry for the
+future GPR accuracy-vs-energy-range analysis task. **Code not built** (per user).
+
+**Time:** 2026-08-26 ~23:33–23:36 JST.
