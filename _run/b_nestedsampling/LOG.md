@@ -236,3 +236,53 @@ this project's `nested_sampling/nested_sampler.py` puts β **inside** the likeli
 unchanged).
 
 **Time:** 2026-08-26 ~20:55–21:00 JST.
+
+---
+
+## Session 2026-08-26 — Add temperature-free nested-sampling mode (consistent with papers/wiki)
+
+**Goal (user-confirmed via clarify):** Edit the code so a **temperature-free**
+nested-sampling mode is available, consistent with the papers (Pártay 2021 / Yang
+2024) and the wiki (`nested-sampling` page): β kept OUT of the sampling likelihood,
+with Z(β)/free-energy/posterior evaluated in post-processing at any temperature.
+
+**Clarify decisions (all user-confirmed):**
+1. **Opt-in** `--temperature-free` flag; the existing fixed-T (`--temp`) path stays
+   the default (backward compatible).
+2. `--temperatures` comma list (e.g. 100,200,300,500,1000): evaluate Z/F/posterior
+   at each; write a per-T summary + `thermodynamics.csv`.
+3. Full scope: `--temperature-free`, `--temperatures` in main.py; refactor
+   `NestedSampler` to decouple β from sampling, store `(E_i, w_i)` per sample, add
+   `evaluate(beta)` / `posterior_at(beta)`; write `samples.csv` (re-runnable).
+4. Verify with a local smoke test in temperature-free mode.
+
+**Actions taken:**
+- `nested_sampling/nested_sampler.py` (1.0.0 → 1.1.0, minor): added
+  `temperature_free` flag; `log_likelihood` returns β-free `-(E-E_ref)` when set;
+  `step()` records `sample_energies` + `sample_prior_weights` (ΔX); new
+  `evaluate(beta)` = `Σ w_i exp(−β E_i)` (+ final live term) and
+  `posterior_at(beta)`; `run()`/`save()` branch for T-free mode (progress shows
+  prior volume X; writes `samples.csv` + `final_live_energies.csv` instead of
+  fixed-T evidence/posterior files).
+- `main.py` (1.0.1 → 1.1.0, minor): added `--temperature-free` +
+  `--temperatures`; temperature-free post-processing writes per-T
+  `posterior_T{KKK}/posterior_summary.csv` + XSFs and `thermodynamics.csv`
+  (T, β, logZ, Z, F=−k_B T ln Z).
+- `smoke_test_temperature_free.py` (new, 1.0.0): unit test that `evaluate`/
+  `posterior_at` match the paper formula + tiny end-to-end T-free run.
+- Docs: README.md (usage + options), README.AI.md (CLI table), TUTORIAL.md
+  (Step 8b), VERSIONS.md (main 1.1.0, nested_sampler 1.1.0, + smoke test).
+
+**Results / verification (real output):**
+- `py_compile` of main.py + nested_sampler.py under agox_v2: OK.
+- `smoke_test_temperature_free.py`: **ALL PASSED** (SMOKE_EXIT=0).
+  - Unit: logZ matches paper formula; posterior weights sum to 1.
+  - End-to-end T-free run (n-live 10, n-iters 15): exit 0, wrote samples.csv,
+    final_live_energies.csv, thermodynamics.csv, posterior_T{100,300,1000}/.
+  - Physics check: T=100/300/1000 K → log Z = −27.2 / −11.6 / −6.1, F = +0.235 /
+    +0.300 / +0.530 eV. Z grows and F becomes less negative as T rises (correct).
+- Fixed-T path left unchanged (backward compatible).
+
+**Open items:** none for the feature. HPC run of T-free mode not launched.
+
+**Time:** 2026-08-26 ~21:00–21:10 JST.

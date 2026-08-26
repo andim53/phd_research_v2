@@ -40,6 +40,20 @@ cd /home/think/Desktop/research/_run/b_nestedsampling
 ```
 After sampling, the analysis writes to `<--output>/analysis/` automatically.
 
+## Usage (temperature-free mode — consistent with the papers)
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
+    --temperature-free --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --output ./ns_output_tfree --rng 42
+```
+In temperature-free mode beta is kept OUT of the likelihood (energy-constrained
+top-down pass, per Pártay 2021 / Yang 2024). The partition function, free energy
+`F = -k_B T ln Z`, and the posterior are evaluated in **post-processing** at each
+`--temperatures` value, so one sample set yields thermodynamics at all temperatures.
+Writes `samples.csv` (re-runnable), `thermodynamics.csv`, and per-T posterior dirs
+`posterior_T{KKK}/`.
+
 ## Usage (standalone re-analysis of a finished run)
 ```
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
@@ -59,7 +73,11 @@ For literature-scale settings and the paper-derived parameter table, see
 `TUTORIAL.md` ("Literature-scale NS parameters").
 
 ## Options
-- `--temp`      temperature (K), default 300
+- `--temp`      temperature (K), default 300 (fixed-T mode only)
+- `--temperature-free`  temperature-free NS: beta kept OUT of the likelihood
+  (energy-constrained top-down pass); evaluates Z/F/posterior at `--temperatures`
+- `--temperatures`  comma-separated T (K) for temperature-free post-processing
+  (default 100,200,300,500,1000)
 - `--n-live`    number of live points, default 50
 - `--n-iters`   nested-sampling iterations, default 300
 - `--perturb`   perturbation amplitude (Å) for prior sampling, default 0.01

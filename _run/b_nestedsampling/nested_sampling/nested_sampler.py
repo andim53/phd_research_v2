@@ -3,15 +3,24 @@
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 
 from ase import Atoms
+
+
+def _logsumexp(a: np.ndarray) -> float:
+    """Numerically stable log(sum(exp(a)))."""
+    a = np.asarray(a, dtype=float)
+    m = a.max()
+    if not np.isfinite(m):
+        return m
+    return m + np.log(np.sum(np.exp(a - m)))
 
 
 class NestedSampler:
@@ -19,10 +28,27 @@ class NestedSampler:
     Nested sampling with GPR likelihood, working in log-space for numerical
     stability.
 
-    The likelihood is L(x) = exp(-beta * (E(x) - E_ref)) where E_ref is the
-    minimum training energy (so L is O(1) at the best structures).
+    Two modes, selected by ``temperature_free``:
 
-    Evidence is accumulated as log(Z).
+    **Fixed-temperature mode (default, ``temperature_free=False``).**
+    The likelihood is L(x) = exp(-beta * (E(x) - E_ref)) where E_ref is the
+    minimum training energy and beta = 1/(k_B * T). Evidence is accumulated at
+    that single temperature. This is the historical behaviour of this code.
+
+    **Temperature-free mode (``temperature_free=True``, consistent with the
+    papers: Partay 2021 / Yang 2024 and the wiki's ``nested-sampling`` page).**
+    The likelihood is beta-free: log L = -(E - E_ref), i.e. sampling is a single
+    top-down pass over configuration space constrained only by a decreasing
+    energy limit (the "worst" live point is simply the highest-energy one). The
+    sampler records, for every discarded sample, its energy ``E_i`` and its
+    prior-volume weight ``w_i = Gamma(E_{i-1}) - Gamma(E_i) = delta_X``. The
+    partition function at ANY temperature is then evaluated in post-processing:
+
+        Z(beta) = sum_i w_i * exp(-beta * E_i)   (+ final live-point term)
+
+    so one sample set yields Z(T), free energy F = -k_B T ln Z, and the posterior
+    at every temperature of interest — matching the papers' temperature-free
+    sampling with beta applied only in post-processing.
     """
 
     def __init__(
@@ -36,13 +62,20 @@ class NestedSampler:
         perturb: float = 0.01,
         rng: np.random.Generator = None,
         perturb_symbols: str = "Fe",
+        temperature_free: bool = False,
     ):
         self.gpr = gpr
         self.db_structures = db_structures
         self.db_energies = db_energies
         self.n_live = n_live
-        self.beta = beta if beta is not None else 1.0 / (8.617333262e-5 * temperature)
-        self.temperature = temperature
+        self.temperature_free = temperature_free
+        if temperature_free:
+            # beta is deliberately NOT set: sampling is temperature-independent.
+            self.beta = None
+            self.temperature = None
+        else:
+            self.beta = beta if beta is not None else 1.0 / (8.617333262e-5 * temperature)
+            self.temperature = temperature
         self.perturb = perturb
         self.rng = rng or np.random.default_rng()
         self.perturb_symbols = perturb_symbols
@@ -67,14 +100,18 @@ class NestedSampler:
         self.live_energies: np.ndarray = np.array([])
         self.live_log_L: np.ndarray = np.array([])
 
-        # Evidence in log space
+        # Evidence in log space (fixed-T mode only)
         self.log_Z = -np.inf
         self.Z_history: List[float] = []
         self.iteration = 0
 
-        # Posterior
+        # Posterior (discarded samples, in removal order)
         self.posterior_samples: List[Atoms] = []
         self.posterior_log_weights: List[float] = []
+
+        # Temperature-free bookkeeping: per-discarded-sample energy + prior weight
+        self.sample_energies: List[float] = []
+        self.sample_prior_weights: List[float] = []
 
         self.log_L_boundary = -np.inf
 
@@ -98,10 +135,16 @@ class NestedSampler:
     # -- Log-likelihood --
 
     def log_likelihood(self, atoms: Atoms) -> float:
-        """log L = -beta * (E - E_ref)."""
+        """log L for ranking the live set.
+
+        - Fixed-T mode:  log L = -beta * (E - E_ref)
+        - Temperature-free mode:  log L = -(E - E_ref)   (beta-free; energy-based)
+        """
         E = self.gpr.predict_energy(atoms)
         if abs(E) > 1e4:
             return -np.inf
+        if self.temperature_free:
+            return -(E - self.E_ref)
         return -self.beta * (E - self.E_ref)
 
     def likelihood(self, atoms: Atoms) -> float:
@@ -136,7 +179,7 @@ class NestedSampler:
         self._filter_unphysical()
         self.log_L_boundary = self.live_log_L.min()
         print(f"Initial log_L_boundary = {self.log_L_boundary:.4f}  "
-              f"(E_boundary = {self.E_ref - self.log_L_boundary/self.beta:.3f} eV)")
+              f"(E_boundary = {self.E_ref - self.log_L_boundary:.3f} eV)")
 
     def _filter_unphysical(self, max_E: float = 1e4):
         """Replace live points with |E| > max_E."""
@@ -159,7 +202,13 @@ class NestedSampler:
     # -- Constrained sampling --
 
     def sample_constrained(self, n_attempts: int = 500) -> Optional[Atoms]:
-        """Draw from prior with log_L > log_L_boundary."""
+        """Draw from prior with log_L > log_L_boundary.
+
+        In temperature-free mode this is the energy constraint E < E_boundary
+        (equivalently log_L = -(E - E_ref) > log_L_boundary); in fixed-T mode it
+        is the beta-weighted likelihood constraint. Either way, the prior volume
+        shrinks toward low energy.
+        """
         for _ in range(n_attempts):
             s = self.sample_from_prior()
             ll = self.log_likelihood(s)
@@ -170,9 +219,10 @@ class NestedSampler:
     # -- Step --
 
     def step(self) -> bool:
-        """One NS iteration. Accumulate log_evidence via log-sum-exp."""
+        """One NS iteration. Remove the worst live point, shrink the prior volume."""
         worst_idx = np.argmin(self.live_log_L)
         log_L_min = self.live_log_L[worst_idx]
+        E_worst = self.live_energies[worst_idx]
 
         i = self.iteration
         # Prior volume shrinkage
@@ -180,21 +230,25 @@ class NestedSampler:
         X_this = np.exp(-(i + 1) / self.n_live)
         delta_X = X_prev - X_this
 
-        # Accumulate evidence: Z += L_min * delta_X
-        # In log space: log(Z_new) = log(Z_old + exp(log_L_min) * delta_X)
-        term = np.exp(log_L_min) * delta_X
-        if self.log_Z == -np.inf:
-            self.log_Z = np.log(term) if term > 0 else -np.inf
-        else:
-            self.log_Z = np.logaddexp(self.log_Z, np.log(term) if term > 0 else -np.inf)
+        # Fixed-T mode: accumulate evidence  Z += L_min * delta_X  (log space)
+        if not self.temperature_free:
+            term = np.exp(log_L_min) * delta_X
+            if self.log_Z == -np.inf:
+                self.log_Z = np.log(term) if term > 0 else -np.inf
+            else:
+                self.log_Z = np.logaddexp(
+                    self.log_Z, np.log(term) if term > 0 else -np.inf)
+            self.Z_history.append(np.exp(self.log_Z) if self.log_Z > -np.inf else 0.0)
 
-        self.Z_history.append(np.exp(self.log_Z) if self.log_Z > -np.inf else 0.0)
-
-        # Save posterior sample
+        # Save posterior sample (discarded worst point)
         self.posterior_samples.append(self.live_structures[worst_idx])
         self.posterior_log_weights.append(
             log_L_min + np.log(delta_X) if delta_X > 0 else -np.inf
         )
+        # Temperature-free bookkeeping: (E_i, w_i = delta_X) for post-processing
+        if self.temperature_free:
+            self.sample_energies.append(E_worst)
+            self.sample_prior_weights.append(delta_X)
 
         # Replace worst point
         new_struct = self.sample_constrained()
@@ -213,8 +267,9 @@ class NestedSampler:
 
     def run(self, n_iterations: int, progress_every: int = 20):
         """Run nested sampling."""
-        print(f"\nNested sampling: {n_iterations} iters, {self.n_live} live, "
-              f"T = {self.temperature} K, beta = {self.beta:.4f} eV^-1")
+        mode = "temperature-free" if self.temperature_free else \
+               f"T = {self.temperature} K, beta = {self.beta:.4f} eV^-1"
+        print(f"\nNested sampling: {n_iterations} iters, {self.n_live} live, {mode}")
         print(f"E_ref (training min) = {self.E_ref:.4f} eV")
         print("=" * 60)
 
@@ -226,33 +281,48 @@ class NestedSampler:
                 n_unphys = (np.abs(self.live_energies) >= 1e4).sum()
                 E_min = valid_E.min() if len(valid_E) > 0 else float('nan')
                 E_max = valid_E.max() if len(valid_E) > 0 else float('nan')
-                Z_now = np.exp(self.log_Z) if self.log_Z > -700 else 0.0
-                print(f"  Iter {it+1:5d}/{n_iterations}  "
-                      f"Z = {Z_now:.6e}  "
-                      f"log_L_min = {log_L_min:.4f}  "
-                      f"E: [{E_min:.3f}, {E_max:.3f}] eV  "
-                      f"unphys: {n_unphys}")
+                if self.temperature_free:
+                    # progress metric = remaining prior volume X_i
+                    X_now = np.exp(-(it + 1) / self.n_live)
+                    print(f"  Iter {it+1:5d}/{n_iterations}  "
+                          f"X = {X_now:.6e}  "
+                          f"E: [{E_min:.3f}, {E_max:.3f}] eV  "
+                          f"unphys: {n_unphys}")
+                else:
+                    Z_now = np.exp(self.log_Z) if self.log_Z > -700 else 0.0
+                    print(f"  Iter {it+1:5d}/{n_iterations}  "
+                          f"Z = {Z_now:.6e}  "
+                          f"log_L_min = {log_L_min:.4f}  "
+                          f"E: [{E_min:.3f}, {E_max:.3f}] eV  "
+                          f"unphys: {n_unphys}")
 
-        # Final evidence correction
-        X_final = np.exp(-n_iterations / self.n_live)
-        log_L_avg = np.mean(self.live_log_L)
-        term_final = np.exp(log_L_avg) * X_final
-        if term_final > 0:
-            self.log_Z = np.logaddexp(self.log_Z, np.log(term_final))
+        if not self.temperature_free:
+            # Final evidence correction (fixed-T mode)
+            X_final = np.exp(-n_iterations / self.n_live)
+            log_L_avg = np.mean(self.live_log_L)
+            term_final = np.exp(log_L_avg) * X_final
+            if term_final > 0:
+                self.log_Z = np.logaddexp(self.log_Z, np.log(term_final))
 
-        Z_final = np.exp(self.log_Z) if self.log_Z > -700 else 0.0
-        print(f"\nFinal evidence: Z = {Z_final:.6e}  (log Z = {self.log_Z:.4f})")
-        print(f"Final prior volume: X = {X_final:.6e}")
+            Z_final = np.exp(self.log_Z) if self.log_Z > -700 else 0.0
+            print(f"\nFinal evidence: Z = {Z_final:.6e}  (log Z = {self.log_Z:.4f})")
+            print(f"Final prior volume: X = {X_final:.6e}")
 
-        # Normalise posterior weights (in log space, then exponentiate)
-        max_log_w = max(self.posterior_log_weights) if self.posterior_log_weights else 0
-        if max_log_w > -np.inf:
-            log_total = max_log_w + np.log(sum(np.exp(lw - max_log_w)
-                                                for lw in self.posterior_log_weights
-                                                if lw > -700))
-            self.posterior_log_weights = [lw - log_total for lw in self.posterior_log_weights]
+            # Normalise posterior weights (in log space, then exponentiate)
+            max_log_w = max(self.posterior_log_weights) if self.posterior_log_weights else 0
+            if max_log_w > -np.inf:
+                log_total = max_log_w + np.log(sum(
+                    np.exp(lw - max_log_w) for lw in self.posterior_log_weights
+                    if lw > -700))
+                self.posterior_log_weights = [
+                    lw - log_total for lw in self.posterior_log_weights]
+        else:
+            X_final = np.exp(-n_iterations / self.n_live)
+            print(f"\nFinal prior volume: X = {X_final:.6e}")
+            print("Temperature-free sampling complete. Evaluate Z(beta)/posterior "
+                  "at any temperature via evaluate()/posterior_at().")
 
-        # Summary
+        # Summary (physical posterior energies)
         phys_E = []
         for s in self.posterior_samples:
             E = self.gpr.predict_energy(s)
@@ -266,7 +336,89 @@ class NestedSampler:
             print(f"  E_min  = {phys_E.min():.4f} eV")
             print(f"  E_max  = {phys_E.max():.4f} eV")
 
-        return Z_final
+        return X_final
+
+    # -- Temperature-free post-processing --
+
+    def evaluate(self, beta: float) -> Tuple[float, float]:
+        """Temperature-free evidence Z(beta) = sum_i w_i exp(-beta E_i).
+
+        Returns
+        -------
+        Z : float
+            Z(beta) (exponentiated; 0.0 if it underflows).
+        logZ : float
+            log Z(beta) (robust number).
+
+        Only meaningful when ``temperature_free=True``; the fixed-T mode should
+        use the accumulated ``self.log_Z`` instead.
+        """
+        if not self.temperature_free:
+            raise ValueError(
+                "evaluate() is only for temperature-free mode (temperature_free=True).")
+        if len(self.sample_prior_weights) == 0:
+            return 0.0, -np.inf
+        w = np.array(self.sample_prior_weights, dtype=float)
+        E = np.array(self.sample_energies, dtype=float)
+        logw = np.log(np.maximum(w, 1e-300))
+        logL = -beta * (E - self.E_ref)
+        logZ = _logsumexp(logw + logL)
+        # final live-point term: X_final * <exp(-beta(E-E_ref))>_live
+        mask = np.abs(self.live_energies) < 1e4
+        E_live = self.live_energies[mask]
+        if len(E_live) > 0:
+            X_final = np.exp(-self.iteration / self.n_live)
+            logL_live = -beta * (E_live - self.E_ref)
+            log_mean = _logsumexp(logL_live) - np.log(len(E_live))
+            logZ = np.logaddexp(logZ, np.log(X_final) + log_mean)
+        Z = np.exp(logZ) if logZ > -700 else 0.0
+        return Z, logZ
+
+    def posterior_at(self, beta: float) -> Tuple[List[Atoms], np.ndarray]:
+        """Temperature-free posterior at inverse temperature beta.
+
+        Returns
+        -------
+        structures : list of ase.Atoms
+            Discarded posterior samples (removal order) plus the final live set.
+        weights : np.ndarray
+            Normalised posterior weights (sum to 1) at this beta.
+
+        weight_i = w_i * exp(-beta E_i) / Z(beta)  (discarded samples)
+        plus the final live set share X_final/N_live * exp(-beta E_i) / Z(beta).
+        """
+        if not self.temperature_free:
+            raise ValueError(
+                "posterior_at() is only for temperature-free mode (temperature_free=True).")
+        Z, logZ = self.evaluate(beta)
+        if not np.isfinite(logZ) or logZ < -700:
+            return list(self.posterior_samples), np.zeros(len(self.posterior_samples))
+
+        w = np.array(self.sample_prior_weights, dtype=float)
+        E = np.array(self.sample_energies, dtype=float)
+        logw = np.log(np.maximum(w, 1e-300))
+        logL = -beta * (E - self.E_ref)
+        weights_disc = np.exp(logw + logL - logZ)
+
+        structures = list(self.posterior_samples)
+        weights = list(weights_disc)
+
+        # final live set
+        mask = np.abs(self.live_energies) < 1e4
+        X_final = np.exp(-self.iteration / self.n_live)
+        if len(self.live_structures) > 0:
+            for idx in np.where(mask)[0]:
+                E_live = self.live_energies[idx]
+                w_live = X_final / self.n_live * np.exp(-beta * (E_live - self.E_ref)) / Z
+                structures.append(self.live_structures[idx])
+                weights.append(w_live)
+
+        weights = np.array(weights, dtype=float)
+        # renormalise (numerical guard)
+        tot = weights.sum()
+        if tot > 0:
+            weights = weights / tot
+        return structures, weights
 
     # -- Save --
 
@@ -275,35 +427,53 @@ class NestedSampler:
         out = Path(output_dir)
         out.mkdir(parents=True, exist_ok=True)
 
-        np.savetxt(out / "evidence_history.csv",
-                   np.column_stack([np.arange(len(self.Z_history)), self.Z_history]),
-                   delimiter=',', header='iteration,evidence_Z', comments='')
-        np.savetxt(out / "log_evidence.csv",
-                   np.column_stack([[i, self.log_Z] for i in range(len(self.Z_history))]),
-                   delimiter=',', header='iteration,log_Z', comments='')
+        if self.temperature_free:
+            # samples.csv (iteration, energy_eV, prior_weight) -> re-runnable
+            # post-processing; final_live_energies.csv
+            rows = np.column_stack([
+                np.arange(len(self.sample_energies)),
+                np.array(self.sample_energies),
+                np.array(self.sample_prior_weights),
+            ])
+            np.savetxt(out / "samples.csv", rows, delimiter=',',
+                       header='iteration,energy_eV,prior_weight', comments='')
+            np.savetxt(out / "final_live_energies.csv",
+                       self.live_energies.reshape(-1, 1),
+                       delimiter=',', header='energy_eV', comments='')
+            print(f"  Wrote samples.csv ({len(self.sample_energies)} discarded "
+                  f"samples) + final_live_energies.csv to {out}")
+            print("  (temperature-free mode: run post-processing to write "
+                  "thermodynamics.csv + per-T posterior structures)")
+        else:
+            np.savetxt(out / "evidence_history.csv",
+                       np.column_stack([np.arange(len(self.Z_history)), self.Z_history]),
+                       delimiter=',', header='iteration,evidence_Z', comments='')
+            np.savetxt(out / "log_evidence.csv",
+                       np.column_stack([[i, self.log_Z] for i in range(len(self.Z_history))]),
+                       delimiter=',', header='iteration,log_Z', comments='')
 
-        # Posterior samples (physical only), all of them + summary CSV so the
-        # analysis can be re-run standalone without re-training the GPR.
-        phys_pairs = [(w, s) for w, s in zip(self.posterior_log_weights, self.posterior_samples)
-                      if abs(self.gpr.predict_energy(s)) < 1e4]
-        if phys_pairs:
-            phys_pairs.sort(key=lambda x: x[0], reverse=True)
-            xsf_dir = out / "posterior_structures"
-            xsf_dir.mkdir(exist_ok=True)
-            summary_rows = []
-            from ase.io import write
-            for i, (lw, s) in enumerate(phys_pairs):
-                w = np.exp(lw) if lw > -700 else 0.0
-                E = self.gpr.predict_energy(s)
-                write(xsf_dir / f"posterior_{i:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
-                summary_rows.append((i, E, w, lw))
-            np.savetxt(out / "posterior_summary.csv", np.asarray(summary_rows, dtype=float),
-                       delimiter=',',
-                       header='rank,energy_eV,weight,log_weight', comments='')
-            print(f"  Saved {len(phys_pairs)} posterior structures to {xsf_dir}")
+            # Posterior samples (physical only), all of them + summary CSV
+            phys_pairs = [
+                (w, s) for w, s in zip(self.posterior_log_weights, self.posterior_samples)
+                if abs(self.gpr.predict_energy(s)) < 1e4]
+            if phys_pairs:
+                phys_pairs.sort(key=lambda x: x[0], reverse=True)
+                xsf_dir = out / "posterior_structures"
+                xsf_dir.mkdir(exist_ok=True)
+                summary_rows = []
+                from ase.io import write
+                for i, (lw, s) in enumerate(phys_pairs):
+                    w = np.exp(lw) if lw > -700 else 0.0
+                    E = self.gpr.predict_energy(s)
+                    write(xsf_dir / f"posterior_{i:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
+                    summary_rows.append((i, E, w, lw))
+                np.savetxt(out / "posterior_summary.csv",
+                           np.asarray(summary_rows, dtype=float), delimiter=',',
+                           header='rank,energy_eV,weight,log_weight', comments='')
+                print(f"  Saved {len(phys_pairs)} posterior structures to {xsf_dir}")
 
-        np.savetxt(out / "final_live_energies.csv",
-                   self.live_energies.reshape(-1, 1),
-                   delimiter=',', header='energy_eV', comments='')
+            np.savetxt(out / "final_live_energies.csv",
+                       self.live_energies.reshape(-1, 1),
+                       delimiter=',', header='energy_eV', comments='')
 
         print(f"Results saved to {out}")

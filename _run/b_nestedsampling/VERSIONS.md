@@ -16,13 +16,14 @@ Versioning rules:
 
 | File | Version |
 |---|---|
-| `main.py` | 1.0.1 |
+| `main.py` | 1.1.0 |
 | `nested_sampling/__init__.py` | 1.0.0 |
 | `nested_sampling/__main__.py` | 1.0.0 |
-| `nested_sampling/nested_sampler.py` | 1.0.0 |
+| `nested_sampling/nested_sampler.py` | 1.1.0 |
 | `nested_sampling/gpr_training.py` | 1.0.0 |
 | `nested_sampling/state_density.py` | 1.0.0 |
 | `nested_sampling/utils.py` | 1.0.0 |
+| `smoke_test_temperature_free.py` | 1.0.0 |
 | `scripts/build_mgo_stack.py` | 1.0.0 |
 | `scripts/build_fe_stack.py` | 1.0.0 |
 | `scripts/build_heteroStruct.py` | 1.0.0 |

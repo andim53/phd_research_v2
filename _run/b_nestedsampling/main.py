@@ -16,7 +16,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 import os
 import sys
@@ -115,7 +115,16 @@ def main():
         description="Nested sampling on the combined multi-seed Fe/MgO dataset"
     )
     p.add_argument("--temp", type=float, default=300.0,
-                   help="Temperature (K), default 300")
+                   help="Temperature (K), default 300 (fixed-T mode only)")
+    p.add_argument("--temperature-free", action="store_true",
+                   help="Temperature-free nested sampling: beta is kept OUT of the "
+                        "likelihood (energy-constrained top-down pass, consistent "
+                        "with Partay 2021 / Yang 2024). Post-processes Z(beta)/"
+                        "free-energy/posterior at each --temperatures value.")
+    p.add_argument("--temperatures", default="100,200,300,500,1000",
+                   help="Comma-separated temperatures (K) at which to evaluate "
+                        "Z, free energy F=-k_B T ln Z and the posterior in "
+                        "temperature-free mode (default 100,200,300,500,1000)")
     p.add_argument("--n-live", type=int, default=50,
                    help="Number of live points, default 50")
     p.add_argument("--n-iters", type=int, default=300,
@@ -188,25 +197,72 @@ def main():
         print(f"  {i:3d}  {Ed:10.4f}  {Eg:10.4f}  {Eg-Ed:10.4f}")
 
     # --- 3. Run nested sampling ----------------------------------------------
-    beta = 1.0 / (K_B * args.temp)
-    print(f"\nbeta = {beta:.6f} eV^-1  (T = {args.temp} K)")
-    print(f"perturb = {args.perturb} A")
-
-    sampler = NestedSampler(
-        gpr=gpr,
-        db_structures=structures,
-        db_energies=energies,
-        n_live=args.n_live,
-        beta=beta,
-        temperature=args.temp,
-        perturb=args.perturb,
-        perturb_symbols=args.perturb_symbols,
-        rng=np.random.default_rng(args.rng),
-    )
+    if args.temperature_free:
+        print(f"\nTemperature-free mode: beta kept OUT of the likelihood "
+              f"(energy-constrained top-down pass).")
+        print(f"Post-processing temperatures: {args.temperatures} K")
+        sampler = NestedSampler(
+            gpr=gpr,
+            db_structures=structures,
+            db_energies=energies,
+            n_live=args.n_live,
+            perturb=args.perturb,
+            perturb_symbols=args.perturb_symbols,
+            rng=np.random.default_rng(args.rng),
+            temperature_free=True,
+        )
+    else:
+        beta = 1.0 / (K_B * args.temp)
+        print(f"\nbeta = {beta:.6f} eV^-1  (T = {args.temp} K)")
+        print(f"perturb = {args.perturb} A")
+        sampler = NestedSampler(
+            gpr=gpr,
+            db_structures=structures,
+            db_energies=energies,
+            n_live=args.n_live,
+            beta=beta,
+            temperature=args.temp,
+            perturb=args.perturb,
+            perturb_symbols=args.perturb_symbols,
+            rng=np.random.default_rng(args.rng),
+        )
 
     sampler.initialize()
     sampler.run(n_iterations=args.n_iters, progress_every=20)
     sampler.save(args.output)
+
+    # --- 3b. Temperature-free post-processing --------------------------------
+    if args.temperature_free:
+        output_dir = Path(args.output)
+        temps = [float(t) for t in args.temperatures.split(",") if t.strip()]
+        therm_rows = []
+        for T in temps:
+            beta = 1.0 / (K_B * T)
+            Z, logZ = sampler.evaluate(beta)
+            F = -K_B * T * logZ          # free energy F = -k_B T ln Z  (eV)
+            structs, weights = sampler.posterior_at(beta)
+            # per-T posterior structures + summary
+            tdir = output_dir / f"posterior_T{int(T)}"
+            tdir.mkdir(exist_ok=True)
+            from ase.io import write as ase_write
+            order = np.argsort(-weights)
+            summary_rows = []
+            for rank, idx in enumerate(order):
+                s = structs[idx]
+                E = gpr.predict_energy(s)
+                w = weights[idx]
+                ase_write(tdir / f"posterior_{rank:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
+                summary_rows.append((rank, E, w))
+            np.savetxt(tdir / "posterior_summary.csv",
+                       np.asarray(summary_rows, dtype=float), delimiter=',',
+                       header='rank,energy_eV,weight', comments='')
+            print(f"  T = {T:.1f} K:  Z = {Z:.6e}  (log Z = {logZ:.4f})  "
+                  f"F = {F:.4f} eV  -> {len(structs)} posterior samples")
+            therm_rows.append((T, beta, logZ, Z, F))
+        np.savetxt(output_dir / "thermodynamics.csv",
+                   np.asarray(therm_rows, dtype=float), delimiter=',',
+                   header='T_K,beta_eV-1,logZ,Z,F_eV', comments='')
+        print(f"  Wrote thermodynamics.csv (T, beta, logZ, Z, F=-k_B T ln Z) to {output_dir}")
 
     # --- 4. State-density / landscape analysis -------------------------------
     if not args.no_analysis:

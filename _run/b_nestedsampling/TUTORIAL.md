@@ -105,6 +105,33 @@ Re-run on a finished run without re-training:
     --analyze-only ./ns_output_allseeds --output ./analysis_out
 ```
 
+## Step 8b — Temperature-free mode (consistent with the papers)
+By default the sampler is **fixed-temperature** (`--temp`): β is inside the
+likelihood, so Z and the posterior are for that one temperature. To match the
+papers (Pártay 2021 / Yang 2024) and the wiki's `nested-sampling` page — where β is
+**absent from sampling** and applied only in post-processing — add `--temperature-free`:
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
+    --temperature-free --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --output ./ns_output_tfree --rng 42
+```
+- **During sampling:** `log_likelihood` becomes β-free (`-(E - E_ref)`), i.e. an
+  energy-constrained top-down pass. The sampler records, per discarded sample, its
+  energy `E_i` and prior-volume weight `w_i = Γ(E_{i-1})−Γ(E_i) = ΔX`, and the final
+  live set.
+- **Post-processing (per `--temperatures` T):** `Z(β) = Σ_i w_i exp(−β E_i)`
+  (+ final live term), `F = −k_B T ln Z`, and the posterior
+  `weight_i = w_i exp(−β E_i)/Z(β)`. One sample set → thermodynamics at all T.
+- **Outputs:** `samples.csv` (re-runnable: iteration, energy_eV, prior_weight),
+  `thermodynamics.csv` (T, β, logZ, Z, F), and per-T posterior dirs
+  `posterior_T{KKK}/` with `posterior_summary.csv`.
+- **Smoke test:** `smoke_test_temperature_free.py` validates the T-free math against
+  the paper formula and runs a tiny end-to-end T-free run.
+- **Verification (smoke, real output):** at 100/300/1000 K, log Z = −27.2 / −11.6 /
+  −6.1 and F = +0.235 / +0.300 / +0.530 eV — Z grows and F becomes less negative as
+  T rises (physically correct).
+
 ## Step 9 — Tuning checklist
 - **Finer evidence / lower variance:** raise `--n-live` (resolution ∝ 1/√K).
 - **Broader exploration (higher-E weight):** raise `--temp`.

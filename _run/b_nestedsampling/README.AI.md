@@ -100,7 +100,9 @@ pjsub j_nestedsampling.sh
 ### `main.py` CLI
 | Flag | Default | Meaning |
 |---|---|---|
-| `--temp` | `300` | Temperature (K); sets `beta=1/(k_B*T)`. |
+| `--temp` | `300` | Temperature (K); sets `beta=1/(k_B*T)`. Fixed-T mode only. |
+| `--temperature-free` | off | Temperature-free NS: beta kept OUT of the likelihood (energy-constrained top-down pass); post-processes Z/F/posterior at `--temperatures`. |
+| `--temperatures` | `100,200,300,500,1000` | Comma-separated T (K) for temperature-free post-processing. |
 | `--n-live` | `50` | Number of live points (evidence resolution ∝ 1/√K). |
 | `--n-iters` | `300` | Number of nested-sampling iterations. |
 | `--perturb` | `0.01` | Perturbation amplitude (Å) on perturbed atoms during prior sampling. |
