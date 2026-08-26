@@ -710,3 +710,32 @@ expanded requirements match what was implemented (--rattle-symbols, --rattle-dis
 etc.). Fixed-grammar cleaned accordingly.
 
 **Time:** 2026-08-27 ~01:10–01:30 JST.
+
+---
+
+## Session 2026-08-27 — Incorporate NESTED_SAMPLING_RUN.md content into README.md
+
+**Goal (user-confirmed via clarify):** Incorporate the content from
+`_run/8_nested_sampling/NESTED_SAMPLING_RUN.md` (786-line notes) into
+`_run/b_nestedsampling/README.md`.
+
+**Clarify decisions (all user-confirmed):**
+1. **Synthesize** (not verbatim append) — fold the content into new README sections,
+   cleaned to match the README's concise style, avoiding duplication with TUTORIAL.md.
+2. Include both the physics/concept Q&As AND the operational sections (state-density
+   analysis, Ray fix, heavy run, literature discussion).
+
+**Actions taken:** Added two new README sections before "Layout":
+- **"Concepts & physics"** — what posterior structures are (discarded worst-live
+  samples, weighted by prior-volume share); what `n_live`/`beta`/`temperature` do
+  (incl. T=300 K → beta≈38.68 eV⁻¹, the stat-mech identification); what "final
+  evidence" `Z` is and why `log Z` (overflow/underflow, log-space accumulation); what
+  "feature dim 720" means (180 radial + 540 angular for 3 species).
+- **"Operational notes"** — state-density/landscape analysis; the Ray
+  `ActorUnavailableError` fix (`use_ray=False`); and a literature-scale table
+  (Pártay/Yang/Chatbipho vs this project) with the modelling-gap note.
+
+**Result:** README.md now carries the conceptual+operational depth from the notes while
+keeping its concise style and pointing to TUTORIAL.md for run reproduction.
+
+**Time:** 2026-08-27 ~01:30–01:40 JST.

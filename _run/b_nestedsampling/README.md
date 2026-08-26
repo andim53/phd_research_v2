@@ -167,6 +167,93 @@ For literature-scale settings and the paper-derived parameter table, see
 | Temperature in likelihood | `--temp` in `L(x)=exp(-β·(E−E_ref))` | Single-temperature NS (vs. papers that keep β out of sampling); see TUTORIAL discussion |
 | Live set / iterations | `--n-live 50 --n-iters 300` defaults | Literature scale is K=500–5000, iters 10^5–10^7 (see TUTORIAL) |
 
+## Concepts & physics
+
+### What are the posterior structures?
+The posterior structures are the **discarded (worst-live) samples** collected during
+nested sampling, each with a weight. Nested sampling removes the lowest-likelihood
+live point every iteration and saves it; these saved points, weighted by their
+prior-volume share `w_i = Γ(E_{i-1})−Γ(E_i)`, form the weighted posterior set.
+`posterior_structures/posterior_*.xsf` are these structures (rank-ordered by weight).
+They represent the *thermodynamically weighted* ensemble of structures at the run's
+temperature — the physically meaningful output, not just the single global minimum.
+
+### `n_live`, `beta`, `temperature` — what they are and do
+- **`n_live` (K, live points)** — the core algorithm parameter. Nested sampling keeps a
+  fixed set of K live points; each iteration removes the worst and draws a new one
+  constrained to higher likelihood. More live points → finer evidence resolution
+  (error ∝ 1/√K) but more evaluations. We use `--n-live 50` (literature uses 500–5000).
+- **`temperature` / `beta`** — the thermodynamic settings. `beta = 1/(k_B·T)`
+  (k_B = 8.617e-5 eV/K) enters the likelihood `L(x)=exp(-beta·(E(x)−E_ref))`.
+  `temperature` is the physical knob (Kelvin); `beta` is what appears in the math.
+  - T = 300 K → beta ≈ 38.68 eV⁻¹. Each eV above the best structure costs a factor
+    `exp(-38.68) ≈ 10⁻¹⁷` in likelihood — low-energy structures are overwhelmingly
+    preferred.
+  - Lower T (higher beta) = sharper focus on the global minimum; higher T = flatter
+    likelihood, more exploration of higher-energy structures.
+  - This is the canonical statistical-mechanics identification: the normalization of
+    `L(x)` is the partition function `Z = ∫ exp(-beta·E) dx`, so `beta` sets the
+    temperature of the thermodynamic average.
+
+### What is "final evidence"? Why `Z`, why `log Z`?
+- **`Z` = the evidence / marginal likelihood / partition function.** It is the
+  normalization constant of the posterior, `Z = ∫ L(x)·π(x) dx`, computed after all NS
+  iterations (plus the final live-point correction). In statistical mechanics it is
+  exactly the canonical partition function, so from it you get the free energy
+  `F = −k_B T ln Z` and all thermodynamic averages. It is the central quantity NS is
+  designed to compute.
+- **Why `log Z`:** the energies are ~−400 eV and `beta ~ 40 eV⁻¹`, so likelihoods span
+  hundreds of orders of magnitude. `Z` grows from ~`10⁻²⁴²` early to ~`10⁻⁴` at the
+  end — a linear `Z` under/overflows float64. NS accumulates evidence multiplicatively
+  (in log space with `np.logaddexp`), so `log Z` is the robust, stable number.
+
+### What does "feature dim 720" mean?
+The `Fingerprint` descriptor (oganov atom-centered symmetry functions from
+`dataset/main.py`) converts each 75-atom Fe/MgO structure into a fixed 720-number
+vector, which the GPR uses as the feature space. Verified breakdown for 3 species
+(Fe, Mg, O):
+- **2-body / radial — 180 values:** 6 distinct atom-pair bond types (3 same-species
+  + 3 cross) × 30 radial bins (`ceil(rc1/binwidth) = ceil(6/0.2) = 30`). 6×30 = 180.
+- **3-body / angular — 540 values:** 18 triple types × 30 angular bins. 18×30 = 540.
+- **Total = 180 + 540 = 720.** Fixed regardless of geometry for any Fe/MgO structure,
+  which is what lets the GPR treat structures as points in a 720-D space and measure
+  similarity via the kernel.
+
+## Operational notes
+
+### State-density / landscape analysis
+After sampling, `main.py` automatically runs a state-density analysis
+(`nested_sampling/state_density.py`, modeled on `_run/9_novelFilter/`). For each of
+`training/` and `posterior/` it produces a PCA-landscape + KDE state-density panel
+(`conf_space.png`) and a Boltzmann probability vs temperature plot
+(`binding_probability_vs_temperature.png`), plus a `comparison_state_density.png`
+overlay. Re-runnable standalone via `--analyze-only <RUN_OUTPUT_DIR>`.
+
+### Ray `ActorUnavailableError` (fixed with `use_ray=False`)
+`GPR(...)` defaults to `use_ray=True`, which spawns one Ray actor per CPU for parallel
+hyperparameter optimization. Under high RAM pressure (concurrent jobs, Obsidian,
+IDE/LSP, gateways), Ray kills an actor → `ActorUnavailableError` at the first GPR
+step. This is environmental, not a code bug. Fix: `use_ray=False` in `build_gpr`
+(runs single-process hyperparameter optimization, no Ray pool, `ActorUnavailableError`
+structurally impossible). Cost: slightly slower training (~2 min → a few minutes).
+The safe `--perturb 0.01` default is unrelated but important — large perturb makes
+the Fingerprint GPR extrapolate to unphysical energies.
+
+### Literature scale & heavy-run guidance
+| Parameter | Pártay 2021 (bulk) | Yang 2024 (surfaces) | Chatbipho 2025 (nanocluster) | This project |
+|---|---|---|---|---|
+| Live set K | 500–5000 | 80/free particle | extends Yang to LJ38 | 50 (default) / 100 (job) |
+| Walk length L | 100s–1000s | ~250 iter/walker | same scheme | no explicit L |
+| System N | 32–256 atoms | ≤16 free particles | LJ38 | 75 atoms (Fe25Mg25O25) |
+| Iterations | 10⁵–10⁷ | 320 000 | comparable | 300 (default) / 1000 (job) |
+| Temperature β | post-process only | post-process only | post-process only | **in the likelihood** (`--temp`) |
+
+Literature-informed heavy run (`--n-live 500 --n-iters 5000`) and the temperature scan
+are documented in `TUTORIAL.md` ("Literature-scale NS parameters"). Note the modelling
+gap to the papers: our prior is DB-resample + small perturb (no clone-and-MC
+decorrelation walk length L), and we put β in the likelihood (single-temperature NS)
+rather than applying it only in post-processing.
+
 ## Layout
 ```
 b_nestedsampling/
