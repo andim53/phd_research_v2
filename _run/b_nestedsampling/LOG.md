@@ -739,3 +739,33 @@ etc.). Fixed-grammar cleaned accordingly.
 keeping its concise style and pointing to TUTORIAL.md for run reproduction.
 
 **Time:** 2026-08-27 ~01:30–01:40 JST.
+
+---
+
+## Session 2026-08-27 — Add physics of temperature-free mode to README.md
+
+**Goal (user-confirmed via clarify):** Document the physics of the temperature-free
+mode (an existing code option) in the README.
+
+**Clarify decisions (all user-confirmed):**
+1. Add a dedicated **"Physics of temperature-free mode"** section (after the existing
+   temperature-free usage section).
+2. Full depth: Boltzmann weight, partition function as a sum over states, density of
+   states, free-energy/heat-capacity derivation, and why it matches Pártay/Yang.
+
+**Actions taken:** Added the section to README.md, grounded in the actual code
+(`NestedSampler.log_likelihood` = `-(E - E_ref)` in T-free mode; `evaluate(β)` =
+`Σ w_i exp(-β(E_i - E_ref))` + live correction):
+- Canonical partition function `Z(β) = Σ e^{-βE} = ∫ Ω(E) e^{-βE} dE` with density of
+  states Ω(E); F = −k_B T ln Z, ⟨E⟩, C_V from derivatives of ln Z.
+- Why sample temperature-free: NS is inherently temperature-independent (top-down,
+  energy-constrained); β weights results only afterwards; one run stores (E_i, w_i)
+  and yields Z(T)/F(T)/C_V(T)/posterior at all T.
+- Contrast with fixed-T mode (β in likelihood → single-temperature run).
+- thermodynamics.csv columns (T, β, logZ, Z, F); C_V → heat-capacity peaks → phase
+  transitions.
+
+**Result:** README now explains the physics behind the temperature-free option,
+code-grounded and consistent with Pártay 2021 / Yang 2024.
+
+**Time:** 2026-08-27 ~01:40–01:48 JST.

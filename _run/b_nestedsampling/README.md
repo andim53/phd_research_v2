@@ -54,6 +54,48 @@ top-down pass, per Pártay 2021 / Yang 2024). The partition function, free energ
 Writes `samples.csv` (re-runnable), `thermodynamics.csv`, and per-T posterior dirs
 `posterior_T{KKK}/`.
 
+## Physics of temperature-free mode
+
+In canonical statistical mechanics the **partition function** of a system of atoms is
+
+$$Z(\beta) = \sum_i e^{-\beta E_i} = \int \Omega(E)\, e^{-\beta E}\, dE,$$
+
+where $\beta = 1/(k_B T)$ and $\Omega(E)$ is the **density of states** (the number of
+microstates at energy $E$). Every macroscopic observable — free energy, internal
+energy, heat capacity, phase behaviour — follows from $Z(\beta)$:
+
+- **Free energy:** $F = -k_B T \ln Z(\beta)$
+- **Mean energy:** $\langle E \rangle = -\partial \ln Z/\partial\beta$
+- **Heat capacity:** $C_V = k_B \beta^2\, \partial^2 \ln Z/\partial\beta^2$
+
+**Why sample temperature-free.** Nested sampling is fundamentally temperature-
+independent: it does one top-down pass over configuration space, constrained only by a
+monotonically *decreasing* energy limit (the "worst" live point). It never needs $\beta$
+to decide where to sample — $\beta$ only weights the results *afterwards*. By keeping
+$\beta$ out of the sampling likelihood, one single run stores, for every discarded
+sample, its energy $E_i$ and its configuration-space (prior-volume) weight
+$w_i = \Gamma(E_{i-1}) - \Gamma(E_i)$. The partition function at **any** temperature is
+then just the weighted Boltzmann sum (computed in `NestedSampler.evaluate`):
+
+$$Z(\beta) = \sum_i w_i\, e^{-\beta (E_i - E_{ref})},$$
+
+plus a final live-set correction. This is exactly the Pártay 2021 / Yang 2024 approach:
+$\beta$ is absent from the sampling and applied only in post-processing, so one sample
+set yields $Z(T)$, $F(T)$, $C_V(T)$, and the temperature-dependent posterior for all $T$
+of interest. (The default fixed-T mode instead puts $\beta$ inside the likelihood, giving
+a single-temperature run.)
+
+**Contrast with the fixed-T mode.** In fixed-T mode, `log L = -β·(E − E_ref)` ranks the
+live set, so the whole run is tied to one temperature and $Z$ is that temperature's
+partition function. In temperature-free mode, `log L = −(E − E_ref)` ranks by energy
+alone; $\beta$ never enters sampling, and `evaluate(β)`/`posterior_at(β)` turn the
+recorded $(E_i, w_i)$ into $Z(\beta)$ and the posterior at any temperature.
+
+**From $Z$ to observables.** The code writes `thermodynamics.csv` with columns
+T, β, logZ, Z, and `F = −k_B T ln Z`. Derivatives of $\ln Z$ with respect to $\beta$
+would give $\langle E\rangle$ and $C_V(T)$ — useful for identifying phase transitions
+via heat-capacity peaks (a hallmark of the nested-sampling approach in the papers).
+
 ## Usage (GPR accuracy vs energy range)
 `gpr_accuracy.py` trains the GPR on the combined 1297-structure dataset and reports
 prediction accuracy (MAE, RMSE, R²) as a function of the energy range (energy above
