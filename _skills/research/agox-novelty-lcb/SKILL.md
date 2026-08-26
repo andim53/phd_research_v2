@@ -25,8 +25,10 @@ energy-minimiser: it seeks regions the GPR surrogate is uncertain about AND that
 structurally new, while staying inside a chosen energy band.
 
 Reusable implementation lives in the local `novelty_lcb` package (an AGOX
-`AcquisitorBaseClass` subclass). Copies exist per-project; the canonical fixed copy is
-in `/home/think/Desktop/research/_run/a_lcbnovel/novelty_lcb/`.
+`AcquisitorBaseClass` subclass). The canonical fixed copy is in
+`/home/think/Desktop/research/_run/a_lcbnovel/novelty_lcb/` (project renamed from
+`10_lcbnovel`). Self-contained copies are synced into each `_runs/<NN>_<descriptor>/`
+dir (latest versioned code); keep those in sync with the project root after a change.
 
 ## When to Use
 
@@ -165,7 +167,8 @@ To compare the acquisitors on a fast system, use an EMT surface (e.g. Ni8/Au(4,4
 fcc100), run BOTH acquisitors on the SAME seeds with the SAME stack (only the acquisitor
 differs), and reuse the run-6 metric set: distinct configurations (fingerprint
 clustering), best E, energy range, duplicate evals, discovery curves, aggregate stats +
-plots. This is `main_benchmark.py` + `j_benchmark.sh` (HPC) in the a_lcbnovel project.
+plots. This is `main_benchmark.py` + `j_benchmark.sh` (HPC) in the `a_lcbnovel`
+project (formerly `10_lcbnovel`).
 Both acquisitors' per-seed DBs are written under `benchmark_results/` (gitignored `*.db`).
 The benchmark needs a RAM-rich node / HPC for the Ray pool.
 

@@ -4,7 +4,8 @@ Session detail for the `agox-novelty-lcb` skill. This captures the new
 `energy_above_min` + `per_atom` window mode and the standalone mock test that
 validates it without the AGOX Ray stack.
 
-Reference implementation: `/home/think/Desktop/research/_run/a_lcbnovel/`
+Reference implementation: `/home/think/Desktop/research/_run/a_lcbnovel/` (renamed
+from `10_lcbnovel`)
 - `novelty_lcb/acquisitor.py` — the acquisitor with `energy_above_min` / `per_atom`.
 - `test_window_logic.py` — the isolated mock test (16/16 PASS).
 - `main_benchmark.py` + `j_benchmark.sh` — the regular-vs-Novelty EMT benchmark.
