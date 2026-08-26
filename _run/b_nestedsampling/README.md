@@ -182,7 +182,8 @@ For literature-scale settings and the paper-derived parameter table, see
 - `--n-iters`   nested-sampling iterations, default 300
 - `--perturb`   perturbation amplitude (Å) for prior sampling, default 0.01
 - `--perturb-symbols`  symbols of the atoms to perturb (default `Fe`, the
-  deposition layer); all other atoms stay fixed during prior sampling
+  deposition layer); **comma-separated for multiple**, e.g. `Fe,B` or `Fe, B` —
+  all matching atoms move, all others stay fixed during prior sampling
 - `--output`    output directory, default `./ns_output_allseeds`
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)

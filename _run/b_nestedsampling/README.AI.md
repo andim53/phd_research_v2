@@ -106,7 +106,7 @@ pjsub j_nestedsampling.sh
 | `--n-live` | `50` | Number of live points (evidence resolution ∝ 1/√K). |
 | `--n-iters` | `300` | Number of nested-sampling iterations. |
 | `--perturb` | `0.01` | Perturbation amplitude (Å) on perturbed atoms during prior sampling. |
-| `--perturb-symbols` | `Fe` | Element(s) perturbed; all others stay fixed. |
+| `--perturb-symbols` | `Fe` | Element(s) perturbed; comma-separated for multiple (e.g. `Fe,B`); all others stay fixed. |
 | `--output` | `./ns_output_allseeds` | Output directory. |
 | `--rng` | `42` | RNG seed (reproducibility). |
 | `--analysis-dir` | `<--output>/analysis` | Analysis output dir. |

@@ -20,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 
 import os
 import sys
@@ -137,7 +137,8 @@ def main():
                    help="Perturbation amplitude (A), default 0.01")
     p.add_argument("--perturb-symbols", default="Fe",
                    help="Symbol(s) of atoms to perturb (deposition layer), "
-                        "default 'Fe'; all other atoms stay fixed")
+                        "comma-separated for multiple, e.g. 'Fe,B' or 'Fe, B'; "
+                        "default 'Fe'. All matching atoms move; all others stay fixed")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,

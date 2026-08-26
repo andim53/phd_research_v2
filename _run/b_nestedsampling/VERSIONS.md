@@ -16,10 +16,10 @@ Versioning rules:
 
 | File | Version |
 |---|---|
-| `main.py` | 1.1.1 |
+| `main.py` | 1.1.2 |
 | `nested_sampling/__init__.py` | 1.0.0 |
 | `nested_sampling/__main__.py` | 1.0.0 |
-| `nested_sampling/nested_sampler.py` | 1.1.0 |
+| `nested_sampling/nested_sampler.py` | 1.2.0 |
 | `nested_sampling/gpr_training.py` | 1.0.0 |
 | `nested_sampling/state_density.py` | 1.0.0 |
 | `nested_sampling/utils.py` | 1.0.0 |

@@ -769,3 +769,37 @@ mode (an existing code option) in the README.
 code-grounded and consistent with Pártay 2021 / Yang 2024.
 
 **Time:** 2026-08-27 ~01:40–01:48 JST.
+
+---
+
+## Session 2026-08-27 — Fix --perturb-symbols to support multiple symbols
+
+**Context (user question):** Does `--perturb-symbols` support multiple atoms (e.g.
+Fe and B at the same time)? **Answer before fix: NO** — the code passed the string
+verbatim into `np.isin(symbols, [perturb_symbols])`, so `"Fe,B"` matched a literal
+"Fe,B" element (zero matches → ValueError). The help text said "Symbol(s)" but didn't
+split. User confirmed fix.
+
+**Clarify decisions (all user-confirmed):**
+1. Fix to support multiple symbols, split on comma.
+2. Split on comma AND trim whitespace (both `Fe,B` and `Fe, B` work).
+
+**Actions taken:**
+- `nested_sampling/nested_sampler.py` (1.1.0 → 1.2.0, minor): parse `perturb_symbols`
+  into a list `[s.strip() for s in str(perturb_symbols).split(",") if s.strip()]`
+  and use `np.isin(symbols, perturb_list)`; error/print updated to "any symbol
+  {list}".
+- `main.py` (1.1.1 → 1.1.2, patch): help text now documents comma-separated multiple
+  symbols (e.g. `Fe,B` / `Fe, B`).
+- Docs: VERSIONS.md, README.md (option), README.AI.md (CLI table).
+
+**Results / verification (real output):**
+- `py_compile` under agox_v2: OK.
+- Parsing test: `Fe`→['Fe'], `Fe,B`→['Fe','B'], `Fe, B`→['Fe','B'], `Mg,Fe,O`→all.
+- Runtime check on seed DB (Fe25Mg25O25): `Fe,B` matches 25 Fe atoms (B=0 in this
+  non-B-doped seed); `B` alone matches 0 → correct.
+
+**Note:** on a B-doped dataset, `--perturb-symbols Fe,B` will perturb Fe AND B atoms
+together. This is the use case that motivated the fix.
+
+**Time:** 2026-08-27 ~01:48–01:58 JST.

@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 from pathlib import Path
@@ -82,14 +82,17 @@ class NestedSampler:
 
         # Indices of the atoms to perturb (the deposition layer). A single list is
         # computed from the (uniform-composition) dataset and reused for every draw.
+        # --perturb-symbols may list multiple symbols separated by commas, e.g. "Fe,B"
+        # (whitespace-trimmed); all matching atoms are perturbed.
+        perturb_list = [s.strip() for s in str(perturb_symbols).split(",") if s.strip()]
         symbols = np.array(db_structures[0].get_chemical_symbols())
-        self.perturb_indices = np.where(np.isin(symbols, [perturb_symbols]))[0]
+        self.perturb_indices = np.where(np.isin(symbols, perturb_list))[0]
         if len(self.perturb_indices) == 0:
             raise ValueError(
-                f"No atoms with symbol '{perturb_symbols}' found in the dataset."
+                f"No atoms with any symbol {perturb_list} found in the dataset."
             )
         print(f"[NestedSampler] Perturbing {len(self.perturb_indices)} atoms of "
-              f"symbol '{perturb_symbols}' (amplitude {perturb:.4f} A); "
+              f"symbol(s) {perturb_list} (amplitude {perturb:.4f} A); "
               f"all other atoms are left fixed.")
 
         # Energy reference: shift so minimum training energy is 0
