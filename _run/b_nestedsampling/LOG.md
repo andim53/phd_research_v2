@@ -563,3 +563,31 @@ DISCUSSION.md in the result dir.
   honest held-out picture.
 
 **Time:** 2026-08-27 ~00:44–00:52 JST.
+
+---
+
+## Session 2026-08-27 — Run gpr_accuracy --fez with 3-fold CV
+
+**Goal (user request):** Run the delta Fe_z analysis with 3-fold cross-validation
+(combining `--cv --cv-folds 3 --fez --uncertainty`) for the honest held-out picture.
+
+**Action:**
+```
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --cv --cv-folds 3 --fez --uncertainty --output ./_tmp/gpr_acc_fez_cv3_out
+```
+
+**Result: FEZCV_EXIT=0.**
+- Fold-averaged overall MAE = 0.0044 ± 0.0003 eV/atom; energy-range CV metrics as
+  before (MAE=0.0044 RMSE=0.0087 R²=0.997).
+- Fe_z (island height) CV results: MAE 0.0030–0.0083 eV/atom across 12 bins
+  (0–5.57 Å); model std 0.0026–0.0117 eV/atom.
+- **Key finding:** the GPR is most accurate for island heights ~2.3–3.7 Å
+  (MAE ~0.0030–0.0041, R²~0.994–0.999) and least accurate for very flat islands
+  (~0.5–1.4 Å, MAE up to 0.0083, model std up to 0.012). The model std tracks the
+  error — well-calibrated.
+- Wrote Fe_z accuracy CSV, uncertainty CSV, plot, and a DISCUSSION.md (mode
+  "3-fold CV", grounded in the held-out numbers).
+- Output dir: `_tmp/gpr_acc_fez_cv3_out/` (gitignored).
+
+**Time:** 2026-08-27 ~00:53–00:59 JST.
