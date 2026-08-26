@@ -591,3 +591,23 @@ DISCUSSION.md in the result dir.
 - Output dir: `_tmp/gpr_acc_fez_cv3_out/` (gitignored).
 
 **Time:** 2026-08-27 ~00:53–00:59 JST.
+
+---
+
+## Session 2026-08-27 — Process new PROMPTS.md entry (include running script in DISCUSSION.md)
+
+**Context:** A new user prompt was found in PROMPTS.md with an empty `# FLAG:`:
+"For all the DISCUSSION.md, include the actual running script that it used."
+Processed per AGENTS.md §3b.
+
+**Actions taken:**
+- Assigned flag `20260827_0059` (local time when processed).
+- Split into `## Original` / `## Fixed grammar` (added "files", fixed the dangling
+  pronoun "it" → "them", "produced them").
+- Folded into Grammar notes as new concept 7 (missing noun / dangling pronoun).
+- Removed the now-redundant empty-flag stub.
+
+**Note:** this logs a future task — update all DISCUSSION.md files (in `_tmp/`)
+to include the actual running script/command that produced each. Not yet applied.
+
+**Time:** 2026-08-27 ~00:59–01:02 JST.
