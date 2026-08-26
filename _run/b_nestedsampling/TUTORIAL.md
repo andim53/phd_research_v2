@@ -158,6 +158,13 @@ into equal-width windows). Two modes:
   the accuracy CSV, and draws per-bin 1σ model-std error bars on the plot. In
   in-sample mode it is the trained model's std on the training set; in CV mode it
   is the average std of the held-out predictions pooled across folds.
+- `--fez` — also report accuracy (and, with `--uncertainty`, uncertainty) vs
+  **delta Fe_z** (the Fe island height = max(Fe z) − min(Fe z), Å), binned ~0.5 Å.
+  Writes `gpr_accuracy_by_fe_z.csv` (+ `uncertainty_by_fe_z.csv` with
+  `--uncertainty`), a `gpr_accuracy_by_fe_z.png` plot, and a `DISCUSSION.md` in the
+  output dir. Works in in-sample and CV modes. Example:
+  `/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py --fez
+  --uncertainty --output ./gpr_accuracy_fez_out`.
 - **Interpretation:** in-sample errors are tiny (MAE~0.001 eV/atom, R²≈1.0,
   interpolation points) and the model std is likewise small (~0.001 eV/atom). CV
   gives the truthful out-of-sample picture: 5-fold CV overall MAE=0.0040

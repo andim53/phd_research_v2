@@ -530,3 +530,36 @@ different delta Fe_z (… the Fe island height)." Processed per AGENTS.md §3b.
 island height). Not built yet.
 
 **Time:** 2026-08-27 ~00:41–00:43 JST.
+
+---
+
+## Session 2026-08-27 — Add delta Fe_z analysis to gpr_accuracy.py (flag 20260827_0041)
+
+**Goal (user-confirmed via clarify):** Add a new flag to `gpr_accuracy.py` for an
+analysis of accuracy + uncertainty across delta Fe_z (the Fe island height), plus a
+DISCUSSION.md in the result dir.
+
+**Clarify decisions (all user-confirmed):**
+1. New opt-in `--fez` flag (own CSV + plot).
+2. delta Fe_z = max(Fe z) − min(Fe z) in Å (island height), binned ~0.5 Å.
+3. Works in in-sample AND --cv AND --uncertainty modes, reusing the same predictions.
+4. Writes a DISCUSSION.md (benchmark-results-discussion format) into the output dir.
+
+**Actions taken:**
+- `gpr_accuracy.py` (1.2.0 → 1.3.0, minor): added `--fez`; new `fe_z_height()`
+  and generic `bin_metrics_x()` helpers; Fe_z analysis block computes per-structure
+  Fe island height, bins (0.5 Å), computes MAE/RMSE/R² (+ model std with
+  `--uncertainty`), writes `gpr_accuracy_by_fe_z.csv` (+ `uncertainty_by_fe_z.csv`),
+  a `gpr_accuracy_by_fe_z.png` plot, and a `DISCUSSION.md` via `_write_fe_z_discussion`.
+- Docs: VERSIONS.md (1.3.0), README.md, TUTORIAL.md (Step 8c).
+
+**Results / verification (real output):**
+- `py_compile` under agox_v2: OK.
+- Ran `gpr_accuracy.py --fez --uncertainty --output ./_tmp/gpr_acc_fez_out`:
+  **FEZ_EXIT=0**. 12 bins over 0–5.57 Å; in-sample MAE 0.00016–0.00099 eV/atom,
+  R²≈1.0, model std ~0.0010–0.0013 eV/atom. Wrote Fe_z accuracy CSV, uncertainty
+  CSV, plot, and DISCUSSION.md (verified).
+- Note: in-sample Fe_z errors are near-zero (interpolation) — CV mode gives the
+  honest held-out picture.
+
+**Time:** 2026-08-27 ~00:44–00:52 JST.

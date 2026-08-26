@@ -24,7 +24,7 @@ Versioning rules:
 | `nested_sampling/state_density.py` | 1.0.0 |
 | `nested_sampling/utils.py` | 1.0.0 |
 | `smoke_test_temperature_free.py` | 1.0.0 |
-| `gpr_accuracy.py` | 1.2.0 |
+| `gpr_accuracy.py` | 1.3.0 |
 | `scripts/build_mgo_stack.py` | 1.0.0 |
 | `scripts/build_fe_stack.py` | 1.0.0 |
 | `scripts/build_heteroStruct.py` | 1.0.0 |
