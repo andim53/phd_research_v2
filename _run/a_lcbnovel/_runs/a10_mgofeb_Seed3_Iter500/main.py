@@ -80,7 +80,7 @@ HETERO_RATTLE_AMPLITUDE = 1.5
 # add_adsorbate_to_hollows (B placed in hollows between 4 Fe atoms) and a
 # GlobalPermutationGenerator (Fe<->B swaps) is added as a 3rd generator.
 # Default 0 = no B (root and existing runs keep the pure Fe/MgO behavior).
-NUM_ATOMS_ADD = 0             # number of B dopant atoms in the Fe deposition layer
+NUM_ATOMS_ADD = 6             # number of B dopant atoms in the Fe deposition layer
 SYMBOL_ADD = "B"              # dopant species
 Z_HEIGHT_ADD = 0              # adsorption height offset from the surface plane
 # 3-generator candidate schedule used when B is enabled (Randomize/Rattle/Permute)

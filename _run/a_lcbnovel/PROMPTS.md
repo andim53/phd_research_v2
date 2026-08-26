@@ -1,3 +1,19 @@
+# FLAG: 20260826_1602
+
+## Original (before grammar fix)
+
+```
+Create a new `_runs` directory, implementing the Boron addition on the Fe on MgO system. Use system like in this /home/think/Desktop/research/_archive/_analysist/1_result/66_MgOFe_20B project code. Clarify for every step.
+```
+
+## Fixed grammar (after)
+
+```
+Create a new `_runs` directory implementing Boron addition onto the Fe/MgO system.
+Use the same system as the `/home/think/Desktop/research/_archive/_analysist/1_result/66_MgOFe_20B`
+project. Clarify each step.
+```
+
 # FLAG: 20260826_1437
 
 ## Original (before grammar fix)
@@ -48,9 +64,13 @@ it. Dropping any of these makes the reader (or agent) guess.
 - **20260826_1437:** "Make a new _runs ..." — missing the **noun** `directory`
   (a `_runs` is a directory, so the type must be named). Same verb-object gap as
   above.
+- **20260826_1602:** "Use system like in this <path> project code" — missing the
+  article ("Use **the same** system") and the connective that links it to the project;
+  the phrase "project code" is vague (the whole *project*, not just its code, is the
+  template).
 
 **Fix pattern:** state the object explicitly — "Create a new `_runs` **directory**",
-"**Make runs** for kappa 3, 4, and 5".
+"**Make runs** for kappa 3, 4, and 5", "Use **the same system as** `<project>`".
 
 ### Concept 2 — Redundant or near-duplicate words
 
@@ -61,9 +81,12 @@ Two words that carry the same meaning are stacked, adding noise instead of preci
 - **20260826_1437:** "same **system and setup**" — *system* and *setup* here are
   near-synonyms for the same thing (the template run being copied); keeping both
   blurs which parameter set is inherited.
+- **20260826_1602:** "the **Boron addition on the Fe on MgO** system" — the doubled
+  "on" ("on the Fe on MgO") is redundant and clunky; a single compound "Fe/MgO system"
+  (or "Fe-on-MgO") states the target once.
 
-**Fix pattern:** pick the single precise word ("kappa value", "same setup") or, if both
-really are distinct, define them explicitly.
+**Fix pattern:** pick the single precise word ("kappa value", "same setup", "Fe/MgO
+system") or, if both really are distinct, define them explicitly.
 
 ### Concept 3 — Vague or ambiguous way of listing parameters/values
 
@@ -82,10 +105,10 @@ Lists of values are stated in a way that leaves the reader guessing whether they
 ### Concept 4 — Non-idiomatic phrasing around common actions ("for every step")
 
 A preposition or filler word is used in a way a native speaker would not, producing a
-grammatically odd but understandable sentence. This one **recurs in both prompts**.
+grammatically odd but understandable sentence. This one **recurs in all three prompts**.
 
-- **20260826_14** and **20260826_1437:** "**Clarify for every step**" — the "for" is
-  unnecessary and unidiomatic.
+- **20260826_14**, **20260826_1437**, and **20260826_1602:** "**Clarify for every
+  step**" — the "for" is unnecessary and unidiomatic.
 
 **Fix pattern:** the natural command form is "**Clarify each step**" (or "Clarify every
 step", without "for").
@@ -97,13 +120,15 @@ them.
 
 - **20260826_14:** the path was split **inside a word** (`.../Desktop/r` + newline +
   `esearch/...`), so the literal text no longer resolves to the real directory.
+- **20260826_1602:** the path is not wrapped in backticks and is run together with the
+  words "this" and "project code", making it hard to copy verbatim.
 
 **Fix pattern:** keep a path on one line (or wrap it in backticks) so it is copied
 verbatim.
 
 ---
 
-**Suggested improvements (beyond the grammar fix, shared by both prompts)**
+**Suggested improvements (beyond the grammar fix, shared by all three prompts)**
 
 - **Write the instruction as a short list** instead of one long sentence, so each
   action is explicit:

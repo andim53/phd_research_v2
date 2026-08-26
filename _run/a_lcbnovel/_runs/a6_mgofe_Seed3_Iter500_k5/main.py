@@ -24,7 +24,7 @@ Usage:
 
 
 
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 
 import argparse
 import os
@@ -52,6 +52,8 @@ from scripts.build_mgo_stack import build_mgo_stack
 from scripts.build_fe_stack import build_fe_stack
 from scripts.hetero_struct_randomize import HeteroStructRandomize
 from scripts.build_heteroStruct import build_heteroStruct
+from scripts.add_adsorbate_to_hollows import add_adsorbate_to_hollows
+from scripts.global_permutation_generator import GlobalPermutationGenerator
 
 
 # ==== Physical parameters (match run 7) ====
@@ -72,6 +74,17 @@ NUM_CANDIDATES = {0: [20, 0], 10: [10, 10], 25: [0, 20]}
 SAMPLE_SIZE = 20
 RATTLE_AMPLITUDE = 2.3
 HETERO_RATTLE_AMPLITUDE = 1.5
+
+# ==== Boron doping (from 66_MgOFe_20B) ====
+# When NUM_ATOMS_ADD > 0, B atoms are added into the Fe deposition layer via
+# add_adsorbate_to_hollows (B placed in hollows between 4 Fe atoms) and a
+# GlobalPermutationGenerator (Fe<->B swaps) is added as a 3rd generator.
+# Default 0 = no B (root and existing runs keep the pure Fe/MgO behavior).
+NUM_ATOMS_ADD = 0             # number of B dopant atoms in the Fe deposition layer
+SYMBOL_ADD = "B"              # dopant species
+Z_HEIGHT_ADD = 0              # adsorption height offset from the surface plane
+# 3-generator candidate schedule used when B is enabled (Randomize/Rattle/Permute)
+NUM_CANDIDATES_B = {0: [20, 0, 0], 10: [10, 5, 5], 25: [0, 10, 10]}
 
 # ==== Model ====
 BK = 0.01
@@ -176,6 +189,18 @@ def build_stack(environment, slab_deposition, db_path, seed, kappa=KAPPA,
             rattle_amplitude=RATTLE_AMPLITUDE,
         ),
     ]
+    # When B doping is enabled, add the Fe<->B permutation generator (66_MgOFe_20B).
+    if NUM_ATOMS_ADD > 0:
+        generators.append(
+            GlobalPermutationGenerator(
+                **environment.get_confinement(),
+                max_number_of_swaps=NUM_ATOMS_ADD,
+                rattle_strength=0.5,
+            )
+        )
+        num_candidates = NUM_CANDIDATES_B
+    else:
+        num_candidates = NUM_CANDIDATES
 
     # Database + descriptor + model
     database = Database(filename=db_path, order=5)
@@ -189,7 +214,7 @@ def build_stack(environment, slab_deposition, db_path, seed, kappa=KAPPA,
     sampler = KMeansSampler(descriptor=descriptor, database=database, sample_size=SAMPLE_SIZE)
     collector = ParallelCollector(
         generators=generators, sampler=sampler, environment=environment,
-        num_candidates=NUM_CANDIDATES, order=1,
+        num_candidates=num_candidates, order=1,
     )
 
     # Acquisitor -- Novelty-LCB (FIXED package: serialization-safe calculator)
@@ -267,8 +292,18 @@ def main():
         for d in [path_xsf, db_dir]:
             os.makedirs(d, exist_ok=True)
 
-        env = build_environment(slab_substrate.copy(), slab_deposition.copy())
-        agox, _ = build_stack(env, slab_deposition, f"{db_dir}/db_{seed}.db", seed,
+        # Per-seed deposition copy; if B doping is enabled, add B into the Fe layer.
+        dep = slab_deposition.copy()
+        if NUM_ATOMS_ADD > 0:
+            dep = add_adsorbate_to_hollows(
+                dep, symbol=SYMBOL_ADD, height=Z_HEIGHT_ADD,
+                num_atoms=NUM_ATOMS_ADD, seed=seed,
+            )
+            print(f"  Doped deposition layer with {NUM_ATOMS_ADD} {SYMBOL_ADD} "
+                  f"atoms -> formula {dep.get_chemical_formula()}")
+
+        env = build_environment(slab_substrate.copy(), dep)
+        agox, _ = build_stack(env, dep, f"{db_dir}/db_{seed}.db", seed,
                               kappa=args.kappa, novelty_weight=args.novelty_weight)
         agox.run(N_iterations=args.n_iterations)
 

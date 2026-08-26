@@ -1230,3 +1230,57 @@ but with different `NOVELTY_WEIGHT` values: 2.0, 3.0, and 4.0. Clarify each step
 
 ### Time
 ~25 min.
+
+
+---
+
+## 2026-08-26 — Session: Add Boron-doping run (a10) under _runs/ + B support in main.py v1.2.0
+
+### Goal (user request, FLAG 20260826_1602, confirmed via clarify)
+Create a new `_runs/` directory implementing **Boron addition onto the Fe/MgO system**,
+using the same system as the `66_MgOFe_20B` project. Clarify each step.
+
+### Clarify (confirmed)
+- **Acquisitor:** keep Novelty-LCB (a_lcbnovel's), not 66's standard LCB.
+- **B addition mechanics:** same as the example — `add_adsorbate_to_hollows` places B in
+  Fe-hollows of the deposition layer; include the `GlobalPermutationGenerator` (Fe<->B)
+  as a 3rd generator, like the example code.
+- **B count:** "based on the max boron site of the system" -> floor(25 Fe / 4) = **6** B
+  (the helper caps at full 4-Fe quartets; 25/4 -> 6).
+- **Dir name:** default a-index naming -> `a10_mgofeb_Seed3_Iter500`.
+- **Settings:** seed 3, 500 iterations; other settings default (kappa 2.0, weight 1.5).
+- **Root main.py:** add B support but keep root `NUM_ATOMS_ADD = 0` (root + existing
+  runs unchanged); sync updated main.py into all run dirs. Version -> 1.2.0 (feature).
+- **Scripts:** copy `add_adsorbate_to_hollows.py` + `global_permutation_generator.py`
+  into a_lcbnovel/scripts, then into _runs.
+
+### Actions taken
+1. Copied `add_adsorbate_to_hollows.py` + `global_permutation_generator.py` from
+   `66_MgOFe_20B/scripts` into `scripts/`; added `__version__ = "1.0.0"` to both.
+2. Root `main.py` (1.1.1 -> 1.2.0): added imports, `NUM_ATOMS_ADD=0` / `SYMBOL_ADD` /
+   `Z_HEIGHT_ADD` / `NUM_CANDIDATES_B` config; wired B into the per-seed loop via
+   `add_adsorbate_to_hollows`; added `GlobalPermutationGenerator` + `num_candidates`
+   (B schedule {0:[20,0,0],10:[10,5,5],25:[0,10,10]} when B>0). Compiles clean.
+3. Verified B-doping produces B6Fe25 (6 B = max hollow sites) in the agox_v2 env.
+4. Synced updated `main.py` + both B scripts into all run dirs (a1-a9, a10, 73).
+   Existing runs keep NUM_ATOMS_ADD=0 -> unchanged behavior. All compile.
+5. `VERSIONS.md`: main.py -> 1.2.0; added the two new script rows (1.0.0).
+6. Created `_runs/a10_mgofeb_Seed3_Iter500/` (copy of a9, then set NUM_ATOMS_ADD=6,
+   KAPPA=2, NOVELTY_WEIGHT=1.5 in its j_*.sh). Verified B6Fe25 locally.
+7. Wrote per-run `README.md` + `TUTORIAL.md` for a10 (B doping, 6 B, permutation gen).
+
+### Results
+- `main.py` v1.2.0 compiles; B-doping verified (B6Fe25). All run dirs sync + compile.
+- New self-contained run `a10_mgofeb_Seed3_Iter500` with versioned stack + docs.
+
+### Decisions & reasoning
+- B count capped at 6 (max hollow sites) rather than the requested 10, per user
+  "based on the max boron site of the system" — the helper physically places B in
+  4-Fe hollows and cannot exceed floor(25/4).
+- Root stays NUM_ATOMS_ADD=0 so the B feature is opt-in; only a10 enables it.
+
+### Open items / next steps
+- (User) launch a10 on HPC (`pjsub j_novEperAtom.sh`).
+
+### Time
+~30 min.
