@@ -883,3 +883,38 @@ Run not executed locally (HPC job). Outputs land in `out_energy_range/` + `out_f
   1297 set: all 50 folds used, 23–29 test structures each, none empty → valid.
 
 **Time:** 2026-08-27 ~02:40–02:50 JST.
+
+---
+
+## Session 2026-08-27 — Create HPC run dir b2_boron_ns (nested sampling, B-doped)
+
+**Goal (user-confirmed via clarify):** Create a new `_runs/` dir running the same NS
+parameters as `_analysist/1_result/1_no_prior_control` but on the B-doped dataset
+(`dataset_boron`), with B included in the perturb.
+
+**Clarify decisions (all user-confirmed):**
+1. Modern root runner `main.py` (latest, multi-symbol `--perturb-symbols Fe,B`) with
+   same NS params as reference: `--temp 300 --n-live 100 --n-iters 1000 --perturb
+   0.01 --output ./ns_output_T300_100_1000_0.01 --rng 42`.
+2. `--perturb-symbols Fe,B` (Fe AND B both perturbed).
+3. NS pipeline only (main.py on dataset_boron).
+4. Run dir name: `b2_boron_ns`.
+5. Copy `dataset_boron/` into the run as `dataset/` (main.py reads ./dataset).
+
+**Actions taken:**
+- Created `_runs/b2_boron_ns/`; copied latest `main.py` (v1.1.2) + `nested_sampling/`
+  package (6 modules) + `dataset_boron/` → `dataset/` (5 B-doped seeds).
+- Wrote `j_b2_boron_ns.sh` (bare PJM, 64 cores, gpaw_env) running the NS pipeline with
+  `--perturb-symbols Fe,B`.
+- Wrote per-run `README.md` + `TUTORIAL.md`.
+
+**Results / verification:**
+- main.py + nested_sampling/ compile under agox_v2; `sh -n` OK.
+- Dataset: 496 structures total (5 seeds), composition Fe25Mg25O25B7; `Fe,B` perturb
+  matches 32 atoms (25 Fe + 7 B) — verified.
+- git dry-run: code + docs tracked; `.db` seed files excluded.
+
+**Note:** some boron seeds contain high-energy structures; the |E|<1e4 filter handles
+gross outliers. Not executed locally (HPC job).
+
+**Time:** 2026-08-27 ~02:50–03:00 JST.
