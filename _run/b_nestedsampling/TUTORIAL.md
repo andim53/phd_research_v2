@@ -75,8 +75,11 @@ Posterior: 300 physical / 300 total
 
 ## Step 6 — Internals (prior + sampler)
 - **Prior / `sample_from_prior()`** — picks a random DB structure, copies it, and
-  if `--perturb > 0` adds Gaussian noise (std = `perturb` Å) to **only the Fe
-  atoms** (`--perturb-symbols`); Mg/O stay fixed. `--perturb 0` = pure resample.
+  if `--perturb > 0` adds Gaussian noise (std = `perturb` Å) to **only the
+  deposition-species atoms** (`--perturb-symbols`, default `Fe`). Multiple symbols
+  are supported comma-separated, e.g. `--perturb-symbols Fe,B` (or `Fe, B`) to move
+  Fe **and** B together; all other atoms (e.g. Mg/O) stay fixed. `--perturb 0` =
+  pure resample.
 - **Likelihood** — `log L = -beta·(E_pred - E_ref)`, `E_ref` = min training
   energy. Log space avoids overflow at ~−400 eV and beta~40 eV⁻¹.
 - **NS loop (`step()`)** — removes worst-live point, shrinks prior volume by
@@ -188,7 +191,8 @@ into equal-width windows). Two modes:
 - **Finer evidence / lower variance:** raise `--n-live` (resolution ∝ 1/√K).
 - **Broader exploration (higher-E weight):** raise `--temp`.
 - **Sharper focus on minimum:** lower `--temp` (e.g. 100–300 K).
-- **Stay on the deposition layer:** keep `--perturb-symbols Fe`; do **not** raise
+- **Stay on the deposition layer:** keep `--perturb-symbols Fe` (or a comma list,
+  e.g. `Fe,B`, to include B); do **not** raise
   `--perturb` (see Pitfall 4).
 - **Reproducibility:** keep `--rng` fixed (e.g. 42).
 

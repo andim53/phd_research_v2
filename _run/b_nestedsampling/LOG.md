@@ -803,3 +803,19 @@ split. User confirmed fix.
 together. This is the use case that motivated the fix.
 
 **Time:** 2026-08-27 ~01:48–01:58 JST.
+
+---
+
+## Session 2026-08-27 — Update TUTORIAL.md for multi-symbol --perturb-symbols
+
+**Context:** Follow-up to the `--perturb-symbols` multi-symbol fix. User asked to
+also update TUTORIAL.md.
+
+**Actions taken:** Updated TUTORIAL.md:
+- **Step 6 (Internals — prior/sample_from_prior):** now states `--perturb-symbols`
+  accepts comma-separated multiple symbols (e.g. `Fe,B` / `Fe, B`) to move Fe and B
+  together; other atoms (Mg/O) stay fixed.
+- **Step 9 (Tuning checklist):** "Stay on the deposition layer" bullet now notes a
+  comma list (e.g. `Fe,B`) can include B.
+
+**Time:** 2026-08-27 ~01:58–02:02 JST.
