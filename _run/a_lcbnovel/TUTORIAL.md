@@ -230,10 +230,15 @@ Once real DBs exist, the established downstream pipeline applies:
    `_runs/3_mgofe_Seed3_Iter700 ` (trailing space). This is error-prone with paths
    and scripts; keep run-dir names free of spaces (`<NN>_<descriptor>`). The space
    was removed via `git mv`.
-8. **Keep each run dir self-contained** — always give a run its own `main*.py`,
-   `scripts/`, and `novelty_lcb/` under `_runs/<NN>_<descriptor>/`; do not rely on
-   the project root when launching from HPC. If a run's code diverges, copy the
-   needed files into the run dir rather than importing from the parent.
+8. **Keep each run dir self-contained + documented** — always give a run its own
+   `main*.py`, `scripts/`, and `novelty_lcb/` under `_runs/<NN>_<descriptor>/`; do not
+   rely on the project root when launching from HPC. If a run's code diverges, copy the
+   needed files into the run dir rather than importing from the parent. Each **per-seed
+   run also carries a `README.md` + `TUTORIAL.md` specific to its treatment** (seed,
+   iteration budget); the README states how it differs from its siblings and the
+   TUTORIAL reproduces that run in isolation. Keep the run's `main.py`, `scripts/`, and
+   `novelty_lcb/` in sync with the latest versioned copies in the project root after a
+   root change.
 9. **Bump `__version__` on every edit** — every in-scope source file carries a
    module-level `__version__ = "X.Y.Z"` (semver; baseline 1.0.0). When you edit a
    file, bump its patch version (minor for API/behavior changes), update the

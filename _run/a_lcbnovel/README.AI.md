@@ -59,10 +59,12 @@ a_lcbnovel/
 - **`_runs/`** — self-contained run directories. Each HPC run (or benchmark) is its
   own dir, holding **everything** it needs (job script, main script, and copies of
   `scripts/` and `novelty_lcb/`), independent of the project root. Naming:
-  **`<NN>_<descriptor>`** (e.g. `4_mgofe_Seed3_Iter900`). **HPC per-seed Fe/MgO runs**
-  are bare code dirs (no per-run docs); **standalone benchmarks** (e.g.
-  `73_novel_benchEMT`) carry the full doc trio inside their own dir. Tracked in git
-  (code + docs), subject to the regenerable-data exclusions.
+  **`<NN>_<descriptor>`** (e.g. `a1_mgofe_Seed3_Iter300`). **HPC per-seed Fe/MgO runs**
+  carry a per-run **`README.md` + `TUTORIAL.md`** specific to that run's treatment
+  (seed, iteration budget); **standalone benchmarks** (e.g. `73_novel_benchEMT`) carry
+  the full doc trio inside their own dir. Run copies of `main.py`, `scripts/`, and
+  `novelty_lcb/` are kept in sync with the latest versioned project root. Tracked in
+  git (code + docs), subject to the regenerable-data exclusions.
 - **`_analysist/`** — analysed/intermediate results, kept separate from `_runs/`.
   Expected layout (matching the repo-root `.gitignore`): `0_analy/` (staging),
   `1_result/` (final), `main_analyst.ipynb`, `main_test.ipynb`. Outputs are

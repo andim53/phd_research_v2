@@ -32,7 +32,11 @@ Canonical import::
     from novelty_lcb import NoveltyLCBAcquisitor, is_distinct, fingerprint_distance
 """
 
+
+
 from __future__ import annotations
+
+__version__ = "1.0.0"
 
 import numpy as np
 from functools import partial

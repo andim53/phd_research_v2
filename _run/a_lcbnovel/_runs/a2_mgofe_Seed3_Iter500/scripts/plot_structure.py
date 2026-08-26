@@ -1,3 +1,7 @@
+
+
+__version__ = "1.0.0"
+
 # @title
 from agox.utils.plot.colors import Colors
 from agox.utils.plot import plot_atoms, plot_cell

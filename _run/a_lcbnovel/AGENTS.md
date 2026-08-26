@@ -99,13 +99,15 @@ and `novelty_lcb/` — and does **not** depend on files in the project root.
 
 ```
 _runs/
-├── <NN>_<descriptor>/            # e.g. 1_mgofe_Seed3_Iter300
+├── <NN>_<descriptor>/            # e.g. a1_mgofe_Seed3_Iter300
 │   ├── j_*.sh                    #   PJM batch script (one seed/job; edit SEED=, N_ITERATIONS=)
-│   ├── main*.py                  #   entry point(s) for that run
-│   ├── scripts/                  #   copied slab/generator builders (self-contained)
-│   ├── novelty_lcb/              #   copied package (self-contained)
+│   ├── main*.py                  #   entry point(s) for that run (latest from project root)
+│   ├── scripts/                  #   latest slab/generator builders (self-contained)
+│   ├── novelty_lcb/              #   latest package copy (self-contained, versioned)
+│   ├── README.md                 #   per-run overview, specific to that run's treatment
+│   ├── TUTORIAL.md               #   how to reproduce THAT run
 │   └── (output/ seed_<N>/ db files, generated on HPC)
-└── <NN>_<descriptor>/            # full benchmark projects may add the doc trio
+└── <NN>_<descriptor>/            # full benchmark projects add the doc trio
     ├── README.md / README.AI.md / LOG.md / TUTORIAL.md / AGENTS.md
     ├── j_*.sh / main*.py
     ├── scripts/ / novelty_lcb/
@@ -114,16 +116,23 @@ _runs/
 
 Naming convention: **`<NN>_<descriptor>`** — a running two-digit index plus a
 short descriptive suffix that captures the run's identity (e.g.
-`4_mgofe_Seed3_Iter900`, `73_novel_benchEMT`). This keeps runs ordered and
+`a1_mgofe_Seed3_Iter300`, `73_novel_benchEMT`). This keeps runs ordered and
 unambiguous.
 
 Documentation policy:
-- **HPC per-seed Fe/MgO runs** (one seed per job, e.g. `1_mgofe_Seed3_Iter300`)
-  are **bare code dirs**: `j_*.sh` + `main.py` + `scripts/` + `novelty_lcb/` and
-  their regenerable outputs. They do **not** get a per-run README/LOG/TUTORIAL.
+- **HPC per-seed Fe/MgO runs** (one seed per job, e.g. `a1_mgofe_Seed3_Iter300`)
+  carry a **per-run `README.md` + `TUTORIAL.md`** alongside `j_*.sh` + `main.py` +
+  `scripts/` + `novelty_lcb/`. The README states the run's treatment — what differs
+  from its sibling runs (seed, iteration budget) — and the TUTORIAL reproduces **that
+  run** in isolation. They do **not** carry a full per-run README.AI/LOG (the project
+  root owns those).
 - **Standalone benchmark projects** (e.g. `73_novel_benchEMT`) are full projects
   and carry the **complete doc trio** (README + README.AI + LOG + TUTORIAL, and an
   AGENTS.md if the owner asks) inside their own dir.
+
+**Keep run copies current.** Each per-seed run's `main.py`, `scripts/`, and
+`novelty_lcb/` should be kept in sync with the latest versioned copies in the project
+root (`cp main.py novelty_lcb/*.py scripts/*.py <run>/` after a root change).
 
 Everything under `_runs/` is **tracked in git** (code + docs), subject to the same
 regenerable-data exclusions.

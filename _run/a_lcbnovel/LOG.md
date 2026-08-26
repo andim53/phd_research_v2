@@ -1060,3 +1060,61 @@ User renamed the project dir on disk: `/home/think/Desktop/research/_run/10_lcbn
 
 ### Time
 ~20 min.
+
+
+---
+
+## 2026-08-26 — Session: Per-run README+TUTORIAL + latest-code sync under _runs/
+
+### Goal (user request, confirmed via clarify)
+Each `_runs/` dir is self-contained: carries the LATEST versioned package dirs
+(`novelty_lcb/`, `scripts/`) from the project root, plus a per-run `README.md` +
+`TUTORIAL.md` specific to that run's treatment. Update governance docs (AGENTS,
+README.AI, TUTORIAL) and the `agox-novelty-lcb` skill to match.
+
+### Clarify (confirmed)
+- **Scope:** a1/a2/a3 per-seed runs get README+TUTORIAL; 73_novel_benchEMT only has
+  its packages refreshed (already has full docs).
+- **Docs per run:** `README.md` + `TUTORIAL.md` only (not README.AI/LOG — project root
+  owns those).
+- **Package sync:** copy latest root `novelty_lcb/` + `scripts/` (versioned) into all
+  four run dirs; also sync latest root `main.py` into a1/a2/a3 (user chose "update with
+  versioning").
+- **Per-run doc content:** specific to the treatment — i.e. what differs from the
+  sibling runs (seed, N_ITERATIONS).
+- **AGENTS.md:** update policy from "bare code dirs, no per-run docs" to "each per-seed
+  run carries README+TUTORIAL"; sync README.AI.md layout + root TUTORIAL.
+- **Skills:** fix stale `10_lcbnovel` → `a_lcbnovel` refs in `agox-novelty-lcb` and
+  refresh the `_skills/` snapshot.
+
+### Actions taken
+1. Synced latest versioned `main.py`, `novelty_lcb/`, `scripts/` from project root →
+   `_runs/a1_mgofe_Seed3_Iter300/`, `a2_...Iter500/`, `a3_...Iter700/`; refreshed
+   `_runs/73_novel_benchEMT/{novelty_lcb,scripts}/`. Verified byte-identical to root
+   (all copies now carry `__version__`).
+2. Wrote per-run `README.md` + `TUTORIAL.md` for a1/a2/a3, each specific to its
+   treatment (seed=3, N_ITERATIONS=300/500/700) with a sibling-difference table.
+3. Updated `AGENTS.md`: per-run README+TUTORIAL policy + "keep run copies current"
+   sync rule + `_runs/` layout tree.
+4. Updated `README.AI.md` §2a layout and root `TUTORIAL.md` pitfall #8.
+5. Fixed stale `10_lcbnovel` → `a_lcbnovel` refs in `agox-novelty-lcb` skill
+   (SKILL.md + references/auto-window-and-test.md + kappa-lambda-sweep.md) and synced
+   the `_skills/research/agox-novelty-lcb/` snapshot.
+
+### Results
+- All run-dir code copies match the latest project root (main.py, novelty_lcb/, scripts/).
+- Per-run README+TUTORIAL present in a1/a2/a3; 73 packages refreshed.
+- Governance docs (AGENTS, README.AI, TUTORIAL) and skill/snapshot consistent.
+
+### Decisions & reasoning
+- Per-seed runs remain lightweight (README+TUTORIAL, no README.AI/LOG) so HPC run dirs
+  stay focused; the project root remains the single owner of the full doc spec.
+- Per-run README/TUTORIAL are specific to the treatment (the iteration budget), since
+  main.py is byte-identical across a1/a2/a3 — the docs differentiate the runs by their
+  actual differing variable.
+
+### Open items / next steps
+- (User) launch heavy Fe/MgO searches (a1/a2/a3 on HPC); run the 73/74 benchmarks.
+
+### Time
+~25 min.

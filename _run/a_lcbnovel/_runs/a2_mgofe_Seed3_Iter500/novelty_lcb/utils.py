@@ -8,7 +8,11 @@ with the acquisitor: the same distance threshold used for acquisition
 can be used for pre-storage duplicate filtering.
 """
 
+
+
 from __future__ import annotations
+
+__version__ = "1.0.0"
 
 import numpy as np
 from typing import TYPE_CHECKING

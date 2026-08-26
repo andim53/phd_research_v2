@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Helper: build a MinimalAGOX instance for benchmarks."""
 
+
+
 from __future__ import annotations
+
+__version__ = "1.0.0"
 
 import os
 from pathlib import Path
