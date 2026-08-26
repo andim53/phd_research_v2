@@ -13,15 +13,11 @@ conda activate gpaw_env
 module load intel
 module load impi
 
-echo "GPR accuracy, 10-fold CV, bin-width 0.05 (energy-range + Fe_z systems)."
+echo "GPR accuracy, 50-fold CV, bin-width 0.1 (Fe_z system only)."
 echo "Params (--cv-folds / --bin-width): see TUTORIAL.md."
 
 OMP_NUM_THREADS=1 python ./gpr_accuracy.py \
-    --cv --cv-folds 10 --uncertainty --bin-width 0.05 \
-    --output ./out_energy_range
-
-OMP_NUM_THREADS=1 python ./gpr_accuracy.py \
-    --cv --cv-folds 10 --fez --uncertainty --bin-width 0.05 \
+    --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
     --output ./out_fez
 
 echo "Done."

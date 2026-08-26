@@ -855,3 +855,31 @@ covering the two reference systems (`gpr_acc_cv_uncert_out` = energy-range CV+un
 Run not executed locally (HPC job). Outputs land in `out_energy_range/` + `out_fez/`.
 
 **Time:** 2026-08-27 ~02:30–02:40 JST.
+
+---
+
+## Session 2026-08-27 — Update run b1_gpr_accuracy_cv10_bin005: j_b1.sh, fez-only, cv 50
+
+**Goal (user-confirmed via clarify):** Edit the run dir so the job script is renamed
+`j_b1.sh`, and it runs ONLY the fez system with `--fez --uncertainty --bin-width 0.1
+--cv-folds 50`.
+
+**Clarify decisions (all user-confirmed):**
+1. Keep dir name `b1_gpr_accuracy_cv10_bin005` (note the name no longer matches the
+   cv50/bin01 spec).
+2. Job runs ONLY the fez system (drop the energy-range invocation).
+3. `--cv-folds 50` (50 GPR trainings, ~1271 train/~26 test per fold — slow, HPC).
+4. Keep dataset/ + gpr_accuracy.py; update docs.
+
+**Actions taken:**
+- Renamed job script `j_gpr_accuracy_cv10_bin005.sh` → `j_b1.sh` (git mv).
+- Rewrote `j_b1.sh`: single invocation
+  `--cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 --output ./out_fez`.
+- Rewrote README.md + TUTORIAL.md to the new spec (fez-only, cv 50, bin 0.1, j_b1.sh).
+
+**Results / verification:**
+- `sh -n j_b1.sh`: OK.
+- gpr_accuracy.py has no cap on --cv-folds; `stratify_folds` with 50 folds on the
+  1297 set: all 50 folds used, 23–29 test structures each, none empty → valid.
+
+**Time:** 2026-08-27 ~02:40–02:50 JST.
