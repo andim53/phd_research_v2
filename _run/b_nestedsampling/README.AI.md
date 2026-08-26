@@ -90,7 +90,10 @@ $PY run_nested_sampling.py --temp 300 --n-live 50 --n-iters 300 \
 # Standalone re-analysis of a finished run (no re-train)
 $PY run_nested_sampling.py --analyze-only ./ns_output_allseeds --output ./analysis_out
 
-# HPC launch (activates gpaw_env; edit the python line to change params)
+# HPC launch (full pipeline: dataset/main.py search, then run_nested_sampling.py)
+#   - activates gpaw_env; 24 cores (matches main.py SubprocessGPAW ncores=24)
+#   - edit run_nested_sampling.py args in j_nestedsampling.sh to change NS params
+#   - literature-scale NS params (--n-live/--n-iters) in TUTORIAL.md
 pjsub j_nestedsampling.sh
 ```
 

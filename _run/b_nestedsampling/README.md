@@ -48,6 +48,14 @@ After sampling, the analysis writes to `<--output>/analysis/` automatically.
 The run dir must contain `posterior_structures/posterior_*.xsf` and
 `posterior_summary.csv`.
 
+## Job (HPC full pipeline)
+`j_nestedsampling.sh` runs the **whole pipeline** on HPC (PJM, 24 cores,
+`gpaw_env`): first `dataset/main.py` (AGOX search over ALL seeds 3..104, writing
+DBs into `dataset/seed_<N>/1_db/db_<N>.db`), then `run_nested_sampling.py`
+(conservative `--n-live 100 --n-iters 1000`). Submit with `pjsub j_nestedsampling.sh`.
+For literature-scale settings and the paper-derived parameter table, see
+`TUTORIAL.md` ("Literature-scale NS parameters").
+
 ## Options
 - `--temp`      temperature (K), default 300
 - `--n-live`    number of live points, default 50

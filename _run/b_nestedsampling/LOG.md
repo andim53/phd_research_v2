@@ -97,3 +97,62 @@ means the `ActorUnavailableError` class is structurally avoided.)
 literature-scale `--n-live 500 --n-iters 5000` and T-scan) still pending on HPC.
 
 **Time:** 2026-08-26 ~20:17–20:20 JST.
+
+---
+
+## Session 2026-08-26 — Update job script to full-pipeline + sync notes with literature
+
+**Goal (user-confirmed via clarify):** Edit `j_nestedsampling.sh` so it runs
+`dataset/main.py` (the AGOX search) **then** `run_nested_sampling.py`, structured
+like `a_lcbnovel/j_novel.sh`; keep the project notes/docs in sync, including a
+literature-scale NS parameter note drawn from the wiki-research nested-sampling
+papers.
+
+**Clarify decisions (all user-confirmed):**
+1. Keep `dataset/main.py` as-is (no CLI refactor); the job runs it directly.
+2. Run ALL seeds 3..104 in one job, then nested sampling.
+3. DBs written into `./dataset` (job `cd dataset` before `python ./main.py`, so
+   `run_nested_sampling.py` finds `dataset/seed_*/1_db/db_*.db`).
+4. NS params: keep current `--temp 300 --n-live 100 --n-iters 1000` **plus** a
+   literature-scale note with multiple papers' parameters (from wiki-research).
+5. Job PJM header: **24 cores** (`vnode-core=24 / mpi proc=24`), matching
+   `dataset/main.py`'s `SubprocessGPAW(ncores=24)`.
+
+**Actions taken:**
+- Env check: locally **no `gpaw_env`** exists; `agox_v2` has AGOX 3.10.2 + ASE
+  3.25.0 + GPAW. On HPC `gpaw_env` is the standing env (it generated the original
+  dataset via `dataset/job_5x5_9.sh`).
+- Rewrote `j_nestedsampling.sh` → full-pipeline job: 24-core PJM header,
+  `conda activate gpaw_env`, `cd dataset && OMP_NUM_THREADS=1 python ./main.py`,
+  `cd ..`, `OMP_NUM_THREADS=1 python ./run_nested_sampling.py --temp 300
+  --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe --output
+  ./ns_output_T300_100_1000_0.01 --rng 42`. Bare style (echo only, no comment
+  blocks).
+- `TUTORIAL.md`: rewrote the "Heavy, supercomputer run" section to document the
+  full-pipeline job (24 cores, env caveat); added a **"Literature-scale NS
+  parameters"** table from wiki-research (`concepts/nested-sampling.md`,
+  `raw/syntheses/nested-sampling_synthesis.md`): Pártay 2021 (K=500–5000,
+  L=100s–1000s, 10⁵–10⁷ iters), Yang 2024 (80 walkers/free particle, 250
+  iters/walker, 320 000 iters at full coverage), Chatbipho 2025 (LJ38
+  nanocluster); recommended middle ground `--n-live 500 --n-iters 5000`.
+- `README.md`: added "Job (HPC full pipeline)" section.
+- `README.AI.md`: updated §3 HPC-launch entry to describe the full pipeline.
+
+**Results / verification:**
+- `j_nestedsampling.sh` written (24 cores, full pipeline).
+- `main.py` and `run_nested_sampling.py` **untouched** → no version bumps
+  (batch scripts not versioned; VERSIONS.md unchanged).
+- Compile-check of `dataset/main.py` + `run_nested_sampling.py` under `agox_v2`
+  (below).
+
+**Decisions & reasoning:**
+- Literature note lives in TUTORIAL.md, **not** in the `.sh` (standing rule: keep
+  batch scripts bare). The `.sh` has a one-line echo pointing to TUTORIAL.md.
+- Job keeps `gpaw_env` (HPC convention); the AGOX/agox_v2 caveat is documented in
+  README.AI + TUTORIAL.
+
+**Open items:**
+- The HPC job itself is not run (all-seeds GPAW search is a heavy HPC job, not a
+  local task). Locally only compile-checks were done.
+
+**Time:** 2026-08-26 ~20:20–20:35 JST.

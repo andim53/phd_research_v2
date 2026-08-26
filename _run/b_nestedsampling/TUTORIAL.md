@@ -114,25 +114,58 @@ Re-run on a finished run without re-training:
 - **Reproducibility:** keep `--rng` fixed (e.g. 42).
 
 ## Heavy, supercomputer run (Fujitsu PJM)
-`j_nestedsampling.sh` targets a PJM node (64 cores, 120 h). Submit with
-`pjsub j_nestedsampling.sh`, check `pjstat`, kill `pjdel`.
-**Env caveat:** the script activates `gpaw_env` (standing convention). The
-sampling script needs the AGOX/ASE stack (`agox_v2`). If the HPC job fails on
-AGOX imports, edit `j_nestedsampling.sh`: `conda activate gpaw_env` →
-`conda activate agox_v2`.
+`j_nestedsampling.sh` is a **full-pipeline job** — it runs the AGOX search first,
+then nested sampling:
+```sh
+# (from the project root, on HPC)
+cd ./dataset
+OMP_NUM_THREADS=1 python ./main.py          # AGOX search, ALL seeds 3..104 -> dataset/seed_<N>/1_db/db_<N>.db
+cd ..
+OMP_NUM_THREADS=1 python ./run_nested_sampling.py \
+    --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --perturb-symbols Fe --output ./ns_output_T300_100_1000_0.01 --rng 42
+```
+- Header: `vnode-core=24 / mpi proc=24` — matches `dataset/main.py`'s
+  `SubprocessGPAW(ncores=24)` (the sampler is single-process, so the DFT search
+  step sets the core count).
+- Submit with `pjsub j_nestedsampling.sh`, check `pjstat`, kill `pjdel`.
+- **Env caveat:** the script activates `gpaw_env` (standing HPC convention). Both
+  scripts need the AGOX/ASE stack; on HPC `gpaw_env` has it (it generated the
+  original dataset via `dataset/job_5x5_9.sh`). If the job fails on AGOX imports,
+  edit `j_nestedsampling.sh`: `conda activate gpaw_env` → `conda activate agox_v2`
+  (locally `agox_v2` has AGOX 3.10.2 + ASE 3.25.0 + GPAW).
+- **Current NS params are conservative** (`--n-live 100 --n-iters 1000`). For
+  literature-scale resolution, use the heavy settings below.
 
-**Canonical heavy run (literature scale):**
+### Literature-scale NS parameters (from the papers)
+The nested-sampling literature sets accuracy via the **live-set size K** (and walk
+length L). Source: the `wiki-research` pages `concepts/nested-sampling.md`,
+`concepts/nested-sampling-validation.md`, and
+`raw/syntheses/nested-sampling_synthesis.md`; PDFs under
+`wiki-research/raw/papers/nested-sampling/`.
+
+| Paper | System | K (live set) | L (walk length) | Iterations | Notes |
+|---|---|---|---|---|---|
+| Pártay, Csányi & Bernstein 2021 (EPJ B 94, 159) | bulk periodic solids | **500–5000** walkers | 100s–1000s | **10⁵–10⁷** | N=32–256 atoms; error in ln Γ ∝ 1/√K; too-small K → basin *extinction* |
+| Yang, Pártay & Wexler 2024 (PCCP 26, 13862) | surfaces / adsorbates | **80 walkers per free particle** | ~250 iterations/walker | 80×250×16 = **320 000** at full coverage | closest analogue to Fe-on-MgO deposition; 25 Fe → K≈2000, iters≈500 000 |
+| Chatbipho et al. 2025 (JCP 163, 174701) | LJ38 nanocluster adsorbates | extends Yang's surface NS | same walk/move scheme | comparable | confirms surface-NS recipe at small-system end |
+
+**Meaning for this project (Fe25Mg25O25, 75 atoms):**
+- The strict Yang-surface analogue for 25 free Fe atoms is `--n-live ~2000` /
+  `--n-iters ~500 000` — very expensive.
+- A tractable literature-informed middle ground is **`--n-live 500 --n-iters 5000`**
+  (Pártay bulk lower bound; 1/√500 resolution, ≈10× the default depth):
 ```bash
 OMP_NUM_THREADS=1 python ./run_nested_sampling.py \
     --temp 300 --n-live 500 --n-iters 5000 --perturb 0.01 \
     --perturb-symbols Fe --rng 42 --output ./ns_output_allseeds_heavy
 ```
 `OMP_NUM_THREADS=1` keeps each single-process job to one thread so many
-independent jobs share a 64-core node evenly (after `use_ray=False` the sampler
-is single-process → scale by submitting many jobs, not MPI-parallelising one).
+independent jobs share the node evenly (after `use_ray=False` the sampler is
+single-process → scale by submitting many jobs, not MPI-parallelising one).
 
 **Suggested temperature scan** (compare thermodynamics across T; each T its own
-job/output):
+job/output, free energy F = −k_B·T·ln Z from each evidence):
 ```bash
 for T in 100 200 300 500 1000; do
   OMP_NUM_THREADS=1 python ./run_nested_sampling.py \
