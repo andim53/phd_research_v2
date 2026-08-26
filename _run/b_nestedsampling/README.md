@@ -34,7 +34,7 @@ AGOX/ASE stack from `agox_v2`.
 ## Usage (full run + automatic analysis)
 ```
 cd /home/think/Desktop/research/_run/b_nestedsampling
-/home/think/miniconda3/envs/agox_v2/bin/python run_nested_sampling.py \
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temp 300 --n-live 50 --n-iters 300 --perturb 0.01 \
     --output ./ns_output_allseeds --rng 42
 ```
@@ -42,17 +42,19 @@ After sampling, the analysis writes to `<--output>/analysis/` automatically.
 
 ## Usage (standalone re-analysis of a finished run)
 ```
-/home/think/miniconda3/envs/agox_v2/bin/python run_nested_sampling.py \
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --analyze-only ./ns_output_allseeds --output ./analysis_out
 ```
 The run dir must contain `posterior_structures/posterior_*.xsf` and
 `posterior_summary.csv`.
 
-## Job (HPC full pipeline)
-`j_nestedsampling.sh` runs the **whole pipeline** on HPC (PJM, 24 cores,
-`gpaw_env`): first `dataset/main.py` (AGOX search over ALL seeds 3..104, writing
-DBs into `dataset/seed_<N>/1_db/db_<N>.db`), then `run_nested_sampling.py`
-(conservative `--n-live 100 --n-iters 1000`). Submit with `pjsub j_nestedsampling.sh`.
+## Job (HPC — nested sampling only)
+`j_nestedsampling.sh` runs **nested sampling** on HPC (PJM, 24 cores, `gpaw_env`):
+`python ./main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01
+--perturb-symbols Fe --output ./ns_output_T300_100_1000_0.01 --rng 42`. It reads
+the existing `dataset/seed_*/1_db/db_*.db` (seeds 3–15, already present — no AGOX
+search step). Submit with `pjsub j_nestedsampling.sh`. The optional AGOX search
+step (`dataset/main.py`, all seeds 3..104) can be added back — see TUTORIAL.
 For literature-scale settings and the paper-derived parameter table, see
 `TUTORIAL.md` ("Literature-scale NS parameters").
 
@@ -92,7 +94,7 @@ For literature-scale settings and the paper-derived parameter table, see
 ## Layout
 ```
 b_nestedsampling/
-├── run_nested_sampling.py   # entry point (root runner)
+├── main.py                  # entry point (root runner; renamed from run_nested_sampling.py)
 ├── nested_sampling/         # package: NestedSampler, train_gpr, state_density, utils
 ├── scripts/                 # clean slab/generator builders used by dataset/main.py
 ├── dataset/                 # AGOX seed DBs (seed_3..15, stop_16) + dataset/main.py + scripts

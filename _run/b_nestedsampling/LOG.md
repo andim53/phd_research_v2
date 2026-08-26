@@ -156,3 +156,54 @@ papers.
   local task). Locally only compile-checks were done.
 
 **Time:** 2026-08-26 ~20:20–20:35 JST.
+
+---
+
+## Session 2026-08-26 — Rename root `run_nested_sampling.py` → `main.py`; job runs NS only
+
+**Goal (user-confirmed via clarify):** The project root runner should be named
+`main.py` (not `run_nested_sampling.py`), and `j_nestedsampling.sh` should run the
+(named) `main.py` — **not** `dataset/main.py`. The AGOX search step is dropped from
+the job; a note documents that it can be added back.
+
+**Clarify decisions (all user-confirmed):**
+1. Remove the `dataset/main.py` AGOX-search step from the job; the job runs ONLY
+   `./main.py` (reads existing `dataset/seed_*/1_db/db_*.db`). Include a note that
+   the search step could also be run.
+2. Do NOT execute the job now — just update the file for HPC.
+3. Keep the job activating `gpaw_env` (HPC convention), pointing to TUTORIAL for
+   the run command.
+4. The "optional search" note goes in **TUTORIAL.md only** (keeps the `.sh` bare).
+5. Rename via `git mv` (preserves history) + update all references.
+
+**Actions taken:**
+- `git mv run_nested_sampling.py main.py` (no self-references broke on rename).
+- Fixed the docstring usage line in `main.py` (`run_nested_sampling.py` → `main.py`);
+  bumped `__version__` **1.0.0 → 1.0.1** (patch, docstring edit).
+- Rewrote `j_nestedsampling.sh`: NS-only job (`python ./main.py --temp 300
+  --n-live 100 --n-iters 1000 ... --output ./ns_output_T300_100_1000_0.01`),
+  24-core header, `gpaw_env`, bare style.
+- `VERSIONS.md`: row `run_nested_sampling.py 1.0.0` → `main.py 1.0.1`.
+- `README.md`: usage/analyze commands → `main.py`; "Job (HPC — nested sampling
+  only)" section (optional search noted, points to TUTORIAL); layout tree.
+- `README.AI.md`: entry-point commands, `### main.py CLI`, HPC-launch comment,
+  in-scope list, use_ray refs, provenance.
+- `TUTORIAL.md`: mental model + all run commands → `main.py`; "Heavy, supercomputer
+  run" section rewritten to NS-only job + added **"Optional: add the AGOX search
+  step back"** subsection.
+- `AGENTS.md`: `_runs/` layout + run-copy-sync text → `main.py`.
+- **LOG.md: historical entries NOT edited** (append-only rule); this entry records
+  the rename as a correction.
+
+**Results / verification:**
+- `main.py` present, `run_nested_sampling.py` gone (git-tracked rename).
+- `main.py` `__version__ = "1.0.1"`; VERSIONS.md updated.
+- No stale `run_nested_sampling` references remain in current-state docs (only
+  intentional rename-provenance notes in README/README.AI).
+- Compile-check of `main.py` under `agox_v2` (below).
+- Job file updated for HPC; **not executed** (per decision).
+
+**Open items:**
+- HPC job not run (NS-only run is launchable via `pjsub j_nestedsampling.sh`).
+
+**Time:** 2026-08-26 ~20:40–20:55 JST.

@@ -20,7 +20,7 @@ human-facing `README.md`. Read `AGENTS.md` (governing rules) and `LOG.md`
 
 ```
 b_nestedsampling/
-├── run_nested_sampling.py       # Entry point: load seeds -> train GPR -> NestedSampler -> analyze
+├── main.py                     # Entry point (renamed from run_nested_sampling.py): load seeds -> train GPR -> NestedSampler -> analyze
 ├── nested_sampling/             # PROVEN package (migrated from 8_nested_sampling)
 │   ├── __init__.py              #   re-exports NestedSampler, train_gpr, K_B, analyze_state_density...
 │   ├── nested_sampler.py        #   NestedSampler (log-space evidence accumulation)
@@ -65,7 +65,7 @@ Every in-scope source file carries a module-level `__version__ = "X.Y.Z"`
   (`1.0.1 → 1.1.0`) on API/behavior changes.
 - **On every edit:** bump `__version__`, update `VERSIONS.md`, record old→new in
   `LOG.md`.
-- In-scope: `run_nested_sampling.py`, `nested_sampling/`, `scripts/`.
+- In-scope: `main.py`, `nested_sampling/`, `scripts/`.
   `dataset/` and `_runs/` snapshots are **not** individually versioned.
 - Pre-existing **function-local** `__version__` values in `scripts/*.py` are left
   untouched (module-level one added).
@@ -77,27 +77,27 @@ PY=/home/think/miniconda3/envs/agox_v2/bin/python
 cd /home/think/Desktop/research/_run/b_nestedsampling
 
 # Compile-check everything
-$PY -m py_compile run_nested_sampling.py nested_sampling/*.py scripts/*.py
+$PY -m py_compile main.py nested_sampling/*.py scripts/*.py
 
 # Quick smoke run (full GPR train, tiny sampler)
-$PY run_nested_sampling.py --temp 300 --n-live 30 --n-iters 20 \
+$PY main.py --temp 300 --n-live 30 --n-iters 20 \
     --perturb 0.01 --output /tmp/ns_smoke --rng 42
 
 # Full production run
-$PY run_nested_sampling.py --temp 300 --n-live 50 --n-iters 300 \
+$PY main.py --temp 300 --n-live 50 --n-iters 300 \
     --perturb 0.01 --output ./ns_output_allseeds --rng 42
 
 # Standalone re-analysis of a finished run (no re-train)
-$PY run_nested_sampling.py --analyze-only ./ns_output_allseeds --output ./analysis_out
+$PY main.py --analyze-only ./ns_output_allseeds --output ./analysis_out
 
-# HPC launch (full pipeline: dataset/main.py search, then run_nested_sampling.py)
-#   - activates gpaw_env; 24 cores (matches main.py SubprocessGPAW ncores=24)
-#   - edit run_nested_sampling.py args in j_nestedsampling.sh to change NS params
-#   - literature-scale NS params (--n-live/--n-iters) in TUTORIAL.md
+# HPC launch (nested sampling only; reads existing dataset/seed_*/1_db/db_*.db)
+#   - activates gpaw_env; 24 cores
+#   - edit main.py args in j_nestedsampling.sh to change NS params
+#   - optional AGOX search step (dataset/main.py) documented in TUTORIAL
 pjsub j_nestedsampling.sh
 ```
 
-### `run_nested_sampling.py` CLI
+### `main.py` CLI
 | Flag | Default | Meaning |
 |---|---|---|
 | `--temp` | `300` | Temperature (K); sets `beta=1/(k_B*T)`. |
@@ -118,7 +118,7 @@ pjsub j_nestedsampling.sh
   lacks it, switch `conda activate gpaw_env` → `conda activate agox_v2` before
   submitting (the original notes flagged this).
 - `matplotlib.use("Agg")` before plotting in headless runs.
-- `GPR(..., use_ray=False)` in `run_nested_sampling.py` avoids Ray actors
+- `GPR(..., use_ray=False)` in `main.py` avoids Ray actors
   (`ActorUnavailableError` on low-RAM nodes). Single-process → scale out by
   submitting many independent jobs.
 
@@ -146,14 +146,15 @@ All regenerable/gitignored.
    (or 0). Note: the |E|<1e4 filter is a pragmatic threshold, not a physical
    guarantee.
 5. **Ray `ActorUnavailableError`** — environmental (RAM exhaustion); avoided with
-   `use_ray=False` (already set in `run_nested_sampling.py`).
+   `use_ray=False` (already set in `main.py`).
 6. **Degenerate KDE** — analysis skips a panel if a set has <2 distinct energies
    (where `gaussian_kde` would be singular).
 
 ## 7. Provenance / references
-- Upstream (migrated from): `_run/8_nested_sampling/` — `run_nested_sampling.py`,
-  `nested_sampling/` package, `dataset/`, `job.sh`, `README.md`,
-  `NESTED_SAMPLING_RUN.md` (786-line notes split into README/LOG/TUTORIAL here).
+- Upstream (migrated from): `_run/8_nested_sampling/` — `run_nested_sampling.py`
+  (now `main.py` here), `nested_sampling/` package, `dataset/`, `job.sh`,
+  `README.md`, `NESTED_SAMPLING_RUN.md` (786-line notes split into
+  README/LOG/TUTORIAL here).
 - Related: `_run/a_lcbnovel/` (Novelty-LCB search), `_run/9_novelFilter/`
   (analysis pipeline the state-density module is modeled on), `_run/8_nested_sampling`.
 - Literature: Pártay/Csányi/Bernstein 2021 (EPJB 94, 159); Yang/Pártay/Wexler 2024

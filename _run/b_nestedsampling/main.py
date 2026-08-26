@@ -7,7 +7,7 @@ trains a single GPR surrogate on the combined 1297 structures, then runs the
 NestedSampler from the `nested_sampling` package on the combined dataset.
 
 Run with the agox_v2 conda env:
-    /home/think/miniconda3/envs/agox_v2/bin/python run_nested_sampling.py [options]
+    /home/think/miniconda3/envs/agox_v2/bin/python main.py [options]
 
 This script relies on:
   - the `nested_sampling` package in this directory (imported as a package)
@@ -16,7 +16,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import os
 import sys

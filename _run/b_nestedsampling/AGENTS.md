@@ -101,7 +101,7 @@ and does **not** depend on files in the project root.
 _runs/
 └── <NN>_<descriptor>/            # e.g. a1_mgofe_Seed3_Iter300
     ├── j_*.sh                    #   PJM batch script (one job; edit the python line)
-    ├── run_nested_sampling.py    #   entry point(s) for that run (latest from project root)
+    ├── main.py                 #   entry point(s) for that run (latest from project root)
     ├── scripts/                  #   latest slab/generator builders (self-contained)
     ├── nested_sampling/          #   latest package copy (self-contained, versioned)
     ├── README.md                 #   per-run overview, specific to that run's treatment
@@ -115,14 +115,14 @@ descriptive suffix that captures the run's identity (e.g. `a1_mgofe_Seed3_Iter30
 
 Documentation policy:
 - **HPC runs** carry a **per-run `README.md` + `TUTORIAL.md`** alongside `j_*.sh` +
-  `run_nested_sampling.py` + `scripts/` + `nested_sampling/`. The README states the
+  `main.py` + `scripts/` + `nested_sampling/`. The README states the
   run's treatment — what differs from its sibling runs (temperature, live set,
   iterations, seed) — and the TUTORIAL reproduces **that run** in isolation. They do
   **not** carry a full per-run README.AI/LOG (the project root owns those).
 
-**Keep run copies current.** Each run's `run_nested_sampling.py`, `scripts/`, and
+**Keep run copies current.** Each run's `main.py`, `scripts/`, and
 `nested_sampling/` should be kept in sync with the latest versioned copies in the
-project root (`cp run_nested_sampling.py nested_sampling/*.py scripts/*.py <run>/`
+project root (`cp main.py nested_sampling/*.py scripts/*.py <run>/`
 after a root change).
 
 Everything under `_runs/` is **tracked in git** (code + docs), subject to the same

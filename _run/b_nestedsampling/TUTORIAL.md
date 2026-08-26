@@ -12,7 +12,7 @@ place). Terminal only — no IDE required.
 - (Optional) HPC cluster with PJM batch for heavy runs — `pjsub`.
 
 ## Step 0 — Mental model
-`run_nested_sampling.py` does three things in sequence:
+`main.py` does three things in sequence:
 1. **Loads the combined dataset** — all structures from every seed DB
    (`dataset/seed_*/1_db/db_*.db`, 1297 structures).
 2. **Trains one GPR surrogate** on all 1297 structures (AGOX Fingerprint
@@ -27,7 +27,7 @@ posterior structures, and a state-density/landscape analysis.
 ## Step 1 — One-line run (default)
 ```bash
 cd /home/think/Desktop/research/_run/b_nestedsampling
-/home/think/miniconda3/envs/agox_v2/bin/python run_nested_sampling.py
+/home/think/miniconda3/envs/agox_v2/bin/python main.py
 ```
 Defaults: `--temp 300 --n-live 50 --n-iters 300 --perturb 0.01
 --perturb-symbols Fe --output ./ns_output_allseeds --rng 42`.
@@ -35,7 +35,7 @@ Defaults: `--temp 300 --n-live 50 --n-iters 300 --perturb 0.01
 ## Step 2 — Quick smoke test first
 Always validate the pipeline on a tiny run before a long one:
 ```bash
-/home/think/miniconda3/envs/agox_v2/bin/python run_nested_sampling.py \
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temp 300 --n-live 30 --n-iters 20 --perturb 0.01 \
     --output /tmp/ns_smoke --rng 42
 ```
@@ -101,7 +101,7 @@ Runs automatically after sampling (`--no-analysis` to skip). For each of
 Plus `comparison_state_density.png` (overlaid training vs posterior KDE).
 Re-run on a finished run without re-training:
 ```bash
-/home/think/miniconda3/envs/agox_v2/bin/python run_nested_sampling.py \
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --analyze-only ./ns_output_allseeds --output ./analysis_out
 ```
 
@@ -114,28 +114,37 @@ Re-run on a finished run without re-training:
 - **Reproducibility:** keep `--rng` fixed (e.g. 42).
 
 ## Heavy, supercomputer run (Fujitsu PJM)
-`j_nestedsampling.sh` is a **full-pipeline job** — it runs the AGOX search first,
-then nested sampling:
+`j_nestedsampling.sh` is a **nested-sampling-only job** — it reads the existing
+`dataset/seed_*/1_db/db_*.db` and runs `main.py`:
 ```sh
 # (from the project root, on HPC)
-cd ./dataset
-OMP_NUM_THREADS=1 python ./main.py          # AGOX search, ALL seeds 3..104 -> dataset/seed_<N>/1_db/db_<N>.db
-cd ..
-OMP_NUM_THREADS=1 python ./run_nested_sampling.py \
+OMP_NUM_THREADS=1 python ./main.py \
     --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
     --perturb-symbols Fe --output ./ns_output_T300_100_1000_0.01 --rng 42
 ```
-- Header: `vnode-core=24 / mpi proc=24` — matches `dataset/main.py`'s
-  `SubprocessGPAW(ncores=24)` (the sampler is single-process, so the DFT search
-  step sets the core count).
+- Header: `vnode-core=24 / mpi proc=24`.
 - Submit with `pjsub j_nestedsampling.sh`, check `pjstat`, kill `pjdel`.
-- **Env caveat:** the script activates `gpaw_env` (standing HPC convention). Both
-  scripts need the AGOX/ASE stack; on HPC `gpaw_env` has it (it generated the
-  original dataset via `dataset/job_5x5_9.sh`). If the job fails on AGOX imports,
-  edit `j_nestedsampling.sh`: `conda activate gpaw_env` → `conda activate agox_v2`
-  (locally `agox_v2` has AGOX 3.10.2 + ASE 3.25.0 + GPAW).
+- **Env caveat:** the script activates `gpaw_env` (standing HPC convention). The
+  sampling script needs the AGOX/ASE stack; on HPC `gpaw_env` has it (it generated
+  the original dataset via `dataset/job_5x5_9.sh`). If the job fails on AGOX
+  imports, edit `j_nestedsampling.sh`: `conda activate gpaw_env` →
+  `conda activate agox_v2` (locally `agox_v2` has AGOX 3.10.2 + ASE 3.25.0 + GPAW).
 - **Current NS params are conservative** (`--n-live 100 --n-iters 1000`). For
   literature-scale resolution, use the heavy settings below.
+
+### Optional: add the AGOX search step back
+By default the job does **not** run the AGOX search — it samples the already-present
+dataset (seeds 3–15). To regenerate/extend the dataset, run `dataset/main.py`
+first (AGOX search over ALL seeds 3..104, writing DBs into
+`dataset/seed_<N>/1_db/db_<N>.db`), then `main.py`:
+```sh
+cd ./dataset
+OMP_NUM_THREADS=1 python ./main.py            # AGOX search (all seeds 3..104)
+cd ..
+OMP_NUM_THREADS=1 python ./main.py ...        # then nested sampling (above)
+```
+Note: `dataset/main.py` uses `SubprocessGPAW(ncores=24)` (matching the job's 24-core
+header) and runs the full seed range in one job.
 
 ### Literature-scale NS parameters (from the papers)
 The nested-sampling literature sets accuracy via the **live-set size K** (and walk
@@ -156,7 +165,7 @@ length L). Source: the `wiki-research` pages `concepts/nested-sampling.md`,
 - A tractable literature-informed middle ground is **`--n-live 500 --n-iters 5000`**
   (Pártay bulk lower bound; 1/√500 resolution, ≈10× the default depth):
 ```bash
-OMP_NUM_THREADS=1 python ./run_nested_sampling.py \
+OMP_NUM_THREADS=1 python ./main.py \
     --temp 300 --n-live 500 --n-iters 5000 --perturb 0.01 \
     --perturb-symbols Fe --rng 42 --output ./ns_output_allseeds_heavy
 ```
@@ -168,7 +177,7 @@ single-process → scale by submitting many jobs, not MPI-parallelising one).
 job/output, free energy F = −k_B·T·ln Z from each evidence):
 ```bash
 for T in 100 200 300 500 1000; do
-  OMP_NUM_THREADS=1 python ./run_nested_sampling.py \
+  OMP_NUM_THREADS=1 python ./main.py \
       --temp $T --n-live 500 --n-iters 5000 --perturb 0.01 \
       --perturb-symbols Fe --output ./ns_T${T} --rng 42
 done

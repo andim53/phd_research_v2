@@ -16,7 +16,7 @@ Versioning rules:
 
 | File | Version |
 |---|---|
-| `run_nested_sampling.py` | 1.0.0 |
+| `main.py` | 1.0.1 |
 | `nested_sampling/__init__.py` | 1.0.0 |
 | `nested_sampling/__main__.py` | 1.0.0 |
 | `nested_sampling/nested_sampler.py` | 1.0.0 |

@@ -13,13 +13,9 @@ conda activate gpaw_env
 module load intel
 module load impi
 
-echo "Full pipeline: (1) AGOX search (all seeds 3..104) then (2) nested sampling."
-echo "Literature-scale NS options (--n-live / --n-iters): see TUTORIAL.md."
+echo "Nested sampling on the existing dataset (seed_3..15)."
+echo "NS options (--n-live / --n-iters): see TUTORIAL.md."
 
-cd ./dataset
-OMP_NUM_THREADS=1 python ./main.py
-cd ..
-
-OMP_NUM_THREADS=1 python ./run_nested_sampling.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe --output ./ns_output_T300_100_1000_0.01 --rng 42
+OMP_NUM_THREADS=1 python ./main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe --output ./ns_output_T300_100_1000_0.01 --rng 42
 
 echo "Done."
