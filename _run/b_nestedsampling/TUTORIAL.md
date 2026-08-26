@@ -135,21 +135,28 @@ papers (Pártay 2021 / Yang 2024) and the wiki's `nested-sampling` page — wher
 ## Step 8c — GPR accuracy vs energy range
 `gpr_accuracy.py` evaluates how accurately the GPR predicts structure energies as a
 function of the energy range (energy above the global minimum, in eV/atom, binned
-into equal-width windows). It trains one GPR on all 1297 structures and computes
-in-sample MAE / RMSE / R² per bin (metrics in eV/atom):
+into equal-width windows). Two modes:
 ```bash
+# in-sample (default): train on all 1297, predict the same set (training-set fit)
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --bin-width 0.1 --output ./gpr_accuracy_out
+
+# 5-fold CV (out-of-sample generalization): stratified by energy bin, each fold
+# trains on 4/5 and predicts the held-out 1/5; held-out errors pooled per bin
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --cv --cv-folds 5 --bin-width 0.1 --output ./gpr_accuracy_cv_out
 ```
-- `--bin-width` — energy-bin width (eV/atom), default 0.1 (auto ≈7 bins over the
+- `--bin-width` — energy-bin width (eV/atom), default 0.1 (≈7 bins over the
   ~0.675 eV/atom range).
-- `--output` — output dir; writes `gpr_accuracy_by_energy_range.csv` +
-  `gpr_accuracy_by_energy_range.png` + a printed table.
+- `--output` — output dir; writes per-bin CSV + plot + printed table.
 - `--use-ray` — use AGOX Ray for training (default single-process).
-- **Note:** these are *in-sample* residuals (interpolation points), so MAE/RMSE are
-  very small (~0.001 eV/atom) and R²≈1.0. That reflects training-set fit, not
-  out-of-sample generalization. For a generalization estimate, cross-validation
-  would be needed (not implemented here).
+- `--cv` / `--cv-folds N` — opt-in K-fold CV (default 5), stratified by energy bin;
+  writes pooled `..._cv<K>folds.csv` + `cv_fold_summary_<K>folds.csv`.
+- **Interpretation:** in-sample errors are tiny (MAE~0.001 eV/atom, R²≈1.0,
+  interpolation points). CV gives the truthful out-of-sample picture: 5-fold CV
+  overall MAE=0.0040 RMSE=0.0067 R²=0.998 eV/atom, with error **increasing toward
+  higher-energy bins** (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom) — the GPR
+  generalizes worse at the energy extremes (fewer structures, more extrapolation).
 
 ## Step 9 — Tuning checklist
 - **Finer evidence / lower variance:** raise `--n-live` (resolution ∝ 1/√K).

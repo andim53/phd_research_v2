@@ -56,16 +56,25 @@ Writes `samples.csv` (re-runnable), `thermodynamics.csv`, and per-T posterior di
 
 ## Usage (GPR accuracy vs energy range)
 `gpr_accuracy.py` trains the GPR on the combined 1297-structure dataset and reports
-in-sample prediction accuracy (MAE, RMSE, R²) as a function of the energy range
-(energy above the minimum, eV/atom, binned):
+prediction accuracy (MAE, RMSE, R²) as a function of the energy range (energy above
+the minimum, eV/atom, binned):
 ```bash
+# in-sample (default): measures training-set fit
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --bin-width 0.1 --output ./gpr_accuracy_out
+
+# K-fold cross-validation (opt-in): out-of-sample generalization estimate
+/home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
+    --cv --cv-folds 5 --bin-width 0.1 --output ./gpr_accuracy_cv_out
 ```
-Outputs: `gpr_accuracy_by_energy_range.csv` (per-bin metrics), a matplotlib plot
-`gpr_accuracy_by_energy_range.png`, and a printed table. In-sample errors are tiny
-(~0.001 eV/atom) because these are interpolation points; for an out-of-sample
-generalization estimate, use cross-validation (not currently implemented).
+Outputs: `gpr_accuracy_by_energy_range*.csv` (per-bin metrics) + matplotlib plot
++ printed table. In CV mode it also writes `cv_fold_summary_<K>folds.csv`
+(fold-averaged MAE) and names outputs `..._cv<K>folds.*`.
+
+Observed (real output, 5-fold CV): overall MAE=0.0040 RMSE=0.0067 R²=0.998 eV/atom —
+error grows toward higher-energy bins (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom),
+i.e. the GPR generalizes worse at the energy extremes. In-sample errors are much
+smaller (~0.001 eV/atom) because those are interpolation points.
 
 ## Usage (standalone re-analysis of a finished run)
 ```

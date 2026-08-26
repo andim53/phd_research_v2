@@ -370,3 +370,60 @@ this is the task logged in PROMPTS.md (flag 20260826_2333).
 generalization estimate.
 
 **Time:** 2026-08-26 ~23:38–23:45 JST.
+
+---
+
+## Session 2026-08-26 — Add K-fold cross-validation to gpr_accuracy.py (fold training)
+
+**Goal (user-confirmed via clarify):** Add fold training to `gpr_accuracy.py` so it
+can report an out-of-sample (generalization) estimate of GPR accuracy vs energy
+range.
+
+**Clarify decisions (all user-confirmed):**
+1. 5 folds default, overridable with `--cv-folds N`.
+2. Opt-in `--cv` flag; in-sample remains the default.
+3. Stratified by energy bin — each bin's structures split across folds so every
+   fold trains on a spread of energy ranges.
+4. Report per-bin metrics from POOLED held-out predictions across folds + a
+   fold-averaged summary.
+
+**Actions taken:**
+- `gpr_accuracy.py` (1.0.0 → 1.1.0, minor): added `--cv` + `--cv-folds`; new
+  `stratify_folds()` (stratified assignment by dE bin); main branches between
+  in-sample and K-fold CV. CV trains one GPR per fold (on K-1/K), predicts the
+  held-out 1/K, pools held-out errors per bin, writes `..._cv<K>folds.csv` +
+  `cv_fold_summary_<K>folds.csv` (fold MAE + mean/std) + a `..._cv<K>folds.png`.
+- Docs: VERSIONS.md (gpr_accuracy.py 1.1.0), README.md, TUTORIAL.md (Step 8c).
+
+**Results / verification (real output):**
+- `py_compile` under agox_v2: OK.
+- Ran 5-fold CV: **CV_EXIT=0**. Per-fold MAE = 0.0039/0.0043/0.0038/0.0040/0.0040;
+  fold-averaged overall MAE = 0.0040 ± 0.0002 eV/atom. Pooled overall MAE=0.0040
+  RMSE=0.0067 R²=0.998 eV/atom.
+- **Key finding:** error grows toward higher-energy bins — MAE=0.010, R²=0.58 at
+  0.39–0.48 eV/atom (vs R²=0.96 near the minimum). The GPR generalizes worse at the
+  energy extremes (fewer structures / more extrapolation). This is the truthful
+  out-of-sample picture (in-sample MAE was only 0.0007).
+- CSV + plot + fold summary written and verified.
+
+**Open items:** none.
+
+**Time:** 2026-08-26 ~23:45–23:55 JST.
+
+---
+
+## Session 2026-08-26 — Process new PROMPTS.md entry (uncertainty analysis)
+
+**Context:** A new user prompt was found in PROMPTS.md with an empty `# FLAG:`:
+"Include an uncertainty analysis, showing the uncertainty across the energy level."
+Processed per AGENTS.md §3b.
+
+**Actions taken:**
+- Assigned flag `20260826_2354` (local time when processed).
+- Split into `## Original` / `## Fixed grammar`; folded the fix (removed a
+  redundant comma splitting verb from object: "analysis, showing" →
+  "analysis showing"; "energy level" → "energy levels") into a new Grammar-note
+  concept 4 (redundant/misplaced comma).
+- Removed the now-redundant empty-flag stub.
+
+**Time:** 2026-08-26 ~23:54–23:56 JST.

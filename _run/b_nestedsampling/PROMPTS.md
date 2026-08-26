@@ -8,6 +8,38 @@ Newer prompts sit **above** older ones. See `AGENTS.md` §3b for the full rules.
 > entries get a `# FLAG: <YYYYMMDD_HHMM>` heading with the two grammar blocks and
 > any fixes folded into the shared `## Grammar notes`.
 
+# FLAG: 20260826_2354
+
+## Original (before grammar fix)
+
+```
+Include an uncertainty analysis, showing the uncertainty across the energy level.
+```
+
+## Fixed grammar (after)
+
+```
+Include an uncertainty analysis showing the uncertainty across the energy levels.
+```
+
+## Grammar notes
+
+Generalized concepts for grammar fixes across prompts. When a prompt is added, its
+fixes are folded into these existing concepts (adding a new one only if the mistake
+is genuinely new).
+
+1. **Formatting that breaks machine-readable content** — paths/identifiers split
+   mid-token by line wraps. Paths and filenames must stay on one line and be kept
+   intact (e.g. `/home/thin k/...` and `It' s` from the 20260826_2333 prompt).
+2. **Incomplete clauses** — an instruction missing its verb, object, or noun (e.g.
+   "the accuracy ... of the GPR model under different energy range" → add the
+   missing plural object "energy ranges").
+3. **Non-idiomatic phrasing** — unnatural preposition/filler around common actions
+   (e.g. "the accuracy (use MAE...)" → "the accuracy (using MAE...)").
+4. **Redundant / misplaced comma** — a comma splitting a verb from its object or
+   breaking the flow (e.g. "analysis, showing the uncertainty" → "analysis showing
+   the uncertainty" from the 20260826_2354 prompt).
+
 # FLAG: 20260826_2333
 
 ## Original (before grammar fix)

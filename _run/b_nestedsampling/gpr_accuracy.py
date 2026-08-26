@@ -7,15 +7,27 @@ Trains the AGOX GPR surrogate on the combined multi-seed Fe/MgO dataset
 predicts the energy of the structures as a function of the ENERGY RANGE.
 
 "Energy range" = the structure's energy relative to the global minimum,
-expressed per atom (eV/atom), binned into equal-width windows. For each bin we
-report in-sample prediction accuracy on the training set:
+expressed per atom (eV/atom), binned into equal-width windows.
 
-    MAE  = mean |E_pred - E_DFT|            (eV/atom)
-    RMSE = sqrt(mean (E_pred - E_DFT)^2)     (eV/atom)
-    R^2  = 1 - SS_res / SS_tot               (per bin, on per-atom energy)
+Two evaluation modes:
 
-Also computes the overall (whole-set) metrics and writes a CSV + a matplotlib
-plot of MAE / RMSE / R^2 vs the energy range.
+1. In-sample (default): trains one GPR on all structures and reports accuracy on
+   the SAME training set. This reflects training-set fit (interpolation points).
+
+2. Cross-validation (--cv): K-fold stratified by energy bin — each bin's
+   structures are split across K folds so every fold trains on a spread of energy
+   ranges. Each fold trains on K-1/K of the data and predicts the held-out 1/K.
+   Held-out predictions are pooled across folds and reported per energy bin
+   (a truthful out-of-sample generalization estimate), plus a fold-averaged
+   summary.
+
+Metrics (eV/atom, per bin and overall):
+
+    MAE  = mean |E_pred - E_DFT|
+    RMSE = sqrt(mean (E_pred - E_DFT)^2)
+    R^2  = 1 - SS_res / SS_tot
+
+Also writes a CSV + a matplotlib plot of MAE / RMSE / R^2 vs the energy range.
 
 Run with the agox_v2 conda env:
     /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py [options]
@@ -23,7 +35,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import sys
@@ -142,6 +154,32 @@ def bin_metrics(dE, err, bin_width, n_atoms):
 
 
 # =============================================================================
+# Cross-validation helpers
+# =============================================================================
+def stratify_folds(dE, n_folds, rng):
+    """Assign each structure to a fold, stratified by energy bin.
+
+    Structures are binned by dE (eV/atom) and, within each bin, assigned to folds
+    round-robin on a shuffled order, so every fold sees a spread of energy ranges.
+    Returns an np.ndarray of fold ids (0..n_folds-1).
+    """
+    dE = np.asarray(dE, dtype=float)
+    n = len(dE)
+    folds = np.empty(n, dtype=int)
+    lo, hi = 0.0, float(dE.max())
+    n_bins = max(1, int(np.ceil((hi - lo) / 0.1)))
+    edges = np.linspace(lo, hi, n_bins + 1)
+    edges[-1] += 1e-6
+    for b in range(n_bins):
+        e0, e1 = edges[b], edges[b + 1]
+        idx = np.where((dE >= e0) & (dE < e1))[0]
+        perm = rng.permutation(idx)
+        for k, i in enumerate(perm):
+            folds[i] = k % n_folds
+    return folds
+
+
+# =============================================================================
 # Main
 # =============================================================================
 def main():
@@ -155,6 +193,13 @@ def main():
     p.add_argument("--use-ray", action="store_true",
                    help="Use AGOX Ray for GPR training (default: single-process "
                         "use_ray=False)")
+    p.add_argument("--cv", action="store_true",
+                   help="Use K-fold cross-validation (stratified by energy bin) "
+                        "instead of in-sample evaluation. Held-out predictions "
+                        "are pooled across folds for a truthful out-of-sample "
+                        "accuracy estimate.")
+    p.add_argument("--cv-folds", type=int, default=5,
+                   help="Number of CV folds (default 5).")
     args = p.parse_args()
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -168,25 +213,81 @@ def main():
     print(f"  Composition: {structures[0].get_chemical_formula()} "
           f"({n_atoms} atoms)")
 
-    # 2. Train GPR
-    print("\nTraining GPR on combined dataset...")
-    gpr = build_gpr(structures, use_ray=args.use_ray)
+    # 2. Evaluate
+    if args.cv:
+        print(f"\n=== Cross-validation ({args.cv_folds}-fold, stratified by energy bin) ===")
+        E_DFT = np.asarray([a.get_potential_energy() for a in structures])
+        dE_per_atom = (E_DFT - E_DFT.min()) / n_atoms
+        rng = np.random.default_rng(42)
+        folds = stratify_folds(dE_per_atom, args.cv_folds, rng)
 
-    # 3. Predict energies (in-sample) and per-atom errors
-    print("\nPredicting energies on the training set...")
-    E_pred = np.array([gpr.predict_energy(a) for a in structures])
-    E_DFT = np.asarray([a.get_potential_energy() for a in structures])
-    # per-atom values (eV/atom), consistent with the energy-range axis
-    dE_per_atom = (E_DFT - E_DFT.min()) / n_atoms
-    err_per_atom = (E_pred - E_DFT) / n_atoms
+        # pooled held-out predictions + per-fold metrics
+        pooled_dE, pooled_err = [], []
+        fold_metrics = []
+        for f in range(args.cv_folds):
+            tr_idx = np.where(folds != f)[0]
+            te_idx = np.where(folds == f)[0]
+            tr = [structures[i] for i in tr_idx]
+            print(f"\n  Fold {f+1}/{args.cv_folds}: train {len(tr_idx)}, "
+                  f"test {len(te_idx)}")
+            gpr = build_gpr(tr, use_ray=args.use_ray)
+            for i in te_idx:
+                e_pred = gpr.predict_energy(structures[i])
+                pooled_dE.append(dE_per_atom[i])
+                pooled_err.append((e_pred - E_DFT[i]) / n_atoms)
+            # per-fold overall error
+            fe = np.array([(gpr.predict_energy(structures[i]) - E_DFT[i])
+                           / n_atoms for i in te_idx])
+            fold_metrics.append(float(np.mean(np.abs(fe))))
+        pooled_dE = np.array(pooled_dE)
+        pooled_err = np.array(pooled_err)
 
-    # 4. Bin + metrics
-    rows, overall, edges, n_bins = bin_metrics(
-        dE_per_atom, err_per_atom, args.bin_width, n_atoms)
+        # pooled per-bin metrics
+        rows, overall, edges, n_bins = bin_metrics(
+            pooled_dE, pooled_err, args.bin_width, n_atoms)
+        title = (f"GPR accuracy vs energy range  "
+                 f"{args.cv_folds}-fold CV (pooled held-out), bin width = "
+                 f"{args.bin_width:.3f} eV/atom, {n_bins} bins, metrics in eV/atom")
+        csv_name = f"gpr_accuracy_by_energy_range_cv{args.cv_folds}folds.csv"
+        plot_name = f"gpr_accuracy_by_energy_range_cv{args.cv_folds}folds.png"
+        fold_mean = float(np.mean(fold_metrics))
+        fold_std = float(np.std(fold_metrics))
+        print(f"\n  Per-fold overall MAE (eV/atom): "
+              f"{[f'{x:.4f}' for x in fold_metrics]}")
+        print(f"  Fold-averaged overall MAE = {fold_mean:.4f} +/- {fold_std:.4f} "
+              f"eV/atom")
+        # CSV (pooled) + a fold-averaged summary row appended
+        csv_path = out / csv_name
+        _write_csv(csv_path, rows)
+        with open(out / f"cv_fold_summary_{args.cv_folds}folds.csv", "w") as f:
+            f.write("fold,overall_MAE_eV_per_atom\n")
+            for k, m in enumerate(fold_metrics):
+                f.write(f"{k+1},{m:.8f}\n")
+            f.write(f"mean,{fold_mean:.8f}\n")
+            f.write(f"std,{fold_std:.8f}\n")
+        print(f"  Saved CSV: {csv_path}")
+    else:
+        # --- in-sample (default) ---
+        print("\nTraining GPR on combined dataset...")
+        gpr = build_gpr(structures, use_ray=args.use_ray)
+        print("\nPredicting energies on the training set...")
+        E_pred = np.array([gpr.predict_energy(a) for a in structures])
+        E_DFT = np.asarray([a.get_potential_energy() for a in structures])
+        dE_per_atom = (E_DFT - E_DFT.min()) / n_atoms
+        err_per_atom = (E_pred - E_DFT) / n_atoms
+        rows, overall, edges, n_bins = bin_metrics(
+            dE_per_atom, err_per_atom, args.bin_width, n_atoms)
+        title = (f"GPR accuracy vs energy range  (in-sample, bin width = "
+                 f"{args.bin_width:.3f} eV/atom, {n_bins} bins, "
+                 f"metrics in eV/atom)")
+        csv_path = out / "gpr_accuracy_by_energy_range.csv"
+        _write_csv(csv_path, rows)
+        plot_name = "gpr_accuracy_by_energy_range.png"
+        print(f"  Saved CSV: {csv_path}")
 
+    # 4. Print table
     print("\n" + "=" * 70)
-    print(f"GPR accuracy vs energy range  (bin width = {args.bin_width:.3f} "
-          f"eV/atom, {n_bins} bins, metrics in eV/atom)")
+    print(title)
     print("=" * 70)
     hdr = (f"{'bin_lo':>8} {'bin_hi':>8} {'n':>6} "
            f"{'MAE':>10} {'RMSE':>10} {'R2':>8}")
@@ -202,18 +303,7 @@ def main():
           f"{overall['MAE_eV_per_atom']:10.4f} "
           f"{overall['RMSE_eV_per_atom']:10.4f} {overall['R2']:8.3f}")
 
-    # 5. Save CSV
-    csv_path = out / "gpr_accuracy_by_energy_range.csv"
-    with open(csv_path, "w") as f:
-        f.write("bin_lo_eV_per_atom,bin_hi_eV_per_atom,n_structures,"
-                "MAE_eV_per_atom,RMSE_eV_per_atom,R2\n")
-        for r in rows:
-            f.write(f"{r['bin_lo_eV_per_atom']:.6f},{r['bin_hi_eV_per_atom']:.6f},"
-                    f"{r['n_structures']},{r['MAE_eV_per_atom']:.8f},"
-                    f"{r['RMSE_eV_per_atom']:.8f},{r['R2']:.8f}\n")
-    print(f"\nSaved CSV: {csv_path}")
-
-    # 6. Plot
+    # 5. Plot
     centers = [(r['bin_lo_eV_per_atom'] + r['bin_hi_eV_per_atom']) / 2
                for r in rows]
     mae = [r['MAE_eV_per_atom'] for r in rows]
@@ -239,19 +329,31 @@ def main():
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="best", fontsize=8)
 
-    fig.suptitle(f"GPR accuracy vs energy range (Fe/MgO, {len(structures)} "
-                 f"structures, {n_atoms} atoms)")
+    mode_tag = f"{args.cv_folds}-fold CV" if args.cv else "in-sample"
+    fig.suptitle(f"GPR accuracy vs energy range ({mode_tag}; Fe/MgO, "
+                 f"{len(structures)} structures, {n_atoms} atoms)")
     fig.tight_layout()
-    plot_path = out / "gpr_accuracy_by_energy_range.png"
+    plot_path = out / plot_name
     fig.savefig(plot_path, dpi=150)
-    print(f"Saved plot: {plot_path}")
+    print(f"  Saved plot: {plot_path}")
 
-    # 7. Overall summary (JSON-like print)
-    print("\nOVERALL (whole set, eV/atom): "
+    # 6. Overall summary
+    print("\nOVERALL (eV/atom): "
           f"MAE={overall['MAE_eV_per_atom']:.4f} "
           f"RMSE={overall['RMSE_eV_per_atom']:.4f} "
           f"R2={overall['R2']:.4f}")
     print(f"\nDone. Outputs in {out}")
+
+
+def _write_csv(csv_path, rows):
+    """Write per-bin metrics CSV."""
+    with open(csv_path, "w") as f:
+        f.write("bin_lo_eV_per_atom,bin_hi_eV_per_atom,n_structures,"
+                "MAE_eV_per_atom,RMSE_eV_per_atom,R2\n")
+        for r in rows:
+            f.write(f"{r['bin_lo_eV_per_atom']:.6f},{r['bin_hi_eV_per_atom']:.6f},"
+                    f"{r['n_structures']},{r['MAE_eV_per_atom']:.8f},"
+                    f"{r['RMSE_eV_per_atom']:.8f},{r['R2']:.8f}\n")
 
 
 if __name__ == "__main__":
