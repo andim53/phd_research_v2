@@ -482,3 +482,29 @@ and CSV, behind a new run flag.
 uncertainty). Not built yet.
 
 **Time:** 2026-08-27 ~00:24–00:26 JST.
+
+---
+
+## Session 2026-08-27 — Write DISCUSSION.md for each _tmp result dir
+
+**Goal (user-confirmed via clarify):** Write a full-depth DISCUSSION.md (skill format)
+for each result directory under `_tmp/`.
+
+**Clarify decisions (all user-confirmed):**
+1. Filename `DISCUSSION.md` (conventional, not DISCUSSIONS).
+2. One DISCUSSION.md per run-dir (summarizes that run's CSVs + PNG).
+3. Full-depth (setup table, per-metric analysis, overall interpretation, caveats).
+4. Written inside `_tmp/` (gitignored) → live with results, no commit needed.
+
+**Actions taken:** Wrote 4 DISCUSSION.md files, each grounded in the real CSV numbers:
+- `_tmp/gpr_accuracy_out/DISCUSSION.md` — in-sample: MAE≈0.0007, R²≈1.0, flat (fit-quality only).
+- `_tmp/gpr_accuracy_cv_out/DISCUSSION.md` — 5-fold CV: MAE=0.0040 RMSE=0.0067 R²=0.998;
+  error rises toward high energy (R² 0.96→0.58).
+- `_tmp/gpr_acc_uncert_out/DISCUSSION.md` — in-sample + uncertainty: model std ≈0.0011,
+  flat (interpolation statement; understates true error).
+- `_tmp/gpr_acc_cv_uncert_out/DISCUSSION.md` — 3-fold CV + uncertainty: model std (0.0046)
+  tracks held-out MAE (0.0044) and both peak at the high-energy extremes; good calibration.
+
+**Note:** files are under gitignored `_tmp/`, so not committed (per decision).
+
+**Time:** 2026-08-27 ~00:26–00:32 JST.
