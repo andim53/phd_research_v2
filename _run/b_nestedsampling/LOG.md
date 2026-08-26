@@ -508,3 +508,25 @@ for each result directory under `_tmp/`.
 **Note:** files are under gitignored `_tmp/`, so not committed (per decision).
 
 **Time:** 2026-08-27 ~00:26–00:32 JST.
+
+---
+
+## Session 2026-08-27 — Process new PROMPTS.md entry (delta Fe_z / Fe island height analysis)
+
+**Context:** A new user prompt was found in PROMPTS.md with an empty `# FLAG:`:
+"Add an additional Analysist. I want to check the accuracy+uncertainty across
+different delta Fe_z (… the Fe island height)." Processed per AGENTS.md §3b.
+
+**Actions taken:**
+- Assigned flag `20260827_0041` (local time when processed).
+- Split into `## Original` / `## Fixed grammar`: fixed "Analysist"→"analysis",
+  "Fe z axist"→"Fe z-axis", and reordered the delta Fe_z definition so
+  "Fe island height" leads.
+- Folded into Grammar notes as new concept 6 (terminology/clarity); extended
+  concept 3 with the "Analysist"→"analysis" instance.
+- Removed the now-redundant empty-flag stub.
+
+**Note:** this logs a future task (accuracy + uncertainty vs delta Fe_z, the Fe
+island height). Not built yet.
+
+**Time:** 2026-08-27 ~00:41–00:43 JST.
