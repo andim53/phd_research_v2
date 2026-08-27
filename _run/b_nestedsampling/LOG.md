@@ -1197,3 +1197,33 @@ focusing GPR + sampling on low-energy structures. Not executed on HPC yet.
 renamed job script OK; git detects the rename.
 
 **Time:** 2026-08-27 ~17:25–17:28 JST.
+
+---
+
+## Session 2026-08-27 — Update current state (new b5 run + _analysist)
+
+**Context:** The user added a new `_runs/b5_boron_ns_emax025` and new `_analysist`
+entries. Asked to "update the current state".
+
+**Clarify decisions (all user-confirmed):**
+1. Fix the b5 run docs (they were stale copies of b2_boron_ns: said 'b2_boron_ns',
+   'j_b2_boron_ns.sh', '--e-max-per-atom 0.67') to match b5 / j_b5 / 0.25.
+2. Copy the b5 run into `_analysist/1_result/` (mirroring b1/b3 copies).
+3. Commit the b5 run dir (tracked).
+
+**Actions taken:**
+- Rewrote `_runs/b5_boron_ns_emax025/README.md` + `TUTORIAL.md`: b5_boron_ns_emax025,
+  `j_b5_boron_ns.sh`, `--e-max-per-atom 0.25` (relative), noted as a tighter cut than
+  b2's 0.67. Job script already used 0.25.
+- Copied b5 into `_analysist/1_result/b5_boron_ns_emax025/` (gitignored).
+
+**Results / verification (real output):**
+- Compile OK (main.py + package); `sh -n` OK; required scripts module present; 5 boron
+  DBs.
+- Filter: 496 -> 181 keep / 315 drop with `--e-max-per-atom 0.25` (tighter than b2's 452).
+- No stale b2/0.67 refs remain (only intentional comparative mentions).
+
+**Note:** `_analysist/1_result/` is gitignored (b1/b3/b5 copies not committed); only
+the b5 run dir under `_runs/` is tracked and committed.
+
+**Time:** 2026-08-27 ~17:29–17:35 JST.
