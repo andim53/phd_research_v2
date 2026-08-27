@@ -53,6 +53,11 @@ b_nestedsampling/
 - **`_runs/<NN>_<descriptor>/`** — self-contained HPC run dirs, each holding
   `j_*.sh` + `main*.py` + copies of `scripts/` and `nested_sampling/`, launchable
   in isolation. HPC per-seed runs carry a per-run `README.md` + `TUTORIAL.md`.
+  **NS run dirs must copy `plot_structure_landscape.py` into
+  `nested_sampling/scripts/` from the reference
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` ONLY** (accepts
+  `s=`); do NOT use the stale `dataset_boron/scripts/` version (lacks `s=` → crashes
+  the landscape analysis with `TypeError: ... unexpected keyword argument 's'`).
 - **`_analysist/`** — analysed/intermediate results (`0_analy/`, `1_result/`,
   notebooks). Outputs regenerable/gitignored; analysis code tracked.
 - **`_archives/`** — archived artifacts; **`_tmp/`** — scratch output. Both

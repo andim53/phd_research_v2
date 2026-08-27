@@ -1346,3 +1346,31 @@ state-density/landscape analysis with
 kwargs `state_density.py` passes (none missing); compiles. Crash resolved.
 
 **Time:** 2026-08-27 ~20:40–20:45 JST.
+
+---
+
+## Session 2026-08-27 — Prevent recurrence: document correct plot_structure_landscape source
+
+**Goal (user-confirmed via clarify):** Update the governing docs so the
+`plot_structure_landscape.py` `s=` error never recurs when creating a new NS run.
+
+**Root cause of recurrence:** AGENTS.md §3a listed `dataset_boron/scripts/` as a valid
+source for `plot_structure_landscape.py`, but that copy is STALE (lacks the `s=`
+argument) and crashes the landscape analysis (the b4/b5 `TypeError`).
+
+**Clarify decision (user-confirmed):** Update AGENTS.md + README.AI.md only (do NOT
+change the stale `dataset_boron` copy).
+
+**Actions taken:**
+- `AGENTS.md` §3a: rewrote the "NS run dirs: required scripts module" note to
+  **"required scripts module + correct version"** — states the reference
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` is the ONLY valid
+  source (accepts `s=`), and explicitly warns **DO NOT use** the STALE
+  `dataset_boron/scripts/` version (lacks `s=`, causes the `TypeError`).
+- `README.AI.md` §2a: added the same reference-ONLY guidance to the `_runs/` run-dir
+  bullet.
+
+**Verification:** AGENTS.md now lists `dataset_boron/scripts` only as "DO NOT use";
+README.AI.md references the reference-only source.
+
+**Time:** 2026-08-27 ~20:46–20:50 JST.

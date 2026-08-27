@@ -125,16 +125,25 @@ Documentation policy:
 project root (`cp main.py nested_sampling/*.py scripts/*.py <run>/`
 after a root change).
 
-**NS run dirs: required `scripts` module.** For nested-sampling runs, the
-`nested_sampling/state_density.py` module does
+**NS run dirs: required `scripts` module + correct version.** For nested-sampling
+runs, `nested_sampling/state_density.py` does
 `from scripts.plot_structure_landscape import plot_structure_landscape`. This
 resolves via the package dir on `sys.path`, so `plot_structure_landscape.py` MUST be
 present at `<run>/nested_sampling/scripts/plot_structure_landscape.py` — otherwise the
-run fails at import with `ModuleNotFoundError: No module named 'scripts'`. When
-creating/updating an NS run dir, always copy it
-(`cp <src>/plot_structure_landscape.py <run>/nested_sampling/scripts/`), where `<src>`
-is e.g. `dataset_boron/scripts/` or the reference
-`_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`.
+run fails at import with `ModuleNotFoundError: No module named 'scripts'`.
+
+**Use the CORRECT version.** The current `state_density.py` calls
+`plot_structure_landscape(..., s=5, ...)`, so the copied `plot_structure_landscape.py`
+MUST accept an `s` argument or the final landscape analysis crashes with
+`TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`.
+
+- **ONLY valid source:** the reference
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py`
+  (accepts `s=25`). Always copy from here:
+  `cp _analysist/1_result/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py <run>/nested_sampling/scripts/`
+- **DO NOT use** `dataset_boron/scripts/plot_structure_landscape.py` — it is a STALE
+  version that lacks the `s=` argument and will crash the landscape analysis (this was
+  the cause of the b4/b5 `TypeError`).
 
 Everything under `_runs/` is **tracked in git** (code + docs), subject to the same
 regenerable-data exclusions.
