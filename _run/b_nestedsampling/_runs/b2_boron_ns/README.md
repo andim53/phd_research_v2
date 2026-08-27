@@ -11,12 +11,16 @@ with the **same NS parameters as the reference run** `_analysist/1_result/1_no_p
 
 ```
 main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
-        --perturb-symbols Fe,B --output ./ns_output_T300_100_1000_0.01 --rng 42
+        --perturb-symbols Fe,B --e-max-per-atom 0.67 \
+        --output ./ns_output_T300_100_1000_0.01 --rng 42
 ```
 
 Key difference vs the reference: the dataset is **B-doped** (Fe25Mg25O25B7, 5 seeds
 seed_0..4, ~100 structures each) and **B is included in the perturbation** via
 `--perturb-symbols Fe,B` (both Fe and B atoms are moved during prior sampling).
+`--e-max-per-atom 0.67` keeps structures within 0.67 eV/atom of the dataset minimum
+(relative energy), dropping the high-energy outliers (452 of 496 remain) so the GPR
+fit is not broken — same control as the GPR-accuracy code.
 
 ## Dataset (boron)
 
@@ -41,7 +45,8 @@ seed_0..4, ~100 structures each) and **B is included in the perturbation** via
 cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b2_boron_ns
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
-    --perturb-symbols Fe,B --output ./ns_output_T300_100_1000_0.01 --rng 42
+    --perturb-symbols Fe,B --e-max-per-atom 0.67 \
+    --output ./ns_output_T300_100_1000_0.01 --rng 42
 ```
 
 ## Usage (HPC)

@@ -17,11 +17,15 @@ reference `_analysist/1_result/1_no_prior_control`:
 
 ```
 main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
-        --perturb-symbols Fe,B --output ./ns_output_T300_100_1000_0.01 --rng 42
+        --perturb-symbols Fe,B --e-max-per-atom 0.67 \
+        --output ./ns_output_T300_100_1000_0.01 --rng 42
 ```
 
 `--perturb-symbols Fe,B` moves **both Fe and B** atoms during prior sampling
 (multi-symbol support in the latest `nested_sampler.py`); Mg/O stay fixed.
+`--e-max-per-atom 0.67` keeps structures within 0.67 eV/atom of the dataset minimum
+(relative), dropping high-energy outliers (452 of 496 remain) so the GPR fit is not
+broken.
 
 ## Step 1 — Local run
 
@@ -29,7 +33,8 @@ main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
 cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b2_boron_ns
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
-    --perturb-symbols Fe,B --output ./ns_output_T300_100_1000_0.01 --rng 42
+    --perturb-symbols Fe,B --e-max-per-atom 0.67 \
+    --output ./ns_output_T300_100_1000_0.01 --rng 42
 ```
 
 For a quick sanity check you can lower `--n-live`/`--n-iters` (e.g. 20/30).

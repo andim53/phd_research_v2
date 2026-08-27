@@ -1122,3 +1122,22 @@ structures for the nested sampling.
   (evidence_history.csv, posterior_structures/, etc.). Confirms all three limits.
 
 **Time:** 2026-08-27 ~16:46–16:50 JST.
+
+---
+
+## Session 2026-08-27 — Update b2_boron_ns run to include --e-max-per-atom 0.67
+
+**Goal (user request):** Update the `b2_boron_ns` run code to include
+`--e-max-per-atom 0.67`.
+
+**Actions taken:**
+- `main.py` in the run dir was already v1.2.0 (with `--e-max-per-atom` support).
+- Added `--e-max-per-atom 0.67` to `j_b2_boron_ns.sh` (the NS invocation).
+- Updated `b2/README.md` + `b2/TUTORIAL.md` commands to include the flag, with a note
+  that it keeps structures within 0.67 eV/atom of the dataset minimum (452/496).
+
+**Verification:** `sh -n j_b2_boron_ns.sh` OK; run `main.py` v1.2.0 confirms
+`--e-max-per-atom` present. (The `--e-max-per-atom` feature itself was verified in
+the previous session on the boron dataset: 496 → 452 remain, sampling completes.)
+
+**Time:** 2026-08-27 ~16:50–16:55 JST.
