@@ -17,7 +17,8 @@ file — do not create a per-flag one.
 
 1. **Formatting that breaks machine-readable content** — paths/identifiers split
    mid-token by line wraps. Paths and filenames must stay on one line and be kept
-   intact (e.g. `/home/thin k/...` and `It' s` from the 20260826_2333 prompt).
+   intact (e.g. `/home/thin k/...` and `It' s` from the 20260826_2333 prompt;
+   "nested\n_sampling" and "relat\nive" from the 20260827_1638 prompt).
 2. **Incomplete clauses** — an instruction missing its verb, object, or noun (e.g.
    "the accuracy ... of the GPR model under different energy range" → add the
    missing plural object "energy ranges").
@@ -33,11 +34,36 @@ file — do not create a per-flag one.
    trailing `,` on the 20260827_0024 prompt).
 6. **Terminology / clarity** — a term used loosely that should be pinned to its
    precise definition (e.g. "Fe z axist" → "Fe z-axis"; reordering the delta Fe_z
-   definition so "Fe island height" leads, from the 20260827_0041 prompt).
+   definition so "Fe island height" leads, from the 20260827_0041 prompt; "gpr" →
+   "GPR" from the 20260827_1638 prompt).
 7. **Missing noun / dangling pronoun** — a sentence missing a plural noun or whose
    pronoun lacks an antecedent (e.g. "For all the DISCUSSION.md, include ... the
    script that it used" → "For all the DISCUSSION.md files, include the actual
-   running script that produced them", from the 20260827_0059 prompt).
+   running script that produced them", from the 20260827_0059 prompt; "limit
+   dataset" → "limit the dataset" from the 20260827_1638 prompt).
+
+---
+
+# FLAG: 20260827_1638
+
+## Original (before grammar fix)
+
+```
+Much like in the gpr_accuracy.py code, update the nested
+_sampling codes to include --e-max-per-atom (that is relat
+ive to its lowest energy). It will limit dataset that is u
+sed for the nested sampling and the gpr training data and
+the initial structure for the nested sampling. 
+```
+
+## Fixed grammar (after)
+
+```
+Much like in the gpr_accuracy.py code, update the nested-sampling codes to include
+--e-max-per-atom (relative to the lowest energy). It will limit the dataset used
+for the nested sampling and the GPR training data, and the initial structures for
+the nested sampling.
+```
 
 ---
 

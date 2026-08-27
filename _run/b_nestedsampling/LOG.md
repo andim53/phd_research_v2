@@ -1061,3 +1061,29 @@ E/atom cutoff to a **relative** energy above the lowest energy in the dataset.
   eV/atom, overall MAE=0.0086 / RMSE=0.0118 / R²=0.996, all CSVs/plots written.
 
 **Time:** 2026-08-27 ~13:30–13:38 JST.
+
+---
+
+## Session 2026-08-27 — Process PROMPTS.md: grammar-fix the --e-max-per-atom NS prompt
+
+**Context:** A new user prompt was found in PROMPTS.md with an empty `# FLAG:` — about
+adding `--e-max-per-atom` (relative to lowest energy) to the nested-sampling codes.
+Processed per AGENTS.md §3b.
+
+**Actions taken:**
+- Assigned flag `20260827_1638` (local time when processed).
+- Split into `## Original` (verbatim, incl. broken line-wraps) / `## Fixed grammar`:
+  repaired the split "nested\n_sampling" → "nested-sampling", "relat\nive" →
+  "relative", "limit dataset" → "limit the dataset", "gpr" → "GPR", and cleaned the
+  phrasing.
+- Folded the fixes into the single shared `## Grammar notes` (concepts 1, 6, 7).
+- Removed the now-redundant empty-flag stub.
+
+**Result / verification:** exactly 1 `## Grammar notes` section; all 6 flags in
+descending order; no empty-flag stub.
+
+**Note:** this logs a future task — add `--e-max-per-atom` (relative) to the
+nested-sampling codes (limit the dataset / GPR training data / initial structures).
+Not built yet.
+
+**Time:** 2026-08-27 ~16:38–16:44 JST.
