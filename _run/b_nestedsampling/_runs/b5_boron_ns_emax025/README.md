@@ -1,4 +1,4 @@
-# Run b5_boron_ns_emax025 — Nested sampling on the B-doped Fe/MgO dataset
+# Run b5_boron_ns_emax025 — Temperature-free NS on B-doped Fe/MgO
 
 Run directory: `_runs/b5_boron_ns_emax025/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.2.0 + `nested_sampling/`
@@ -6,23 +6,26 @@ package) + the B-doped dataset (`dataset_boron/`, copied as `dataset/`).
 
 ## What this run does
 
-Runs the **nested-sampling pipeline** (`main.py`) on the **B-doped Fe/MgO** dataset,
-with the **same NS parameters as the reference run** `_analysist/1_result/1_no_prior_control`,
-plus a **relative high-energy cut**:
+Runs the **nested-sampling pipeline** (`main.py`) on the **B-doped Fe/MgO** dataset in
+**temperature-free mode**, with the **same NS parameters as the reference run**
+`_analysist/1_result/1_no_prior_control`, plus a **relative high-energy cut**:
 
 ```
-main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
-        --perturb-symbols Fe,B --e-max-per-atom 0.25 \
-        --output ./ns_output_T300_100_1000_0.01 --rng 42
+main.py --temperature-free --temperatures 100,200,300,500,1000 \
+        --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B \
+        --e-max-per-atom 0.25 --output ./ns_output_tfree_emax025 --rng 42
 ```
 
-Key features vs the reference: the dataset is **B-doped** (Fe25Mg25O25B7, 5 seeds
-seed_0..4, ~100 structures each) and **B is included in the perturbation** via
-`--perturb-symbols Fe,B` (both Fe and B atoms are moved during prior sampling).
-`--e-max-per-atom 0.25` keeps structures within 0.25 eV/atom of the dataset minimum
-(relative energy), dropping higher-energy structures so the GPR fit is not broken —
-the same control as the GPR-accuracy code. (This run is the b2_boron_ns analogue but
-with a tighter 0.25 eV/atom cut vs b2's 0.67.)
+Key features:
+- **Temperature-free mode** — beta kept OUT of the likelihood (energy-constrained
+  top-down pass, per Pártay 2021 / Yang 2024). The partition function Z(β), free
+  energy F = −k_B T ln Z, and the posterior are evaluated in post-processing at each
+  `--temperatures` value (100,200,300,500,1000 K) from one run.
+- **B-doped** dataset (Fe25Mg25O25B7, 5 seeds) with **B included in the perturbation**
+  via `--perturb-symbols Fe,B` (both Fe and B atoms are moved during prior sampling).
+- **`--e-max-per-atom 0.25`** — keeps structures within 0.25 eV/atom of the dataset
+  minimum (relative energy), dropping higher-energy structures (181 of 496 remain) so
+  the GPR fit is not broken. Same control as the GPR-accuracy code.
 
 ## Dataset (boron)
 
@@ -31,8 +34,7 @@ with a tighter 0.25 eV/atom cut vs b2's 0.67.)
   100 structures each (seed_4 has 96).
 - Note: some seeds (2-4) contain structures with unphysically high energies
   (up to ~5.6 eV/atom above the minimum); the GPR's `|E|<1e4` physical filter handles
-  gross outliers, and `--e-max-per-atom 0.25` drops the high-energy outliers before
-  training/sampling.
+  gross outliers, and `--e-max-per-atom 0.25` drops them before training/sampling.
 
 ## Environment
 
@@ -47,9 +49,9 @@ with a tighter 0.25 eV/atom cut vs b2's 0.67.)
 ```bash
 cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_ns_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
-    --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
-    --perturb-symbols Fe,B --e-max-per-atom 0.25 \
-    --output ./ns_output_T300_100_1000_0.01 --rng 42
+    --temperature-free --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B \
+    --e-max-per-atom 0.25 --output ./ns_output_tfree_emax025 --rng 42
 ```
 
 ## Usage (HPC)
@@ -58,10 +60,12 @@ cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_ns_emax025
 pjsub j_b5_boron_ns.sh
 ```
 
-## Outputs (`ns_output_T300_100_1000_0.01/`)
+## Outputs (`ns_output_tfree_emax025/`)
 
 - `evidence_history.csv`, `log_evidence.csv`, `final_live_energies.csv`
 - `posterior_summary.csv`, `posterior_structures/posterior_*.xsf`
+- `samples.csv`, `thermodynamics.csv` (T, β, logZ, Z, F=−k_B T ln Z)
+- `posterior_T{KKK}/` per-temperature posterior dirs (temperature-free post-processing)
 - `analysis/` — state-density / landscape analysis (training/posterior)
 
 ## Contents

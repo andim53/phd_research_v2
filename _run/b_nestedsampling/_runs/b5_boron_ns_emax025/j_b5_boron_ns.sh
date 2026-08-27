@@ -13,13 +13,14 @@ conda activate gpaw_env
 module load intel
 module load impi
 
-echo "Nested sampling on the B-doped Fe/MgO dataset (dataset_boron)."
-echo "Same NS params as 1_no_prior_control; perturb Fe + B; --e-max-per-atom 0.67."
+echo "Nested sampling on the B-doped Fe/MgO dataset (dataset_boron), temperature-free."
+echo "Perturb Fe + B; --e-max-per-atom 0.25."
 
 OMP_NUM_THREADS=1 python ./main.py \
-    --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --temperature-free --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
     --perturb-symbols Fe,B \
     --e-max-per-atom 0.25 \
-    --output ./ns_output_T300_100_1000_0.01 --rng 42
+    --output ./ns_output_tfree_emax025 --rng 42
 
 echo "Done."

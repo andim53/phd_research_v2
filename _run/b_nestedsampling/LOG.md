@@ -1227,3 +1227,26 @@ entries. Asked to "update the current state".
 the b5 run dir under `_runs/` is tracked and committed.
 
 **Time:** 2026-08-27 ~17:29–17:35 JST.
+
+---
+
+## Session 2026-08-27 — Switch b5_boron_ns_emax025 to temperature-free mode
+
+**Goal (user-confirmed via clarify):** Edit the b5 run to use **temperature-free mode**
+(replace `--temp 300` with `--temperature-free --temperatures 100,200,300,500,1000`),
+keeping everything else (B-doped, `--perturb-symbols Fe,B`, `--e-max-per-atom 0.25`,
+same NS params). Also update docs + output dir name.
+
+**Actions taken:**
+- `j_b5_boron_ns.sh`: switched to temperature-free, output `./ns_output_tfree_emax025`.
+- `README.md` + `TUTORIAL.md`: documented temperature-free mode + new output dir +
+  per-T outputs (`thermodynamics.csv`, `posterior_T*`).
+- Synced the `_analysist/1_result/b5_boron_ns_emax025/` copy.
+
+**Results / verification (real output, local smoke T-free 200/300 K, small params):**
+- `SMOKE_EXIT=0`; `--e-max-per-atom 0.25` dropped 315, 181 remain; GPR trained;
+  `[Perturbing 32 atoms of ['Fe','B']]`; Z ↑ / F less negative with T (T=200: Z=6.7e-19,
+  F=0.721; T=300: Z=2.3e-13, F=0.752); thermodynamics.csv + per-T posterior written.
+- `sh -n j_b5_boron_ns.sh` OK.
+
+**Time:** 2026-08-27 ~17:36–17:42 JST.
