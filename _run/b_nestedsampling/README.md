@@ -149,12 +149,13 @@ Flags: `--rattle-dist` (comma amplitudes, default 0.05,0.1,0.2,0.5,1.0),
 `--rattle-copies` (default 5). Predictions with |E|>1e4 eV (unphysical
 extrapolation) are excluded and counted.
 
-With `--e-max-per-atom <eV/atom>`, excludes structures with E/atom above the given
-threshold **before GPR training AND evaluation** (both CV and in-sample). Use it to
+With `--e-max-per-atom <eV/atom>`, excludes structures whose **relative energy above
+the dataset minimum** exceeds the threshold — i.e. keeps `(E/atom − min E/atom) ≤
+value` — **before GPR training AND evaluation** (both CV and in-sample). Use it to
 drop high-energy outlier structures that break the GPR fit (e.g. the B-doped dataset
-has outliers up to −0.23 eV/atom that make the surrogate predict unphysically);
-`--e-max-per-atom -5.2` keeps a spread comparable to the working Fe/MgO set.
-Default: not set (keep all).
+has outliers up to 5.6 eV/atom above the minimum that make the surrogate predict
+unphysically); `--e-max-per-atom 0.67` keeps a spread comparable to the working
+Fe/MgO set. Default: not set (keep all).
 
 Observed (real output, 5-fold CV): overall MAE=0.0040 RMSE=0.0067 R²=0.998 eV/atom —
 error grows toward higher-energy bins (MAE~0.010, R²~0.58 at 0.39–0.48 eV/atom),

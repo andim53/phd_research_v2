@@ -18,7 +18,7 @@ echo "Params (--cv-folds / --bin-width / --e-max-per-atom): see TUTORIAL.md."
 
 OMP_NUM_THREADS=1 python ./gpr_accuracy.py \
     --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
-    --e-max-per-atom -5.2 \
+    --e-max-per-atom 0.67 \
     --output ./out_fez
 
 echo "Done."

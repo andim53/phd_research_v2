@@ -58,7 +58,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.5.1"
 
 import os
 import sys
@@ -253,11 +253,13 @@ def main():
     p.add_argument("--rattle-copies", type=int, default=5,
                    help="Rattled copies per structure per amplitude (default 5).")
     p.add_argument("--e-max-per-atom", type=float, default=None,
-                   help="Exclude structures with E/atom above this threshold "
-                        "(eV/atom) before GPR training AND evaluation (both CV and "
-                        "in-sample). Use to drop high-energy outlier structures that "
-                        "break the GPR fit, e.g. --e-max-per-atom -2.5. Default: "
-                        "None (keep all).")
+                   help="Exclude structures whose RELATIVE energy above the dataset "
+                        "minimum exceeds this threshold (eV/atom), i.e. keep "
+                        "(E/atom - min E/atom) <= value. Applies before GPR training "
+                        "AND evaluation (both CV and in-sample). Use to drop "
+                        "high-energy outlier structures that break the GPR fit, "
+                        "e.g. --e-max-per-atom 0.67 (keeps structures within 0.67 "
+                        "eV/atom of the minimum). Default: None (keep all).")
     args = p.parse_args()
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -272,14 +274,18 @@ def main():
           f"({n_atoms} atoms)")
 
     # 1b. Optional high-energy outlier exclusion (in-place, before training + eval)
+    #     --e-max-per-atom is a RELATIVE energy above the dataset minimum (eV/atom):
+    #     keep structures with (E/atom - min E/atom) <= value.
     if args.e_max_per_atom is not None:
         e_per_atom = np.asarray(energies, dtype=float) / n_atoms
-        keep = e_per_atom <= args.e_max_per_atom
+        rel_e = e_per_atom - e_per_atom.min()   # relative to dataset min
+        keep = rel_e <= args.e_max_per_atom
         n_drop = int((~keep).sum())
         structures = [s for s, k in zip(structures, keep) if k]
         energies = np.asarray(energies, dtype=float)[keep]
-        print(f"  --e-max-per-atom {args.e_max_per_atom}: dropped {n_drop} "
-              f"high-energy structures (E/atom > {args.e_max_per_atom}); "
+        print(f"  --e-max-per-atom {args.e_max_per_atom} (relative to dataset min "
+              f"E/atom = {e_per_atom.min():.4f} eV/atom): dropped {n_drop} "
+              f"high-energy structures (E/atom - min > {args.e_max_per_atom}); "
               f"{len(structures)} remain")
         if len(structures) == 0:
             raise SystemExit(f"No structures remain after E/atom > "

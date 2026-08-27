@@ -1032,3 +1032,32 @@ explain why and fix it, saving the explanation in the run's README.md.
   Fe_z + energy-range CSVs/plots + DISCUSSION written. Physical, meaningful results.
 
 **Time:** 2026-08-27 ~13:00–13:26 JST.
+
+---
+
+## Session 2026-08-27 — Make --e-max-per-atom a RELATIVE energy above dataset minimum
+
+**Goal (user-confirmed via clarify):** Change `--e-max-per-atom` from an absolute
+E/atom cutoff to a **relative** energy above the lowest energy in the dataset.
+
+**Clarify decisions (all user-confirmed):**
+1. New semantics: keep structures with `(E/atom − min E/atom) ≤ threshold` (eV/atom).
+   Positive values drop high-energy outliers above `threshold` eV/atom above min.
+2. b3 uses `--e-max-per-atom 0.67` (relative; matches the working Fe/MgO spread).
+   The old `-5.2` absolute value is invalid under the new semantics.
+
+**Actions taken (`gpr_accuracy.py` 1.5.0 → 1.5.1, patch):**
+- Updated the `--e-max-per-atom` help text to document the relative semantics.
+- Changed the filter logic: `rel_e = e_per_atom - e_per_atom.min(); keep = rel_e <=
+  args.e_max_per_atom`; print includes the dataset min E/atom.
+- Re-copied `gpr_accuracy.py` (v1.5.1) into b3 + b1 run dirs.
+- Updated `j_b3_gpr_accuracy_boron_cv50.sh` to `--e-max-per-atom 0.67`.
+- Synced b3 README/TUTORIAL/DISCUSSION + project README + VERSIONS.md.
+
+**Results / verification (real output):**
+- Relative `0.67` keeps the same 452 structures (abs cutoff −5.205 ≈ old −5.2) — verified.
+- 5-fold CV smoke with `0.67`: **B3_SMOKE5_EXIT=0**; "dropped 44 high-energy
+  structures (E/atom - min > 0.67); 452 remain"; fold-averaged MAE 0.0086 ± 0.0006
+  eV/atom, overall MAE=0.0086 / RMSE=0.0118 / R²=0.996, all CSVs/plots written.
+
+**Time:** 2026-08-27 ~13:30–13:38 JST.

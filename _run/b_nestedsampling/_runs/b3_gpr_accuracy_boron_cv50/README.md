@@ -1,7 +1,7 @@
 # Run b3_gpr_accuracy_boron_cv50 — GPR accuracy, 50-fold CV, bin 0.1 (B-doped Fe/MgO)
 
 Run directory: `_runs/b3_gpr_accuracy_boron_cv50/` (self-contained, launchable on HPC)
-Copied from the latest project-root code (`gpr_accuracy.py` v1.5.0) + the B-doped
+Copied from the latest project-root code (`gpr_accuracy.py` v1.5.1) + the B-doped
 dataset (`dataset_boron/`, copied as `dataset/`).
 
 ## What this run does
@@ -9,16 +9,17 @@ dataset (`dataset_boron/`, copied as `dataset/`).
 Runs `gpr_accuracy.py` in **cross-validation + uncertainty** mode on the **B-doped
 Fe/MgO** dataset (Fe25Mg25O25B7, 5 seeds, 496 structures), on the **Fe_z
 (island-height) system**, with the **same parameters as `_runs/b1_gpr_accuracy_cv10_bin005`**
-plus a **high-energy outlier cut**:
+plus a **relative high-energy outlier cut**:
 
 ```
 gpr_accuracy.py --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
-                --e-max-per-atom -5.2 --output ./out_fez
+                --e-max-per-atom 0.67 --output ./out_fez
 ```
 
 Same as `b1_gpr_accuracy_cv10_bin005` (50-fold CV, bin 0.1, fez-only) but on the
-**B-doped** dataset, with `--e-max-per-atom -5.2` to drop the high-energy outlier
-structures (see "Error explanation" below).
+**B-doped** dataset, with `--e-max-per-atom 0.67` (a RELATIVE energy above the dataset
+minimum, eV/atom) to drop the high-energy outlier structures (see "Error
+explanation" below).
 
 ## Error explanation & fix (this run)
 
@@ -45,11 +46,13 @@ printed MAE/RMSE/R² were astronomically large (~10⁹ eV/atom, R² ~ −10²⁰
    - Added a **`|E|<1e4 eV` physical filter** to the CV and in-sample prediction loops
      (exclude/count unphysical predictions, like the sampler does).
    - Added a **`--e-max-per-atom <eV/atom>` flag** to exclude structures above a
-     physical E/atom threshold before training AND evaluation (controllable; default
-     = keep all). The b3 run uses **`--e-max-per-atom -5.2`**, which keeps 452
-     structures with a spread of ~0.67 eV/atom — matching the working plain Fe/MgO set.
+     physical energy threshold before training AND evaluation (controllable; default
+     = keep all). The threshold is a **RELATIVE** energy above the dataset minimum
+     (keeps `E/atom − min E/atom ≤ value`). The b3 run uses **`--e-max-per-atom 0.67`**,
+     which keeps 452 structures with a spread of ~0.67 eV/atom — matching the working
+     plain Fe/MgO set.
 
-**Verification (real output, 5-fold CV smoke with `-5.2`):** the pipeline now completes
+**Verification (real output, 5-fold CV smoke with `0.67`):** the pipeline now completes
 with physical results — fold-averaged MAE = **0.0086 ± 0.0006 eV/atom**, overall
 MAE=0.0086 / RMSE=0.0118 / R²=0.996, per-bin MAE 0.0047–0.0115 eV/atom, model std
 0.0083 eV/atom, Fe_z + energy-range CSVs/plots written. In-sample MAE ≈ 0.0002 eV/atom.
@@ -61,9 +64,10 @@ MAE=0.0086 / RMSE=0.0118 / R²=0.996, per-bin MAE 0.0047–0.0115 eV/atom, model
 - Composition: **Fe25Mg25O25B7** (7 B atoms doped into the Fe layer), 5 seeds (0-4),
   100 structures each (seed_4 has 96) = **496 structures** total.
 - Uniform composition across all seeds → single Fingerprint descriptor valid.
-- **Note:** seeds 2-4 contain high-energy outlier structures (E/atom up to −0.23 eV)
-  that are likely DFT failures; they must be excluded for the GPR to fit. The run uses
-  `--e-max-per-atom -5.2` to drop them (452 structures remain).
+- **Note:** seeds 2-4 contain high-energy outlier structures (up to ~5.6 eV/atom above
+  the minimum) that are likely DFT failures; they must be excluded for the GPR to fit.
+  The run uses `--e-max-per-atom 0.67` (relative to the dataset minimum) to drop them
+  (452 structures remain).
 
 ## Environment
 
@@ -79,7 +83,7 @@ MAE=0.0086 / RMSE=0.0118 / R²=0.996, per-bin MAE 0.0047–0.0115 eV/atom, model
 cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b3_gpr_accuracy_boron_cv50
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
-    --e-max-per-atom -5.2 --output ./out_fez
+    --e-max-per-atom 0.67 --output ./out_fez
 ```
 
 ## Usage (HPC)
@@ -99,8 +103,8 @@ pjsub j_b3_gpr_accuracy_boron_cv50.sh
 
 ## Contents
 
-- `gpr_accuracy.py` — latest project-root version (v1.5.0), self-contained
+- `gpr_accuracy.py` — latest project-root version (v1.5.1), self-contained
 - `dataset/` — B-doped seed DBs (5 DBs, Fe25Mg25O25B7; gitignored)
 - `j_b3_gpr_accuracy_boron_cv50.sh` — PJM batch script (24 cores, gpaw_env),
-  runs with `--e-max-per-atom -5.2`
+  runs with `--e-max-per-atom 0.67`
 - `README.md` / `TUTORIAL.md` — this run's docs

@@ -7,7 +7,7 @@
 | Script | `gpr_accuracy.py` v1.5.0 |
 | Mode | 50-fold CV + uncertainty, Fe_z system, bin 0.1 |
 | Dataset | B-doped Fe/MgO, Fe25Mg25O25B7 (82 atoms), 5 seeds, 496 structures |
-| Outlier cut | `--e-max-per-atom -5.2` (keeps 452 structures, spread ~0.67 eV/atom) |
+| Outlier cut | `--e-max-per-atom 0.67` (keeps 452 structures, spread ~0.67 eV/atom) |
 | Output | `out_fez/` |
 
 ## Error & fixes
@@ -19,7 +19,7 @@ metrics were unphysical (~10⁹ eV/atom). Two fixes in `gpr_accuracy.py`:
    with `rows`), fixing the `errorbar` crash.
 2. **High-energy outliers broke the GPR fit** — added a `|E|<1e4 eV` physical filter to
    the prediction loops AND a `--e-max-per-atom` flag to drop structures above a
-   physical E/atom threshold. With `-5.2`, the surviving set matches the working
+   physical E/atom threshold. With `0.67`, the surviving set matches the working
    Fe/MgO spread (~0.67 eV/atom) and the GPR fits (in-sample MAE ≈ 0.0002 eV/atom).
 
 ## Verified results (5-fold CV smoke, real output)
@@ -42,5 +42,5 @@ is viable **only** with the outlier cut; without it the surrogate cannot represe
 
 - The surviving set (452 of 496) drops the high-E structures from seeds 2-4; these are
   likely DFT-failure artifacts and should ideally be re-generated at the source.
-- The `--e-max-per-atom` threshold is a controllable flag; `-5.2` was chosen to match
+- The `--e-max-per-atom` threshold is a controllable flag; `0.67` was chosen to match
   the working Fe/MgO energy spread.
