@@ -235,25 +235,16 @@ iteration for a plateau and by inspecting `X_final`.
 `F = −k_B T ln Z` against **temperature** from `thermodynamics.csv` to see the
 temperature dependence. The state-density analysis (`analysis/conf_space.png`,
 `binding_probability_vs_temperature.png`) already visualizes the landscape and the
-Boltzmann probability vs T. There is no dedicated "Z vs T" plot currently written by the
-code — if you want one, it is a small addition (plot `thermodynamics.csv`).
+Boltzmann probability vs T. For a dedicated `Z`/`log Z`/`F` vs `T` figure (and an
+optional heat-capacity `C_V(T)` panel), use `scripts/plot_thermodynamics.py`
+(see "Usage (thermodynamics plot)" below).
 
 **How to make the new `Z`-vs-`T` / `F`-vs-`T` plot.** `thermodynamics.csv` has columns
-`T_K, beta_eV-1, logZ, Z, F_eV` (one row per temperature). Plot it with a small standalone
-script (using the `agox_v2` python):
-```python
-import numpy as np, matplotlib.pyplot as plt
-d = np.loadtxt("ns_output_tfree/thermodynamics.csv", delimiter=",", skiprows=1)
-T, logZ, F = d[:,0], d[:,3], d[:,4]
-fig, ax = plt.subplots(1, 2, figsize=(9,4))
-ax[0].plot(T, logZ, "o-"); ax[0].set(xlabel="T (K)", ylabel="log Z")
-ax[1].plot(T, F, "s-");  ax[1].set(xlabel="T (K)", ylabel="F = -k_B T ln Z (eV)")
-plt.tight_layout(); plt.savefig("thermodynamics_Z_F.png", dpi=300)
-```
-For the heat capacity, add `C_V(T)` from a numerical second difference of `log Z` vs
-`β = 1/(k_B T)`: `C_V = k_B·β²·d²(lnZ)/dβ²` (peaks mark phase transitions). This is the small
-addition the text above ("no dedicated Z vs T plot") refers to, now spelled out. (If you want,
-I can generate this script and run it against a specific temperature-free run dir.)
+`T_K, beta_eV-1, logZ, Z, F_eV` (one row per temperature). This is now a committed script,
+`scripts/plot_thermodynamics.py` (see "Usage (thermodynamics plot)" below), which reads the
+CSV and draws `Z`, `log Z` and `F = −k_B T ln Z` vs `T` (plus an optional `C_V(T)` panel with
+`--cv`). The one-line essentials it encapsulates: `logZ` is the robust column
+(`Z = exp(logZ)` underflows at low `T`), and the free energy is `F = −k_B T ln Z`.
 
 **What do we need `log Z` for?** (1) **Numerical stability** — `Z` under/overflows
 float64 (range ~`10⁻²⁴²`→`10⁻⁴`), `log Z` does not. (2) **Thermodynamics** — the free
@@ -303,6 +294,18 @@ top-down pass, per Pártay 2021 / Yang 2024). The partition function, free energ
 `--temperatures` value, so one sample set yields thermodynamics at all temperatures.
 Writes `samples.csv` (re-runnable), `thermodynamics.csv`, and per-T posterior dirs
 `posterior_T{KKK}/`.
+
+## Usage (thermodynamics plot)
+`scripts/plot_thermodynamics.py` plots the thermodynamics of a finished
+temperature-free run from its `thermodynamics.csv` (columns `T_K, beta_eV-1, logZ,
+Z, F_eV`, one row per temperature). It draws `Z`, `log Z` and `F = −k_B T ln Z` vs
+`T` in one figure, and with `--cv` adds a heat-capacity `C_V(T)` panel computed from
+the numerically stable `log Z` via `C_V = k_B·β²·d²(lnZ)/dβ²` (needs ≥3 temperature
+points; peaks mark phase transitions). Needs only numpy + matplotlib (no AGOX):
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python scripts/plot_thermodynamics.py \
+    --input ns_output_tfree/thermodynamics.csv --output thermodynamics_Z_F.png --cv
+```
 
 ## Physics of temperature-free mode
 

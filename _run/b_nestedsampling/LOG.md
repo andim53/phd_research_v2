@@ -1482,3 +1482,39 @@ flat 0.255 eV-atom peaks, papers' phase-diagram / heat-capacity analysis).
 intact; README grew 476 -> 631 lines.
 
 **Time:** 2026-08-27 ~21:xx JST.
+
+
+---
+
+## Session 2026-08-27 — Add scripts/plot_thermodynamics.py (Z/logZ/F vs T + optional Cv)
+
+**Goal (user-confirmed via clarify):** make the new plot for analysing thermodynamics.csv.
+Clarified: (1) standalone script at project root `scripts/`; (2) scope = Z, log Z, F vs T
+panels + optional heat-capacity C_V(T); (3) validation = generate a small synthetic
+thermodynamics.csv and run the script against it (no real temperature-free run output exists
+yet — thermodynamics.csv is only produced by a `--temperature-free` NS run, and none of the
+`_runs/*` dirs have run output on disk).
+
+**Actions taken:**
+- Created `scripts/plot_thermodynamics.py` (v1.0.0): reads `thermodynamics.csv`
+  (T,beta,logZ,Z,F per row), draws Z / log Z / F = -k_B T ln Z vs T in one figure; `--cv`
+  adds a C_V(T) panel via `C_V = k_B*beta^2*d^2(ln Z)/d(beta)^2` (numpy.gradient, needs >=3
+  points). CLI: `--input/--output/--cv/--cv-output`. numpy+matplotlib only (no AGOX), Agg
+  headless-safe.
+- Fixed two syntax errors flagged by lint (generator expression unpacked into multiple
+  targets -> list comprehension), lines 72 and 94.
+- Generated `_tmp/demo_thermodynamics.csv` (synthetic, clearly demo) and ran the script:
+  both `_tmp/demo_Z_F.png` (3600x1200) and `_tmp/demo_Cv.png` (1800x1200) produced; also
+  verified the non-`--cv` path (`_tmp/demo_Z_F_only.png`). All valid PNG images.
+- Updated README.md: replaced the "no dedicated Z vs T plot" text, replaced the inline
+  snippet with a pointer to the committed script, and added a
+  "## Usage (thermodynamics plot)" section.
+
+**Verification (real output):** script ran against the demo CSV and produced valid PNGs
+(file(1): PNG image data, correct dimensions). Lint clean.
+
+**Open item:** script is validated on synthetic data; run it against a real
+temperature-free run's `thermodynamics.csv` once such a run has completed (or submit
+`--temperature-free` run on HPC).
+
+**Time:** 2026-08-27 ~23:10-23:15 JST.
