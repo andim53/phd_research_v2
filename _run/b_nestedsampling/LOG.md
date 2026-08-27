@@ -1250,3 +1250,26 @@ same NS params). Also update docs + output dir name.
 - `sh -n j_b5_boron_ns.sh` OK.
 
 **Time:** 2026-08-27 ~17:36–17:42 JST.
+
+---
+
+## Session 2026-08-27 — Rename _analysist b5 copy to b5_boron_tfree_emax025
+
+**Goal (user request):** Rename `_analysist/1_result/b5_boron_ns_emax025` to
+`b5_boron_tfree_emax025`.
+
+**Context:** The b5 `_analysist` copy had been moved into
+`_analysist/1_result/_archives/b5_boron_ns_emax025` (a new `_archives` subdir, part of
+the user's reorganization). Clarify timed out; defaulted to renaming in place under
+`_archives`.
+
+**Actions taken:**
+- `mv _analysist/1_result/_archives/b5_boron_ns_emax025 b5_boron_tfree_emax025`.
+- Updated the archive's README.md/TUTORIAL.md titles to `b5_boron_tfree_emax025`.
+
+**Notes:**
+- `_analysist/` is gitignored → no commit needed for this filesystem rename.
+- The `_runs/b5_boron_ns_emax025` source run dir is a separate tracked dir and keeps
+  its original name (only the archive copy was renamed per the request).
+
+**Time:** 2026-08-27 ~17:46–17:52 JST.
