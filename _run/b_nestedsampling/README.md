@@ -17,9 +17,96 @@ Status: re-hosted under the AI-Agent Project Workflow (migrated from
    KDE state density + Boltzmann probability vs temperature), comparing the
    posterior samples against the training set.
 
+Notes:
+
+**What is the `log L` in nested sampling?** `L` is the **likelihood** — a measure of how
+"good" a structure is. In the fixed-T mode it is `L(x) = exp(-β·(E(x) − E_ref))`, so a
+structure is more likely the lower its GPR-predicted energy is. In temperature-free mode
+`log L = −(E − E_ref)`, i.e. structures are ranked by energy alone. Nested sampling treats
+`L` as an unnormalized posterior weight over configuration space; `log L` (its natural
+logarithm) is what the code actually manipulates, because the raw likelihood spans
+hundreds of orders of magnitude (energies ~ −400 eV, `β ~ 40 eV⁻¹`).
+
+**What do you mean by "evidence"?** The **evidence `Z`** is the normalization constant of
+the posterior, `Z = ∫ L(x)·π(x) dx`. It is a single number that measures how much
+probability mass the likelihood assigns to the configuration space — i.e. how well the
+"surface" is supported. In statistical mechanics `Z` is exactly the **canonical partition
+function**, so it is both the Bayesian evidence and the object from which all
+thermodynamics (free energy, heat capacity) is derived. It is the central quantity nested
+sampling is designed to compute.
+
+**Why in log-space?** Because `Z` ranges from ~`10⁻²⁴²` early in the run to ~`10⁻⁴` at
+the end. A linear `Z` under/overflows float64 (max ~`10³⁰⁸`, min normal ~`10⁻³⁰⁸`, and
+the ratios involved are far more extreme). Working with `log Z` keeps every intermediate
+value in a numerically safe range and never loses precision.
+
+**What do you mean by "accumulation"?** Nested sampling shrinks the remaining prior
+volume geometrically (by `exp(-1/K)` each iteration). It accumulates the evidence by
+adding, at every iteration, the discarded sample's prior-volume slice times its
+likelihood — done in **log space** with `np.logaddexp`, which is the numerically stable
+way to add very different-magnitude numbers in log form. "Accumulation" = summing those
+weighted slices over all iterations (plus a final live-set correction) to build up `Z`.
+
+**What is `beta`?** `beta = 1/(k_B·T)` is the **inverse temperature** (units eV⁻¹, with
+`k_B = 8.617e-5 eV/K`). It is the thermodynamic knob in the likelihood: at T = 300 K,
+`beta ≈ 38.68 eV⁻¹`, so each eV above the best structure costs a factor
+`exp(-38.68) ≈ 10⁻¹⁷` in likelihood — low-energy structures are overwhelmingly preferred.
+Lower T (higher β) sharpens focus on the global minimum; higher T flattens the landscape.
+
+**What is `E`, and why `− E_ref`?** `E = E(x)` is the **GPR-predicted energy** of a
+structure (eV). The likelihood only cares about energy *differences*, so `E` is shifted by
+a reference. **`E_ref` = the minimum training energy** (the lowest-energy structure in the
+dataset). Subtracting `E_ref` makes the best structure have `E − E_ref = 0` → `L = 1`
+(its likelihood is 1, i.e. the highest), while any higher-energy structure has `E − E_ref
+> 0` → `L < 1`. This shifts the whole likelihood to O(1) at the optimum, avoiding
+overflow and giving a clean, physically sensible reference point.
+
 The central output is the **model evidence / partition function `Z`** (and
 `log Z`) for the Fe/MgO system at a given temperature, plus the weighted
 posterior set of structures.
+
+Notes:
+
+**What is model evidence?** Model evidence is `Z`, the normalization constant of the
+posterior `Z = ∫ L(x)·π(x) dx`. It answers "how much total probability (likelihood ×
+prior) does the model place over the structures?" — a single scalar that, for a given
+energy surface and temperature, quantifies how well-supported the configuration space is.
+Because of the statistical-mechanics identification, `Z` is also the **partition
+function**, so it is the quantity from which the free energy `F = −k_B T ln Z` and all
+other thermodynamic averages are obtained. (The earlier "What is the evidence" note in the
+What-it-does section covers the same concept; this is the "model evidence" phrasing used
+in the Bayesian literature.)
+
+**What did they do?** The pipeline: (1) load all seed structures, (2) train a single GPR
+surrogate on them, (3) run `NestedSampler` to sweep the configuration space from high to
+low energy, collecting `(energy, weight)` pairs for every discarded sample and
+accumulating `log Z` in log space, (4) write `Z`/`log Z` (plus the weighted posterior set),
+and (5) run the state-density analysis. So "what they did" = turned the raw energy
+landscape into a numerically stable estimate of the evidence/partition function and the
+weighted ensemble.
+
+**Where do we get the `Z` result?** `Z` is computed inside `NestedSampler` (accumulated
+via `np.logaddexp` over the iterations, plus the final live-set correction) and written to
+the output directory as `evidence_history.csv` (columns: iteration, Z) and `log_evidence.csv`
+(iteration, log Z). In **temperature-free** mode, `Z(β)` for any temperature is produced in
+post-processing by `sampler.evaluate(beta)` and written to `thermodynamics.csv`
+(columns T, β, logZ, Z, F). So the `Z` result is in those CSVs, one row per iteration
+(for the run) or one row per temperature (for the temperature-free scan).
+
+**How to plot it?** Plot `Z` (or `log Z`) against the **iteration** from
+`evidence_history.csv` to see the evidence converge; or plot `log Z` / `Z` and
+`F = −k_B T ln Z` against **temperature** from `thermodynamics.csv` to see the
+temperature dependence. The state-density analysis (`analysis/conf_space.png`,
+`binding_probability_vs_temperature.png`) already visualizes the landscape and the
+Boltzmann probability vs T. There is no dedicated "Z vs T" plot currently written by the
+code — if you want one, it is a small addition (plot `thermodynamics.csv`).
+
+**What do we need `log Z` for?** (1) **Numerical stability** — `Z` under/overflows
+float64 (range ~`10⁻²⁴²`→`10⁻⁴`), `log Z` does not. (2) **Thermodynamics** — the free
+energy is `F = −k_B T ln Z`, and derivatives of `ln Z` w.r.t. `β` give mean energy and
+heat capacity (heat-capacity peaks mark phase transitions). (3) **Bayesian model
+comparison** — differences in `log Z` between models give Bayes factors. So `log Z` is
+the robust quantity the code keeps and that you use for all the physics and statistics.
 
 ## Environment
 

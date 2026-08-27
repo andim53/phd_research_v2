@@ -1414,3 +1414,23 @@ kwargs `state_density.py` passes (none missing); compiles. Any future copy from
 `dataset_boron/scripts/` is now correct.
 
 **Time:** 2026-08-27 ~20:51–20:54 JST.
+
+---
+
+## Session 2026-08-27 — Answer the notes added to README.md in detail
+
+**Goal (user-confirmed via clarify):** Answer the conceptual notes the user added to
+README.md inline, in place, preserving the questions.
+
+**Notes answered (two Notes blocks):**
+1. In "What it does": log L / evidence / why log-space / accumulation; beta / E and
+   why −E_ref / what E_ref is.
+2. In the "central output" paragraph: what model evidence is / what they did; where the
+   Z result comes from / how to plot it / what log Z is needed for.
+
+**Approach:** answered each question as inline expository text under each Notes block,
+keeping the original questions, consistent with the README's conceptual style and
+grounded in the actual code (NestedSampler, np.logaddexp, evidence_history.csv,
+thermodynamics.csv, evaluate()).
+
+**Time:** 2026-08-27 ~20:56–21:02 JST.
