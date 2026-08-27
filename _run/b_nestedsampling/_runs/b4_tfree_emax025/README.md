@@ -1,6 +1,6 @@
-# Run b3_tfree_emax025 — Temperature-free NS on plain Fe/MgO, e-max-per-atom 0.25
+# Run b4_tfree_emax025 — Temperature-free NS on plain Fe/MgO, e-max-per-atom 0.25
 
-Run directory: `_runs/b3_tfree_emax025/` (self-contained, launchable on HPC)
+Run directory: `_runs/b4_tfree_emax025/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.2.0 + `nested_sampling/`
 package) + the plain **Fe/MgO (no Boron)** dataset (13 seeds, same system as
 `_analysist/1_result/1_no_prior_control`).
@@ -37,7 +37,7 @@ Key features:
 
 ## Environment
 
-- HPC batch (`j_b3_tfree_emax025.sh`) activates `gpaw_env` (standing HPC convention).
+- HPC batch (`j_b4_tfree_emax025.sh`) activates `gpaw_env` (standing HPC convention).
   If it fails on AGOX imports, switch `conda activate gpaw_env` →
   `conda activate agox_v2`.
 - Local run:
@@ -46,7 +46,7 @@ Key features:
 ## Usage (local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b3_tfree_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b4_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe \
@@ -56,7 +56,7 @@ cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b3_tfree_emax025
 ## Usage (HPC)
 
 ```bash
-pjsub j_b3_tfree_emax025.sh
+pjsub j_b4_tfree_emax025.sh
 ```
 
 ## Outputs (`ns_output_tfree_emax025/`)
@@ -73,5 +73,5 @@ pjsub j_b3_tfree_emax025.sh
 - `nested_sampling/` — package (NestedSampler, train_gpr, state_density, utils) incl.
   the required `scripts/plot_structure_landscape.py`
 - `dataset/` — plain Fe/MgO seed DBs (13 DBs, Mg25O25Fe25; gitignored)
-- `j_b3_tfree_emax025.sh` — PJM batch script (64 cores, gpaw_env)
+- `j_b4_tfree_emax025.sh` — PJM batch script (64 cores, gpaw_env)
 - `README.md` / `TUTORIAL.md` — this run's docs

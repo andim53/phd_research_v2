@@ -1,4 +1,4 @@
-# TUTORIAL — Reproduce run b3_tfree_emax025 (temperature-free NS, plain Fe/MgO)
+# TUTORIAL — Reproduce run b4_tfree_emax025 (temperature-free NS, plain Fe/MgO)
 
 Step-by-step guide to reproduce this run in isolation. Level: intermediate.
 
@@ -6,7 +6,7 @@ Step-by-step guide to reproduce this run in isolation. Level: intermediate.
 
 - Conda env **`agox_v2`** (AGOX 3.10.2 + ASE 3.25.0) for local runs:
   `/home/think/miniconda3/envs/agox_v2/bin/python`.
-- HPC pjsub (PJM) for the batch run (`gpaw_env`, set in `j_b3_tfree_emax025.sh`).
+- HPC pjsub (PJM) for the batch run (`gpaw_env`, set in `j_b4_tfree_emax025.sh`).
 - Dataset present in this dir: `dataset/seed_*/1_db/db_*.db` (13 DBs, Mg25O25Fe25).
 
 ## Step 0 — What this run does
@@ -32,7 +32,7 @@ main.py --temperature-free --temperatures 100,200,300,500,1000 \
 ## Step 1 — Local run (validate on a small scale first if desired)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b3_tfree_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b4_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe \
@@ -44,7 +44,7 @@ For a quick sanity check you can lower `--n-live`/`--n-iters` (e.g. 20/30).
 ## Step 2 — HPC launch
 
 ```bash
-pjsub j_b3_tfree_emax025.sh
+pjsub j_b4_tfree_emax025.sh
 ```
 
 - Header: 64 cores, `gpaw_env`, 120 h.
@@ -67,7 +67,7 @@ Sanity checks:
 
 ## Pitfalls
 
-- **Env:** job uses `gpaw_env`; if AGOX imports fail, edit `j_b3_tfree_emax025.sh` to
+- **Env:** job uses `gpaw_env`; if AGOX imports fail, edit `j_b4_tfree_emax025.sh` to
   `conda activate agox_v2`.
 - **`scripts` module required:** `nested_sampling/scripts/plot_structure_landscape.py`
   MUST be present (it is, in this run) or `state_density.py` fails to import.

@@ -1179,3 +1179,21 @@ mode** with **`--e-max-per-atom 0.25`**.
 focusing GPR + sampling on low-energy structures. Not executed on HPC yet.
 
 **Time:** 2026-08-27 ~17:17–17:24 JST.
+
+---
+
+## Session 2026-08-27 — Rename run dir b3_tfree_emax025 -> b4_tfree_emax025
+
+**Goal (user request):** Rename the run dir `_runs/b3_tfree_emax025` to
+`b4_tfree_emax025` (change b3 to b4).
+
+**Actions taken:**
+- `git mv b3_tfree_emax025 b4_tfree_emax025` (history preserved).
+- `git mv j_b3_tfree_emax025.sh j_b4_tfree_emax025.sh`.
+- Updated all internal references (README.md, TUTORIAL.md, job script): `b3_` →
+  `b4_`, `j_b3_` → `j_b4_`.
+
+**Verification:** no stale `b3_tfree_emax025`/`j_b3` refs remain; `sh -n` on the
+renamed job script OK; git detects the rename.
+
+**Time:** 2026-08-27 ~17:25–17:28 JST.
