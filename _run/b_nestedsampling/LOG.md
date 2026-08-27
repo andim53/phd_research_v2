@@ -1087,3 +1087,38 @@ nested-sampling codes (limit the dataset / GPR training data / initial structure
 Not built yet.
 
 **Time:** 2026-08-27 ~16:38–16:44 JST.
+
+---
+
+## Session 2026-08-27 — Add --e-max-per-atom (relative) to nested-sampling codes (flag 20260827_1638)
+
+**Goal (user-confirmed via clarify):** Update the nested-sampling codes to include
+`--e-max-per-atom` (relative to the lowest energy), mirroring `gpr_accuracy.py`. It
+limits the dataset used for nested sampling, the GPR training data, and the initial
+structures for the nested sampling.
+
+**Clarify decisions (all user-confirmed):**
+1. A single `--e-max-per-atom` flag in `main.py`, applied once after loading, which
+   limits all three at once (NS dataset, GPR training, initial sampler structures).
+2. Semantics = RELATIVE to the dataset minimum (keep `E/atom − min E/atom ≤ value`),
+   same as `gpr_accuracy.py`; positive values drop high-energy outliers (e.g. 0.67).
+3. Add to `main.py` (runner) + the `--analyze-only` path for consistency; no explicit
+   threading into NestedSampler (it reads the filtered `db_structures`).
+4. Smoke-test on the boron dataset with `--e-max-per-atom 0.67`.
+
+**Actions taken (`main.py` 1.1.2 → 1.2.0, minor):**
+- Added `--e-max-per-atom` arg + help.
+- Added filter after loading (step 1b): keep `rel_e <= e_max_per_atom`, drop the rest;
+  this precedes `build_gpr(structures)` and `NestedSampler(db_structures=structures)`
+  so all three are limited. Empty-set guard.
+- Applied the same filter in the `--analyze-only` path.
+- Copied updated `main.py` (v1.2.0) into `b2_boron_ns` run dir.
+- Synced README.md (Options), TUTORIAL.md (Step 6), VERSIONS.md, LOG.md.
+
+**Results / verification (real output, boron dataset, --e-max-per-atom 0.67):**
+- `Total: 496 structures` → `dropped 44 high-energy structures; 452 remain`.
+- GPR trained on the 452 filtered structures; `[NestedSampler] Perturbing 32 atoms of
+  symbol(s) ['Fe', 'B']`; sampling completed (`SMOKE_EXIT=0`), outputs written
+  (evidence_history.csv, posterior_structures/, etc.). Confirms all three limits.
+
+**Time:** 2026-08-27 ~16:46–16:50 JST.

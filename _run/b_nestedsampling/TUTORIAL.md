@@ -80,6 +80,12 @@ Posterior: 300 physical / 300 total
   are supported comma-separated, e.g. `--perturb-symbols Fe,B` (or `Fe, B`) to move
   Fe **and** B together; all other atoms (e.g. Mg/O) stay fixed. `--perturb 0` =
   pure resample.
+- **`--e-max-per-atom`** — filters the loaded dataset by RELATIVE energy above the
+  dataset minimum (keeps `E/atom − min E/atom ≤ value`), applied once after loading.
+  This limits the dataset used for NS, the GPR training data, and the initial sampler
+  structures (all drawn from the filtered set). Use to drop high-energy outlier
+  structures that break the GPR fit (e.g. `--e-max-per-atom 0.67` on the B-doped
+  dataset).
 - **Likelihood** — `log L = -beta·(E_pred - E_ref)`, `E_ref` = min training
   energy. Log space avoids overflow at ~−400 eV and beta~40 eV⁻¹.
 - **NS loop (`step()`)** — removes worst-live point, shrinks prior volume by

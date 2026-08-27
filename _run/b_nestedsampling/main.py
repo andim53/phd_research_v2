@@ -20,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.1.2"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -139,6 +139,14 @@ def main():
                    help="Symbol(s) of atoms to perturb (deposition layer), "
                         "comma-separated for multiple, e.g. 'Fe,B' or 'Fe, B'; "
                         "default 'Fe'. All matching atoms move; all others stay fixed")
+    p.add_argument("--e-max-per-atom", type=float, default=None,
+                   help="Exclude structures whose RELATIVE energy above the dataset "
+                        "minimum exceeds this threshold (eV/atom), i.e. keep "
+                        "(E/atom - min E/atom) <= value. Applies to the dataset used "
+                        "for nested sampling, the GPR training data, AND the initial "
+                        "sampler structures (filtered once after loading). Use to "
+                        "drop high-energy outlier structures that break the GPR fit, "
+                        "e.g. --e-max-per-atom 0.67. Default: None (keep all).")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
@@ -167,6 +175,14 @@ def main():
         print("=" * 70)
         # training set (structures + DFT energies) for comparison
         structures, energies, _ = load_all_seeds(DATASET_DIR, DB_PATTERN)
+        if args.e_max_per_atom is not None:
+            n_atoms = len(structures[0])
+            e_per_atom = np.asarray(energies, dtype=float) / n_atoms
+            keep = (e_per_atom - e_per_atom.min()) <= args.e_max_per_atom
+            structures = [s for s, k in zip(structures, keep) if k]
+            energies = np.asarray(energies, dtype=float)[keep]
+            print(f"  --e-max-per-atom {args.e_max_per_atom}: {len(structures)} "
+                  f"structures remain (relative filter)")
         print(f"  Training set: {len(structures)} structures")
         analyze_saved_output(
             run_output_dir=args.analyze_only,
@@ -188,6 +204,23 @@ def main():
           f"{len(db_paths)} databases")
     print(f"  Composition: {structures[0].get_chemical_formula()}")
     print(f"  E range: {energies.min():.4f} .. {energies.max():.4f} eV")
+
+    # --- 1b. Optional high-energy outlier exclusion (relative to dataset min) ---
+    if args.e_max_per_atom is not None:
+        n_atoms = len(structures[0])
+        e_per_atom = np.asarray(energies, dtype=float) / n_atoms
+        rel_e = e_per_atom - e_per_atom.min()   # relative to dataset min
+        keep = rel_e <= args.e_max_per_atom
+        n_drop = int((~keep).sum())
+        structures = [s for s, k in zip(structures, keep) if k]
+        energies = np.asarray(energies, dtype=float)[keep]
+        print(f"  --e-max-per-atom {args.e_max_per_atom} (relative to dataset min "
+              f"E/atom = {e_per_atom.min():.4f} eV/atom): dropped {n_drop} "
+              f"high-energy structures (E/atom - min > {args.e_max_per_atom}); "
+              f"{len(structures)} remain")
+        if len(structures) == 0:
+            raise SystemExit(f"No structures remain after --e-max-per-atom "
+                             f"{args.e_max_per_atom} exclusion.")
 
     # --- 2. Train GPR on the combined dataset --------------------------------
     print("\nTraining GPR on combined dataset...")

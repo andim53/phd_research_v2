@@ -192,6 +192,11 @@ For literature-scale settings and the paper-derived parameter table, see
 - `--perturb-symbols`  symbols of the atoms to perturb (default `Fe`, the
   deposition layer); **comma-separated for multiple**, e.g. `Fe,B` or `Fe, B` —
   all matching atoms move, all others stay fixed during prior sampling
+- `--e-max-per-atom`  exclude structures whose RELATIVE energy above the dataset
+  minimum exceeds this threshold (eV/atom); applies to the dataset used for nested
+  sampling, the GPR training data, and the initial sampler structures (filtered once
+  after loading). Use to drop high-energy outliers that break the GPR fit
+  (e.g. `0.67`); default not set = keep all
 - `--output`    output directory, default `./ns_output_allseeds`
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)
