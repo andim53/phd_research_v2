@@ -69,8 +69,12 @@ Sanity checks:
 
 - **Env:** job uses `gpaw_env`; if AGOX imports fail, edit `j_b4_tfree_emax025.sh` to
   `conda activate agox_v2`.
-- **`scripts` module required:** `nested_sampling/scripts/plot_structure_landscape.py`
-  MUST be present (it is, in this run) or `state_density.py` fails to import.
+- **`scripts` module required + correct version:** `nested_sampling/scripts/plot_structure_landscape.py`
+  MUST be present (it is, in this run) or `state_density.py` fails to import. It must
+  also accept the `s=` argument (the current `state_density.py` passes `s=5`); use the
+  version from `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` — NOT
+  the stale `dataset_boron/scripts/` copy (which lacks `s=` and causes
+  `TypeError: ... unexpected keyword argument 's'` in the landscape analysis).
 - **`--e-max-per-atom` is RELATIVE** to the dataset minimum (keep `E/atom − min ≤
   0.25`); 0.25 on the ~0.67 eV/atom Fe/MgO set keeps the lowest-energy band.
 

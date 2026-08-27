@@ -1295,3 +1295,33 @@ rename.
 earlier rename of the `_analysist` archive copy stands.
 
 **Time:** 2026-08-27 ~17:54–17:58 JST.
+
+---
+
+## Session 2026-08-27 — Fix b4_tfree_emax025 landscape-analysis error (plot_structure_landscape 's')
+
+**Context (user-reported HPC error):** `b4_tfree_emax025` crashed at the final
+state-density/landscape analysis with
+`TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`
+(`state_density.py:130`, in `make_landscape`). User asked to explain the error in the
+run's README.md and fix it.
+
+**Root cause (confirmed):** version mismatch — the run's `nested_sampling/scripts/
+plot_structure_landscape.py` (copied from stale `dataset_boron/scripts/`) lacks the
+`s=` argument, but the current `state_density.py` calls
+`plot_structure_landscape(..., s=5, ...)`. The nested sampling itself completed
+successfully (thermodynamics.csv written); only the optional landscape plotting crashed.
+
+**Clarify decision (user-confirmed):** Fix ONLY b4_tfree_emax025.
+
+**Actions taken:**
+- Copied the correct `plot_structure_landscape.py` (accepts `s=25`) from the reference
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
+  `b4/nested_sampling/scripts/`.
+- Documented the error + fix in `b4/README.md` ("Error explanation & fix").
+- Updated `b4/TUTORIAL.md` pitfall (correct source for plot_structure_landscape).
+
+**Verification (real output):** corrected version accepts `s=` (default 25) and ALL
+kwargs `state_density.py` passes (no missing); compiles. The crash is resolved.
+
+**Time:** 2026-08-27 ~18:05–18:13 JST.

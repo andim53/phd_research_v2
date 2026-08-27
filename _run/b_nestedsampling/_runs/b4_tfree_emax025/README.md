@@ -29,6 +29,40 @@ Key features:
 - Same NS params as the reference `1_no_prior_control`: `--n-live 100 --n-iters 1000
   --perturb 0.01 --perturb-symbols Fe --rng 42`.
 
+## Error explanation & fix (this run)
+
+**Observed failure** (`j_b4_tfree_emax025.sh.6605135.out`): the run crashed at the
+final **state-density / landscape analysis** step with
+
+```
+TypeError: plot_structure_landscape() got an unexpected keyword argument 's'
+```
+
+at `nested_sampling/state_density.py:130` (in `make_landscape`, called from
+`analyze_state_density`).
+
+**Important:** the nested-sampling itself **completed successfully** — all 1000
+iterations, all 5 temperatures' Z/F written to `thermodynamics.csv`
+(T=100..1000 K: Z = 2.1e-05 → 6.2e-03, F = 0.093 → 0.439 eV), 1100 posterior samples
+per temperature. The crash is ONLY in the optional post-run landscape plotting.
+
+**Root cause:** a **version mismatch** between `state_density.py` and the
+`plot_structure_landscape.py` that was copied into this run's `nested_sampling/scripts/`.
+`state_density.py` (the current version) calls `plot_structure_landscape(..., s=5, ...)`,
+but the `plot_structure_landscape.py` copied from `dataset_boron/scripts/` does **not**
+accept an `s` argument (stale signature) → `TypeError`.
+
+**Fix (applied):** copied the correct `plot_structure_landscape.py` from the reference
+`_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` (which accepts
+`s=25`) into `nested_sampling/scripts/`. Verified: the corrected version accepts `s=`
+and all kwargs `state_density.py` passes (no missing arguments); compiles.
+
+**What to do to avoid it:** when creating/updating an NS run dir, copy
+`plot_structure_landscape.py` from the **reference** `1_no_prior_control` (or any copy
+that accepts the `s=` argument) — NOT the stale `dataset_boron/scripts/` version.
+Resubmit the job (`pjsub j_b4_tfree_emax025.sh`); the sampling will re-run and the
+analysis will now complete.
+
 ## Dataset
 
 - Plain **Fe/MgO** (no Boron), 13 seeds (seed_3..15), 1297 structures, all
