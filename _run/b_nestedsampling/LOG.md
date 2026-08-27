@@ -1325,3 +1325,24 @@ successfully (thermodynamics.csv written); only the optional landscape plotting 
 kwargs `state_density.py` passes (no missing); compiles. The crash is resolved.
 
 **Time:** 2026-08-27 ~18:05–18:13 JST.
+
+---
+
+## Session 2026-08-27 — Fix b5_boron_tfree_emax025 (same plot_structure_landscape 's' error)
+
+**Context:** b5 has the same stale `plot_structure_landscape.py` (from
+`dataset_boron/scripts/`, no `s=` arg) as b4, which would crash the final
+state-density/landscape analysis with
+`TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`.
+
+**Actions taken:**
+- Copied the correct `plot_structure_landscape.py` (accepts `s=25`) from the reference
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
+  `b5_boron_tfree_emax025/nested_sampling/scripts/`.
+- Documented the error + fix in `b5/README.md` ("Error explanation & fix") + updated
+  `b5/TUTORIAL.md` pitfall (correct source for plot_structure_landscape).
+
+**Verification (real output):** b5 corrected version accepts `s=` (default 25) and all
+kwargs `state_density.py` passes (none missing); compiles. Crash resolved.
+
+**Time:** 2026-08-27 ~20:40–20:45 JST.
