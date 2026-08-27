@@ -307,6 +307,24 @@ points; peaks mark phase transitions). Needs only numpy + matplotlib (no AGOX):
     --input ns_output_tfree/thermodynamics.csv --output thermodynamics_Z_F.png --cv
 ```
 
+**Where does `thermodynamics.csv` come from?** It is produced **only** by a
+**temperature-free** nested-sampling run (`main.py --temperature-free ...`) — it is
+written to the run's `--output` directory (e.g. `./ns_output_tfree/thermodynamics.csv`)
+by the temperature-free post-processing step. It does **not** exist for a default
+fixed-T run: fixed-T mode writes `evidence_history.csv` / `log_evidence.csv` instead.
+To generate it:
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py \
+    --temperature-free --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --output ./ns_output_tfree --rng 42
+```
+The run trains the GPR on the combined dataset, samples temperature-free, and the
+post-processing loop calls `sampler.evaluate(beta)` per `--temperatures` value to
+write `T_K,beta_eV-1,logZ,Z,F_eV` rows. (No `thermodynamics.csv` is present in the
+repo or in the existing `_runs/*` — run the command above to create one, locally or
+via the HPC temperature-free job.)
+
 ## Physics of temperature-free mode
 
 In canonical statistical mechanics the **partition function** of a system of atoms is

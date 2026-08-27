@@ -1518,3 +1518,21 @@ temperature-free run's `thermodynamics.csv` once such a run has completed (or su
 `--temperature-free` run on HPC).
 
 **Time:** 2026-08-27 ~23:10-23:15 JST.
+
+
+---
+
+## Session 2026-08-27 — README: document where thermodynamics.csv comes from
+
+**Goal (user request):** add to README.md where the `thermodynamics.csv` file comes from.
+
+**Action taken:** added a "**Where does `thermodynamics.csv` come from?**" note inside the
+"## Usage (thermodynamics plot)" section: it is produced ONLY by a `--temperature-free` run,
+written to the run's `--output` dir by the temperature-free post-processing step (one row per
+`--temperatures` value via `sampler.evaluate(beta)`); fixed-T mode instead writes
+`evidence_history.csv`/`log_evidence.csv`; included the exact command to generate it and a
+note that none currently exists in the repo / `_runs/*`.
+
+**Verification:** README updated; no `^Notes:` flags (none added).
+
+**Time:** 2026-08-27 ~23:20 JST.
