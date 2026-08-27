@@ -1395,3 +1395,22 @@ state-density/landscape analysis with
 kwargs `state_density.py` passes (none missing); compiles. Crash resolved.
 
 **Time:** 2026-08-27 ~20:48–20:52 JST.
+
+---
+
+## Session 2026-08-27 — Update dataset_boron/scripts/plot_structure_landscape.py
+
+**Context:** The `dataset_boron/scripts/plot_structure_landscape.py` was the stale
+version (no `s=` arg) that caused the b4/b5/b2 `TypeError` when copied into NS run
+dirs. The user asked to update it so the trap is removed at the source.
+
+**Action taken:**
+- Replaced `dataset_boron/scripts/plot_structure_landscape.py` with the correct
+  reference version (accepts `s=25`) from
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`.
+
+**Verification (real output):** updated version accepts `s=` (default 25) and all
+kwargs `state_density.py` passes (none missing); compiles. Any future copy from
+`dataset_boron/scripts/` is now correct.
+
+**Time:** 2026-08-27 ~20:51–20:54 JST.
