@@ -1448,3 +1448,37 @@ blocks now stand on their own without the Notes: flag).
 **Verification:** no `^Notes:` lines remain.
 
 **Time:** 2026-08-27 ~21:02–21:05 JST.
+
+
+---
+
+## Session 2026-08-27 — Answer the 12 remaining Notes blocks in README.md and remove all flags
+
+**Goal (user request):** Update README.md: read the notes, answer each in place, then
+remove the `Notes:` flag lines. Use the wiki (wiki-research) for grounding where relevant.
+
+**Notes answered (12 blocks), each as inline expository text in the README's conceptual style:**
+1. `beta` / why `log L` sometimes has no `beta` (temp-free vs fixed-T).
+2. posterior, its normalization constant, `pi` (prior), `x` (configuration).
+3. "geometrically", `exp(-1/K)`, prior/prior volume, "slice x likelihood", `K=n_live`.
+4. "thermodynamic knob" / "in the likelihood".
+5. why `L=1` at `E-E_ref=0`; "shifts the likelihood", O(1), "at the optimum".
+6. where `Z` lives in the data; configurational state density `g(E)`; temp-dependent
+   flat-vs-island probability; how papers use NS results / what analysis they do.
+7. free energy `F=-k_B T ln Z`; weight and its relation to `Z`; how the NestedSampler builds `Z`.
+8. papers' convergence criteria for `Z`.
+9. how to make the new `Z`-vs-`T` / `F`-vs-`T` plot (standalone snippet given in README).
+10. heat capacity, how it is computed here, why it matters.
+11. how NS decides what to sample; `w_i`; `n_live`; the top-down step mechanics; initial
+    structures; the DB remains the sampling pool for the whole run.
+12. fixed-T vs temperature-free equations; why `beta` can be dropped; what each represents.
+
+**Grounding:** code read (`nested_sampling/nested_sampler.py` step()/evaluate()/
+sample_constrained()/sample_from_prior(), `main.py` post-processing, `state_density.py`)
++ wiki-research concept pages `nested-sampling` and `state-density-g-e` (island 0.074 /
+flat 0.255 eV-atom peaks, papers' phase-diagram / heat-capacity analysis).
+
+**Verification:** all 12 `Notes:` markers removed (grep 0 matches); anchors/blank lines
+intact; README grew 476 -> 631 lines.
+
+**Time:** 2026-08-27 ~21:xx JST.

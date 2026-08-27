@@ -25,6 +25,21 @@ structure is more likely the lower its GPR-predicted energy is. In temperature-f
 logarithm) is what the code actually manipulates, because the raw likelihood spans
 hundreds of orders of magnitude (energies ~ −400 eV, `β ~ 40 eV⁻¹`).
 
+**What is `beta`, and why does it not always appear in `log L`?** `beta = 1/(k_B·T)`
+is the **inverse temperature** (units eV⁻¹, `k_B = 8.617e-5 eV/K`). It is the thermodynamic
+knob: in **fixed-T mode** the likelihood is `L(x) = exp(-β·(E(x)−E_ref))`, so `β` sits
+*inside* the likelihood and controls how strongly low-energy structures are preferred during
+sampling — at T = 300 K `β ≈ 38.68 eV⁻¹`, so each eV above the best structure costs a factor
+`exp(-38.68) ≈ 10⁻¹⁷` in likelihood. Lower T (higher β) sharpens focus on the global minimum;
+higher T flattens the landscape. **Why does `log L` sometimes have no `beta`?** Because in
+**temperature-free mode** the sampling likelihood is `log L = −(E − E_ref)` — `β` is
+deliberately left OUT. Nested sampling only needs to *rank* configurations by energy (a
+strictly decreasing energy limit), and multiplying the exponent by `β` does not change that
+ranking. So `β` is moved to post-processing: one temperature-free run records each sample's
+`(E_i, w_i)` and then `Z(β) = Σ_i w_i·exp(−β(E_i − E_ref))` gives the partition function at
+*any* temperature (see "Physics of temperature-free mode"). Fixed-T mode *does* include `β`
+in `log L`, which is why it yields only a single-temperature result.
+
 **What do you mean by "evidence"?** The **evidence `Z`** is the normalization constant of
 the posterior, `Z = ∫ L(x)·π(x) dx`. It is a single number that measures how much
 probability mass the likelihood assigns to the configuration space — i.e. how well the
@@ -32,6 +47,20 @@ probability mass the likelihood assigns to the configuration space — i.e. how 
 function**, so it is both the Bayesian evidence and the object from which all
 thermodynamics (free energy, heat capacity) is derived. It is the central quantity nested
 sampling is designed to compute.
+
+**What is the posterior, its normalization constant, `π`, and `x`?** The **posterior**
+`P(x)` is the probability distribution over configurations *given* the energy surface — "how
+likely is each structure". It is `P(x) = L(x)·π(x)/Z`. The **normalization constant of the
+posterior** is `Z`: because `P(x)` must integrate to 1, the unnormalized weight `L(x)·π(x)`
+must be divided by `Z = ∫ L(x)·π(x) dx` — so `Z` is exactly the total probability mass and
+is the object nested sampling computes. `π(x)` is the **prior** — the probability weight
+assigned to configuration `x` *before* any energy information. Here it is the empirical
+distribution over the 1297 database structures (uniform draw + small perturbation). `x` is
+the **configuration variable**: a point in the 3N-dimensional configuration space, i.e. one
+atomic structure (all atomic coordinates). So the equation just says: total weight of a
+configuration = (how good it is, `L`) × (how much prior weight its region had, `π`), summed
+(`∫`) over all configurations `x`. In the discrete NS sum this becomes `Z = Σ_i w_i·L_i`,
+where `w_i` is the prior-volume weight of sample `i`.
 
 **Why in log-space?** Because `Z` ranges from ~`10⁻²⁴²` early in the run to ~`10⁻⁴` at
 the end. A linear `Z` under/overflows float64 (max ~`10³⁰⁸`, min normal ~`10⁻³⁰⁸`, and
@@ -45,11 +74,50 @@ likelihood — done in **log space** with `np.logaddexp`, which is the numerical
 way to add very different-magnitude numbers in log form. "Accumulation" = summing those
 weighted slices over all iterations (plus a final live-set correction) to build up `Z`.
 
+**"Geometrically"** means the remaining prior volume shrinks by a *constant
+multiplicative ratio* each iteration — like a geometric series. Nested sampling shows that
+after `i` iterations the surviving prior volume is `X_i = exp(−i/K)`.
+
+**What is the `exp(−1/K)` factor?** It is the fraction by which the prior volume shrinks on
+every single iteration: `X_{i+1}/X_i = exp(−1/K)`. Reason: with `K` live points the expected
+volume fraction left after removing the worst and replacing it is `K/(K+1)`, so after `i`
+steps `X_i ≈ (K/(K+1))^i ≈ exp(−i/K)`. It is **necessary** because it assigns each discarded
+sample its correct configuration-space weight `w_i = X_{i−1} − X_i = ΔX` — the amount of
+prior volume that sample represents. Without it you could not turn the sample list into an
+integral for `Z`. Its **impact**: the shrinkage converts NS into a quadrature rule; larger `K`
+shrinks more slowly (smaller `ΔX`, finer resolution, error `∝ 1/√K`).
+
+**What is the "prior" and "prior volume"?** The **prior** `π(x)` is the initial sampling
+distribution over configurations before energy is used — the *measure* on configuration space.
+Here it is the empirical DB distribution (uniform draw over the 1297 structures +
+perturbation). **Prior volume** is the total measure of configuration space the sampler
+starts with, normalized to `X_0 = 1`; NS progressively "eats" it as the energy/likelihood
+cutoff tightens, and `X_i` is the fraction remaining after iteration `i`. "Why in volume":
+configurations form a high-dimensional space (3N coordinates), so a distribution over them has
+a volume (Lebesgue measure / count of distinct structures); `π(x)dx` is a probability element
+over that volume and `X` is the surviving fraction.
+
+**"Slice × likelihood"?** At each iteration the removed worst sample sits at the current
+prior-volume boundary; the thin shell of prior volume consumed between two successive energy
+levels is the **slice** `ΔX = X_{i−1} − X_i`, and the **likelihood** `L` is how good a sample
+is (evaluated at that boundary, `L_min`). The contribution of that slice to `Z` is `L_min × ΔX`
+— the probability mass (likelihood × prior volume) in that shell. During sampling the slice is
+the newly-excluded region and `L` is its weight.
+
+**What is `K`?** `K = n_live`, the number of live points. It appears in `exp(−1/K)` because it
+sets the shrinkage rate and therefore the resolution/noise of the `Z` estimate.
+
 **What is `beta`?** `beta = 1/(k_B·T)` is the **inverse temperature** (units eV⁻¹, with
 `k_B = 8.617e-5 eV/K`). It is the thermodynamic knob in the likelihood: at T = 300 K,
 `beta ≈ 38.68 eV⁻¹`, so each eV above the best structure costs a factor
 `exp(-38.68) ≈ 10⁻¹⁷` in likelihood — low-energy structures are overwhelmingly preferred.
 Lower T (higher β) sharpens focus on the global minimum; higher T flattens the landscape.
+
+**"Thermodynamic knob"?** A knob you turn to set the *effective temperature* of the
+statistical-mechanical ensemble: `β = 1/(k_B T)` dials the system from deep-freeze (focus on
+the global minimum) to hot (explore everything). **"In the likelihood"?** In fixed-T mode `β`
+literally multiplies the energy inside the exponent of `L(x) = exp(−β·(E(x)−E_ref))`, so it
+directly sets how sharply the *sampling* penalizes higher-energy structures.
 
 **What is `E`, and why `− E_ref`?** `E = E(x)` is the **GPR-predicted energy** of a
 structure (eV). The likelihood only cares about energy *differences*, so `E` is shifted by
@@ -59,9 +127,46 @@ dataset). Subtracting `E_ref` makes the best structure have `E − E_ref = 0` �
 > 0` → `L < 1`. This shifts the whole likelihood to O(1) at the optimum, avoiding
 overflow and giving a clean, physically sensible reference point.
 
+**Why is `L = 1` when `E − E_ref = 0`?** Because `L = exp(−β·0) = exp(0) = 1`. So the
+best (lowest-energy) structure gets the maximum possible likelihood, normalized to 1.
+
+**"Shifts the whole likelihood"?** Subtracting `E_ref` changes the origin of the energy scale
+so every likelihood is measured *relative to the best structure*: the exponent becomes
+`E − E_ref`, which is `0` at the optimum and `>0` everywhere else. **`O(1)`** means "order of
+magnitude 1" — the likelihood is now roughly unit-sized at the optimum instead of astronomically
+large. **Why `O(1)`**: the raw likelihoods are enormous in absolute value (energies ≈ −400 eV,
+`β ≈ 40 eV⁻¹` → `exp(16000)`), and only their relative ranking matters; normalizing so the best
+is exactly 1 keeps the numbers manageable and physically clean. **"At the optimum"** = at the
+best (lowest-energy) structure, the reference point where `E − E_ref = 0`.
+
 The central output is the **model evidence / partition function `Z`** (and
 `log Z`) for the Fe/MgO system at a given temperature, plus the weighted
 posterior set of structures.
+
+**Where is `Z` in the result files, and how do I get the state density / phase
+probability from it?** `Z` lives in `evidence_history.csv` / `log_evidence.csv` (fixed-T, one
+row per iteration) and in `thermodynamics.csv` (temperature-free, one row per temperature:
+`T, β, logZ, Z, F`). You use it via `F = −k_B T ln Z` and its derivatives (mean energy, heat
+capacity). For the **configurational state density** `g(E)` per energy level, build a KDE over
+the per-atom relative energies of the sampled set — exactly what `state_density.py` does
+(`gaussian_kde` over `(E − minE)/N`, giving "State Density (config./eV)"). Alternatively, in
+temperature-free mode, histogram the discarded samples of `samples.csv` *weighted by their
+prior weights* `w_i` per energy bin. For the **temperature-dependent flat-vs-island
+probability**, split the posterior samples into the two growth modes by the Fe island height
+`Δz = max(Fe z) − min(Fe z)` (as in `gpr_accuracy.py --fez`), compute each mode's state density
+`g_flat(E)`, `g_island(E)`, and form `P_mode(T) = ∫ g_mode(E)·exp(−(E−E_ref)/(k_B T)) dE / Z(T)`.
+At low T the lower-energy island mode dominates; as T rises the higher-entropy (flat) mode
+gains weight. This is the island-growth manuscript result: island peak at 0.074 eV/atom,
+metastable flat peak at 0.255 eV/atom.
+
+**How do papers use the NS result / what analysis do they do?** They construct
+temperature-dependent **phase diagrams** from `Z(T)` and locate **phase transitions via peaks
+in the heat capacity** `C_V = k_B β² ∂²lnZ/∂β²`; map the PES into **energy-landscape charts**
+(basins); compute **free energies / Bayes factors** from `ΔlnZ`; and use the weighted posterior
+ensemble for **structure statistics** per phase. Examples: Pártay 2021 (pressure–temperature
+phase diagrams of bulk LJ/Al/Fe), Yang 2024 (coverage–temperature surface phase diagrams),
+Chatbipho 2025 (adsorbate phase transitions on nanoclusters). Temperature-free post-processing
+is what lets one sample set yield `Z(T)`, `F(T)`, `C_V(T)` for all temperatures.
 
 **What is model evidence?** Model evidence is `Z`, the normalization constant of the
 posterior `Z = ∫ L(x)·π(x) dx`. It answers "how much total probability (likelihood ×
@@ -72,6 +177,30 @@ function**, so it is the quantity from which the free energy `F = −k_B T ln Z`
 other thermodynamic averages are obtained. (The earlier "What is the evidence" note in the
 What-it-does section covers the same concept; this is the "model evidence" phrasing used
 in the Bayesian literature.)
+
+**What is free energy, and how do I compute it?** The **free energy** `F = −k_B T ln Z`
+is the thermodynamic potential of the ensemble; it encodes the balance between energy and
+entropy at temperature `T`, and all equilibrium properties derive from it. You calculate it
+directly from your result: in temperature-free mode `thermodynamics.csv` already contains
+`F = −k_B T ln Z` per temperature (written by `main.py` post-processing); in fixed-T mode use
+the accumulated `log Z` with `F = −k_B T·logZ`.
+
+**What is the "weight" and its relation to `Z`?** Each discarded sample has a
+configuration-space weight `w_i = Γ(E_{i−1}) − Γ(E_i) = ΔX_i = exp(−i/K) − exp(−(i+1)/K)` —
+the fraction of the (normalized) prior volume that sample represents. **Relation to `Z`:**
+`Z = Σ_i w_i·L_i`, i.e. `Z` is the sum over all samples of (prior-volume weight × likelihood);
+the weights are the quadrature integration weights of NS.
+
+**How do we count the weight?** In `NestedSampler.step()`, `X_prev = exp(−i/K)`,
+`X_this = exp(−(i+1)/K)`, `delta_X = X_prev − X_this`. In temperature-free mode this `delta_X`
+is stored in `sample_prior_weights`; in fixed-T mode the posterior weight is
+`log(w) = log_L_min + log(delta_X)`.
+
+**How do we build `Z` from weight + energy in the NestedSampler?** Fixed-T: each step does
+`log_Z = np.logaddexp(log_Z, log(exp(log_L_min)·delta_X))`, plus a final live-set correction.
+Temperature-free: `NestedSampler.evaluate(beta)` computes `Z(β) = Σ_i w_i·exp(−β(E_i − E_ref))`
+via the numerically stable `_logsumexp(log w + log L)`, plus the final live-point term — one
+call per `--temperatures` value.
 
 **What did they do?** The pipeline: (1) load all seed structures, (2) train a single GPR
 surrogate on them, (3) run `NestedSampler` to sweep the configuration space from high to
@@ -89,6 +218,18 @@ post-processing by `sampler.evaluate(beta)` and written to `thermodynamics.csv`
 (columns T, β, logZ, Z, F). So the `Z` result is in those CSVs, one row per iteration
 (for the run) or one row per temperature (for the temperature-free scan).
 
+**How do papers define convergence / when is `Z` converged?** Nested sampling is exact
+once it has consumed (almost) all the prior volume, so the practical criteria are: (1) **`log Z`
+plateaus** — plotting `log Z` vs iteration (`evidence_history.csv`), the curve flattens and
+changes by less than a small tolerance (typically ≲ 0.1–0.5 nats) between iteration blocks;
+(2) **the energy limit has descended** — the worst-live-point energy / `log_L_boundary` has
+reached (below) the global-minimum / structural phase-transition region; (3) **remaining prior
+volume is negligible** — `X_final = exp(−n_iters/K)` is tiny, so the live-set correction no
+longer changes `Z` materially; and (4) the **statistical error** `∝ Z/√K` is small enough for
+your purpose. Papers run until `X` is negligible (the top-down pass has eaten the whole prior
+volume). Our code stops at a fixed `--n-iters`; you check convergence by plotting `log Z` vs
+iteration for a plateau and by inspecting `X_final`.
+
 **How to plot it?** Plot `Z` (or `log Z`) against the **iteration** from
 `evidence_history.csv` to see the evidence converge; or plot `log Z` / `Z` and
 `F = −k_B T ln Z` against **temperature** from `thermodynamics.csv` to see the
@@ -97,12 +238,38 @@ temperature dependence. The state-density analysis (`analysis/conf_space.png`,
 Boltzmann probability vs T. There is no dedicated "Z vs T" plot currently written by the
 code — if you want one, it is a small addition (plot `thermodynamics.csv`).
 
+**How to make the new `Z`-vs-`T` / `F`-vs-`T` plot.** `thermodynamics.csv` has columns
+`T_K, beta_eV-1, logZ, Z, F_eV` (one row per temperature). Plot it with a small standalone
+script (using the `agox_v2` python):
+```python
+import numpy as np, matplotlib.pyplot as plt
+d = np.loadtxt("ns_output_tfree/thermodynamics.csv", delimiter=",", skiprows=1)
+T, logZ, F = d[:,0], d[:,3], d[:,4]
+fig, ax = plt.subplots(1, 2, figsize=(9,4))
+ax[0].plot(T, logZ, "o-"); ax[0].set(xlabel="T (K)", ylabel="log Z")
+ax[1].plot(T, F, "s-");  ax[1].set(xlabel="T (K)", ylabel="F = -k_B T ln Z (eV)")
+plt.tight_layout(); plt.savefig("thermodynamics_Z_F.png", dpi=300)
+```
+For the heat capacity, add `C_V(T)` from a numerical second difference of `log Z` vs
+`β = 1/(k_B T)`: `C_V = k_B·β²·d²(lnZ)/dβ²` (peaks mark phase transitions). This is the small
+addition the text above ("no dedicated Z vs T plot") refers to, now spelled out. (If you want,
+I can generate this script and run it against a specific temperature-free run dir.)
+
 **What do we need `log Z` for?** (1) **Numerical stability** — `Z` under/overflows
 float64 (range ~`10⁻²⁴²`→`10⁻⁴`), `log Z` does not. (2) **Thermodynamics** — the free
 energy is `F = −k_B T ln Z`, and derivatives of `ln Z` w.r.t. `β` give mean energy and
 heat capacity (heat-capacity peaks mark phase transitions). (3) **Bayesian model
 comparison** — differences in `log Z` between models give Bayes factors. So `log Z` is
 the robust quantity the code keeps and that you use for all the physics and statistics.
+
+**What is heat capacity, how is it computed here, why does it matter?** Heat capacity
+`C_V = ∂⟨E⟩/∂T` measures how much energy the system absorbs per unit temperature rise. It is
+computed from the partition function as `C_V = k_B β² ∂²lnZ/∂β²`. In this sampling you already
+have `ln Z(β)` at many temperatures (`thermodynamics.csv`), so `C_V(T)` follows from a numerical
+second derivative of `ln Z` with respect to `β = 1/(k_B T)`. **Why it matters:** a peak in
+`C_V(T)` is the standard thermodynamic signature of a phase transition — the hallmark NS
+analysis (Pártay 2021 etc.). Here it would locate the flat↔island (and any solid↔liquid)
+transitions directly from your `Z` data.
 
 ## Environment
 
@@ -168,11 +335,64 @@ set yields $Z(T)$, $F(T)$, $C_V(T)$, and the temperature-dependent posterior for
 of interest. (The default fixed-T mode instead puts $\beta$ inside the likelihood, giving
 a single-temperature run.)
 
+**How does nested sampling decide what to sample?** It keeps a set of `K` live points.
+Each iteration it (1) removes the **worst** live point (lowest `log L` / highest energy),
+(2) shrinks the prior volume and records the sample's weight, and (3) **replaces** the removed
+point with a new structure drawn from the prior but **constrained to be better than the current
+boundary** — `sample_constrained()` repeatedly draws until it finds a structure with
+`log L > log_L_boundary` (equivalently, in temperature-free mode, energy below the current
+worst-energy limit) and `|E| < 1e4`; if none after 500 attempts it falls back to an
+unconstrained prior draw. So sampling is a repeated *random draw from the DB distribution +
+small perturbation*, filtered by the likelihood/energy threshold.
+
+**What is `w_i` in the equation, and how is it computed?** `w_i` is the prior-volume
+(configuration-space) weight of sample `i`: `w_i = Γ(E_{i−1}) − Γ(E_i) = ΔX =
+exp(−i/K) − exp(−(i+1)/K)`, computed in `step()` as `delta_X`. It is the fraction of the
+normalized prior volume that sample represents. It is used because `Z = Σ_i w_i·L_i` — the
+weights turn the sequence of samples into a numerical integration of `Z` over the prior volume.
+
+**What is `n_live` and how does it relate to `log L`, `Z`, and the top-down pass?** `n_live`
+(`K`) is the number of live points. It sets the shrinkage rate (`X_i = exp(−i/K)`) and thus
+the resolution/noise of the `Z` estimate (error `∝ 1/√K`): more live points → each iteration
+consumes a smaller volume slice → finer, lower-variance evidence. The top-down pass removes
+points worst-first, so it naturally descends energy levels, and `K` is how many samples coexist
+at each level.
+
+**How is one top-down step performed here (and does it use the DB throughout)?** A step is NOT
+just a single 0.01 Å perturbation. `step()`: find the worst live point (`argmin log L`), shrink
+the prior volume (`ΔX`), accumulate evidence / record the weight, then replace the worst point
+via `sample_constrained()` — which copies a **random structure from the database** and adds a
+Gaussian perturbation (amplitude `perturb = 0.01 Å`) to the Fe atoms (`perturb_indices`).
+**Initial structures:** `initialize()` draws `n_live` such DB-resample + perturb structures with
+no boundary constraint yet. **The database stays the pool for the whole run:** `sample_from_prior()`
+is the *only* source of new structures, and every call (initial and every replacement) picks a
+random DB structure (`idx = rng.integers(0, len(db_structures))`) and perturbs it. So yes — the
+sampler keeps re-initializing from the DB at every step; it never evolves the removed point (no
+clone-and-MC decorrelation walk, the modelling gap vs the papers noted above).
+
 **Contrast with the fixed-T mode.** In fixed-T mode, `log L = -β·(E − E_ref)` ranks the
 live set, so the whole run is tied to one temperature and $Z$ is that temperature's
 partition function. In temperature-free mode, `log L = −(E − E_ref)` ranks by energy
 alone; $\beta$ never enters sampling, and `evaluate(β)`/`posterior_at(β)` turn the
 recorded $(E_i, w_i)$ into $Z(\beta)$ and the posterior at any temperature.
+
+**Difference between fixed-T and temperature-free in the equations.** Fixed-T:
+`log L = −β(E − E_ref)` → `L(x) = exp(−β(E − E_ref))`, so `β` (the temperature) is inside the
+sampling likelihood and `Z` is that single temperature's partition function. Temperature-free:
+`log L = −(E − E_ref)` → `L(x) = exp(−(E − E_ref))`, no `β`; `β` appears only in post-processing
+as `Z(β) = Σ_i w_i·exp(−β(E_i − E_ref))`.
+
+**Why can we even drop `β` from the equation?** Because the top-down NS pass is
+temperature-independent: it only needs to *rank* configurations by energy (a strictly decreasing
+energy limit), and multiplying the exponent by `β` (a positive constant) does not change that
+ranking — it changes only how the recorded `(E_i, w_i)` are re-weighted. So `β` can be moved
+entirely to post-processing without changing which samples are collected.
+
+**What does each represent?** Fixed-T represents a single-thermodynamic-state estimate: all
+sampling is focused at one temperature and yields that temperature's `Z` (and weighted
+posterior). Temperature-free represents a complete thermodynamic function of `T`: one sample set
+yields `Z(T)`, `F(T)`, `C_V(T)`, and the temperature-dependent posterior for every temperature
+of interest, because the energy levels and weights are `β`-independent.
 
 **From $Z$ to observables.** The code writes `thermodynamics.csv` with columns
 T, β, logZ, Z, and `F = −k_B T ln Z`. Derivatives of $\ln Z$ with respect to $\beta$
