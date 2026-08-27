@@ -14,10 +14,11 @@ module load intel
 module load impi
 
 echo "GPR accuracy, 50-fold CV, bin-width 0.1 (Fe_z system), B-doped dataset."
-echo "Params (--cv-folds / --bin-width): see TUTORIAL.md."
+echo "Params (--cv-folds / --bin-width / --e-max-per-atom): see TUTORIAL.md."
 
 OMP_NUM_THREADS=1 python ./gpr_accuracy.py \
     --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
+    --e-max-per-atom -5.2 \
     --output ./out_fez
 
 echo "Done."

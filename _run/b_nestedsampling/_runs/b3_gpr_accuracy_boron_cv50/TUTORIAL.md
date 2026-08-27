@@ -18,19 +18,25 @@ dataset — identical parameters to `_runs/b1_gpr_accuracy_cv10_bin005`, but on
 Fe25Mg25O25B7 (496 structures):
 
 ```
-gpr_accuracy.py --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 --output ./out_fez
+gpr_accuracy.py --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
+                --e-max-per-atom -5.2 --output ./out_fez
 ```
 
 50-fold CV trains 50 GPRs (one per fold); ~10 test structures per fold on this
-smaller 496-structure set. Higher CV → robust held-out pooling but **slower**
-(50 GPR trainings — expect several hours on HPC).
+smaller 452-structure (post-cut) set. Higher CV → robust held-out pooling but
+**slower** (50 GPR trainings — expect several hours on HPC).
+
+`--e-max-per-atom -5.2` drops structures with E/atom > −5.2 eV (the high-energy
+outliers from seeds 2-4 that otherwise break the GPR fit). See README.md "Error
+explanation & fix".
 
 ## Step 1 — Local run (validate on a small scale first if desired)
 
 ```bash
 cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b3_gpr_accuracy_boron_cv50
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
-    --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 --output ./out_fez
+    --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
+    --e-max-per-atom -5.2 --output ./out_fez
 ```
 
 For a quick local sanity check you can lower `--cv-folds` (e.g. 5) temporarily; the

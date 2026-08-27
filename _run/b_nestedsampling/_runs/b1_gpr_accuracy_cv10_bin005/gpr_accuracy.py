@@ -58,7 +58,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import sys
@@ -252,6 +252,12 @@ def main():
                    help="Number of DB structures to rattle (sample size, default 200).")
     p.add_argument("--rattle-copies", type=int, default=5,
                    help="Rattled copies per structure per amplitude (default 5).")
+    p.add_argument("--e-max-per-atom", type=float, default=None,
+                   help="Exclude structures with E/atom above this threshold "
+                        "(eV/atom) before GPR training AND evaluation (both CV and "
+                        "in-sample). Use to drop high-energy outlier structures that "
+                        "break the GPR fit, e.g. --e-max-per-atom -2.5. Default: "
+                        "None (keep all).")
     args = p.parse_args()
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -264,6 +270,21 @@ def main():
     print(f"  Total: {len(structures)} structures, {len(db_paths)} databases")
     print(f"  Composition: {structures[0].get_chemical_formula()} "
           f"({n_atoms} atoms)")
+
+    # 1b. Optional high-energy outlier exclusion (in-place, before training + eval)
+    if args.e_max_per_atom is not None:
+        e_per_atom = np.asarray(energies, dtype=float) / n_atoms
+        keep = e_per_atom <= args.e_max_per_atom
+        n_drop = int((~keep).sum())
+        structures = [s for s, k in zip(structures, keep) if k]
+        energies = np.asarray(energies, dtype=float)[keep]
+        print(f"  --e-max-per-atom {args.e_max_per_atom}: dropped {n_drop} "
+              f"high-energy structures (E/atom > {args.e_max_per_atom}); "
+              f"{len(structures)} remain")
+        if len(structures) == 0:
+            raise SystemExit(f"No structures remain after E/atom > "
+                             f"{args.e_max_per_atom} exclusion.")
+
     mode_tag = f"{args.cv_folds}-fold CV" if args.cv else "in-sample"
 
     # 2. Evaluate
@@ -278,6 +299,7 @@ def main():
         pooled_dE, pooled_err = [], []
         pooled_std = [] if args.uncertainty else None
         fold_metrics = []
+        n_unphys_total = 0
         for f in range(args.cv_folds):
             tr_idx = np.where(folds != f)[0]
             te_idx = np.where(folds == f)[0]
@@ -291,12 +313,21 @@ def main():
                     pooled_std.append(np.asarray(unc).ravel()[0] / n_atoms)
                 else:
                     e_pred = gpr.predict_energy(structures[i])
+                e_pred = float(np.asarray(e_pred).ravel()[0])
+                # physical filter: exclude off-manifold extrapolations (|E|>1e4 eV)
+                if abs(e_pred) > 1e4:
+                    n_unphys_total += 1
+                    continue
                 pooled_dE.append(dE_per_atom[i])
                 pooled_err.append((e_pred - E_DFT[i]) / n_atoms)
-            # per-fold overall error
-            fe = np.array([(gpr.predict_energy(structures[i]) - E_DFT[i])
-                           / n_atoms for i in te_idx])
-            fold_metrics.append(float(np.mean(np.abs(fe))))
+            # per-fold overall error (physical only)
+            fe = []
+            for i in te_idx:
+                e_pred = float(np.asarray(gpr.predict_energy(structures[i])).ravel()[0])
+                if abs(e_pred) <= 1e4:
+                    fe.append((e_pred - E_DFT[i]) / n_atoms)
+            if fe:
+                fold_metrics.append(float(np.mean(np.abs(fe))))
         pooled_dE = np.array(pooled_dE)
         pooled_err = np.array(pooled_err)
         if pooled_std is not None:
@@ -316,6 +347,9 @@ def main():
               f"{[f'{x:.4f}' for x in fold_metrics]}")
         print(f"  Fold-averaged overall MAE = {fold_mean:.4f} +/- {fold_std:.4f} "
               f"eV/atom")
+        if n_unphys_total:
+            print(f"  Excluded {n_unphys_total} unphysical predictions "
+                  f"(|E|>1e4 eV)")
         # CSV (pooled) + a fold-averaged summary row appended
         csv_path = out / csv_name
         _write_csv(csv_path, rows)
@@ -331,10 +365,19 @@ def main():
         print("\nTraining GPR on combined dataset...")
         gpr = build_gpr(structures, use_ray=args.use_ray)
         print("\nPredicting energies on the training set...")
-        E_pred = np.array([gpr.predict_energy(a) for a in structures])
+        E_pred_all = np.array([float(np.asarray(gpr.predict_energy(a)).ravel()[0])
+                               for a in structures])
         E_DFT = np.asarray([a.get_potential_energy() for a in structures])
-        dE_per_atom = (E_DFT - E_DFT.min()) / n_atoms
-        err_per_atom = (E_pred - E_DFT) / n_atoms
+        dE_all = (E_DFT - E_DFT.min()) / n_atoms
+        # physical filter: exclude off-manifold extrapolations (|E|>1e4 eV)
+        phys_mask = np.abs(E_pred_all) <= 1e4
+        E_pred = E_pred_all[phys_mask]
+        dE_per_atom = dE_all[phys_mask]
+        E_DFT_masked = E_DFT[phys_mask]
+        err_per_atom = (E_pred - E_DFT_masked) / n_atoms
+        n_unphys_total = int((~phys_mask).sum())
+        if n_unphys_total:
+            print(f"  Excluded {n_unphys_total} unphysical predictions (|E|>1e4 eV)")
         std_per_atom = None
         if args.uncertainty:
             print("  Computing model uncertainty (predict_energy_and_uncertainty)...")
@@ -342,7 +385,7 @@ def main():
             for a in structures:
                 _, unc = gpr.predict_energy_and_uncertainty(a)
                 std_pts.append(np.asarray(unc).ravel()[0] / n_atoms)
-            std_per_atom = np.array(std_pts)
+            std_per_atom = np.array(std_pts)[phys_mask]
         rows, overall, edges, n_bins = bin_metrics(
             dE_per_atom, err_per_atom, args.bin_width, n_atoms)
         title = (f"GPR accuracy vs energy range  (in-sample, bin width = "
@@ -672,7 +715,13 @@ def _write_csv(csv_path, rows):
 
 
 def bin_mean_std(dE, std, edges, n_bins):
-    """Per-bin mean of a per-point quantity (e.g. model std), aligned with bin_metrics rows."""
+    """Per-bin mean of a per-point quantity (e.g. model std), aligned with bin_metrics rows.
+
+    Only NON-EMPTY bins are returned (in the same order as the rows produced by
+    bin_metrics / bin_metrics_x, which skip empty bins). This keeps the length
+    consistent with the plot/CSV arrays (centers, mae, ...) so matplotlib errorbar
+    does not fail with a shape mismatch when the data has empty bins.
+    """
     dE = np.asarray(dE, dtype=float)
     std = np.asarray(std, dtype=float)
     means = []
@@ -680,9 +729,8 @@ def bin_mean_std(dE, std, edges, n_bins):
         e0, e1 = edges[b], edges[b + 1]
         m = (dE >= e0) & (dE < e1)
         if int(m.sum()) == 0:
-            means.append(float("nan"))
-        else:
-            means.append(float(np.mean(std[m])))
+            continue          # skip empty bins -> align with rows
+        means.append(float(np.mean(std[m])))
     return means
 
 

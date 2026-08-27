@@ -984,3 +984,51 @@ into `sys.path`, so `scripts.plot_structure_landscape` resolves from
   include `nested_sampling/scripts/plot_structure_landscape.py`.
 
 **Time:** 2026-08-27 ~12:21–12:26 JST.
+
+---
+
+## Session 2026-08-27 — Fix b3_gpr_accuracy_boron_cv50 run error
+
+**Context (user-reported HPC error):** `b3_gpr_accuracy_boron_cv50` crashed at the
+plot with `ValueError: 'yerr' (shape: (57,)) ... shape matches 'y' (shape: (22,))`,
+and the printed metrics were unphysical (~10⁹ eV/atom, R² ~ −10²⁰). The user asked to
+explain why and fix it, saving the explanation in the run's README.md.
+
+**Root causes (confirmed):**
+1. **Empty-bin length mismatch bug:** `bin_mean_std()` returned one value per grid bin
+   (empty → NaN), but `rows`/`centers`/`mae` from `bin_metrics()` skip empty bins.
+   The boron data (bins spanning 0–5.6 eV/atom, many empty) triggered a length
+   mismatch → `errorbar` crash.
+2. **High-energy outliers break the GPR fit:** seeds 2-4 contain structures with
+   E/atom up to −0.23 eV (dE above min ≈ 5.6 eV/atom vs ~0.67 for plain Fe/MgO). The
+   GPR could not fit such a wide landscape (even in-sample predictions were
+   −7140..+6296 eV), and CV held-out predictions were almost all unphysical → empty
+   pooled errors → crash.
+
+**Clarify decisions (all user-confirmed):**
+1. Fix `bin_mean_std` to skip empty bins (aligned with rows).
+2. Keep both code fixes; add `|E|<1e4` physical filter to prediction loops.
+3. Add `--e-max-per-atom <eV/atom>` flag (in-place outlier exclusion, controllable).
+4. b3 uses `--e-max-per-atom -5.2` (452 structures, spread ~0.67 eV/atom, matching the
+   working Fe/MgO set).
+5. Also write a DISCUSSION.md in the b3 run output.
+
+**Actions taken (`gpr_accuracy.py` 1.4.0 → 1.5.0):**
+- `bin_mean_std()` now skips empty bins (fixes the errorbar crash).
+- Added `|E|<1e4` physical filter to CV + in-sample prediction loops (exclude/count
+  unphysical predictions).
+- Added `--e-max-per-atom` flag (drops structures with E/atom above threshold before
+  training AND eval, both CV and in-sample).
+- Re-copied fixed `gpr_accuracy.py` (v1.5.0) into b3 and b1 run dirs.
+- Updated `j_b3_gpr_accuracy_boron_cv50.sh` to `--e-max-per-atom -5.2`.
+- Wrote the **error explanation** into `b3/README.md`, a `b3/DISCUSSION.md`, updated
+  `b3/TUTORIAL.md`, project-root README.md (+ `--e-max-per-atom` doc), VERSIONS.md.
+
+**Results / verification (real output):**
+- In-sample on the -5.2-cut set: predictions −481.7..−426.9 eV (physical), 0
+  |E|>1e4, MAE 0.0002 eV/atom → GPR fits.
+- 5-fold CV smoke with `-5.2`: **B3_SMOKE4_EXIT=0**; fold-averaged MAE = 0.0086 ±
+  0.0006 eV/atom, overall MAE=0.0086 / RMSE=0.0118 / R²=0.996, model std 0.0083,
+  Fe_z + energy-range CSVs/plots + DISCUSSION written. Physical, meaningful results.
+
+**Time:** 2026-08-27 ~13:00–13:26 JST.
