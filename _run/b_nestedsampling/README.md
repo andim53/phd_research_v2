@@ -17,8 +17,6 @@ Status: re-hosted under the AI-Agent Project Workflow (migrated from
    KDE state density + Boltzmann probability vs temperature), comparing the
    posterior samples against the training set.
 
-Notes:
-
 **What is the `log L` in nested sampling?** `L` is the **likelihood** — a measure of how
 "good" a structure is. In the fixed-T mode it is `L(x) = exp(-β·(E(x) − E_ref))`, so a
 structure is more likely the lower its GPR-predicted energy is. In temperature-free mode
@@ -64,8 +62,6 @@ overflow and giving a clean, physically sensible reference point.
 The central output is the **model evidence / partition function `Z`** (and
 `log Z`) for the Fe/MgO system at a given temperature, plus the weighted
 posterior set of structures.
-
-Notes:
 
 **What is model evidence?** Model evidence is `Z`, the normalization constant of the
 posterior `Z = ∫ L(x)·π(x) dx`. It answers "how much total probability (likelihood ×

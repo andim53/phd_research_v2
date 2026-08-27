@@ -1434,3 +1434,17 @@ grounded in the actual code (NestedSampler, np.logaddexp, evidence_history.csv,
 thermodynamics.csv, evaluate()).
 
 **Time:** 2026-08-27 ~20:56–21:02 JST.
+
+---
+
+## Session 2026-08-27 — Remove the Notes: flags from README.md
+
+**Goal (user request):** Remove the `Notes:` header lines now that the answers are
+inline.
+
+**Action taken:** removed both `Notes:` markers in README.md (the two conceptual-answer
+blocks now stand on their own without the Notes: flag).
+
+**Verification:** no `^Notes:` lines remain.
+
+**Time:** 2026-08-27 ~21:02–21:05 JST.
