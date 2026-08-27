@@ -1141,3 +1141,41 @@ structures for the nested sampling.
 the previous session on the boron dataset: 496 → 452 remain, sampling completes.)
 
 **Time:** 2026-08-27 ~16:50–16:55 JST.
+
+---
+
+## Session 2026-08-27 — Create HPC run dir b3_tfree_emax025 (temp-free NS, plain Fe/MgO)
+
+**Goal (user-confirmed via clarify):** New `_runs/` dir using the same system as
+`_analysist/1_result/1_no_prior_control` (plain Fe/MgO, no B), but in **temperature-free
+mode** with **`--e-max-per-atom 0.25`**.
+
+**Clarify decisions (all user-confirmed):**
+1. Run dir name: `b3_tfree_emax025`.
+2. Temperature-free mode: `--temperature-free --temperatures 100,200,300,500,1000`
+   (default list); same NS params as reference (`--n-live 100 --n-iters 1000
+   --perturb 0.01 --perturb-symbols Fe --rng 42`).
+3. Dataset: plain Fe/MgO (13 seeds, project-root `dataset/` copied as `dataset/`).
+4. `--e-max-per-atom 0.25` (relative to dataset min) in the job.
+
+**Actions taken:**
+- Created `_runs/b3_tfree_emax025/`; copied `main.py` (v1.2.0) + `nested_sampling/`
+  package + `dataset/` (13 Fe/MgO seeds) + required
+  `nested_sampling/scripts/plot_structure_landscape.py`.
+- Wrote `j_b3_tfree_emax025.sh` (bare PJM, 64 cores, gpaw_env) running the
+  temperature-free invocation with `--e-max-per-atom 0.25`.
+- Wrote per-run `README.md` + `TUTORIAL.md`.
+
+**Results / verification (real output):**
+- Compile OK (main.py + package); `sh -n` OK; package imports (scripts module present).
+- Dataset: 1297 structures, 0.675 eV/atom span; `--e-max-per-atom 0.25` keeps 971,
+  drops 326 — verified.
+- Local smoke (T-free, 200/300 K, n-live 20/n-iters 30): `SMOKE_EXIT=0`; dropped 326,
+  971 remain; GPR trained; Z ↑ and F less negative with T (T=200: Z=1.6e-16, F=0.627;
+  T=300: Z=6.6e-12, F=0.665); thermodynamics.csv + per-T posterior written.
+- git dry-run: code + docs tracked (29 files); `.db`/`.png` excluded.
+
+**Note:** 0.25 eV/atom cut on the ~0.675 span keeps the lowest-energy band (971/1297),
+focusing GPR + sampling on low-energy structures. Not executed on HPC yet.
+
+**Time:** 2026-08-27 ~17:17–17:24 JST.
