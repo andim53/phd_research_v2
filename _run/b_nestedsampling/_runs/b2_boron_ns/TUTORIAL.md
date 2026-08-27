@@ -59,6 +59,13 @@ Sanity checks:
 
 ## Pitfalls
 
+- **`scripts` module required (ModuleNotFoundError).** `nested_sampling/state_density.py`
+  does `from scripts.plot_structure_landscape import plot_structure_landscape`. For the
+  run to import, `plot_structure_landscape.py` MUST be present at
+  `nested_sampling/scripts/plot_structure_landscape.py` (resolved via the package dir
+  on sys.path). When creating an NS run dir, always copy it (e.g.
+  `cp <src>/plot_structure_landscape.py nested_sampling/scripts/`). This run was fixed
+  by adding it.
 - **Env:** job uses `gpaw_env`; if AGOX imports fail, edit `j_b2_boron_ns.sh` to
   `conda activate agox_v2`.
 - **Unphysical energies:** some boron seeds contain high-energy structures; the

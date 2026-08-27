@@ -950,3 +950,37 @@ on the **boron system**, using the same parameters as `_runs/b1_gpr_accuracy_cv1
 outliers (|E|<1e4 filter handles). Not executed locally.
 
 **Time:** 2026-08-27 ~03:00–03:08 JST.
+
+---
+
+## Session 2026-08-27 — Fix b2_boron_ns: missing scripts/ (plot_structure_landscape)
+
+**Context (user-reported HPC error):** `b2_boron_ns` failed at import with
+`ModuleNotFoundError: No module named 'scripts'` — `nested_sampling/state_density.py`
+(line 49) does `from scripts.plot_structure_landscape import plot_structure_landscape`,
+but the run dir had no `scripts/` module. This was an oversight when the run was
+created (only main.py + nested_sampling/ + dataset were copied).
+
+**Root cause (confirmed):** `state_density.py` inserts its own dir (`<run>/nested_sampling/`)
+into `sys.path`, so `scripts.plot_structure_landscape` resolves from
+`<run>/nested_sampling/scripts/plot_structure_landscape.py`. The project-root
+`nested_sampling/` has no `scripts/`; the reference (`1_no_prior_control`) had
+`nested_sampling/scripts/plot_structure_landscape.py`.
+
+**Clarify decisions (all user-confirmed):**
+1. Copy `plot_structure_landscape.py` into `b2_boron_ns/nested_sampling/scripts/`
+   (minimal, matches reference layout).
+2. Apply to b2; also document the required treatment in the notes (NS run-dir creation
+   must include this).
+
+**Actions taken:**
+- Created `b2_boron_ns/nested_sampling/scripts/` and copied
+  `dataset_boron/scripts/plot_structure_landscape.py` into it.
+- Verified: import resolves (`IMPORT OK`); full `nested_sampling` package (incl.
+  state_density) imports cleanly from the run dir → the error is fixed.
+- Added a **Pitfall** to `b2_boron_ns/TUTORIAL.md` (scripts module required when
+  creating NS run dirs).
+- Added a governing note to project-root `AGENTS.md` (§3a run dirs): NS run dirs must
+  include `nested_sampling/scripts/plot_structure_landscape.py`.
+
+**Time:** 2026-08-27 ~12:21–12:26 JST.

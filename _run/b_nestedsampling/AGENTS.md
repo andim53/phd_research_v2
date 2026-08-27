@@ -125,6 +125,17 @@ Documentation policy:
 project root (`cp main.py nested_sampling/*.py scripts/*.py <run>/`
 after a root change).
 
+**NS run dirs: required `scripts` module.** For nested-sampling runs, the
+`nested_sampling/state_density.py` module does
+`from scripts.plot_structure_landscape import plot_structure_landscape`. This
+resolves via the package dir on `sys.path`, so `plot_structure_landscape.py` MUST be
+present at `<run>/nested_sampling/scripts/plot_structure_landscape.py` — otherwise the
+run fails at import with `ModuleNotFoundError: No module named 'scripts'`. When
+creating/updating an NS run dir, always copy it
+(`cp <src>/plot_structure_landscape.py <run>/nested_sampling/scripts/`), where `<src>`
+is e.g. `dataset_boron/scripts/` or the reference
+`_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`.
+
 Everything under `_runs/` is **tracked in git** (code + docs), subject to the same
 regenerable-data exclusions.
 
