@@ -1273,3 +1273,25 @@ the user's reorganization). Clarify timed out; defaulted to renaming in place un
   its original name (only the archive copy was renamed per the request).
 
 **Time:** 2026-08-27 ~17:46–17:52 JST.
+
+---
+
+## Session 2026-08-27 — Rename source run _runs/b5_boron_ns_emax025 -> b5_boron_tfree_emax025
+
+**Context / correction:** The user clarified their intent: the dir to edit/rename is the
+**source** `_runs/b5_boron_ns_emax025` (already temperature-free from last session), NOT
+the `_analysist` archive. They confirmed renaming the source run to `b5_boron_tfree_emax025`
+to match the tfree mode.
+
+**Actions taken:**
+- `git mv _runs/b5_boron_ns_emax025 b5_boron_tfree_emax025`.
+- Updated README.md/TUTORIAL.md internal refs to `b5_boron_tfree_emax025`.
+
+**Verification:** no stale `b5_boron_ns_emax025` refs in README/TUTORIAL; `sh -n` on
+`j_b5_boron_ns.sh` OK (job script filename unchanged, dir renamed); git detects the
+rename.
+
+**Note:** This is tracked in git (unlike the gitignored `_analysist` archive). The
+earlier rename of the `_analysist` archive copy stands.
+
+**Time:** 2026-08-27 ~17:54–17:58 JST.

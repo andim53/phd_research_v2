@@ -1,6 +1,6 @@
-# Run b5_boron_ns_emax025 — Temperature-free NS on B-doped Fe/MgO
+# Run b5_boron_tfree_emax025 — Temperature-free NS on B-doped Fe/MgO
 
-Run directory: `_runs/b5_boron_ns_emax025/` (self-contained, launchable on HPC)
+Run directory: `_runs/b5_boron_tfree_emax025/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.2.0 + `nested_sampling/`
 package) + the B-doped dataset (`dataset_boron/`, copied as `dataset/`).
 
@@ -47,7 +47,7 @@ Key features:
 ## Usage (local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_ns_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B \

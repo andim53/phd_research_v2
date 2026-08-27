@@ -1,4 +1,4 @@
-# TUTORIAL — Reproduce run b5_boron_ns_emax025 (temperature-free NS, B-doped Fe/MgO)
+# TUTORIAL — Reproduce run b5_boron_tfree_emax025 (temperature-free NS, B-doped Fe/MgO)
 
 Step-by-step guide to reproduce this run in isolation. Level: intermediate.
 
@@ -34,7 +34,7 @@ main.py --temperature-free --temperatures 100,200,300,500,1000 \
 ## Step 1 — Local run
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_ns_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B \
