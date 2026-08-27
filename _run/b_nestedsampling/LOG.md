@@ -1374,3 +1374,24 @@ change the stale `dataset_boron` copy).
 README.AI.md references the reference-only source.
 
 **Time:** 2026-08-27 ~20:46–20:50 JST.
+
+---
+
+## Session 2026-08-27 — Fix b2_boron_ns (same plot_structure_landscape 's' error)
+
+**Context:** b2 has the same stale `plot_structure_landscape.py` (from
+`dataset_boron/scripts/`, no `s=` arg) as b4/b5, which would crash the final
+state-density/landscape analysis with
+`TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`.
+
+**Actions taken:**
+- Copied the correct `plot_structure_landscape.py` (accepts `s=25`) from the reference
+  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
+  `b2_boron_ns/nested_sampling/scripts/`.
+- Documented the error + fix in `b2/README.md` ("Error explanation & fix") + updated
+  `b2/TUTORIAL.md` pitfall (correct source for plot_structure_landscape).
+
+**Verification (real output):** b2 corrected version accepts `s=` (default 25) and all
+kwargs `state_density.py` passes (none missing); compiles. Crash resolved.
+
+**Time:** 2026-08-27 ~20:48–20:52 JST.

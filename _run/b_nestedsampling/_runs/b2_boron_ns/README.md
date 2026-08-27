@@ -22,6 +22,29 @@ seed_0..4, ~100 structures each) and **B is included in the perturbation** via
 (relative energy), dropping the high-energy outliers (452 of 496 remain) so the GPR
 fit is not broken — same control as the GPR-accuracy code.
 
+## Error explanation & fix (this run)
+
+**Observed failure (same as b4/b5):** the run can crash at the final
+**state-density / landscape analysis** with
+
+```
+TypeError: plot_structure_landscape() got an unexpected keyword argument 's'
+```
+
+at `nested_sampling/state_density.py:130` (in `make_landscape`). The nested-sampling
+itself completes successfully; the crash is only in the optional landscape plotting.
+
+**Root cause:** the run's `nested_sampling/scripts/plot_structure_landscape.py` was
+copied from the stale `dataset_boron/scripts/` version, which does **not** accept an
+`s` argument, but the current `state_density.py` calls
+`plot_structure_landscape(..., s=5, ...)`.
+
+**Fix (applied):** copied the correct `plot_structure_landscape.py` (accepts `s=25`)
+from the reference `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`
+into `nested_sampling/scripts/`. Verified: accepts `s=` and all kwargs
+`state_density.py` passes (none missing); compiles. Resubmit `pjsub j_b2_boron_ns.sh`
+to complete the analysis.
+
 ## Dataset (boron)
 
 - Copied from `dataset_boron/` into this run as `dataset/` (main.py reads `./dataset`).
