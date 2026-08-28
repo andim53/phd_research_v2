@@ -2344,3 +2344,36 @@ DB density near 0.3 if under-sampled, not --perturb.
 list in the walk Usage section).
 
 **Time:** 2026-08-28 ~05:50 JST.
+
+
+---
+
+## Session 2026-08-28 — Create b6 analysis script in _analysist/0_analy
+
+**Goal (user request):** make a new analysis code in _analysist that analyzes the b6 run's
+samples.csv, final_live_energies.csv, and thermodynamics.csv.
+
+**Clarified (per standing rule):**
+- Scope: a single comprehensive script reading all 3 CSVs.
+- Location: _analysist/0_analy/ (staging dir).
+- Name: analyze_b6_outputs.py (--data + --outdir, default outdir <data>/analysis/analyze_b6).
+- Run it against the b6 data to verify.
+
+**Script created:** _analysist/0_analy/analyze_b6_outputs.py (v1.0.0). Reads the 3 CSVs and
+produces: (1) samples.csv -> energy-vs-iteration + prior_weight-weighted energy histogram (g(E)
+proxy) + cumulative weighted evidence vs iteration; (2) final_live_energies.csv -> live-energy
+histogram; (3) thermodynamics.csv -> Z/logZ/F vs T + heat capacity C_V(T); plus a combined summary
+figure and a printed summary.
+
+**Verification (real execution):** ran against
+_analysist/1_result/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04 -> outdir
+_analysist/0_analy/b6_analysis_out. 7 PNGs produced (all valid, file(1) confirmed). Summary:
+1000 discarded samples (E -430.94..-410.73 eV), 100 final live (-436.69..-430.94 eV), 5
+temperatures (logZ -40.09..-17.15), sum(w_i)=0.99995. Note: Cv ~1e-8..1e-19 (logZ vs beta nearly
+linear here -> no strong phase-transition peak in this T range); displayed 0.0000 due to 4-decimal
+rounding.
+
+**Git:** _analysist/0_analy/ and _analysist/1_result/ are gitignored (regenerable analysis
+artifacts, per AGENTS.md), so neither the script nor its outputs are committed; only this LOG is.
+
+**Time:** 2026-08-28 ~17:40-17:50 JST.
