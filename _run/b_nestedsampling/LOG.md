@@ -2377,3 +2377,33 @@ rounding.
 artifacts, per AGENTS.md), so neither the script nor its outputs are committed; only this LOG is.
 
 **Time:** 2026-08-28 ~17:40-17:50 JST.
+
+
+---
+
+## Session 2026-08-28 — Write DISCUSSION.md for b6 analysis
+
+**Goal (user request):** write a complete DISCUSSION.md in
+_analysist/0_analy/b6_analysis_out discussing all the results.
+
+**Deliverable:** _analysist/0_analy/b6_analysis_out/DISCUSSION.md (9 KB), grounded in the actual
+b6 run data. Sections:
+1. What was run and the 3 CSVs.
+2. Sampling / discarded-sample descent + energy window (samples -430.94..-410.73 eV; rel to
+   approx global min -436.69 eV = +0.077..+0.346 eV/atom, inside the 0.08-0.35 window -> windowed
+   start behaved as designed; live set converged to -436.69..-430.94).
+3. Prior-weight histogram g(E) proxy: weighted peak at ~-419.42 eV (~+0.23 eV/atom) - NS mass
+   accumulates where there is volume, not at the single global min.
+4. Final live distribution near the ground-state basin.
+5. Thermodynamics table (logZ -40.09..-17.15, F 0.35..1.48 eV); C_V ~ 0 (logZ vs beta nearly
+   linear -> no resolved first-order phase transition in 100-1000 K for this window).
+6. Cumulative weighted evidence sanity check: sum(w_i)=0.99995 == 1 - X_final = 1 - exp(-1000/100)
+   = 0.99995 (exact match).
+7. Overall interpretation + caveats (GPR not DFT, limited 1000 iters/100 live vs literature,
+   g(E) is a windowed proxy not full state density).
+8. Suggested next steps (larger n-live/iter, wider window to see C_V peak, cross-check vs DFT,
+   compare g(E) peak vs island 0.074 / flat 0.255 reference peaks).
+
+**Git:** _analysist is gitignored, so DISCUSSION.md is NOT committed (only this LOG).
+
+**Time:** 2026-08-28 ~17:55 JST.
