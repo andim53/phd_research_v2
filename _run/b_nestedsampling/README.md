@@ -1334,6 +1334,44 @@ Both codes compute the same two quantities — the partition function `Z` and th
 states `g(E)` — from the nested-sampling `(E_i, w_i)` trace, but with different implementation
 choices (log-space + GPR energies in Python vs linear + exact 1D energies in Fortran).
 
+**If your goal is to sample the ~0.3 eV/atom state fairly/uniformly, the low `--perturb` is
+NOT the blocker — the windowed seeding and the walk are the right tools.**
+
+The key point: `--perturb` controls how far a single prior draw strays from a DB structure; it
+does **not** decide whether the sampler visits the 0.3 eV/atom band. In b6, three mechanisms
+target that band:
+
+1. **Windowed seeding (`--e-window-lo 0.3 --e-window-hi 0.35`)** — pins the *initial* live set's
+   worst point into `[0.3, 0.35]` eV/atom, so the run *starts* in the band you care about.
+2. **`--e-max-per-atom 0.4`** — caps the DB pool to structures within 0.4 eV/atom, keeping the
+   relevant range.
+3. **The walk (`--walk`)** — explores the band with `--walk-small 0.05` / `--walk-large 0.40`,
+   providing the actual moves within it.
+
+So a low `--perturb 0.01` is fine for this goal — the walk supplies the exploration, and the
+windowed seeding anchors the start to ~0.3.
+
+**The important caveat (fairness / uniformity).** The windowed seeding only constrains the
+**initial** live set, NOT every subsequent draw. After initialization, `sample_from_prior()`
+still draws from the **whole DB** (which is dense near 0 eV/atom), and the walk clones *live*
+points. So whether the sampler *fairly/uniformly* covers the 0.3 eV/atom band over the whole run
+depends on:
+- **whether the DB actually has structures near 0.3 eV/atom** (if not, the prior has little mass
+  there and the walk can only reach it from nearby live points),
+- **the windowed seeding + walk together** keeping the live set in the band,
+- and **sufficient `--n-live`** so the band is adequately populated.
+
+**Recommendation for a fair/uniform sample of the 0.3 band specifically.** Keep the low
+`--perturb` (it avoids GPR extrapolation); rely on:
+- `--e-max-per-atom` to bound the pool near your range,
+- `--e-window-lo/hi` to start in the band,
+- `--walk` (and tune `--walk-large`) to move within/explore the band,
+- and a high enough `--n-live` so the band is well sampled.
+
+If you find the 0.3 region under-sampled, first check the DB's density near 0.3 eV/atom and/or
+raise `--n-live` / widen the window — not `--perturb`.
+
+
 **Is a higher `--perturb` better given the DB is biased toward low (≈0 eV/atom) energy?**
 
 Not necessarily — there is a real trade-off, and "better" depends on what you want the prior to do.

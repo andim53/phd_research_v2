@@ -2321,3 +2321,26 @@ walk or energy window, keep --perturb small.
 list in the walk Usage section).
 
 **Time:** 2026-08-28 ~05:40 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer sample-0.3-band-goal Notes block
+
+**Goal (user request):** answer the new 'Notes:' block: the user's actual goal is to fairly/uniformly
+sample the ~0.3 eV/atom higher-energy state; is the low --perturb a problem?
+
+**Clarified (per standing rule):** answer grounded in b6's design.
+
+**Answer written (flag removed):** the low --perturb is NOT the blocker for the 0.3 band — the
+windowed seeding (--e-window-lo 0.3 --e-window-hi 0.35) pins the initial live set to that band, and
+the walk explores it. Caveat: windowed seeding only constrains the INITIAL live set, not every
+subsequent draw (sample_from_prior still draws from the whole DB, dense near 0); fair/uniform
+sampling of ~0.3 depends on DB density near 0.3 + windowed seeding + walk + sufficient n-live.
+Recommendation: keep low perturb; use e-max + window + walk (tune walk-large) + high n-live; check
+DB density near 0.3 if under-sampled, not --perturb.
+
+**Verification:** 'Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate bulleted
+list in the walk Usage section).
+
+**Time:** 2026-08-28 ~05:50 JST.
