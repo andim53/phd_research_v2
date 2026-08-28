@@ -2107,3 +2107,38 @@ correctly labelled v1.3.0.)
 with the VERSIONS manifest.
 
 **Time:** 2026-08-28 ~03:40 JST.
+
+
+---
+
+## Session 2026-08-28 — Create run dir _runs/b6_tfree_walk_emax04 (Fe/MgO, e-max 0.4, window [0.3,0.35], dual-scale walk)
+
+**Goal (user request):** make a new _runs dir. It runs Fe/MgO-only nested sampling with:
+--e-max-per-atom 0.4 eV/atom above ground state; --e-window-lo 0.3 --e-window-hi 0.35 eV/atom
+above ground state, --e-window-max-attempts 1000; --walk-steps 50 --walk-small 0.05 --walk-large
+0.40 --walk-mode both.
+
+**Clarified (per standing rule):**
+- Name: b6_tfree_walk_emax04.
+- Settings: temperature-free, n-live 100, n-iters 1000, temperatures 100,200,300,500,1000,
+  perturb 0.01, perturb-symbols Fe, rng 42 + the specified flags.
+- Scope: full self-contained copy (main.py + nested_sampling/ + scripts/ + dataset 13 seeds +
+  j_*.sh + README + TUTORIAL), matching b4/b5.
+
+**Actions taken:**
+- Created _runs/b6_tfree_walk_emax04/ as a full self-contained copy from the project root
+  (main.py v1.4.0 + nested_sampling/ + scripts/), dataset (13 seeds seed_3..15 + stop_16).
+- Copied the CORRECT plot_structure_landscape.py (accepts s=) from
+  _analysist/1_result/1_no_prior_control/nested_sampling/scripts/ into
+  nested_sampling/scripts/ (avoids the 's' TypeError; verified s=25, normalize_density,
+  density_x_label, plot_z_vs_e params present).
+- Wrote j_b6_tfree_walk_emax04.sh (PJM, gpaw_env, OMP_NUM_THREADS=1) with the exact command line.
+- Wrote README.md + TUTORIAL.md describing the run treatment, flags, and verification.
+- py_compile OK for run main.py + nested_sampler.py; j script made executable.
+
+**Command line:** main.py --temperature-free --temperatures 100,200,300,500,1000 --n-live 100
+--n-iters 1000 --perturb 0.01 --perturb-symbols Fe --e-max-per-atom 0.4 --e-window-lo 0.3
+--e-window-hi 0.35 --e-window-max-attempts 1000 --walk --walk-steps 50 --walk-small 0.05
+--walk-large 0.40 --walk-mode both --output ./ns_output_tfree_walk_emax04 --rng 42
+
+**Time:** 2026-08-28 ~03:50-04:10 JST.
