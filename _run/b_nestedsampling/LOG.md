@@ -2277,3 +2277,24 @@ cosmetic formula difference (exp(-i/K) vs (K/(K+1))^i). Mirrors Fortran's dead_E
 bulleted list in the walk Usage section).
 
 **Time:** 2026-08-28 ~05:20 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer weight-update-ordering Notes block
+
+**Goal (user request):** answer the new '# Notes:' block asking whether the Fortran updates its
+weight_i after finding the new worst E_i, and what the Python does.
+
+**Clarified (per standing rule):** answer grounded in both codes' order.
+
+**Answer written (flag removed):** Both codes compute the weight WITHIN the same iteration, after
+identifying the worst point, and BEFORE replacing it. Fortran main loop: (1) maxloc worst ->
+(2) dead_E(iter) -> (3) dead_X(iter)=(K/(K+1))**iter -> (4) replace. Python step(): (1) argmin
+worst -> (2) delta_X=exp(-i/K)-exp(-(i+1)/K) -> (3) append (E_worst, delta_X) -> (4) replace. The
+weight uses the iteration index i at that step and is not tied to the new worst after replacement.
+
+**Verification:** '# Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate
+bulleted list in the walk Usage section).
+
+**Time:** 2026-08-28 ~05:30 JST.

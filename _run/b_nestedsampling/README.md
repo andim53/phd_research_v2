@@ -1399,6 +1399,46 @@ So `delta_X` in Python is precisely the Fortran's `weight_i = X_{i-1} − X_i`. 
 difference is the formula: Python uses `X_i = exp(−i/K)` while the Fortran uses
 `X_i = (K/(K+1))**iter` — these agree to leading order (`exp(−1/K) ≈ K/(K+1)`).
 
+**Order of the weight update relative to finding the worst point — Fortran vs Python.**
+
+Both codes compute the weight **within the same iteration, after identifying the worst point,
+and before replacing it**. Neither waits for the *new* worst point of the next iteration.
+
+**Fortran (`nested_sampling_windowed_fixed.f`, main loop lines 79–96):**
+```fortran
+do iter = 1, n_iterations
+  idx_worst = maxloc(walkers_E)                    ! (1) find the worst walker
+  dead_E(iter) = walkers_E(idx_worst)              ! (2) record its energy
+  dead_X(iter) = (K/(K+1))**iter                   ! (3) record the prior-volume weight
+  ... clone + constrained_walk ...                 ! (4) replace the worst
+end do
+```
+So Fortran: **(1) find worst → (2) record `dead_E` → (3) record `dead_X` → (4) replace**. The
+weight `dead_X(iter)` is computed at the top of the *same* iteration (using `iter`), i.e. right
+after identifying the worst point, and `dead_E(iter)` is that worst point's energy.
+
+**Python (`NestedSampler.step()`, lines 404–414):**
+```python
+worst_idx = np.argmin(self.live_log_L)             # (1) find the worst live point
+log_L_min = self.live_log_L[worst_idx]
+E_worst   = self.live_energies[worst_idx]
+i = self.iteration
+X_prev = np.exp(-i / self.n_live)                  # (2) X_{i-1}
+X_this = np.exp(-(i + 1) / self.n_live)            #    X_i
+delta_X = X_prev - X_this                          # (3) w_i = X_{i-1} - X_i
+... append E_worst, delta_X ...                    # (4) store (E_i, w_i)
+new_struct = self.sample_constrained()             # (5) replace the worst
+```
+Python: **(1) find worst → (2) compute `delta_X` → (3) append `(E_worst, delta_X)` → (4) replace**.
+The weight uses the iteration index `i` at that step.
+
+**Answer to the question.** Yes — in **both** codes the weight is updated/recorded **after** the
+worst point for that iteration is identified and **before** the replacement is made. The weight
+`w_i` always corresponds to the *current* iteration's shell (between `X_{i-1}` and `X_i`), and
+`E_i` is the worst point removed at that iteration. It is not tied to the *new* worst point that
+arises after replacement.
+
+
 **What is stored after each iteration (bookkeeping):**
 
 - **Temperature-free mode (`step()` lines 431–434):** it appends
