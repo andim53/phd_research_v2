@@ -733,6 +733,60 @@ downward from there (including the <0.25 structures), exactly as you want. NS th
 **So the recipe is just one flag:** `--e-max-per-atom 0.25` (plus `--n-live`/`--n-iters` as
 usual). No `--e-min-per-atom`, no rejection loop, no wasted data.
 
+**How to guarantee the initial live set's worst point lands in the 0.25±0.01 band.**
+
+Your concern is correct: with a uniform draw over a DB capped at 0.25 but dense near 0, the *max*
+of the `K` initial draws can still come out well below 0.25 (e.g. 0.1), because the worst is the
+highest of `K` independent draws and there are far more low-energy structures. To make the worst
+≈0.25 **guaranteed** (not just likely), you must **ensure at least one initial live point is
+seeded in the 0.24–0.26 band**, and ensure **none exceeds 0.25**. The other live points can stay
+wherever they land — nothing is discarded.
+
+Concretely, inside `initialize()` (lines 162–185), after filling the live set by the usual draws,
+**replace one of the draws with a point drawn from the band** `[0.24, 0.26]` eV/atom (intersected
+with the pool ≤0.25). Because the worst live point is `max(live_log_L)` → `E_boundary` (line 183),
+seeding one point in that band forces the worst to be at least that high, while the ≤0.25 cap keeps
+it from being higher. So the initial `E_boundary` lands **in the band**, and all other live points
+span downward (including the <0.25 structures).
+
+**Simplest robust implementation (pseudo-code):**
+
+```python
+# inside initialize(), instead of K purely uniform draws:
+#   1) first, seed ONE live point from the 0.24-0.26 band:
+while True:
+    s = sample_from_prior()
+    rel = (gpr.predict_energy(s) - E_ref) / N_atoms
+    if 0.24 <= rel <= 0.26 and abs(gpr.predict_energy(s)) < 1e4:
+        break
+live_structures.append(s); ...
+
+#   2) then draw the remaining K-1 live points as usual (uniform over the <=0.25 pool).
+```
+
+**Why "none above 0.25" is automatic here.** The prior pool is capped at ≤0.25 by
+`--e-max-per-atom 0.25`, so no drawn structure can exceed 0.25 anyway — the worst can never be
+above 0.25, and the seeded band point guarantees it is at least ~0.24.
+
+**Edge cases to handle:**
+- **Band may be empty / undersampled.** If the DB has no (or too few) structures in
+  `[0.24, 0.26]`, the `while True` seeding loop can spin. Mitigate: relax the band if not found
+  (e.g. accept the highest structure present ≤0.25), or error with a clear message. Since you only
+  need **one** such point, it is cheap unless the DB truly lacks the band.
+- **`≤` vs `<` at the boundary.** "Around 0.25±0.01" → band `[0.24, 0.26]`; use `<= 0.26` and
+  `>= 0.24`. Because the pool is capped at 0.25, the effective band is really `[0.24, 0.25]` — you
+  cannot exceed 0.25, so "worst ≈ 0.25" means "as close to 0.25 as the DB's band provides, within
+  [0.24, 0.25]".
+- **Determinism/RNG.** Seeding one point changes the draw; if you want reproducibility, keep the
+  same `--rng` and draw the band point first so the subsequent draws are unaffected.
+
+**Net effect.** This is a small, additive change to `initialize()`: seed one live point in the
+0.24–0.25 band (so the worst is pinned there) and cap the pool at 0.25 — all other structures,
+including everything below, are kept and span the live set. It directly answers "I don't want to
+start from 0.1; I want the worst ≈ 0.25±0.01," with nothing discarded and no rejection over the
+whole set.
+
+
 **Caveat on "exactly 0.25".** Because the draw is uniform over a *discrete* DB, the worst live
 point is pinned to the *highest structure actually present at or below 0.25* — which is typically
 ≈0.25 but not guaranteed to be exactly 0.25 (unless the DB has a structure at precisely that

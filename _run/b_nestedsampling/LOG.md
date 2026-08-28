@@ -1728,3 +1728,28 @@ energy; if pinning exactly to the pool top is required, seed one live point at t
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~00:40 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer guarantee-worst-in-band Notes block
+
+**Goal (user request):** answer the new `Notes:` block: the user wants to GUARANTEE the initial
+live set's worst point lands around 0.25±0.01 (not accidentally way below, e.g. 0.1), while
+keeping lower-than-0.25 structures.
+
+**Clarified (per standing rule):** frame it as seeding/ensuring at least ONE initial live point in
+the 0.24-0.26 band (and none above 0.25), so the worst is pinned to ~0.25 while all other live
+points stay wherever they land.
+
+**Answer written (flag removed):** explained the worst = max of K uniform draws, so it can land
+well below 0.25. Fix: inside initialize(), seed ONE live point drawn from the [0.24,0.26] band
+(intersected with pool <=0.25); the <=0.25 cap makes the worst never exceed 0.25, and the seeded
+band point makes it at least ~0.24, pinning initial E_boundary in-band; all other live points span
+downward (nothing discarded). Gave pseudo-code (seed one band point, then draw remaining K-1
+uniformly). Edge cases: band may be empty (relax or error); <=0.26/>=0.24 boundary; effective band
+is [0.24,0.25] since pool capped at 0.25; determinism (draw band point first under same --rng).
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~00:50 JST.
