@@ -1327,6 +1327,63 @@ step (`dataset/main.py`, all seeds 3..104) can be added back — see TUTORIAL.
 For literature-scale settings and the paper-derived parameter table, see
 `TUTORIAL.md` ("Literature-scale NS parameters").
 
+**How the Python code makes its Partition Function and State Density, compared to the
+Fortran toy.**
+
+Both codes compute the same two quantities — the partition function `Z` and the density of
+states `g(E)` — from the nested-sampling `(E_i, w_i)` trace, but with different implementation
+choices (log-space + GPR energies in Python vs linear + exact 1D energies in Fortran).
+
+**1. Partition function `Z`.**
+
+- **Fortran (`print_thermodynamics`, lines 179–205):** for each temperature `T`, it loops over
+  the discarded samples and builds the **linear** weighted Boltzmann sum
+  `Z = Σ_i weight_i · exp(−E_i / T)` where `weight_i = X_{i−1} − X_i` (the prior-volume shell).
+  Then `U = Σ w·E·exp(−E/T)/Z`, `F = −T·ln(Z)`, `S = (U−F)/T`. Energies are the exact 1D
+  potential; it is a plain scalar loop in double precision.
+
+- **Python (temperature-free, `NestedSampler.evaluate`, lines 526+):** computes the same
+  weighted sum but shifted by `E_ref` (the min training energy) and in **log space**:
+  `Z(β) = Σ_i w_i · exp(−β(E_i − E_ref))`, evaluated via the numerically stable
+  `_logsumexp(log w + log L)` (with `logL = −β(E−E_ref)`), plus a final live-set correction.
+  This is done per `--temperatures` value and written to `thermodynamics.csv`. Free energy
+  `F = −k_B T ln Z` is computed in `main.py`.
+
+- **Python (fixed-T, `step()` lines 416–424):** accumulates `Z` *incrementally during sampling*
+  with `np.logaddexp(self.log_Z, log(L_min·ΔX))` plus a final live-set correction — because in
+  fixed-T mode `β` is in the likelihood, the evidence is built up iteration by iteration in log
+  space.
+
+**Key difference for `Z`:** Fortran uses a **plain linear sum** (`exp(−E/T)`, no log-space) —
+fine for the toy's small, exact energies. Python uses **log-space accumulation** (`logaddexp` /
+`_logsumexp`) because real GPR energies are ≈ −400 eV with `β ≈ 40 eV⁻¹`, so likelihoods span
+hundreds of orders of magnitude and a linear `Z` under/overflows float64. Python also shifts by
+`E_ref` so the best structure has `E−E_ref = 0` and `exp` terms stay O(1).
+
+**2. Density of states `g(E)`.**
+
+- **Fortran (`convert_to_density_of_states`, lines 210–244):** a **bin histogram**. It fixes a
+  bin grid spanning `[island−0.15, flat+0.15]`, and for each sample adds its consumed prior
+  volume **per unit energy** to the sample's bin: `g(E) += ΔX / ΔE` (bin_width). Result is a
+  discrete `g(E)` histogram printed per bin center.
+
+- **Python (`state_density.py`):** computes `g(E)` as a **Kernel Density Estimate (KDE)** — it
+  smooths the discrete energies into a continuous density using `scipy.stats.gaussian_kde` over
+  the per-atom relative energies `(E − min)/N`. This produces `conf_space.png`,
+  `binding_probability_vs_temperature.png`, and a `comparison_state_density.png`. It is the
+  smoothed, analysis-ready counterpart to the Fortran's exact histogram.
+
+**Key difference for `g(E)`:** Fortran builds a **hard bin histogram** (`g = ΔX/ΔE`); Python
+builds a **smooth KDE** (`gaussian_kde`) for plotting/analysis. Both represent the same idea —
+the configuration-space density per unit energy from the `(E_i, w_i)` trace — but Python
+smooths it (and uses GPR energies normalized per atom).
+
+**Bottom line.** Same underlying recipe (`Z = Σ w·L`, `g = dX/dE` from the NS weights), but
+Python adds log-space numerics (mandatory for real GPR energies), the `E_ref` shift, per-atom
+relative energies, KDE smoothing, and writes structured CSVs/plots, whereas the Fortran toy uses
+plain linear sums and a hard histogram on the exact 1D potential.
+
+
 **`--perturb` vs `--walk` — order, what each does, interaction, and "only `--walk`".**
 
 **(1) Which comes first / order.** In the pipeline, `--perturb` "starts" first — it drives the

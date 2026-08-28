@@ -2227,3 +2227,30 @@ only --perturb 0 disables it (pure DB resample init), while the walk still works
 legitimate bulleted list in the walk Usage section).
 
 **Time:** 2026-08-28 ~05:00 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer Partition-Function/State-Density Python-vs-Fortran Notes block
+
+**Goal (user request):** answer the new '# Notes:' block asking how the Python code makes its
+Partition Function and State Density compared to the Fortran.
+
+**Clarified (per standing rule):** answer all aspects grounded in both codes (partition function
+fixed-T logaddexp + temperature-free evaluate() weighted sum vs Fortran plain exp(-E/T) sum;
+state density KDE vs bin histogram; numerical-stability log-space vs linear; E_ref shift).
+
+**Answer written (flag removed):**
+Z: Fortran print_thermodynamics = linear Z=sum(w·exp(-E/T)), U/F/S; Python temperature-free
+evaluate() = Z=sum(w_i·exp(-beta(E_i-E_ref))) via _logsumexp(log w + log L) + live-set correction,
+written to thermodynamics.csv; Python fixed-T step() accumulates log_Z via np.logaddexp. Key diff:
+Fortran linear, Python log-space (GPR energies ~-400 eV, beta~40) + E_ref shift.
+g(E): Fortran convert_to_density_of_states = bin histogram g += dX/dE; Python state_density.py =
+gaussian_kde (smoothed, per-atom relative energies) for conf_space/binding_probability PNGs.
+Bottom line: same recipe (Z=sum w·L, g=dX/dE) but Python adds log-space numerics, E_ref shift,
+per-atom normalization, KDE smoothing, and structured CSVs/plots.
+
+**Verification:** '# Notes:' flag removed (the remaining 'Notes:' at line ~480 is the legitimate
+bulleted list in the walk Usage section).
+
+**Time:** 2026-08-28 ~05:10 JST.
