@@ -1972,3 +1972,28 @@ extrapolation to unphysical energies.
 **Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
 
 **Time:** 2026-08-28 ~02:25 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer how-to-implement-Fortran-sampling Notes block
+
+**Goal (user request):** answer the new `Notes:` block asking how to apply the Fortran sampling
+method (two-scale Gaussian + MC walk) in Python.
+
+**Clarified (per standing rule):** explain conceptually how to implement it (add a clone-and-MC
+constrained_walk to sample_constrained, with small/large Gaussian scales and a walk-length
+n_steps; keep the GPR energy limit; note the perturb-symbols constraint); NO code change.
+
+**Answer written (flag removed):** gave a Python sketch of a constrained_walk() method (clone,
+two Gaussian scales small/large, n_steps, accept only if |E|<1e4 and E < E_boundary =
+E_ref - log_L_boundary), and how to call it inside sample_constrained by cloning a random
+surviving live point. Design points: walk length n_steps (Fortran mixing_steps=40; papers
+100s-1000s), two scales with the large-scale GPR-extrapolation caveat, respect perturb_indices
+(--perturb-symbols), keep the constrained E < E_boundary + |E|<1e4, clone a random non-worst live
+point. Noted why this closes the 'walk length L' gap (Python currently only re-draws from the DB;
+the walk lets a sample diffuse and cross the barrier).
+
+**Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
+
+**Time:** 2026-08-28 ~02:35 JST.

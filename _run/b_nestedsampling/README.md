@@ -637,6 +637,63 @@ tailored to a *continuous* 1D potential (Fortran); the Python single small pertu
 *surrogate-constrained* setting where large moves make the Fingerprint GPR extrapolate to
 unphysical energies.
 
+**How to implement the Fortran two-scale MC-walk sampling in Python.**
+
+The cleanest way is to add a **clone-and-MC-constrained-walk** method and use it inside
+`sample_constrained` (replacing the independent single draws with a correlated walk), exactly
+mirroring the Fortran's `constrained_walk`. Concretely:
+
+```python
+def constrained_walk(self, x0, n_steps=40, small=0.05, large=0.40):
+    """MC walk from a clone x0, keeping E below the current energy limit."""
+    x = x0
+    E_limit = self.E_ref - self.log_L_boundary      # current E_boundary
+    for _ in range(n_steps):
+        scale = large if self.rng.random() < 0.5 else small
+        noise = self.rng.normal(0, scale, (len(self.perturb_indices), 3))
+        trial = x.copy()
+        trial.positions[self.perturb_indices] += noise
+        Et = self.gpr.predict_energy(trial)
+        if abs(Et) < 1e4 and Et < E_limit:          # keep E below boundary
+            x = trial
+    return x
+```
+
+Then in `sample_constrained`, instead of (or as a fallback to) the independent rejection draws,
+**clone a random surviving live point** and walk it:
+
+```python
+# in sample_constrained: pick a random live structure as the clone
+idx = self.rng.integers(0, len(self.live_structures))
+x_new = self.constrained_walk(self.live_structures[idx].copy(),
+                              n_steps=walk_length, small=small_perturb,
+                              large=large_perturb)
+```
+
+**Design points to decide (all optional new CLI flags, e.g. `--walk-length`,
+`--small-perturb`, `--large-perturb`):**
+- **Walk length `n_steps`** — the Fortran uses `mixing_steps = 40`; longer = better decorrelation
+  but more GPR evaluations. The papers use L = 100s–1000s.
+- **Two scales** — small (local refinement) and large (barrier crossing). Choose them relative to
+  your `--perturb` and typical barrier width. **Caveat (from the Python-Fortran note):** the large
+  scale can make the Fingerprint GPR extrapolate to unphysical energies; keep the `|E| < 1e4`
+  guard and/or tune `large` conservatively.
+- **Which atoms move** — respect `perturb_indices` (the `--perturb-symbols` deposition layer), so
+  the substrate stays fixed, matching `sample_from_prior`.
+- **Constraint** — every accepted step must keep `E < E_boundary` (equivalently `log L >
+  log_L_boundary`) and `|E| < 1e4`; the Fortran uses exactly `E < E_max_local`. This is what makes
+  it a *constrained* walk and keeps the new sample inside the current prior-volume shell.
+- **Clone source** — pick a random surviving live point (like the Fortran's clone of a random
+  non-worst walker), NOT the discarded worst point. This gives the walk a valid starting
+  configuration already inside the region.
+
+**Why this closes the "walk length L" gap.** The current Python code only re-draws from the DB
+(no new configurations). Adding the walk lets a new sample *diffuse* within the allowed region and
+occasionally cross the barrier via a large step — exactly the clone-and-MC-decorrelate move the
+papers use, giving properly-weighted traffic between the flat and island basins that the
+independent-draw version cannot.
+
+
 
 **Does the Python code define an `E_max`? — the honest answer.** No — the Python
 `NestedSampler` does **not** set an explicit upper-energy `E_max` like the Fortran toy's
