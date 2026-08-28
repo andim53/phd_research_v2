@@ -650,6 +650,71 @@ above the minimum you would:
    restrict the prior to a window like `[0.05, 0.25]` eV/atom. Otherwise the prior includes the
    global minimum itself, so sampling will also touch the very lowest structures.
 
+**How to force NS to start from 0.25 eV/atom above the global minimum, regardless of the
+initial DB draw.**
+
+Your observation is correct: `initialize()` (lines 162–185) draws the `K` initial live points
+with `sample_from_prior()` — a **uniform draw over the DB + noise** with **no** energy condition.
+The worst of those (the highest-energy one) becomes the first `log_L_boundary`/`E_boundary`
+(line 183). Because the DB is dense near the ground state, most initial draws land at low energy,
+so the initial boundary is typically *much lower* than 0.25 eV/atom — i.e. the run effectively
+starts low, not at your chosen window top.
+
+**To force the start at the top (≈0.25 eV/atom), you must constrain the *initial* live draws, not
+just the prior pool.** Concretely, add a rejection condition inside `initialize()`'s draw loop so
+every initial live point satisfies a lower energy bound relative to the minimum. Conceptually:
+
+```python
+# pseudo-code for a forced-start initialize loop
+for i in range(n_live):
+    while True:
+        s = sample_from_prior()
+        E = gpr.predict_energy(s)
+        rel = (E - E_ref) / N_atoms               # eV/atom above the global minimum
+        if abs(E) < 1e4 and rel >= e_min_per_atom: # e.g. >= 0.25
+            break
+    live_structures.append(s); ...
+```
+
+Here `e_min_per_atom` is the lower bound you want the *initial* live points to sit above — e.g.
+`0.25`. This forces every one of the `K` starting walkers to be at **≥ 0.25 eV/atom** above the
+minimum, so the initial `E_boundary` (the worst of them) is *at or just above* 0.25, and NS then
+descends from there. (If you instead want the top *capped* at 0.25 and to descend from it, you
+combine this with `--e-max-per-atom 0.25`, which restricts the pool so `rel ≤ 0.25`; then the
+initial boundary lands near 0.25 and descends toward the minimum.)
+
+**The trade-off you must weigh before doing this.** A strict lower bound on the **initial** live
+set (requiring `rel ≥ 0.25`) has real costs:
+
+1. **It may be impossible to fill the live set.** If the (filtered) DB has few or no structures
+   with `rel ≥ 0.25`, the `while True` loop can spin (or time out) without collecting `K` valid
+   walkers. You need enough high-energy structures in the pool — this is exactly why the Fortran
+   toy uses rejection sampling over a *continuous* 1D potential, where such a draw always exists;
+   a finite discrete DB may not have enough.
+2. **It throws away information and wastes the low-energy data.** Every initial draw below 0.25 is
+   discarded, even though those are precisely your best structures. NS is designed to *start high
+   and descend* precisely so it can weight the whole range of `Z`; forcing the start high without
+   also sampling the low region means the low-energy basin contributes only via later constrained
+   draws, and you may lose the low-energy weight unless the window extends to the minimum.
+3. **The `≤`/`<` boundary choice matters.** "Start at 0.25" is ambiguous: do you accept `rel ==
+   0.25` or `rel > 0.25`? For a discrete DB, requiring `rel ≥ 0.25` usually yields *strictly
+   above* (no exact hit); requiring `rel > 0.25` is a stricter criterion and even harder to fill.
+4. **A cleaner alternative for "start at the top".** Rather than forcing a lower bound, set only
+   the **upper** window (`--e-max-per-atom 0.25`) and let NS start automatically at the top of
+   that window. NS always begins at the highest-energy point of its prior pool, so if the pool is
+   capped at 0.25, the run *does* start near 0.25 and descends — no rejection loop needed, and no
+   risk of an unfillable live set. The forced lower bound is only needed if you specifically want
+   to *exclude the region below 0.25 entirely* (i.e. never sample the ground state), which is
+   physically unusual because the whole point of `Z` is to include the low-energy basin.
+
+**Recommendation.** Use `--e-max-per-atom 0.25` to set the window top, and (if you want to guard
+against accidental very-low starts) add the rejection condition in `initialize()` only as an
+optional `--e-min-per-atom` flag with a warning if too few structures satisfy it. That keeps the
+"start near the top" behavior without breaking the run or discarding the low-energy data you care
+about. (This is the same "windowed" reasoning as the Fortran `E_max`; the difference is that the
+Fortran can always fill its live set from a continuous potential, whereas your DB may not.)
+
+
 **Important nuance about what "starting from 0.25 eV/atom" means in NS.** Nested sampling does
 not need you to set the *start* — it **automatically starts at the top of whatever window you
 give it** (the highest-energy structure in the prior pool) and descends to the bottom. So:

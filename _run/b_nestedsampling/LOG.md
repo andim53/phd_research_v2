@@ -1676,3 +1676,30 @@ eV/atom (E_ref ~ -437 eV; relative per-atom = (E-E_ref)/N).
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~00:20 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer forced-start-at-top Notes block
+
+**Goal (user request):** answer the new `Notes:` block in the Fortran toy-model section (how to
+force NS to START from 0.25 eV/atom above the global minimum regardless of the initial uniform-DB
+draw).
+
+**Clarified (per standing rule):** explain conceptually in the README only (no code change);
+focus on the "force the start at exactly the top" behavior including its trade-off.
+
+**Answer written (flag removed):** explained that initialize() draws initial live points with
+sample_from_prior() = uniform DB draw + noise with NO energy condition, so the initial boundary
+lands low (DB is dense near ground state). To force the start at the top, add a rejection condition
+inside initialize()'s draw loop so every initial live point satisfies rel=(E-E_ref)/N >= e_min
+(0.25); gave pseudo-code. Weighed the trade-off: (1) live set may be unfillable if the DB lacks
+high-energy structures (Fortran's continuous potential always fills; a finite DB may not); (2) it
+discards the low-energy data and can lose low-basin weight; (3) the <=/> boundary choice matters;
+(4) cleaner alternative: use only --e-max-per-atom 0.25 and let NS auto-start at the top of that
+window (no rejection loop). Recommended --e-max-per-atom for the top + an optional --e-min-per-atom
+guard with a warning.
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~00:30 JST.
