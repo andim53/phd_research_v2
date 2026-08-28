@@ -1572,6 +1572,46 @@ walkers_x(idx_worst) = x_new             ! UNCONDITIONALLY replace
 walkers_E(idx_worst) = energy(x_new, A, B)
 ```
 
+**The Python code uses cloning too** — it just happens inside the walk.
+
+In `sample_constrained` (when `--walk` is on), Python clones a **random surviving live point** and
+passes it to the walk:
+
+```python
+if self.walk and len(self.live_structures) > 0:
+    idx = self.rng.integers(0, len(self.live_structures))
+    walked = self.constrained_walk(self.live_structures[idx])   # clone the live point
+```
+
+And `constrained_walk` itself copies at the start and on every trial:
+
+```python
+def constrained_walk(self, x0):
+    x = x0.copy()                        # <-- the clone (copy of the live point)
+    ...
+    trial = x.copy()                     # copy for each trial move
+    trial.positions[self.perturb_indices] += noise
+    ...
+```
+
+So the Python **"clone" is a copy of an existing live point** (`x0.copy()`), exactly the same idea
+as the Fortran's clone — copy a surviving walker and evolve it with a constrained walk.
+
+**One difference in the clone source:**
+- **Fortran** (lines 85–89): clones a random **other** walker, explicitly excluding the worst:
+  `do ... idx_clone = int(r*K)+1; if (idx_clone /= idx_worst) exit; end do` → `x_clone =
+  walkers_x(idx_clone)`.
+- **Python**: clones a random live point **which may include the worst** (`rng.integers(0,
+  len(live_structures))`, no exclusion). This is a minor implementation difference — both copy an
+  existing live structure to seed the walk, but the Fortran deliberately avoids cloning the walker
+  being replaced, while Python does not.
+
+**Bottom line.** Python uses the same clone-and-walk mechanism as the Fortran (copy an existing
+live point, then evolve it with a constrained MC walk), the only difference being the Fortran
+excludes the worst walker from the clone choice while Python samples uniformly over all live
+points.
+
+
 So the new walker is set to whatever `constrained_walk` returns, with **no check** that it is
 actually better (lower energy) than the removed worst. Consequences:
 

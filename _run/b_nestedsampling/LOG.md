@@ -2579,3 +2579,24 @@ None on failure -> step() falls back to sample_from_prior (fresh draw) instead o
 list in the walk Usage section).
 
 **Time:** 2026-08-28 ~19:10 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer Python-clone Notes block
+
+**Goal (user request):** answer the new 'Notes:' block asking: in the Fortran they use clone, what
+about in Python?
+
+**Clarified (per standing rule):** answer grounded in code.
+
+**Answer written (flag removed):** Python DOES use cloning too. In sample_constrained (with --walk)
+it clones a random surviving live point (constrained_walk(live_structures[idx])), and
+constrained_walk starts with x0.copy() (line 363) + copies each trial. So the Python 'clone' = a
+copy of an existing live point, same idea as the Fortran. Difference: Fortran clones a random OTHER
+(non-worst) walker (excludes idx_worst); Python clones a random live point (may include the worst).
+
+**Verification:** 'Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate bulleted
+list in the walk Usage section).
+
+**Time:** 2026-08-28 ~19:20 JST.
