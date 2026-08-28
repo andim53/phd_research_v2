@@ -2433,3 +2433,33 @@ change behaviour.
 **Git:** _analysist is gitignored, so neither script is committed (only this LOG).
 
 **Time:** 2026-08-28 ~18:00 JST.
+
+
+---
+
+## Session 2026-08-28 — Create plot_conf_space_deltaz.py (conf_space colored by Fe island height)
+
+**Goal (user request):** make a new code in _analysist/0_analy/ for making the same conf_space.png
+as the b6 run's analysis/posterior/conf_space.png but with an additional analysis of island height
+(delta Z) in color for the scatter plot.
+
+**Clarified (per standing rule):**
+- Color = Fe island height delta_Z = max(Fe z) - min(Fe z) (Angstrom), Fe identified by symbol.
+- Method: reuse plot_structure_landscape with z_data=delta_Z (AGOX Fingerprint PCA + landscape
+  script), colorbar added.
+- Location: new standalone script _analysist/0_analy/plot_conf_space_deltaz.py.
+- Run against b6 posterior structures (temperature-free) to verify.
+
+**Script created:** plot_conf_space_deltaz.py (v1.0.0). Reads posterior_T{KKK}/*.xsf, computes PC1
+of AGOX Fingerprint descriptors (structural axis), per-atom relative energy (E-Emin)/N (density
+axis), and delta_Z per structure (color); passes z_data=delta_Z to plot_structure_landscape with a
+colorbar, writes conf_space_deltaz.png.
+
+**Verification (real execution):** ran against
+_analysist/1_result/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04/posterior_T300 (1100
+structures): energy -436.69..-410.73 eV, delta Z 0.039..5.205 Angstrom; produced
+_analysist/0_analy/b6_analysis_out/conf_space_deltaz.png (893x868 PNG, valid).
+
+**Git:** _analysist is gitignored, so neither the script nor the PNG is committed (only this LOG).
+
+**Time:** 2026-08-28 ~18:10 JST.
