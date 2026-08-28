@@ -581,11 +581,81 @@ the prior window must span the barrier to connect the two phases.
   top of its "window" is *implicitly* the highest-energy structure in the DB — there is no
   barrier-relative margin. The window is just "whatever the collected DB spans".
 
-**How the Python loop "lowers the energy window" — the running `E_boundary`.** Fortran
-sets a fixed `E_max` once and shrinks by the known ratio `X_i = (K/(K+1))^i`. The Python code does
-the same *descending* idea but **dynamically**, by keeping the energy cutoff at the current worst
-live point and updating it every iteration. There is no fixed upper value; the cutoff is
-re-computed from the live set each step. Concretely:
+**1. What does "keeping the energy cutoff at the current worst live point" mean?**
+The energy cutoff is the highest energy still allowed inside the sample set. "The current worst
+live point" is the *highest-energy* structure still alive (the live points are the `K` structures
+currently being kept). "Keeping the cutoff at the worst live point" means: every iteration the
+cutoff is set exactly equal to the energy of the current worst live point, i.e.
+`log_L_boundary = live_log_L.min()` (line 265) after each `step()`. So the cutoff is not a number
+you choose and fix; it is always "whatever is currently the highest live-point energy."
+
+**2. In the Fortran, is an upper value set first and then decreased via `X_i=(K/(K+1))^i`?**
+Almost, but with an important correction. In the Fortran there are **two different quantities**,
+and you must not mix them up:
+- **`E_max` (line 61, = barrier + margin)** is set **once**, and used **only to generate the
+  *initial* `K` walkers** (rejection sampling, lines 66–77). It is **never** used again in the
+  loop and never decreased.
+- **The energy cutoff used during the loop** is `dead_E(iter) = walkers_E(idx_worst)` (line 82) —
+  the energy of the current worst walker. This is passed to `constrained_walk` as the
+  `E_max_local` bound (line 91). It is **re-computed every iteration** from the worst walker, just
+  like Python's `log_L_boundary`.
+- **`dead_X(iter) = (K/(K+1))**iter` (line 83)** is the **prior-*volume* weight** (the shrinking
+  shell), NOT the energy cutoff. It is only stored and later used in `print_thermodynamics` /
+  `convert_to_density_of_states` to weight `Z` and `g(E)`.
+
+So: the Fortran's *energy* cutoff is `dead_E` (dynamic, worst-walker), and `X_i=(K/(K+1))^i` is
+the *volume* weight — the two play different roles. The Python code is exactly the same: the
+energy cutoff is `log_L_boundary`/`E_boundary` (dynamic, worst live point, line 265), and the
+volume weight is `ΔX = exp(−i/K) − exp(−(i+1)/K)` (lines 232–234). The only cosmetic difference is
+the formula for the volume fraction: `(K/(K+1))^i` (Fortran) vs `exp(−i/K)` (Python) — they are
+the same to leading order, `exp(−i/K) = [exp(−1/K)]^i ≈ (K/(K+1))^i`.
+
+**3. What would happen if I set `max_E` to 0.25 eV/atom above the lowest energy?**
+It would be a **serious bug**, because `max_E` in the Python code is an **absolute energy in eV**,
+NOT a relative "eV/atom above the minimum". It appears in `_filter_unphysical(max_E=1e4)` and in
+the `abs(E) < 1e4` / `|E| > 1e4` checks. The system's absolute energies are ≈ −437 eV (very
+negative), so every structure has `|E| ≈ 437`, which is far above 0.25. Setting `max_E = 0.25`
+would make `abs(E) < 0.25` **false for every real structure**, so the sampler would reject/replace
+*everything* as "unphysical" and the run would fail or produce nothing. The relative "eV/atom
+above the minimum" filter you are thinking of is a **different mechanism**: the `--e-max-per-atom`
+CLI flag (in `main.py`), which drops DB structures with `(E/atom − min E/atom) > value` *before*
+training, using a relative threshold — not the internal `max_E`. And the **variable name for the
+lowest energy** is **`E_ref`** (`self.E_ref = db_energies.min()`, line 99), i.e. the minimum
+training energy. (The per-atom minimum is `db_energies.min()/N`; `--e-max-per-atom` compares
+`E/atom − min(E/atom)`.)
+
+**4. `E_ref`, `log_L_boundary`, `E_boundary` — what they are, how computed, how used.**
+- **`E_ref`** (line 99): `self.E_ref = db_energies.min()` — the lowest energy in the training set
+  (a scalar, eV). It is the **energy origin**: the likelihood is written relative to it,
+  `log L = −(E − E_ref)` (temperature-free), so the best structure has `E − E_ref = 0`. It is
+  computed once from the dataset and never changes.
+- **`log_L_boundary`** (init `−np.inf` line 119; set to `live_log_L.min()` at line 183 and 265):
+  the current **log-likelihood cutoff** = the `log L` of the current worst live point. It is the
+  threshold that `sample_constrained()` requires new draws to beat (`ll > log_L_boundary`). It is
+  recomputed every iteration as the worst point is replaced.
+- **`E_boundary`** (derived, printed line 185): the **energy** cutoff that `log_L_boundary`
+  corresponds to. In temperature-free mode, `log L = −(E − E_ref)`, so
+  `log_L_boundary = −(E_boundary − E_ref)` ⇒ **`E_boundary = E_ref − log_L_boundary`**. It is not
+  stored as a separate variable — it is the energy implied by `log_L_boundary`; the code prints it
+  at line 185 as `E_ref - log_L_boundary`. You read `E < E_boundary` as "new samples must be lower
+  in energy than the current cutoff."
+
+**5. Does the Fortran also re-compute the cutoff from the live set each step?**
+**Yes — exactly.** In the Fortran main loop, `dead_E(iter) = walkers_E(idx_worst)` (line 82) is the
+current worst walker's energy, and it is passed as `E_max_local` to `constrained_walk` (line 91)
+to constrain the new sample. Because `idx_worst` is re-found each iteration
+(`maxloc(walkers_E)`), the Fortran cutoff is **re-computed from the worst live walker every step**,
+just like Python's `log_L_boundary = live_log_L.min()`. This corrects the earlier wording in this
+section, which implied Fortran used only a fixed `E_max`: the fixed `E_max` is used **only for the
+initial walkers**; the in-loop cutoff is the dynamic worst-walker energy in both codes.
+
+
+**How the Python loop "lowers the energy window" — the running `E_boundary`.** As clarified
+above (Q2/Q5), the Fortran's *energy* cutoff is also dynamic (`dead_E(iter)` = worst-walker
+energy, line 82), and `X_i = (K/(K+1))^i` is only the prior-*volume* weight, not the cutoff. The
+Python code does the same descending idea: it keeps the energy cutoff at the current worst live
+point and re-computes it every iteration. There is no fixed upper value in the loop; the cutoff is
+re-derived from the live set each step. Concretely:
 
 **Initialize (`initialize()`, lines 162–185).**
 - Draw `K = n_live` structures from the prior (`sample_from_prior()`: random DB structure +
@@ -611,9 +681,10 @@ re-computed from the live set each step. Concretely:
    **moved down** (tightened).
 
 So each iteration "lowers the window": the worst surviving energy is removed and replaced by
-something lower, so the boundary `E_boundary` creeps downward exactly like Fortran's `E_max`
-descending — but the Python descent is *data-driven* (wherever the live points currently are)
-rather than a fixed initial value.
+something lower, so the boundary `E_boundary` creeps downward exactly like the Fortran's in-loop
+cutoff `dead_E(iter)` descending — the descent is *data-driven* (wherever the worst live point
+currently is) in **both** codes, not a fixed value. (The only thing fixed in the Fortran is
+`E_max`, used solely to generate the initial walkers.)
 
 **Example (concrete numbers, temperature-free).** Suppose `E_ref = −437 eV`, and the 50 initial
 live points span `−420` to `−430 eV`. Initialize sets `E_boundary ≈ −420` (the worst). Iteration 1:
@@ -625,13 +696,14 @@ the window's ceiling drops, so the sampled structures concentrate ever closer to
 shrink as Fortran, just expressed via `exp` instead of `(K/(K+1))^i`.
 
 **Analogy (no basis needed).** Imagine a net with 50 holes floating on a lake, and the water level
-is the energy cutoff. Fortran picks one fixed starting level (its `E_max`) and, each round, lowers
-the whole lake by a known, pre-chosen amount. Python instead does: look at the *highest* spot still
-inside the net, drain just below it, drop a new weight that must be below that level, then look at
-the new highest spot and repeat. Both drain the lake toward the bottom, but Python's level is set
-by "where the worst remaining sample currently is" rather than by a number fixed at the start. The
-amount of water each drained step represents (`ΔX`) is what later gets multiplied into the
-partition function `Z`.
+is the energy cutoff. Both codes first fill the net to a starting level, then proceed the same way
+each round: look at the *highest* spot still inside the net, drain the thin slice of water just
+below it, drop a new weight that must be below that level, then look at the new highest spot and
+repeat. The lake drains toward the bottom, and the level is set each step by "where the worst
+remaining sample currently is" — in both Python and Fortran. The only Fortran-specific wrinkle is
+that its *starting* fill level is a chosen `E_max` (barrier + margin), used just to seed the
+initial walkers. The amount of water each drained step represents (`ΔX`, the prior-volume slice)
+is what later gets multiplied into the partition function `Z`.
 
 
 What the Python code does define, and how:

@@ -1616,3 +1616,36 @@ so the window creeps downward each iteration. Contrasted with Fortran (fixed E_m
 **Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
 
 **Time:** 2026-08-28 ~00:00 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer 5-part Notes block + correct prior Fortran-vs-Python claim
+
+**Goal (user request):** answer the new `Notes:` block in the Fortran toy-model section
+(5 questions on the energy cutoff / E_max / E_ref / log_L_boundary / E_boundary / max_E).
+
+**Clarified (per standing rule):** (1) correct the misleading prior README statement AND answer
+all 5 questions grounded in code; (2) structure as one inline block replacing the Notes flag.
+
+**Answer written (flag removed), 5 parts:**
+1. "cutoff at the current worst live point" = log_L_boundary = live_log_L.min() (line 265).
+2. Fortran correction: E_max is set once and used ONLY to seed initial walkers (rejection
+   sampling); the in-loop energy cutoff is dead_E(iter)=worst-walker energy (line 82, dynamic);
+   X_i=(K/(K+1))^i is the prior-VOLUME weight for Z/g(E), NOT the cutoff. Python mirrors this
+   (log_L_boundary dynamic; dX=exp(-i/K)-exp(-(i+1)/K) is the volume weight). Same to leading order.
+3. max_E is an ABSOLUTE eV filter, not relative eV/atom; setting it to 0.25 would reject all real
+   structures (|E|~437); the relative filter is the --e-max-per-atom CLI flag; lowest-energy
+   variable is E_ref (db_energies.min(), line 99).
+4. E_ref (energy origin, min training energy), log_L_boundary (log-L cutoff = worst live point),
+   E_boundary (derived = E_ref - log_L_boundary, printed line 185), how each is computed/used.
+5. Yes - Fortran also re-computes the cutoff each step (dead_E = worst walker).
+
+**Also corrected prior misleading text (3 spots):** the section previously said Fortran "sets a
+fixed E_max once and shrinks by X_i=(K/(K+1))^i" and that only Python is "data-driven"; corrected
+to state both codes re-derive the energy cutoff from the worst live point each step, and X_i is
+the volume weight, not the cutoff (E_max is only the initial-walker seeding).
+
+**Verification:** 0 `Notes:` flags remain; corrections applied; README grew to ~990 lines.
+
+**Time:** 2026-08-28 ~00:10 JST.
