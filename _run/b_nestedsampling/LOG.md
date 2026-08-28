@@ -2733,3 +2733,27 @@ threshold 2.0, greedy+RNG packing may not reach perfect >=2.0 spacing - inherent
 not a bug.
 
 **Time:** 2026-08-28 ~19:30-20:10 JST.
+
+
+---
+
+## Session 2026-08-28 — Create run dir _runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty (b8 + novelty-threshold)
+
+**Goal (user request):** make a new _runs dir, same system/params as b8, plus the new novelty
+threshold. Name starts with b9.
+
+**Clarified (per standing rule):**
+- b9 = b8's params (plain Fe/MgO, e-max 0.4, window [0.3,0.35], walk on + exclude-worst,
+  no-posterior-xsf, perturb Fe, temperature-free, n-live 100, n-iters 1000, rng 42) PLUS
+  --novelty-threshold 1.0 --novelty-max-attempts 500. Latest root code (v1.7.0).
+
+**Actions taken:**
+- Created _runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/ as a full self-contained copy:
+  main.py (v1.7.0) + nested_sampling/ + scripts/ + dataset (plain Fe/MgO, 13 seeds).
+- Copied the CORRECT plot_structure_landscape.py (accepts s=25) into nested_sampling/scripts/.
+- Wrote j_b9_*.sh (PJM, gpaw_env) with the b8 command + --novelty-threshold 1.0
+  --novelty-max-attempts 500.
+- Wrote README.md + TUTORIAL.md documenting the treatment and the novelty flags.
+- py_compile OK for run main.py + nested_sampler.py; j script executable.
+
+**Time:** 2026-08-28 ~20:20 JST.
