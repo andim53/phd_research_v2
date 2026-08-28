@@ -1334,6 +1334,45 @@ Both codes compute the same two quantities — the partition function `Z` and th
 states `g(E)` — from the nested-sampling `(E_i, w_i)` trace, but with different implementation
 choices (log-space + GPR energies in Python vs linear + exact 1D energies in Fortran).
 
+**Is a higher `--perturb` better given the DB is biased toward low (≈0 eV/atom) energy?**
+
+Not necessarily — there is a real trade-off, and "better" depends on what you want the prior to do.
+
+**Your observation is correct.** With `--perturb 0.01` (Å), each prior draw is a DB structure plus
+a *tiny* Gaussian jitter, so the prior is effectively the **empirical DB distribution** — and since
+the DB is dense near the low-energy island region, the prior is heavily weighted there. This is a
+**prior-design choice**, not a bug: it focuses sampling where you already have data.
+
+**A higher `--perturb` would broaden the prior** — each draw scatters further from the DB
+structure, so the sampler explores more configuration space (more coverage of the flat/other
+basins, and it partially counteracts the DB's low-energy bias). But it comes with real costs:
+
+1. **GPR extrapolation risk.** The README's tradeoff note (and the Fortran section) flags that
+   larger displacements make the Fingerprint GPR extrapolate to unphysical energies. With
+   `--perturb 0.5`, live points hit |E|→thousands of eV. The `|E| < 1e4` filter is only a
+   pragmatic guard, not a guarantee.
+2. **In b6 you already have `--walk` on.** The dual-scale walk (with `--walk-small 0.05` /
+   `--walk-large 0.40`) already provides the exploration the prior is missing — it clones a live
+   point and moves it with scales *larger* than `--perturb 0.01`. So the "broaden the prior"
+   benefit is largely covered by the walk; raising `--perturb` too would double up and add GPR
+   risk.
+3. **It can blur the initial windowed start.** `--perturb` drives the initial live-set draws
+   (anchor + capped fills). A large perturb could push the anchor/fills outside the intended
+   `[0.3, 0.35]` window.
+
+**When a higher `--perturb` WOULD be better:** if you are *not* using `--walk`, and you believe the
+DB undersamples an important region (e.g. the flat basin or barrier), then a larger `--perturb`
+is the main way to explore beyond the DB. But the safer, more targeted alternative for this
+project is to rely on the **windowed seeding** (`--e-window-lo/hi`) and the **walk** to control
+exploration, and keep `--perturb` small to avoid GPR extrapolation.
+
+**Bottom line.** A higher `--perturb` is *not automatically better*: it broadens exploration but
+risks GPR extrapolation and is largely redundant with `--walk` in b6. If you want more exploration
+than the DB gives, prefer tuning the walk (`--walk-small`/`--walk-large`/`--walk-steps`) or the
+energy window, and keep `--perturb` small. Only raise `--perturb` if you are running without the
+walk and deliberately want the prior to stray far from the DB.
+
+
 **1. Partition function `Z`.**
 
 - **Fortran (`print_thermodynamics`, lines 179–205):** for each temperature `T`, it loops over

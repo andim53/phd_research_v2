@@ -2298,3 +2298,26 @@ weight uses the iteration index i at that step and is not tied to the new worst 
 bulleted list in the walk Usage section).
 
 **Time:** 2026-08-28 ~05:30 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer higher-perturb-vs-DB-bias Notes block
+
+**Goal (user request):** answer the new 'Notes:' block asking whether, since --perturb 0.01 means
+sampling only from the DB (biased toward 0 eV/atom), a higher perturbation would be better.
+
+**Clarified (per standing rule):** answer honestly with the trade-off.
+
+**Answer written (flag removed):** Not necessarily - it's a prior-design trade-off. Confirmed the
+observation (small perturb = prior is the empirical DB distribution, biased low). A higher perturb
+broadens exploration but: (1) GPR extrapolation risk (large displacements -> unphysical energies,
+per README tradeoff note); (2) redundant with --walk in b6 (the walk already explores with
+--walk-small/--walk-large); (3) can blur the windowed initial start. Higher perturb is better ONLY
+when not using --walk and the DB undersamples an important region. Preferred alternative: tune the
+walk or energy window, keep --perturb small.
+
+**Verification:** 'Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate bulleted
+list in the walk Usage section).
+
+**Time:** 2026-08-28 ~05:40 JST.
