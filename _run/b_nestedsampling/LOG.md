@@ -2533,3 +2533,27 @@ present; save(save_xsf=True) -> 10 xsf written + summary. Behavior confirmed cor
 **Git:** committed main.py, nested_sampler.py, README.md, README.AI.md, VERSIONS.md.
 
 **Time:** 2026-08-28 ~18:50 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer perturb-init-then-walk Notes block
+
+**Goal (user request):** answer the new 'Notes:' block asking what happens if the initial live set
+uses --perturb but the next step uses --walk only.
+
+**Clarified (per standing rule):** answer grounded in code (this IS the b6 setup; sequential +
+complementary).
+
+**Answer written (flag removed):** This is exactly b6. (1) initialize() uses --perturb-based prior
+draws (windowed anchor + capped fills via sample_from_prior, std=0.01 A) -> the initial live set is
+perturb-seeded. (2) Each step's sample_constrained uses --walk as PRIMARY (clones a surviving live
+point - which was perturb-seeded - and evolves with constrained_walk's own scales), independent of
+--perturb. (3) Fallback: --perturb rejection draws then sample_from_prior. So the walk takes over
+the per-step moves starting FROM the perturb-seeded live set; the two are sequential and
+complementary (perturb seeds init + fallback, walk does primary moves).
+
+**Verification:** 'Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate bulleted
+list in the walk Usage section).
+
+**Time:** 2026-08-28 ~19:00 JST.

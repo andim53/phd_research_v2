@@ -1536,6 +1536,33 @@ them as plain `(E_i, w_i)`; fixed-T stores the posterior weight in log form and 
 evidence. This mirrors the Fortran's `dead_E(iter)` / `dead_X(iter)` tracking.
 
 
+**What happens if the initial live set uses `--perturb` but the next steps use `--walk` only?**
+
+That is **exactly** the b6 setup, and it works as a clean, sequential pipeline — the two are
+complementary, not in conflict:
+
+1. **Initialization (`initialize()`)** uses `--perturb`-based prior draws. The initial live set is
+   built entirely from `sample_from_prior()` (a DB structure + a Gaussian displacement of std
+   `--perturb` 0.01 Å): the windowed anchor (`find_window_anchor`) and the capped fills
+   (`sample_capped_at_window`) all produce `--perturb`-perturbed structures. So the live set
+   **starts** as perturb-seeded DB structures (for b6, pinned into `[0.3, 0.35]` eV/atom).
+
+2. **Each NS iteration (`step()` → `sample_constrained()`)** uses `--walk` as the **primary** move:
+   it clones a random surviving live point and evolves it with `constrained_walk` (using
+   `--walk-small`/`--walk-large`, independent of `--perturb`). Critically, **the walk clones a
+   point that was originally seeded by `--perturb`** (from step 1), so the walk operates *on* the
+   perturb-seeded live set.
+
+3. **Fallback:** if the walk fails to produce a valid point, `sample_constrained` falls back to the
+   `--perturb`-based rejection draws, then to `sample_from_prior`.
+
+So the answer to "what happens": **the walk takes over the per-step moves, but it starts from the
+perturb-seeded initial live set and still uses `--perturb` as its fallback.** The `--perturb`
+seeding provides the starting configurations; the `--walk` provides the subsequent exploration
+(decorrelation, barrier crossing). This is exactly the intended design — `--perturb` and `--walk`
+are **sequential and complementary** (`--perturb` seeds init + fallback, `--walk` does the primary
+moves), which is what the b6 command (`--perturb 0.01 ... --walk`) relies on.
+
 
 **`--perturb` vs `--walk` — order, what each does, interaction, and "only `--walk`".**
 
