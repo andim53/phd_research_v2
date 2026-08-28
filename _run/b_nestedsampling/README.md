@@ -1556,6 +1556,45 @@ complementary, not in conflict:
 3. **Fallback:** if the walk fails to produce a valid point, `sample_constrained` falls back to the
    `--perturb`-based rejection draws, then to `sample_from_prior`.
 
+**What happens in the Fortran if an iteration doesn't produce the expected result (a better
+walker)?**
+
+The Fortran has **no "expected result" / acceptance check** on the replacement. Each iteration
+(lines 79–96) does:
+
+```fortran
+idx_worst = maxloc(walkers_E)            ! find the worst walker
+dead_E(iter) = walkers_E(idx_worst)      ! record it
+dead_X(iter) = (K/(K+1))**iter           ! record prior-volume weight
+... clone a random other walker ...
+x_new = constrained_walk(x_clone, dead_E(iter), mixing_steps, A, B)
+walkers_x(idx_worst) = x_new             ! UNCONDITIONALLY replace
+walkers_E(idx_worst) = energy(x_new, A, B)
+```
+
+So the new walker is set to whatever `constrained_walk` returns, with **no check** that it is
+actually better (lower energy) than the removed worst. Consequences:
+
+- **`constrained_walk` always returns a valid point.** It starts at the clone and, over
+  `mixing_steps` trials, keeps only steps with `E < E_max_local` (the removed worst's energy).
+  If *no* trial is accepted (all rejected), it simply **returns the clone unchanged** — which has
+  energy equal to the removed worst's level, so the new "worst" may be no better than the old one.
+- **If trials were accepted but the walk couldn't descend below the limit** (e.g. it got stuck
+  near `E_max_local`), the returned point may still be at/near the old worst energy.
+- Either way, **the walker is replaced unconditionally**, so the "worst" may not improve that
+  iteration. This is a deliberate, stable design: the nested-sampling **prior-volume bookkeeping
+  `dead_X(iter) = (K/(K+1))^i` still proceeds** (the volume shrinks regardless), and the sampler
+  relies on the *ensemble* of walkers over many iterations to keep descending — not on any single
+  iteration being guaranteed to improve.
+
+**Contrast with Python.** Python's `sample_constrained` is stricter: it runs the walk and returns
+`None` if it never produced a valid point below `E_boundary`, in which case `step()` falls back to
+`sample_from_prior()` (an unconstrained draw) — so a failed walk still gets replaced, but by a
+fresh prior draw rather than the unchanged clone. The Fortran instead returns the (possibly
+unchanged) clone directly. Both keep the sampler running even when a step doesn't "succeed" in
+improving the worst point.
+
+
 So the answer to "what happens": **the walk takes over the per-step moves, but it starts from the
 perturb-seeded initial live set and still uses `--perturb` as its fallback.** The `--perturb`
 seeding provides the starting configurations; the `--walk` provides the subsequent exploration

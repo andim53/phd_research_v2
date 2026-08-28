@@ -2557,3 +2557,25 @@ complementary (perturb seeds init + fallback, walk does primary moves).
 list in the walk Usage section).
 
 **Time:** 2026-08-28 ~19:00 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer Fortran-failed-iteration Notes block
+
+**Goal (user request):** answer the new 'Notes:' block asking what happens in the Fortran if an
+iteration doesn't produce the expected result.
+
+**Clarified (per standing rule):** answer grounded in the Fortran code.
+
+**Answer written (flag removed):** The Fortran has NO acceptance check on the replacement - each
+iteration unconditionally sets walkers_E(idx_worst) = energy(constrained_walk(...)). constrained_walk
+always returns a valid point (the clone if no trial is accepted; may be stuck near E_max_local), so
+the 'worst' may not improve that iteration, but dead_X=(K/(K+1))^i prior-volume bookkeeping proceeds
+regardless (ensemble descent over many iterations). Contrast with Python: sample_constrained returns
+None on failure -> step() falls back to sample_from_prior (fresh draw) instead of the unchanged clone.
+
+**Verification:** 'Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate bulleted
+list in the walk Usage section).
+
+**Time:** 2026-08-28 ~19:10 JST.
