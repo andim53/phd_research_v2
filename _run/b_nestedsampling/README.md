@@ -571,6 +571,50 @@ the prior window must span the barrier to connect the two phases.
 | `print_thermodynamics` | For T ∈ {0.05,0.1,0.2,0.3,0.5,1.0}: `Z=Σ ΔX·e^(−E/T)`, `U`, `F=−T ln Z`, `S=(U−F)/T` | `evaluate(beta)` per `--temperatures` value → `thermodynamics.csv` (Z, F); also gives `⟨E⟩` and entropy |
 | `convert_to_density_of_states` | Histogram `g(E) = Σ ΔX/ΔE` over bins spanning `[island−0.15, flat+0.15]` | `state_density.py` KDE over per-atom relative energies; the exact-histogram counterpart |
 
+**Does the Python code define an `E_max`? — the honest answer.** No — the Python
+`NestedSampler` does **not** set an explicit upper-energy `E_max` like the Fortran toy's
+`E_max = E_barrier + margin`. The two codes shape the prior window differently:
+
+- **Fortran:** explicitly picks `E_max` = barrier + margin, so `X_0 = 1` deliberately spans
+  *both* basins (the "windowed" design).
+- **Python:** the prior is a uniform draw over the database structures + a tiny perturb, so the
+  top of its "window" is *implicitly* the highest-energy structure in the DB — there is no
+  barrier-relative margin. The window is just "whatever the collected DB spans".
+
+What the Python code does define, and how:
+
+1. **`E_ref` (line 99) = `db_energies.min()`** — the **lowest** training energy. This is a
+   *lower* reference, not an upper bound. It shifts the likelihood so the best structure has
+   `E − E_ref = 0` (`log L = −(E − E_ref)` in temperature-free mode).
+2. **Implicit upper boundary (the prior).** `sample_from_prior()` (line 123) draws a random DB
+   structure and adds a Gaussian perturb to the Fe atoms. Its energy is whatever that structure
+   has — the highest-energy DB structure effectively caps the window. No `E_max` is chosen.
+3. **Dynamic cutoff `log_L_boundary` (line 119, set at 183/265).** After the initial live set,
+   `log_L_boundary = live_log_L.min()`, i.e. the cutoff sits at the current worst live point. In
+   temperature-free mode `log L > log_L_boundary` ⟺ `E < E_ref − log_L_boundary`, so the
+   *energy* cutoff `E_boundary` is `E_ref − log_L_boundary` (printed at line 185). It **moves
+   down** every iteration as the worst point is removed — it is a running energy limit, not a
+   fixed `E_max`.
+4. **Physical sanity filter `1e4` eV (lines 147, 218, 187).** `|E| > 1e4` is treated as an
+   unphysical GPR extrapolation and rejected/replaced. This is *not* the Fortran's `E_max`; it is
+   just a guard against bad surrogate predictions.
+
+**Consequence vs the Fortran design.** Because the Python prior window is set by the DB's own
+energy range (not a deliberate "past-the-barrier" margin), whether the Python run connects the
+flat and island basins depends on whether the DB already contains structures across that
+barrier. That is the same trade-off raised in the earlier note ("is it better to choose a
+higher-energy prior, 0.25 eV/atom above the global minimum?") — the Python code does not enforce
+it; you would influence it by what structures are in the database or by `--e-max-per-atom`.
+
+**Example (no basis needed).** Think of nested sampling as slowly draining a tank of water and
+recording the level after each bucket is removed. Fortran sets the *starting* water level at the
+top of a window that covers two connected pools (`E_max` past the barrier). Python instead
+starts with "however much water the database already contains" — its starting level is set by the
+highest-energy structure it happened to collect, with no explicit choice of where the top is.
+Both then lower the level bucket by bucket (the running `E_boundary`), but only Fortran has
+deliberately chosen the initial window to include both basins.
+
+
 **How it connects to the README.** Every concept from the README appears verbatim in this toy:
 - **Prior volume / shrinkage:** `X_i = (K/(K+1))^i` is the discrete form of the README's
   `X_i = exp(−i/K)`; the per-iteration shell `ΔX = X_{i−1} − X_i` is the prior-volume weight

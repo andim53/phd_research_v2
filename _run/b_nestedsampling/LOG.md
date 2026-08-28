@@ -1566,3 +1566,27 @@ mapping, moderate depth.
 sections; README grew to 820 lines.
 
 **Time:** 2026-08-27 ~23:35-23:45 JST.
+
+
+---
+
+## Session 2026-08-27 — README: answer the E_max Notes block in the Fortran section
+
+**Goal (user request):** answer the new `Notes:` block the user added inside the "Nested sampling
+in 1D (Fortran toy model)" section ("On the python codes, how does the E_max is first define? ...").
+
+**Clarified (per standing rule):** treat the Python-vs-Fortran difference honestly — Python has
+no explicit E_max.
+
+**Answer written (flag removed):** explained that the Python `NestedSampler` does NOT define an
+explicit upper E_max like the Fortran's E_barrier+margin. It instead has: E_ref = db_energies.min()
+(lower reference, shifts log L = -(E - E_ref)); an implicit prior window set by the DB's own energy
+range (sample_from_prior = uniform DB resample + perturb, no barrier-relative margin); a dynamic
+running cutoff log_L_boundary (=> E_boundary = E_ref - log_L_boundary, updated each iteration);
+and a 1e4 eV physical sanity filter (unphysical GPR guard, not an E_max). Contrasted with the
+Fortran "windowed" design and the earlier higher-energy-prior note; gave a tank-drain analogy
+for no-basis readers.
+
+**Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
+
+**Time:** 2026-08-27 ~23:50 JST.
