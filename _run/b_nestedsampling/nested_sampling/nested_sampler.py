@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.6.0"
+__version__ = "1.7.0"
 
 import os
 from pathlib import Path
@@ -72,6 +72,8 @@ class NestedSampler:
         walk_large: float = 0.40,
         walk_mode: str = "both",
         walk_exclude_worst: bool = False,
+        novelty_threshold: Optional[float] = None,
+        novelty_max_attempts: int = 500,
     ):
         self.gpr = gpr
         self.db_structures = db_structures
@@ -145,6 +147,32 @@ class NestedSampler:
                   f"(relative to E_ref={self.E_ref:.4f} eV, {len(self.db_structures[0])} "
                   f"atoms); rest capped at {hi:.3f}; max_attempts="
                   f"{self.e_window_max_attempts}")
+
+        # Optional novelty (de-duplication) of the INITIAL live set.
+        # When novelty_threshold > 0, each initial live point must be at least this
+        # far (Euclidean distance in AGOX Fingerprint feature space) from every
+        # already-kept initial live point. Draws violating the threshold are
+        # rejected/retried up to novelty_max_attempts (then the draw is accepted
+        # anyway). Applied ONLY at initialize(); GPR training and the run use the
+        # full DB. This is the "novelty pass on the initial live set" recommended
+        # in the README.
+        self.novelty_threshold = (float(novelty_threshold)
+                                  if novelty_threshold is not None else 0.0)
+        self.novelty_max_attempts = int(novelty_max_attempts)
+        if self.novelty_threshold < 0:
+            raise ValueError(
+                f"novelty_threshold must be >= 0, got {novelty_threshold}.")
+        if self.novelty_max_attempts < 1:
+            raise ValueError(
+                f"novelty_max_attempts must be >= 1, got {self.novelty_max_attempts}.")
+        self._novelty_descriptor = None
+        self._novelty_kept = []   # feature vectors of already-kept initial live points
+        if self.novelty_threshold > 0:
+            from agox.models.descriptors.fingerprint import Fingerprint
+            self._novelty_descriptor = Fingerprint.from_atoms(db_structures[0])
+            print(f"[NestedSampler] Novelty threshold enabled: initial live points must be "
+                  f">= {self.novelty_threshold:.4f} apart (Fingerprint space), "
+                  f"max_attempts={self.novelty_max_attempts}")
 
         # Indices of the atoms to perturb (the deposition layer). A single list is
         # computed from the (uniform-composition) dataset and reused for every draw.
@@ -228,11 +256,66 @@ class NestedSampler:
         return self.sample_from_prior()
 
     def _append_live_point(self, s: Atoms):
+        """Append a live point, enforcing the novelty threshold when enabled.
+
+        If novelty_threshold > 0, the given structure must be >= threshold apart
+        (in Fingerprint space) from all already-kept initial live points. If it is
+        too close, we retry with fresh prior draws up to novelty_max_attempts;
+        if still no novel point is found, the last draw is accepted anyway (so a
+        sparse DB cannot hang the sampler)."""
+        if self.novelty_threshold > 0:
+            if self._min_dist_to_kept(s) < self.novelty_threshold:
+                best = s
+                best_d = self._min_dist_to_kept(s)
+                for _ in range(self.novelty_max_attempts):
+                    cand = self.sample_from_prior()
+                    d = self._min_dist_to_kept(cand)
+                    if d >= self.novelty_threshold:
+                        best, best_d = cand, d
+                        break
+                    if d > best_d:      # track the most-novel candidate seen
+                        best, best_d = cand, d
+                s = best                # accept the best (possibly novel, else most-novel)
+            self._register_novel(s)
         E = self.gpr.predict_energy(s)
         ll = self.log_likelihood(s)
         self.live_structures.append(s)
         self.live_energies = np.append(self.live_energies, E)
         self.live_log_L = np.append(self.live_log_L, ll)
+
+    def _fp_feature(self, s: Atoms) -> np.ndarray:
+        """Fingerprint feature vector of a structure (flat 1D)."""
+        return np.asarray(self._novelty_descriptor.create_features(s).ravel(), float)
+
+    def _min_dist_to_kept(self, s: Atoms) -> float:
+        """Min Euclidean distance in Fingerprint space to already-kept initial live points."""
+        if not self._novelty_kept:
+            return np.inf
+        K = np.vstack(self._novelty_kept)
+        f = self._fp_feature(s)
+        return float(np.linalg.norm(K - f, axis=1).min())
+
+    def _register_novel(self, s: Atoms):
+        """Record a kept initial live point's feature vector for novelty checks."""
+        self._novelty_kept.append(self._fp_feature(s))
+
+    def sample_from_prior_novel(self) -> Atoms:
+        """Prior draw that is novel (>= novelty_threshold apart from kept initial live
+        points). Tries up to novelty_max_attempts; if none passes, returns the last draw
+        anyway (so a sparse DB cannot hang the sampler)."""
+        if self.novelty_threshold <= 0:
+            s = self.sample_from_prior()
+            self._register_novel(s)
+            return s
+        last = None
+        for _ in range(self.novelty_max_attempts):
+            s = self.sample_from_prior()
+            last = s
+            if self._min_dist_to_kept(s) >= self.novelty_threshold:
+                self._register_novel(s)
+                return s
+        self._register_novel(last)
+        return last
 
     def sample_from_prior(self) -> Atoms:
         """Draw from empirical DB distribution + optional perturbation.
@@ -302,12 +385,7 @@ class NestedSampler:
         else:
             for i in range(self.n_live):
                 s = self.sample_from_prior()
-                E = self.gpr.predict_energy(s)
-                ll = self.log_likelihood(s)
-
-                self.live_structures.append(s)
-                self.live_energies = np.append(self.live_energies, E)
-                self.live_log_L = np.append(self.live_log_L, ll)
+                self._append_live_point(s)
 
                 if (i + 1) % 10 == 0:
                     valid_E = self.live_energies[np.abs(self.live_energies) < 1e4]

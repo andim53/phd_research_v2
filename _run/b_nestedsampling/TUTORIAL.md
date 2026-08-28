@@ -151,6 +151,12 @@ Flags:
   worst one, Fortran-style (the Fortran clones a random *other* walker, never the
   one being replaced; by default Python clones uniformly over all live points).
   Default off.
+- `--novelty-threshold` / `--novelty-max-attempts` — (new in v1.7.0) de-duplicate the
+  INITIAL live set: each initial live point must be at least `--novelty-threshold`
+  apart (Euclidean distance in AGOX Fingerprint space) from all already-kept ones.
+  Draws violating it are retried up to `--novelty-max-attempts`, else the most-novel
+  candidate is accepted. Applied only at `initialize()`; GPR training and the run use
+  the full DB. Default off.
 
 Caveat: large steps can make the Fingerprint GPR extrapolate to unphysical energies; tune
 `--walk-large` conservatively (the `|E| < 1e4` guard is kept).

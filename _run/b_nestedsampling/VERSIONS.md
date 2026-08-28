@@ -16,10 +16,10 @@ Versioning rules:
 
 | File | Version | Description |
 |---|---|---|
-| `main.py` | 1.6.0 | Root runner; added `--walk-exclude-worst` CLI flag (with `--walk`, clone only from live points excluding the worst, Fortran-style) |
+| `main.py` | 1.7.0 | Root runner; added `--novelty-threshold` / `--novelty-max-attempts` CLI flags (de-duplicate the initial live set in Fingerprint space) |
 | `nested_sampling/__init__.py` | 1.0.0 | |
 | `nested_sampling/__main__.py` | 1.0.0 | |
-| `nested_sampling/nested_sampler.py` | 1.6.0 | NestedSampler: added `walk_exclude_worst` param (default False); `sample_constrained` clones only from non-worst live points when set (falls back to uniform draw if n_live<=1) |
+| `nested_sampling/nested_sampler.py` | 1.7.0 | NestedSampler: added `novelty_threshold` / `novelty_max_attempts` params; `_append_live_point` de-duplicates initial live points by AGOX Fingerprint distance (applied at initialize only); `_fp_feature`/`_min_dist_to_kept`/`_register_novel` helpers |
 | `nested_sampling/gpr_training.py` | 1.0.0 | |
 | `nested_sampling/state_density.py` | 1.0.0 | |
 | `nested_sampling/utils.py` | 1.0.0 | |

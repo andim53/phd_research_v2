@@ -2698,3 +2698,38 @@ single-grammar-notes convention.
 list).
 
 **Time:** 2026-08-28 ~19:20-19:30 JST.
+
+
+---
+
+## Session 2026-08-28 — Add --novelty-threshold / --novelty-max-attempts (initial live-set de-dup); bump 1.6.0->1.7.0
+
+**Goal (user request):** implement a novelty threshold for the initial live points, controllable
+by a new flag, so we can control how different we want the initial live points to be (per the
+README recommendation: apply a novelty pass to the initial live set only, keep GPR on the full DB).
+
+**Clarified (per standing rule):**
+- Metric: Euclidean distance in AGOX Fingerprint feature space (same as the 9_novelFilter novelty).
+- Scope: applied ONLY in initialize() to the initial live set (windowed anchor + fills + default
+  draws); NOT during the run; GPR training uses the full DB.
+- Flags: --novelty-threshold (default None/disabled); --novelty-max-attempts (default 500).
+
+**Code changes:**
+- nested_sampler.py: new novelty_threshold / novelty_max_attempts params (validated). Builds an
+  AGOX Fingerprint descriptor when enabled. Helpers _fp_feature, _min_dist_to_kept,
+  _register_novel. _append_live_point now enforces novelty: if the draw is < threshold from kept
+  initial points, retry up to novelty_max_attempts (tracking the most-novel candidate), then accept
+  the best. Default initialize() path routed through _append_live_point (was appending directly,
+  bypassing novelty).
+- main.py: new --novelty-threshold / --novelty-max-attempts flags; passed to both sampler branches.
+- Version: main.py + nested_sampler.py 1.6.0 -> 1.7.0 (new feature + flags = minor bump).
+- Docs: README.md Options, README.AI.md Options table, TUTORIAL.md Step 6c, VERSIONS.md.
+
+**Verification (real execution):** py_compile OK. Mock-GPR/mock-descriptor tests: (1) default
+(non-windowed) path now de-duplicates initial live points (min pairwise >= threshold for
+well-separated structures); (2) windowed path too; (3) fallback (huge threshold / sparse DB)
+accepts most-novel candidate without hanging. Noted: on a pathological 0.5-spaced grid with
+threshold 2.0, greedy+RNG packing may not reach perfect >=2.0 spacing - inherent to greedy novelty,
+not a bug.
+
+**Time:** 2026-08-28 ~19:30-20:10 JST.

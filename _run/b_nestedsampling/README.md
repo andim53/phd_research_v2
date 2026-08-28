@@ -1777,6 +1777,14 @@ both are active, and `--perturb` is not wasted even though `--walk` is on.
 - `--walk-exclude-worst`  when `--walk` is on, clone ONLY from live points EXCLUDING
   the worst (Fortran-style: don't clone the walker being replaced). Default off
   (clone uniformly over all live points)
+- `--novelty-threshold`  minimum Euclidean distance (in AGOX Fingerprint feature
+  space) between any two INITIAL live points (eV-free, raw descriptor units). When
+  >0, the initial live set is de-duplicated at `initialize()`: each initial live
+  point must be ≥ this far from all already-kept ones (draws violating it are
+  retried up to `--novelty-max-attempts`). Applied ONLY at initialization; GPR
+  training and the run use the full DB. Default: None (disabled)
+- `--novelty-max-attempts`  max prior draws to find a novel initial live point
+  before accepting the most-novel candidate anyway. Default 500
 - `--output`    output directory, default `./ns_output_allseeds`
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)

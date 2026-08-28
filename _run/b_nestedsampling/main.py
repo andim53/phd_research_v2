@@ -20,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.6.0"
+__version__ = "1.7.0"
 
 import os
 import sys
@@ -187,6 +187,17 @@ def main():
                         "EXCLUDING the worst one (Fortran-style: don't clone the "
                         "walker being replaced). Default False = clone uniformly "
                         "over all live points.")
+    p.add_argument("--novelty-threshold", type=float, default=None,
+                   help="Minimum Euclidean distance (in AGOX Fingerprint feature "
+                        "space) between any two INITIAL live points. When >0, the "
+                        "initial live set is de-duplicated: each initial live point "
+                        "must be >= this far from all already-kept ones. Applied "
+                        "ONLY at initialization (windowed anchor + fills + default "
+                        "draws); GPR training and the run use the full DB. "
+                        "Default: None (disabled).")
+    p.add_argument("--novelty-max-attempts", type=int, default=500,
+                   help="Max prior draws to find a novel initial live point before "
+                        "accepting the last draw anyway. Default: 500.")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
@@ -304,6 +315,8 @@ def main():
             walk_large=args.walk_large,
             walk_mode=args.walk_mode,
             walk_exclude_worst=args.walk_exclude_worst,
+            novelty_threshold=args.novelty_threshold,
+            novelty_max_attempts=args.novelty_max_attempts,
         )
     else:
         beta = 1.0 / (K_B * args.temp)
@@ -328,6 +341,8 @@ def main():
             walk_large=args.walk_large,
             walk_mode=args.walk_mode,
             walk_exclude_worst=args.walk_exclude_worst,
+            novelty_threshold=args.novelty_threshold,
+            novelty_max_attempts=args.novelty_max_attempts,
         )
 
     sampler.initialize()
