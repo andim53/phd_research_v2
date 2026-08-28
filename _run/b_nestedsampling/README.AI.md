@@ -117,6 +117,7 @@ pjsub j_nestedsampling.sh
 | `--analysis-dir` | `<--output>/analysis` | Analysis output dir. |
 | `--no-analysis` | off | Skip automatic analysis. |
 | `--no-posterior-xsf` | off | Skip writing posterior `.xsf` files (fixed-T `posterior_structures/` and temperature-free `posterior_T{KKK}/`); still writes `posterior_summary.csv`. Saved-run re-analysis (`--analyze-only`) needs the xsf. |
+| `--walk-exclude-worst` | off | When `--walk` on, clone only from live points excluding the worst (Fortran-style). |
 | `--analyze-only <DIR>` | None | Re-run analysis on a saved run. |
 
 ## 4. Dependencies & environment

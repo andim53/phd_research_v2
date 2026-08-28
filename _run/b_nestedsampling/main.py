@@ -20,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 import os
 import sys
@@ -182,6 +182,11 @@ def main():
                    help="Which displacement scale(s) to use in the walk: 'both' (50/50 "
                         "small/large, Fortran default), 'small' (only small steps), "
                         "'large' (only large steps). Default: both.")
+    p.add_argument("--walk-exclude-worst", action="store_true",
+                   help="When the walk is enabled, clone ONLY from live points "
+                        "EXCLUDING the worst one (Fortran-style: don't clone the "
+                        "walker being replaced). Default False = clone uniformly "
+                        "over all live points.")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
@@ -298,6 +303,7 @@ def main():
             walk_small=args.walk_small,
             walk_large=args.walk_large,
             walk_mode=args.walk_mode,
+            walk_exclude_worst=args.walk_exclude_worst,
         )
     else:
         beta = 1.0 / (K_B * args.temp)
@@ -321,6 +327,7 @@ def main():
             walk_small=args.walk_small,
             walk_large=args.walk_large,
             walk_mode=args.walk_mode,
+            walk_exclude_worst=args.walk_exclude_worst,
         )
 
     sampler.initialize()

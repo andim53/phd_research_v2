@@ -1721,6 +1721,9 @@ both are active, and `--perturb` is not wasted even though `--walk` is on.
   default 0.40
 - `--walk-mode`  `both` (50/50 small/large, Fortran default) | `small` (only small
   steps) | `large` (only large steps). Default `both`
+- `--walk-exclude-worst`  when `--walk` is on, clone ONLY from live points EXCLUDING
+  the worst (Fortran-style: don't clone the walker being replaced). Default off
+  (clone uniformly over all live points)
 - `--output`    output directory, default `./ns_output_allseeds`
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)

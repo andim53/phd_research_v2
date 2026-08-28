@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 import os
 from pathlib import Path
@@ -71,6 +71,7 @@ class NestedSampler:
         walk_small: float = 0.05,
         walk_large: float = 0.40,
         walk_mode: str = "both",
+        walk_exclude_worst: bool = False,
     ):
         self.gpr = gpr
         self.db_structures = db_structures
@@ -99,6 +100,7 @@ class NestedSampler:
         self.walk_small = float(walk_small)
         self.walk_large = float(walk_large)
         self.walk_mode = str(walk_mode).lower()
+        self.walk_exclude_worst = bool(walk_exclude_worst)
         if self.walk_mode not in ("both", "small", "large"):
             raise ValueError(
                 f"walk_mode must be 'both', 'small' or 'large', got '{walk_mode}'.")
@@ -388,10 +390,24 @@ class NestedSampler:
         ``sample_from_prior`` (handled by the caller in ``step``).
         """
         if self.walk and len(self.live_structures) > 0:
-            idx = self.rng.integers(0, len(self.live_structures))
-            walked = self.constrained_walk(self.live_structures[idx])
-            if walked is not None:
-                return walked
+            if self.walk_exclude_worst:
+                # clone from live points EXCLUDING the worst (Fortran-style: don't
+                # clone the walker being replaced). Fall back to all if n_live <= 1.
+                worst_idx = int(np.argmin(self.live_log_L))
+                n_others = len(self.live_structures) - 1
+                if n_others >= 1:
+                    # map a random index in [0, n_others) to the live list skipping worst
+                    r = self.rng.integers(0, n_others)
+                    idx = r if r < worst_idx else r + 1
+                    walked = self.constrained_walk(self.live_structures[idx])
+                    if walked is not None:
+                        return walked
+                # else fall through to the uniform draw below (n_live <= 1)
+            else:
+                idx = self.rng.integers(0, len(self.live_structures))
+                walked = self.constrained_walk(self.live_structures[idx])
+                if walked is not None:
+                    return walked
         for _ in range(n_attempts):
             s = self.sample_from_prior()
             ll = self.log_likelihood(s)

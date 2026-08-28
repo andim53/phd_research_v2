@@ -16,10 +16,10 @@ Versioning rules:
 
 | File | Version | Description |
 |---|---|---|
-| `main.py` | 1.5.0 | Root runner; added `--no-posterior-xsf` CLI flag to skip writing posterior `.xsf` files (fixed-T and temperature-free); still writes `posterior_summary.csv` |
+| `main.py` | 1.6.0 | Root runner; added `--walk-exclude-worst` CLI flag (with `--walk`, clone only from live points excluding the worst, Fortran-style) |
 | `nested_sampling/__init__.py` | 1.0.0 | |
 | `nested_sampling/__main__.py` | 1.0.0 | |
-| `nested_sampling/nested_sampler.py` | 1.5.0 | NestedSampler.save() gained a `save_xsf` param (default True) to skip writing the posterior `.xsf` structure files while still writing `posterior_summary.csv` |
+| `nested_sampling/nested_sampler.py` | 1.6.0 | NestedSampler: added `walk_exclude_worst` param (default False); `sample_constrained` clones only from non-worst live points when set (falls back to uniform draw if n_live<=1) |
 | `nested_sampling/gpr_training.py` | 1.0.0 | |
 | `nested_sampling/state_density.py` | 1.0.0 | |
 | `nested_sampling/utils.py` | 1.0.0 | |

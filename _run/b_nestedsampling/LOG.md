@@ -2600,3 +2600,32 @@ copy of an existing live point, same idea as the Fortran. Difference: Fortran cl
 list in the walk Usage section).
 
 **Time:** 2026-08-28 ~19:20 JST.
+
+
+---
+
+## Session 2026-08-28 — Add --walk-exclude-worst flag; version bump 1.5.0 -> 1.6.0
+
+**Goal (user request):** based on the README's noted difference (Fortran excludes the worst walker
+from the clone; Python samples uniformly over all), add a parameter to also exclude the worst
+walker.
+
+**Clarified (per standing rule):**
+- Flag: --walk-exclude-worst (store_true, default False). When set (with --walk), sample_constrained
+  clones ONLY from live points EXCLUDING the worst (Fortran-style); default False keeps uniform-over-all.
+- Full implementation: sampler param + CLI flag + docs + version bump.
+
+**Code changes:**
+- nested_sampler.py: new walk_exclude_worst param (default False). sample_constrained clones only
+  from non-worst live points when set: worst_idx=argmin(live_log_L); if n_others>=1, map a random
+  index r in [0,n_others) to skip worst (idx = r if r<worst_idx else r+1); falls back to the
+  uniform draw if n_live<=1.
+- main.py: new --walk-exclude-worst flag; passed to both temperature-free and fixed-T sampler branches.
+- Version: main.py + nested_sampler.py 1.5.0 -> 1.6.0 (new feature + flag = minor bump).
+- Docs: README.md Options, README.AI.md Options table, VERSIONS.md.
+
+**Verification (real execution):** py_compile OK. Mock-GPR test: with walk_exclude_worst=True, 200/200
+sample_constrained calls never cloned the worst live point; with False, the worst WAS sometimes
+cloned. Behavior confirmed.
+
+**Time:** 2026-08-28 ~19:30 JST.
