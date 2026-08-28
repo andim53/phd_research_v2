@@ -16,10 +16,10 @@ Versioning rules:
 
 | File | Version | Description |
 |---|---|---|
-| `main.py` | 1.3.0 | Root runner; added windowed initial-live seeding CLI flags `--e-window-lo`, `--e-window-hi`, `--e-window-max-attempts` (wired into both temperature-free and fixed-T sampler branches) |
+| `main.py` | 1.4.0 | Root runner; added dual-scale constrained MC walk CLI flags `--walk`, `--walk-steps`, `--walk-small`, `--walk-large`, `--walk-mode` (wired into both temperature-free and fixed-T sampler branches) |
 | `nested_sampling/__init__.py` | 1.0.0 | |
 | `nested_sampling/__main__.py` | 1.0.0 | |
-| `nested_sampling/nested_sampler.py` | 1.3.0 | NestedSampler: added bounded-attempt windowed initial-live seeding (`e_window_lo/hi/max_attempts` params, `find_window_anchor`, `sample_capped_at_window`, `rel_energy`, `e_window_enabled`); `initialize()` seeds a worst-in-window anchor then caps the rest at the window max |
+| `nested_sampling/nested_sampler.py` | 1.4.0 | NestedSampler: added dual-scale constrained MC walk (`walk/walk_steps/walk_small/walk_large/walk_mode` params, `_choose_scale`, `constrained_walk`); `sample_constrained` clones a random live point and walks it (falling back to rejection draws) |
 | `nested_sampling/gpr_training.py` | 1.0.0 | |
 | `nested_sampling/state_density.py` | 1.0.0 | |
 | `nested_sampling/utils.py` | 1.0.0 | |

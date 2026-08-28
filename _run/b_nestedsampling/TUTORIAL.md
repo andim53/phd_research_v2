@@ -130,6 +130,27 @@ Notes:
   `--e-max-per-atom 0.25` limits the pool; `--e-window-lo/hi` pins where the run starts.
 - Only the **initial** live set is affected; the sampling dynamics after iteration 1 are unchanged.
 
+## Step 6c — Dual-scale constrained MC walk (new in v1.3.0)
+`--walk` enables the Fortran-style clone-and-walk move in `sample_constrained`. When on, each new
+sample is produced by cloning a random surviving live point and evolving it with a sequence of
+Gaussian trial steps (accepting each only if `E < E_boundary` and `|E| < 1e4`); if the walk fails,
+it falls back to rejection draws, then `sample_from_prior`.
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py --temperature-free \
+    --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --walk --walk-steps 40 --walk-small 0.05 --walk-large 0.40 --walk-mode both \
+    --output ./ns_output_tfree_walk --rng 42
+```
+Flags:
+- `--walk` — enable (off by default).
+- `--walk-steps` — trial steps per walk (Fortran `mixing_steps`; default 40; papers use 100s–1000s).
+- `--walk-small` / `--walk-large` — Gaussian displacement scales in Å (defaults 0.05 / 0.40).
+- `--walk-mode` — `both` (50/50 small/large, Fortran default) | `small` | `large`.
+
+Caveat: large steps can make the Fingerprint GPR extrapolate to unphysical energies; tune
+`--walk-large` conservatively (the `|E| < 1e4` guard is kept).
+
 ## Step 7 — Verifying the GPR fit
 The run prints a validation table for the first 5 training structures:
 ```

@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 from pathlib import Path
@@ -66,6 +66,11 @@ class NestedSampler:
         e_window_lo: Optional[float] = None,
         e_window_hi: Optional[float] = None,
         e_window_max_attempts: int = 1000,
+        walk: bool = False,
+        walk_steps: int = 40,
+        walk_small: float = 0.05,
+        walk_large: float = 0.40,
+        walk_mode: str = "both",
     ):
         self.gpr = gpr
         self.db_structures = db_structures
@@ -82,6 +87,29 @@ class NestedSampler:
         self.perturb = perturb
         self.rng = rng or np.random.default_rng()
         self.perturb_symbols = perturb_symbols
+
+        # Dual-scale constrained MC walk (clone-and-walk sampling, Fortran-style).
+        # When enabled, sample_constrained clones a random surviving live point
+        # and evolves it with a sequence of small/large Gaussian steps, keeping
+        # each trial below the current energy boundary. walk_mode: "both" (50/50
+        # small/large, Fortran default), "small" (only small steps), "large"
+        # (only large steps).
+        self.walk = bool(walk)
+        self.walk_steps = int(walk_steps)
+        self.walk_small = float(walk_small)
+        self.walk_large = float(walk_large)
+        self.walk_mode = str(walk_mode).lower()
+        if self.walk_mode not in ("both", "small", "large"):
+            raise ValueError(
+                f"walk_mode must be 'both', 'small' or 'large', got '{walk_mode}'.")
+        if self.walk_steps < 1:
+            raise ValueError(f"walk_steps must be >= 1, got {self.walk_steps}.")
+        if self.walk_small < 0 or self.walk_large < 0:
+            raise ValueError("walk_small / walk_large must be >= 0.")
+        if self.walk:
+            print(f"[NestedSampler] Dual-scale walk enabled: steps={self.walk_steps}, "
+                  f"small={self.walk_small:.3f} A, large={self.walk_large:.3f} A, "
+                  f"mode={self.walk_mode}")
 
         # Energy reference: shift so minimum training energy is 0, and the atom
         # count used for eV/atom relative window checks. Set before the windowed
@@ -312,6 +340,40 @@ class NestedSampler:
 
     # -- Constrained sampling --
 
+    def _choose_scale(self) -> float:
+        """Pick the displacement scale for one walk step based on walk_mode."""
+        if self.walk_mode == "small":
+            return self.walk_small
+        if self.walk_mode == "large":
+            return self.walk_large
+        # "both": 50/50 small vs large (Fortran default)
+        return self.walk_large if self.rng.random() < 0.5 else self.walk_small
+
+    def constrained_walk(self, x0: Atoms) -> Optional[Atoms]:
+        """Clone-and-MC constrained walk (Fortran-style dual-scale rattle).
+
+        Starts from a clone of ``x0`` and runs ``walk_steps`` trial moves, each a
+        Gaussian displacement of all ``perturb_indices`` atoms with scale chosen
+        from ``walk_mode`` (both/small/large). A trial is accepted only if it
+        stays physical (|E| < 1e4) and below the current energy boundary
+        (E < E_boundary, equivalently log L > log_L_boundary). Returns the
+        evolved structure, or None if the walk never produced a valid point
+        below the boundary.
+        """
+        x = x0.copy()
+        E_boundary = self.E_ref - self.log_L_boundary
+        valid = False
+        for _ in range(self.walk_steps):
+            scale = self._choose_scale()
+            noise = self.rng.normal(0.0, scale, (len(self.perturb_indices), 3))
+            trial = x.copy()
+            trial.positions[self.perturb_indices] += noise
+            Et = self.gpr.predict_energy(trial)
+            if abs(Et) < 1e4 and Et < E_boundary:
+                x = trial
+                valid = True
+        return x if valid else None
+
     def sample_constrained(self, n_attempts: int = 500) -> Optional[Atoms]:
         """Draw from prior with log_L > log_L_boundary.
 
@@ -319,7 +381,17 @@ class NestedSampler:
         (equivalently log_L = -(E - E_ref) > log_L_boundary); in fixed-T mode it
         is the beta-weighted likelihood constraint. Either way, the prior volume
         shrinks toward low energy.
+
+        If the dual-scale walk is enabled, first clone a random surviving live
+        point and evolve it with ``constrained_walk`` (primary method). If that
+        fails, fall back to the original independent rejection draws, then to
+        ``sample_from_prior`` (handled by the caller in ``step``).
         """
+        if self.walk and len(self.live_structures) > 0:
+            idx = self.rng.integers(0, len(self.live_structures))
+            walked = self.constrained_walk(self.live_structures[idx])
+            if walked is not None:
+                return walked
         for _ in range(n_attempts):
             s = self.sample_from_prior()
             ll = self.log_likelihood(s)

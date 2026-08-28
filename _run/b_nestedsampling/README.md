@@ -456,6 +456,35 @@ This implements the "start at ~0.25, keep everything below" behaviour discussed 
 section. (For a hard dataset-side cap use `--e-max-per-atom 0.25`; the windowed seeding only
 affects the *initial* live set.)
 
+## Usage (dual-scale constrained MC walk)
+`--walk` activates the Fortran-style **clone-and-walk** sampling move in
+`sample_constrained`. Instead of (only) independent DB re-draws, it clones a random surviving
+live point and evolves it with a sequence of Gaussian trial steps, keeping every accepted step
+below the current energy boundary (`E < E_boundary`, `|E| < 1e4`). If the walk produces no valid
+point, it falls back to the original rejection draws, then to `sample_from_prior`.
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py --temperature-free \
+    --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --walk --walk-steps 40 --walk-small 0.05 --walk-large 0.40 --walk-mode both \
+    --output ./ns_output_tfree_walk --rng 42
+```
+Controls:
+- `--walk-steps` — trial steps per walk (the Fortran `mixing_steps`; default 40; the papers use
+  100s–1000s).
+- `--walk-small` / `--walk-large` — the two Gaussian displacement scales in Å (small = local
+  refinement, large = barrier crossing; defaults 0.05 / 0.40).
+- `--walk-mode` — `both` (50/50 small/large, Fortran default) | `small` (only small) | `large`
+  (only large).
+
+Notes:
+- The walk perturbs **all** `--perturb-symbols` atoms simultaneously, in Å, matching
+  `sample_from_prior`.
+- Large steps can make the Fingerprint GPR extrapolate to unphysical energies — the `|E| < 1e4`
+  guard is kept, and you may want to tune `--walk-large` conservatively.
+- This closes the "walk length L" modelling gap (Python previously could not create new
+  configurations, only re-draw from the DB).
+
 ## Physics of temperature-free mode
 
 In canonical statistical mechanics the **partition function** of a system of atoms is
@@ -1355,6 +1384,17 @@ For literature-scale settings and the paper-derived parameter table, see
 - `--e-window-max-attempts`  max draws to find a structure in the seeding band
   `[lo, hi]`; a `RuntimeError` is raised if not found within this many draws.
   Default 1000
+- `--walk`  enable the dual-scale constrained MC walk (Fortran-style
+  clone-and-walk) in `sample_constrained`: clones a random surviving live point
+  and evolves it with Gaussian steps (falling back to rejection draws if the walk
+  fails)
+- `--walk-steps`  number of trial steps in the constrained walk (the Fortran
+  `mixing_steps`), default 40
+- `--walk-small`  small displacement scale (Å) for the walk, default 0.05
+- `--walk-large`  large displacement scale (Å) for the walk (barrier crossing),
+  default 0.40
+- `--walk-mode`  `both` (50/50 small/large, Fortran default) | `small` (only small
+  steps) | `large` (only large steps). Default `both`
 - `--output`    output directory, default `./ns_output_allseeds`
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)

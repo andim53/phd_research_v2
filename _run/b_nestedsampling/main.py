@@ -20,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -163,6 +163,25 @@ def main():
                    help="Max attempts to find a structure in the windowed seeding "
                         "band [lo, hi]; a RuntimeError is raised if not found within "
                         "this many draws. Default: 1000.")
+    p.add_argument("--walk", action="store_true",
+                   help="Enable the dual-scale constrained MC walk (Fortran-style "
+                        "clone-and-walk) in sample_constrained. Clones a random "
+                        "surviving live point and evolves it with Gaussian steps, "
+                        "falling back to rejection draws if the walk fails.")
+    p.add_argument("--walk-steps", type=int, default=40,
+                   help="Number of trial steps in the constrained walk (the Fortran "
+                        "'mixing_steps'). Default: 40.")
+    p.add_argument("--walk-small", type=float, default=0.05,
+                   help="Small displacement scale (Angstrom) for the constrained walk. "
+                        "Default: 0.05.")
+    p.add_argument("--walk-large", type=float, default=0.40,
+                   help="Large displacement scale (Angstrom) for the constrained walk "
+                        "(barrier crossing). Default: 0.40.")
+    p.add_argument("--walk-mode", type=str, default="both",
+                   choices=["both", "small", "large"],
+                   help="Which displacement scale(s) to use in the walk: 'both' (50/50 "
+                        "small/large, Fortran default), 'small' (only small steps), "
+                        "'large' (only large steps). Default: both.")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
@@ -267,6 +286,11 @@ def main():
             e_window_lo=args.e_window_lo,
             e_window_hi=args.e_window_hi,
             e_window_max_attempts=args.e_window_max_attempts,
+            walk=args.walk,
+            walk_steps=args.walk_steps,
+            walk_small=args.walk_small,
+            walk_large=args.walk_large,
+            walk_mode=args.walk_mode,
         )
     else:
         beta = 1.0 / (K_B * args.temp)
@@ -285,6 +309,11 @@ def main():
             e_window_lo=args.e_window_lo,
             e_window_hi=args.e_window_hi,
             e_window_max_attempts=args.e_window_max_attempts,
+            walk=args.walk,
+            walk_steps=args.walk_steps,
+            walk_small=args.walk_small,
+            walk_large=args.walk_large,
+            walk_mode=args.walk_mode,
         )
 
     sampler.initialize()

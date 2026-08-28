@@ -2021,3 +2021,40 @@ shell that independent draws cannot produce.
 **Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
 
 **Time:** 2026-08-28 ~02:45 JST.
+
+
+---
+
+## Session 2026-08-28 — Implement dual-scale constrained MC walk + flags; version bump 1.3.0 -> 1.4.0
+
+**Goal (user request):** implement the constrained_walk with dual scale into the code, with a flag
+to activate it and controls for steps, small/large step, and an option to choose only small or only
+large scale.
+
+**Clarified (per standing rule):**
+- Integration: inside sample_constrained, clone a random surviving live point and run the dual-scale
+  MC walk as PRIMARY; fall back to rejection draws, then sample_from_prior if the walk fails.
+- Flags: --walk (on/off), --walk-steps (default 40), --walk-small (0.05), --walk-large (0.40),
+  --walk-mode {both,small,large}.
+- Mode: both = 50/50 small/large (Fortran); small/large restrict to one scale.
+- Clone: a random surviving live point (Fortran-style, non-worst).
+
+**Code changes:**
+- nested_sampler.py: constructor params walk/walk_steps/walk_small/walk_large/walk_mode (validated:
+  walk_mode in {both,small,large}, walk_steps>=1, scales>=0). New methods _choose_scale() and
+  constrained_walk() (clone, walk_steps Gaussian trials over perturb_indices, accept if |E|<1e4 and
+  E < E_boundary, return None if never valid). sample_constrained now tries the walk first then
+  rejection.
+- main.py: new CLI flags --walk, --walk-steps, --walk-small, --walk-large, --walk-mode (choices);
+  wired into both temperature-free and fixed-T sampler branches.
+- Version: main.py + nested_sampler.py 1.3.0 -> 1.4.0 (new feature + flags = minor bump). VERSIONS.md
+  descriptions updated.
+- README.md: added the 5 flags to Options; added "## Usage (dual-scale constrained MC walk)".
+- TUTORIAL.md: added "## Step 6c — Dual-scale constrained MC walk".
+
+**Verification (real execution):** py_compile OK. Mock-GPR smoke test (_tmp/test_walk.py) run with
+agox_v2 python: (1) invalid walk_mode -> ValueError; (2) mode=small -> always small scale; (3)
+constrained_walk returns a structure below E_boundary; (4) sample_constrained (walk) returns a
+structure; (5) walk-disabled rejection path still works. Removed the test file afterwards.
+
+**Time:** 2026-08-28 ~02:55-03:15 JST.
