@@ -1327,6 +1327,47 @@ step (`dataset/main.py`, all seeds 3..104) can be added back — see TUTORIAL.
 For literature-scale settings and the paper-derived parameter table, see
 `TUTORIAL.md` ("Literature-scale NS parameters").
 
+**`--perturb` vs `--walk` — order, what each does, interaction, and "only `--walk`".**
+
+**(1) Which comes first / order.** In the pipeline, `--perturb` "starts" first — it drives the
+**initialization**. Then during the NS iterations, `--walk` is tried *first* inside
+`sample_constrained`, and `--perturb` acts as the **fallback**. Concretely:
+- **Initialize (`initialize()`):** builds the initial live set entirely from `--perturb`-based
+  prior draws — the windowed anchor (`find_window_anchor`) and the capped fills
+  (`sample_capped_at_window`) all call `sample_from_prior()`, which applies a Gaussian
+  displacement of std `--perturb` (0.01 Å). The walk is NOT used at initialization.
+- **Each NS step (`step()` → `sample_constrained()`):** if `--walk` is on, it **first** clones a
+  random surviving live point and runs the walk (`constrained_walk`, using `--walk-small`/
+  `--walk-large`). If the walk yields no valid point, it **falls back** to `--perturb`-based
+  rejection draws (`sample_from_prior` repeatedly), and finally to an unconstrained prior draw.
+
+**(2) What each does.**
+- **`--perturb`** — the Gaussian displacement std (Å) added to the base prior draw
+  `sample_from_prior`. It is the "small, safe jitter" used to build the initial live set and to
+  generate fallback candidates.
+- **`--walk`** — a separate, larger clone-and-walk move in `sample_constrained`. It uses its own
+  scales (`--walk-small 0.05`, `--walk-large 0.40`, `--walk-mode`), unrelated to `--perturb`.
+
+**(3) How they interact.** They are **complementary**, not alternatives: `--perturb` handles
+*initialization + fallback*, `--walk` handles the *primary per-step move*. `--perturb` does not
+feed the walk — the walk clones an existing live point and moves it with its own scales.
+
+**(4) What if I use only `--walk` (no `--perturb` flag)?** `--perturb` has a **default of 0.01**,
+so "only `--walk`" still means `--perturb 0.01` is active underneath: the initial live set and
+the fallback draws still use a 0.01 Å perturb. The only way to make `--perturb` truly unused is
+`--perturb 0`. In that case:
+- The initial live set would be drawn from the DB **with no jitter** (pure resample of DB
+  structures).
+- The fallback rejection draws would also be pure DB resamples (no new coordinates).
+- The **walk still works** (it uses its own scales, independent of `--perturb`), so `--walk` on
+  its own can still generate new configurations — but the starting points for the walk come from
+  the live set, which was seeded from DB structures.
+
+**Bottom line:** with the b6 command (`--perturb 0.01 ... --walk`), `--perturb` handles the
+initial live-set seeding and the fallback, while `--walk` handles the primary per-step move —
+both are active, and `--perturb` is not wasted even though `--walk` is on.
+
+
 ## Options
 - `--temp`      temperature (K), default 300 (fixed-T mode only)
 - `--temperature-free`  temperature-free NS: beta kept OUT of the likelihood

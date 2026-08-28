@@ -2201,3 +2201,29 @@ in sample_constrained, independent of --perturb. So --perturb is NOT redundant w
 - README.md (root): added a note in the 'Usage (dual-scale constrained MC walk)' Notes list.
 
 **Time:** 2026-08-28 ~04:50 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer --perturb vs --walk order/interaction Notes block
+
+**Goal (user request):** answer the new `Notes:` block asking, given --perturb vs --walk: which
+comes first / starts first, what each does, how they interact, and what happens if only --walk is
+used.
+
+**Clarified (per standing rule):** answer all 4 parts grounded in the code.
+
+**Answer written (flag removed):**
+(1) Order: --perturb starts first (drives initialize(); the windowed anchor + capped fills call
+sample_from_prior which applies std=--perturb; the walk is NOT used at init). Then each step's
+sample_constrained tries the WALK first and falls back to --perturb rejection draws.
+(2) What each does: --perturb = Gaussian displacement std of sample_from_prior (init + fallback);
+--walk = separate clone-and-walk in sample_constrained with its own --walk-small/--walk-large.
+(3) Interaction: complementary, not alternatives (init+fallback vs primary per-step move).
+(4) Only --walk: --perturb defaults to 0.01, so it is still active underneath (init + fallback);
+only --perturb 0 disables it (pure DB resample init), while the walk still works.
+
+**Verification:** to-answer Notes flag removed (the remaining 'Notes:' at line ~480 is the
+legitimate bulleted list in the walk Usage section).
+
+**Time:** 2026-08-28 ~05:00 JST.
