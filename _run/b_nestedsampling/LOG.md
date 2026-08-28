@@ -1753,3 +1753,28 @@ is [0.24,0.25] since pool capped at 0.25; determinism (draw band point first und
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~00:50 JST.
+
+
+---
+
+## Session 2026-08-28 — README: assess anchor-structure Notes block
+
+**Goal (user request):** answer the new `Notes:` block proposing a cleaner design instead of the
+while-True band seeding: as a flag, immediately pick the DB structure closest to the 0.25±0.01
+window as one initial live point, then fill the rest with uniform random capped at window max
+(0.25). Asks "What about this?"
+
+**Clarified (per standing rule):** assess their proposal in the README (no code change); present
+the worst-pinning as guaranteed within the DB's resolution, including the sparse-band caveat.
+
+**Answer written (flag removed):** endorsed the design as cleaner + deterministic (3 reasons: no
+rejection loop / always terminates; anchor = argmin |rel-0.25| pins the worst to the closest-to-
+0.25 structure (and <=0.25 cap keeps it from being higher); keeps everything below, nothing
+discarded). Addressed the "guarantee" honestly: worst = the DB's best available approximation of
+0.25 (dense band -> ~0.25; sparse -> the highest available <=0.25, e.g. 0.22). Proposed flag
+semantics (--e-anchor-per-atom, moved with --e-max-per-atom cap, anchor drawn first, tie-break
+by lowest index for determinism, empty-pool error).
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~01:00 JST.

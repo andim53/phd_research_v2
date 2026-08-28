@@ -761,6 +761,47 @@ while True:
         break
 live_structures.append(s); ...
 
+**Assessing your proposal — yes, this is a cleaner and fully deterministic design.**
+
+Your approach: as a flag, (1) **immediately pick the DB structure closest to the desired energy
+window (0.25±0.01)** as one initial live point (the "anchor"), then (2) fill the remaining
+`K−1` live points with **uniform random capped at the window max (0.25)**. This is better than a
+`while True` band seeding in three ways:
+
+1. **Deterministic and always terminates.** No rejection loop — you just find the argmin of
+   `|(E−E_ref)/N − 0.25|` over the pool and take that structure. It cannot spin.
+2. **Pins the worst to the closest-to-0.25 structure.** The anchor is the structure whose
+   relative energy is *nearest* 0.25, and every other live point is ≤ 0.25 (capped pool). So the
+   worst live point = `max(live_log_L)` → `E_boundary` (line 183) is **exactly that anchor** —
+   the closest the DB provides to 0.25, i.e. worst ≈ 0.25 within whatever the DB has.
+3. **Keeps everything below.** All other live points stay wherever uniform draws land (including
+   the <0.25 structures), so nothing is discarded and the low-energy basin is fully represented.
+
+**Does it "guarantee" worst ≈ 0.25?** Yes, *within the DB's resolution*: the worst is pinned to
+the closest-to-0.25 structure that exists at or below 0.25. If the DB is dense near 0.25, that
+structure is ≈0.25 (well within 0.25±0.01). If the DB is sparse there (e.g. its highest structure
+≤0.25 is 0.22), the worst lands at 0.22 — still the *best possible* anchor, but not literally
+0.25. So the guarantee is "worst = the DB's best available approximation of 0.25," which is the
+strongest guarantee a finite discrete DB can give.
+
+**Sensible flag semantics.** Make it `--e-anchor-per-atom 0.25` (optional). When set:
+- Pre-filter the pool with `--e-max-per-atom` semantics so no structure exceeds the anchor value
+  (so the anchor is indeed the global worst; if you don't cap, a structure above 0.25 would win
+  `max` and defeat the purpose — so anchor and cap should move together).
+- In `initialize()`, draw the anchor structure first (closest to the anchor value), then draw the
+  other `K−1` live points uniformly from the capped pool.
+- Edge case: if the pool is empty at/above the anchor (no structure ≤ 0.25 at all), error clearly.
+
+**Tie-break / determinism.** If two structures are equidistant from 0.25, pick either
+deterministically (e.g. lowest index) so `--rng` still reproduces the run. Drawing the anchor
+*first* also keeps the subsequent uniform draws' RNG stream identical to a run without the anchor.
+
+**Net assessment.** This is the right design — simpler, deterministic, and it achieves exactly
+"worst ≈ 0.25 (closest available), keep everything below." The only caveat is the inherent
+discrete-DB resolution: "guaranteed ≈ 0.25" really means "guaranteed = the closest available
+structure to 0.25 that is ≤ 0.25."
+
+
 #   2) then draw the remaining K-1 live points as usual (uniform over the <=0.25 pool).
 ```
 
