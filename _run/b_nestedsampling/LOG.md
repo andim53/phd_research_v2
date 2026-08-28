@@ -1590,3 +1590,29 @@ for no-basis readers.
 **Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
 
 **Time:** 2026-08-27 ~23:50 JST.
+
+
+---
+
+## Session 2026-08-27 — README: answer the E_max/main-loop Notes block in the Fortran section
+
+**Goal (user request):** answer the new `Notes:` block inside the Fortran toy-model section
+("Nested sampling works by first find the E_max and slowly lower it, based on the Fortran code
+main loop; in the python code, how does it operate? ...").
+
+**Clarified (per standing rule):** answer fully by walking initialize() -> step() -> updating
+log_L_boundary (the running energy cutoff), contrasted with Fortran's fixed E_max +
+(K/(K+1))^i shrink, with example + no-basis analogy, building on the prior E_max answer.
+
+**Answer written (flag removed):** explained the Python loop lowers the energy window
+DYNAMICALLY (running E_boundary = E_ref - log_L_boundary, set at line 183/265), not via a fixed
+E_max. Walked: initialize() draws n_live prior samples, sets first cutoff to worst live point;
+step() finds argmin(live_log_L), records delta_X = exp(-i/K)-exp(-(i+1)/K), replaces worst via
+sample_constrained() (log L > log_L_boundary, |E|<1e4), then updates log_L_boundary = live_log_L.min()
+so the window creeps downward each iteration. Contrasted with Fortran (fixed E_max, known
+(K/(K+1))^i ratio). Gave a concrete numeric example (E_ref=-437 eV, boundary descending -420 ->
+-421 -> -422 ...) and a net/water-level no-basis analogy.
+
+**Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
+
+**Time:** 2026-08-28 ~00:00 JST.

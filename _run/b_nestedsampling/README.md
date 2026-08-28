@@ -581,6 +581,59 @@ the prior window must span the barrier to connect the two phases.
   top of its "window" is *implicitly* the highest-energy structure in the DB — there is no
   barrier-relative margin. The window is just "whatever the collected DB spans".
 
+**How the Python loop "lowers the energy window" — the running `E_boundary`.** Fortran
+sets a fixed `E_max` once and shrinks by the known ratio `X_i = (K/(K+1))^i`. The Python code does
+the same *descending* idea but **dynamically**, by keeping the energy cutoff at the current worst
+live point and updating it every iteration. There is no fixed upper value; the cutoff is
+re-computed from the live set each step. Concretely:
+
+**Initialize (`initialize()`, lines 162–185).**
+- Draw `K = n_live` structures from the prior (`sample_from_prior()`: random DB structure +
+  perturb). These are the "live" points — the current window occupants.
+- Remove unphysical ones (`_filter_unphysical`, `|E| > 1e4`).
+- Set the first cutoff to the *worst* live point:
+  `log_L_boundary = live_log_L.min()` (line 183). In temperature-free mode this corresponds to an
+  energy `E_boundary = E_ref − log_L_boundary` (printed line 185) — this is the "E_max" of the
+  current window.
+
+**Iterate (`run()` → `step()`, lines 271–267), repeated `n_iterations` times:**
+1. **Find the worst** live point: `worst_idx = argmin(live_log_L)` (line 226) — the highest-energy
+   one in temperature-free mode. This is the Fortran `idx_worst = maxloc(walkers_E)`.
+2. **Record the shell weight** `ΔX = X_{i−1} − X_i = exp(−i/K) − exp(−(i+1)/K)` (lines 232–234),
+   and save the discarded sample with that weight (lines 246–254) — the Fortran `dead_X`/
+   `dead_E`.
+3. **Replace** the worst point with a new structure that must be *better* than the cutoff:
+   `sample_constrained()` (lines 207–220) draws from the prior until
+   `log L > log_L_boundary` and `|E| < 1e4` (i.e. `E < E_boundary`), up to 500 attempts; if it
+   fails, it falls back to an unconstrained draw (lines 257–259).
+4. **Update the cutoff**: `log_L_boundary = live_log_L.min()` (line 265). Because the new point is
+   better than the old worst, the *new* worst is at least as good — so the energy window has
+   **moved down** (tightened).
+
+So each iteration "lowers the window": the worst surviving energy is removed and replaced by
+something lower, so the boundary `E_boundary` creeps downward exactly like Fortran's `E_max`
+descending — but the Python descent is *data-driven* (wherever the live points currently are)
+rather than a fixed initial value.
+
+**Example (concrete numbers, temperature-free).** Suppose `E_ref = −437 eV`, and the 50 initial
+live points span `−420` to `−430 eV`. Initialize sets `E_boundary ≈ −420` (the worst). Iteration 1:
+remove the `−420` structure, draw a new one constrained to `E < −420`; suppose it lands at `−424`.
+Now the worst live point is `−421`, so `E_boundary` becomes `−421`. Iteration 2 removes `−421`,
+replaces it with something `< −421`, say `−423`; worst is now `−422`, boundary → `−422`. Each step
+the window's ceiling drops, so the sampled structures concentrate ever closer to the ground state
+`E_ref`. The volume removed each step is `ΔX = exp(−i/50) − exp(−(i+1)/50)` — the same geometric
+shrink as Fortran, just expressed via `exp` instead of `(K/(K+1))^i`.
+
+**Analogy (no basis needed).** Imagine a net with 50 holes floating on a lake, and the water level
+is the energy cutoff. Fortran picks one fixed starting level (its `E_max`) and, each round, lowers
+the whole lake by a known, pre-chosen amount. Python instead does: look at the *highest* spot still
+inside the net, drain just below it, drop a new weight that must be below that level, then look at
+the new highest spot and repeat. Both drain the lake toward the bottom, but Python's level is set
+by "where the worst remaining sample currently is" rather than by a number fixed at the start. The
+amount of water each drained step represents (`ΔX`) is what later gets multiplied into the
+partition function `Z`.
+
+
 What the Python code does define, and how:
 
 1. **`E_ref` (line 99) = `db_energies.min()`** — the **lowest** training energy. This is a
