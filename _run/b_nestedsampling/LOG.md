@@ -2642,3 +2642,29 @@ walk) flags list, noting it is new in v1.6.0 and that it clones only from live p
 worst (Fortran-style), default off.
 
 **Time:** 2026-08-28 ~19:40 JST.
+
+
+---
+
+## Session 2026-08-28 — Create run dir _runs/b8_femgo_walk_emax04_exclworst_noxsf (b6 + walk-exclude-worst + no-xsf)
+
+**Goal (user request):** update b7 and make a new b8 dir. After clarify, the user said: they made a
+mistake, they don't use b7; b8 = the b6 system (plain Fe/MgO) with b6's params PLUS
+--walk-exclude-worst and --no-posterior-xsf, with the latest root code (v1.6.0).
+
+**Clarified (per standing rule):**
+- b8 = b6's system/params (plain Fe/MgO, e-max 0.4, window [0.3,0.35], walk on, perturb Fe,
+  temperature-free, n-live 100, n-iters 1000, rng 42) + --walk-exclude-worst + --no-posterior-xsf.
+- Latest root code (v1.6.0). b7 left unchanged.
+
+**Actions taken:**
+- Created _runs/b8_femgo_walk_emax04_exclworst_noxsf/ as a full self-contained copy: main.py
+  (v1.6.0) + nested_sampling/ + scripts/ from project root; dataset from root dataset/ (13 seeds,
+  plain Fe/MgO).
+- Copied the CORRECT plot_structure_landscape.py (accepts s=25) into nested_sampling/scripts/.
+- Wrote j_b8_*.sh (PJM, gpaw_env) with the b6 command + --walk-exclude-worst + --no-posterior-xsf.
+- Wrote README.md + TUTORIAL.md documenting the treatment and the two new flags (including the
+  note that --no-posterior-xsf keeps the auto state-density analysis but disables --analyze-only).
+- py_compile OK for run main.py + nested_sampler.py; j script executable.
+
+**Time:** 2026-08-28 ~19:50 JST.
