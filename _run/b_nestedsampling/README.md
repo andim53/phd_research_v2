@@ -714,6 +714,35 @@ optional `--e-min-per-atom` flag with a warning if too few structures satisfy it
 about. (This is the same "windowed" reasoning as the Fortran `E_max`; the difference is that the
 Fortran can always fill its live set from a continuous potential, whereas your DB may not.)
 
+**Understood — you want the initial live set's *worst* point at 0.25 eV/atom while *keeping*
+the lower-than-0.25 structures in the live set. Good news: that requires **no rejection and
+nothing discarded** — it is exactly the "upper-window-only" case.
+
+**How to get it.** Cap the prior pool's upper bound at 0.25 eV/atom with `--e-max-per-atom 0.25`.
+This keeps every DB structure with `(E/atom − min E/atom) ≤ 0.25`, which includes:
+- the low-energy structures (down to the global minimum), and
+- the near-0.25 ones.
+
+Then `initialize()` draws the `K` initial live points *uniformly from that pool*. Because the
+pool's top is 0.25, no initial live point can exceed 0.25 — so the **worst** of them (the initial
+`E_boundary`, `log_L_boundary = live_log_L.min()`, line 183) is **at most 0.25**, and in practice
+lands close to 0.25 whenever the pool has structures near the top. The rest of the live set spans
+downward from there (including the <0.25 structures), exactly as you want. NS then descends from
+~0.25 toward the minimum, weighting the whole range.
+
+**So the recipe is just one flag:** `--e-max-per-atom 0.25` (plus `--n-live`/`--n-iters` as
+usual). No `--e-min-per-atom`, no rejection loop, no wasted data.
+
+**Caveat on "exactly 0.25".** Because the draw is uniform over a *discrete* DB, the worst live
+point is pinned to the *highest structure actually present at or below 0.25* — which is typically
+≈0.25 but not guaranteed to be exactly 0.25 (unless the DB has a structure at precisely that
+energy). If you specifically need the worst to sit at the *top of the pool*, the cleanest is to
+seed one initial live point at the highest-energy structure in the filtered pool — but for most
+purposes `--e-max-per-atom 0.25` gives "start at ~0.25, keep everything below" without any
+discarding. (This is the "cleaner alternative" from the previous note; your requirement is exactly
+what it delivers.)
+
+
 
 **Important nuance about what "starting from 0.25 eV/atom" means in NS.** Nested sampling does
 not need you to set the *start* — it **automatically starts at the top of whatever window you

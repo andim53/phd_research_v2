@@ -1703,3 +1703,28 @@ guard with a warning.
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~00:30 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer worst-at-0.25-keep-lower Notes block
+
+**Goal (user request):** answer the new `Notes:` block correcting the previous note: the user
+does NOT want to throw away lower-than-0.25 structures; they want the initial live set's WORST
+point at 0.25 eV/atom while KEEPING the lower-than-0.25 structures as initial live points.
+
+**Clarified (per standing rule):** cap the prior pool at <=0.25 via --e-max-per-atom 0.25 so the
+worst live point is AT MOST 0.25 (typically ~0.25), keeping all lower structures, no
+rejection/discarding.
+
+**Answer written (flag removed):** explained this is the "upper-window-only" case needing no
+rejection. `--e-max-per-atom 0.25` keeps all structures with rel<=0.25 (low-energy down to the
+minimum AND the near-0.25 ones); initialize() draws the K initial live points uniformly from that
+pool, so the worst (=initial E_boundary, log_L_boundary=live_log_L.min(), line 183) is at most
+0.25 and typically ~0.25, while the rest of the live set spans downward. Recipe = one flag,
+--e-max-per-atom 0.25. Caveat: exact 0.25 depends on whether the DB has a structure at that
+energy; if pinning exactly to the pool top is required, seed one live point at the top structure.
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~00:40 JST.
