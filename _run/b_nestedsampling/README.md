@@ -437,6 +437,25 @@ write `T_K,beta_eV-1,logZ,Z,F_eV` rows. (No `thermodynamics.csv` is present in t
 repo or in the existing `_runs/*` — run the command above to create one, locally or
 via the HPC temperature-free job.)
 
+## Usage (windowed initial-live seeding)
+`--e-window-lo` / `--e-window-hi` (eV/atom **above the global minimum**) let you pin the
+initial live set's **worst** point to a chosen energy window (e.g. `[0.24, 0.25]`) while
+keeping all lower structures. When both are set, `initialize()` first finds ONE live point
+("the worst") by **bounded-attempt** search — draws up to `--e-window-max-attempts` structures
+whose GPR-predicted `rel = (E − E_ref)/N` falls in `[lo, hi]` (a `RuntimeError` is raised if
+none is found). The remaining `K−1` live points are uniform prior draws **capped at `hi`** (any
+draw above `hi` is rejected). Example:
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py --temperature-free \
+    --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --e-window-lo 0.24 --e-window-hi 0.25 --e-window-max-attempts 1000 \
+    --output ./ns_output_tfree_windowed --rng 42
+```
+This implements the "start at ~0.25, keep everything below" behaviour discussed in the Fortran
+section. (For a hard dataset-side cap use `--e-max-per-atom 0.25`; the windowed seeding only
+affects the *initial* live set.)
+
 ## Physics of temperature-free mode
 
 In canonical statistical mechanics the **partition function** of a system of atoms is
@@ -628,9 +647,9 @@ and at a different stage. Two distinct things are involved:
    `max_E`.
 
 So: to filter *which structures enter the pool* by relative eV/atom above the minimum, use
-`--e-max-per-atom`. What the code does **not** currently have is a runtime *relative* `max_E`
-filter applied during sampling. That could be added (see Q2) as a small change — convert the
-absolute check `abs(E) > max_E` into a relative one like `(E − E_ref)/N > threshold` or keep both.
+`--e-max-per-atom`. For a runtime *relative* window on the **initial live set** (the Q2
+"windowed" idea), the code now provides `--e-window-lo` / `--e-window-hi` (bounded-attempt seeding,
+see "Windowed initial-live seeding" below).
 
 **Q2. Can we set the initial energy window ourselves, e.g. sample only a band starting 0.25
 eV/atom above the global minimum?**
@@ -1183,6 +1202,15 @@ For literature-scale settings and the paper-derived parameter table, see
   sampling, the GPR training data, and the initial sampler structures (filtered once
   after loading). Use to drop high-energy outliers that break the GPR fit
   (e.g. `0.67`); default not set = keep all
+- `--e-window-lo`  lower bound (eV/atom above the global minimum) of the windowed
+  initial-live seeding; with `--e-window-hi` set, ONE initial live point (the
+  "worst") is found by bounded-attempt search with rel energy in `[lo, hi]`.
+  rel uses the GPR-predicted energy. Default not set = disabled
+- `--e-window-hi`  upper bound of the windowed seeding (eV/atom); also the cap on the
+  remaining initial live draws. See `--e-window-lo`
+- `--e-window-max-attempts`  max draws to find a structure in the seeding band
+  `[lo, hi]`; a `RuntimeError` is raised if not found within this many draws.
+  Default 1000
 - `--output`    output directory, default `./ns_output_allseeds`
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)

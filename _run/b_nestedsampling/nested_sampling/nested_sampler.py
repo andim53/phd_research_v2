@@ -63,6 +63,9 @@ class NestedSampler:
         rng: np.random.Generator = None,
         perturb_symbols: str = "Fe",
         temperature_free: bool = False,
+        e_window_lo: Optional[float] = None,
+        e_window_hi: Optional[float] = None,
+        e_window_max_attempts: int = 1000,
     ):
         self.gpr = gpr
         self.db_structures = db_structures
@@ -80,6 +83,39 @@ class NestedSampler:
         self.rng = rng or np.random.default_rng()
         self.perturb_symbols = perturb_symbols
 
+        # Energy reference: shift so minimum training energy is 0, and the atom
+        # count used for eV/atom relative window checks. Set before the windowed
+        # seeding block below (which prints E_ref).
+        self.E_ref = db_energies.min()
+        self.n_atoms = len(db_structures[0])
+
+        # Optional "windowed" initial-live seeding (bounded-attempt version).
+        # When both e_window_lo / e_window_hi are set (eV/atom, relative to the
+        # global minimum), the initial live set is built so that ONE live point
+        # (the "worst") is found by bounded rejection sampling in [lo, hi], and
+        # the remaining K-1 live points are uniform draws capped at `hi` (any
+        # draw whose rel energy > hi is rejected). rel = (E_gpr - E_ref)/N uses
+        # the GPR-predicted energy, matching how the sampler ranks live points.
+        # A RuntimeError is raised if the anchor is not found within
+        # e_window_max_attempts.
+        self.e_window_lo = e_window_lo
+        self.e_window_hi = e_window_hi
+        self.e_window_max_attempts = int(e_window_max_attempts)
+        if self.e_window_lo is not None and self.e_window_hi is not None:
+            lo = self.e_window_lo
+            hi = self.e_window_hi
+            if lo > hi:
+                raise ValueError(
+                    f"e_window_lo ({lo}) must be <= e_window_hi ({hi}).")
+            if self.e_window_max_attempts < 1:
+                raise ValueError(
+                    f"e_window_max_attempts must be >= 1, got {self.e_window_max_attempts}.")
+            print(f"[NestedSampler] Windowed init enabled: worst live point in "
+                  f"[{lo:.3f}, {hi:.3f}] eV/atom "
+                  f"(relative to E_ref={self.E_ref:.4f} eV, {len(self.db_structures[0])} "
+                  f"atoms); rest capped at {hi:.3f}; max_attempts="
+                  f"{self.e_window_max_attempts}")
+
         # Indices of the atoms to perturb (the deposition layer). A single list is
         # computed from the (uniform-composition) dataset and reused for every draw.
         # --perturb-symbols may list multiple symbols separated by commas, e.g. "Fe,B"
@@ -93,10 +129,7 @@ class NestedSampler:
             )
         print(f"[NestedSampler] Perturbing {len(self.perturb_indices)} atoms of "
               f"symbol(s) {perturb_list} (amplitude {perturb:.4f} A); "
-              f"all other atoms are left fixed.")
-
-        # Energy reference: shift so minimum training energy is 0
-        self.E_ref = db_energies.min()
+              "all other atoms are left fixed.")
 
         # Live points (stored as log-likelihoods for numerical stability)
         self.live_structures: List[Atoms] = []
@@ -119,6 +152,57 @@ class NestedSampler:
         self.log_L_boundary = -np.inf
 
     # -- Prior sampling --
+
+    def e_window_enabled(self) -> bool:
+        """True if the windowed initial-live seeding is active (both bounds set)."""
+        return self.e_window_lo is not None and self.e_window_hi is not None
+
+    def rel_energy(self, atoms: Atoms) -> float:
+        """Relative energy of a structure in eV/atom above the global minimum.
+
+        Uses the GPR-predicted energy (matching how the sampler ranks live
+        points): rel = (E_gpr - E_ref) / N_atoms.
+        """
+        return (self.gpr.predict_energy(atoms) - self.E_ref) / self.n_atoms
+
+    def find_window_anchor(self) -> Atoms:
+        """Bounded-attempt search for ONE structure whose rel energy is in [lo,hi].
+
+        Raises RuntimeError if no such structure is found within
+        e_window_max_attempts draws. This anchor becomes the initial "worst"
+        live point.
+        """
+        for _ in range(self.e_window_max_attempts):
+            s = self.sample_from_prior()
+            if abs(self.gpr.predict_energy(s)) < 1e4 and \
+                    self.e_window_lo <= self.rel_energy(s) <= self.e_window_hi:
+                return s
+        raise RuntimeError(
+            f"No structure found with rel energy in "
+            f"[{self.e_window_lo:.3f}, {self.e_window_hi:.3f}] eV/atom "
+            f"after {self.e_window_max_attempts} attempts. The database may be "
+            f"sparse in this window; raise --e-window-max-attempts or widen the "
+            f"window.")
+
+    def sample_capped_at_window(self) -> Atoms:
+        """Uniform prior draw accepted only if rel energy <= e_window_hi.
+
+        Bounded: after e_window_max_attempts failures, falls back to an
+        unconstrained prior draw (so a sparse DB cannot hang the sampler).
+        """
+        for _ in range(self.e_window_max_attempts):
+            s = self.sample_from_prior()
+            if abs(self.gpr.predict_energy(s)) < 1e4 and \
+                    self.rel_energy(s) <= self.e_window_hi:
+                return s
+        return self.sample_from_prior()
+
+    def _append_live_point(self, s: Atoms):
+        E = self.gpr.predict_energy(s)
+        ll = self.log_likelihood(s)
+        self.live_structures.append(s)
+        self.live_energies = np.append(self.live_energies, E)
+        self.live_log_L = np.append(self.live_log_L, ll)
 
     def sample_from_prior(self) -> Atoms:
         """Draw from empirical DB distribution + optional perturbation.
@@ -160,24 +244,48 @@ class NestedSampler:
     # -- Initialisation --
 
     def initialize(self):
-        """Draw initial live points."""
+        """Draw initial live points.
+
+        If the windowed seeding is enabled (e_window_lo/hi set), the initial
+        live set is built as: ONE anchor live point found by bounded-attempt
+        search in [lo, hi] (this becomes the "worst"), then the remaining K-1
+        live points are uniform draws capped at the window max (hi). Otherwise
+        the default behaviour (all K uniform prior draws) is used.
+        """
         print(f"Drawing {self.n_live} initial live points...")
-        for i in range(self.n_live):
-            s = self.sample_from_prior()
-            E = self.gpr.predict_energy(s)
-            ll = self.log_likelihood(s)
+        if self.e_window_enabled():
+            # Anchor first: guaranteed to be in [lo, hi] (or RuntimeError).
+            anchor = self.find_window_anchor()
+            self._append_live_point(anchor)
+            print(f"  [anchor] worst live point rel energy = "
+                  f"{self.rel_energy(anchor):.4f} eV/atom (window "
+                  f"[{self.e_window_lo:.3f}, {self.e_window_hi:.3f}])")
+            # Remaining K-1: uniform draws capped at the window max (hi).
+            for i in range(self.n_live - 1):
+                s = self.sample_capped_at_window()
+                self._append_live_point(s)
+                if (i + 2) % 10 == 0:
+                    valid_E = self.live_energies[np.abs(self.live_energies) < 1e4]
+                    if len(valid_E) > 0:
+                        print(f"  [{i+2}/{self.n_live}] E: "
+                              f"{valid_E.min():.3f} to {valid_E.max():.3f} eV")
+        else:
+            for i in range(self.n_live):
+                s = self.sample_from_prior()
+                E = self.gpr.predict_energy(s)
+                ll = self.log_likelihood(s)
 
-            self.live_structures.append(s)
-            self.live_energies = np.append(self.live_energies, E)
-            self.live_log_L = np.append(self.live_log_L, ll)
+                self.live_structures.append(s)
+                self.live_energies = np.append(self.live_energies, E)
+                self.live_log_L = np.append(self.live_log_L, ll)
 
-            if (i + 1) % 10 == 0:
-                valid_E = self.live_energies[np.abs(self.live_energies) < 1e4]
-                if len(valid_E) > 0:
-                    print(f"  [{i+1}/{self.n_live}] E: "
-                          f"{valid_E.min():.3f} to {valid_E.max():.3f} eV")
-                else:
-                    print(f"  [{i+1}/{self.n_live}] WARNING: unphysical energies")
+                if (i + 1) % 10 == 0:
+                    valid_E = self.live_energies[np.abs(self.live_energies) < 1e4]
+                    if len(valid_E) > 0:
+                        print(f"  [{i+1}/{self.n_live}] E: "
+                              f"{valid_E.min():.3f} to {valid_E.max():.3f} eV")
+                    else:
+                        print(f"  [{i+1}/{self.n_live}] WARNING: unphysical energies")
 
         self._filter_unphysical()
         self.log_L_boundary = self.live_log_L.min()

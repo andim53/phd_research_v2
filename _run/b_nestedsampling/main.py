@@ -147,6 +147,22 @@ def main():
                         "sampler structures (filtered once after loading). Use to "
                         "drop high-energy outlier structures that break the GPR fit, "
                         "e.g. --e-max-per-atom 0.67. Default: None (keep all).")
+    p.add_argument("--e-window-lo", type=float, default=None,
+                   help="Lower bound of the windowed initial-live seeding (eV/atom "
+                        "above the global minimum). When both --e-window-lo and "
+                        "--e-window-hi are set, ONE initial live point (the 'worst') "
+                        "is found by bounded-attempt search with rel energy in "
+                        "[lo, hi]; the remaining live points are uniform draws capped "
+                        "at hi. rel uses the GPR-predicted energy. Default: None "
+                        "(windowed seeding disabled).")
+    p.add_argument("--e-window-hi", type=float, default=None,
+                   help="Upper bound of the windowed initial-live seeding (eV/atom "
+                        "above the global minimum); also the cap on the remaining "
+                        "initial live draws. See --e-window-lo. Default: None.")
+    p.add_argument("--e-window-max-attempts", type=int, default=1000,
+                   help="Max attempts to find a structure in the windowed seeding "
+                        "band [lo, hi]; a RuntimeError is raised if not found within "
+                        "this many draws. Default: 1000.")
     p.add_argument("--output", default=os.path.join(_HERE, "ns_output_allseeds"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
@@ -248,6 +264,9 @@ def main():
             perturb_symbols=args.perturb_symbols,
             rng=np.random.default_rng(args.rng),
             temperature_free=True,
+            e_window_lo=args.e_window_lo,
+            e_window_hi=args.e_window_hi,
+            e_window_max_attempts=args.e_window_max_attempts,
         )
     else:
         beta = 1.0 / (K_B * args.temp)
@@ -263,6 +282,9 @@ def main():
             perturb=args.perturb,
             perturb_symbols=args.perturb_symbols,
             rng=np.random.default_rng(args.rng),
+            e_window_lo=args.e_window_lo,
+            e_window_hi=args.e_window_hi,
+            e_window_max_attempts=args.e_window_max_attempts,
         )
 
     sampler.initialize()

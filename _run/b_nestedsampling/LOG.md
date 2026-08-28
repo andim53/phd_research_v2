@@ -1825,3 +1825,44 @@ how _filter_unphysical and the abs(E)>1e4 checks already work in nested_sampler.
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~01:20 JST.
+
+
+---
+
+## Session 2026-08-28 — Implement windowed initial-live seeding (bounded-attempt, flags)
+
+**Goal (user request):** add the code to perform the bounded-attempt version of the windowed
+initial-live seeding, with a flag controlling max_attempts and the worst-energy-window pick
+(e.g. [0.24, 0.25]).
+
+**Clarified (per standing rule):**
+- Seed ONE live point found by bounded-attempt in [lo, hi] (the "worst"); remaining K-1 live
+  points are uniform draws capped at the window max (hi); the whole set capped at hi.
+- Enforce the cap at hi inside the code (reject any initial draw whose rel energy > hi); do NOT
+  rely on --e-max-per-atom.
+- rel check uses the GPR-predicted energy of the sampled (perturbed) structure (matches how the
+  sampler ranks live points).
+
+**Code changes (nested_sampling/nested_sampler.py + main.py):**
+- NestedSampler.__init__: new optional params e_window_lo, e_window_hi, e_window_max_attempts.
+  Validates lo<=hi and max_attempts>=1; prints an enable notice. Moved E_ref/n_atoms assignment
+  above the window block (it prints E_ref).
+- New helpers: e_window_enabled(), rel_energy() (=(E_gpr-E_ref)/N), find_window_anchor()
+  (bounded-attempt in [lo,hi], raises RuntimeError if not found), sample_capped_at_window()
+  (draws accepted only if rel<=hi, bounded fallback to unconstrained draw),
+  _append_live_point().
+- initialize(): when windowed, seed the anchor first then the remaining K-1 capped draws;
+  else the original path unchanged.
+- main.py: new CLI flags --e-window-lo, --e-window-hi, --e-window-max-attempts (default 1000);
+  passed to NestedSampler in both temperature-free and fixed-T branches.
+
+**Verification (real execution):** py_compile OK for main.py + nested_sampler.py. Wrote a mock-GPR
+smoke test (_tmp/test_windowed_seed.py) run with the agox_v2 python: (1) windowed init -> worst in
+[0.24,0.25] and all live <=0.25 (PASS); (2) empty band -> RuntimeError (PASS); (3) default path
+unchanged (PASS); (4) lo>hi -> ValueError (PASS). Removed the test file afterwards.
+
+**Docs:** README.md - updated the "does not currently have a runtime relative max_E" note to point
+to the new flags; added --e-window-lo/hi/max-attempts to the Options list; added a
+"## Usage (windowed initial-live seeding)" section with an example.
+
+**Time:** 2026-08-28 ~01:30-01:50 JST.
