@@ -2407,3 +2407,29 @@ b6 run data. Sections:
 **Git:** _analysist is gitignored, so DISCUSSION.md is NOT committed (only this LOG).
 
 **Time:** 2026-08-28 ~17:55 JST.
+
+
+---
+
+## Session 2026-08-28 — Rename b6 analysis script to analyze_tfree_outputs.py (generic tfree analyzer)
+
+**Goal (user request):** edit the analyze_b6_outputs.py script; rename it so it can be used to
+analyze any temperature-free (tfree) run.
+
+**Clarified (per standing rule):**
+- New name: analyze_tfree_outputs.py.
+- Generalize internal text (remove 'b6' wording) -> generic tfree analyzer.
+
+**Actions taken:**
+- Created _analysist/0_analy/analyze_tfree_outputs.py (v1.0.0): identical logic, generalized
+  title/module docstring/print headers/arg descriptions; summary figure renamed to
+  tfree_analysis_summary.png; default outdir <data>/analysis/analyze_tfree.
+- Removed _analysist/0_analy/analyze_b6_outputs.py.
+
+**Verification (real execution):** py_compile OK; ran against the b6 data -> same output as before
+(1000 samples, 100 live, 5 temps, sum(w_i)=0.99995), confirming the rename/generalization didn't
+change behaviour.
+
+**Git:** _analysist is gitignored, so neither script is committed (only this LOG).
+
+**Time:** 2026-08-28 ~18:00 JST.
