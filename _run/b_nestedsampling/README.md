@@ -781,6 +781,38 @@ if not found:
     raise RuntimeError(f"No structure found in [0.24, 0.25] eV/atom after {max_attempts} draws")
 ```
 
+**No — the two checks serve different purposes and should NOT share the same definition.**
+
+In the condition
+```python
+if 0.24 <= rel <= 0.25 and abs(gpr.predict_energy(s)) < 1e4:
+```
+the two halves are doing unrelated jobs:
+
+1. **`rel = (E − E_ref)/N` (eV/atom, relative to the global minimum)** is the **energy-window band
+   selector**. It answers "is this structure in the 0.25±0.01 window you want to start from?" It is
+   *relative* and *per-atom* by design, because that is how you express "eV above the ground state."
+
+2. **`abs(gpr.predict_energy(s)) < 1e4` (absolute eV)** is a **physical-sanity guard** against
+   unphysical GPR extrapolations. Its job is only to reject predictions that are numerically absurd
+   (e.g. `|E| > 1e4 eV`) — a surrogate that goes haywire far from training data. It is *absolute*
+   and in **eV**, not eV/atom, because that is the raw magnitude the model outputs (the system's
+   absolute energies are ≈ −437 eV; an unphysical prediction is one whose raw magnitude is
+   astronomically large).
+
+So the two checks answer different questions: one is "is it in my desired energy window?" and the
+other is "did the model return a physically sane number at all?". They should not use the same
+definition — `rel` is a *window* filter, `1e4` is a *sanity* filter.
+
+**Could `1e4` be made relative per-atom?** Technically yes (e.g. reject `rel > 1e4/N`), but that
+would be *redundant* with the window filter and would conflate two concerns. The `1e4` guard is
+meant to catch garbage predictions regardless of your window; it should stay absolute and loose
+(a large threshold), so it only trips on genuinely unphysical extrapolations, never on legitimate
+high-energy structures you might still want. Keeping them separate is cleaner and matches how the
+rest of the code uses them (`_filter_unphysical(max_E=1e4)` and the `abs(E) > 1e4` checks
+throughout `nested_sampler.py`).
+
+
 **Why this is good.** It cannot hang forever, and it gives a clear, debuggable failure signal
 ("the DB has no structure near 0.25") instead of silently doing something unintended.
 

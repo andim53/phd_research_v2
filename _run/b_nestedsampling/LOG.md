@@ -1802,3 +1802,26 @@ want). Proposed a hybrid (anchor, then choose error vs warn-and-proceed if outsi
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~01:10 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer two-checks-different-purposes Notes block
+
+**Goal (user request):** answer the new `Notes:` block asking whether the `abs(gpr.predict_energy(s)) < 1e4`
+check in the band-seeding sketch should also use the eV/atom-relative-to-ground-state definition.
+
+**Clarified (per standing rule):** explain that the two checks serve different purposes (rel =
+energy-window band filter; 1e4 = physical-sanity guard against unphysical GPR extrapolation), and
+that 1e4 is in absolute eV, not eV/atom, so they should NOT share the same definition. No code change.
+
+**Answer written (flag removed):** rel=(E-E_ref)/N is the relative per-atom window-band selector
+("is it in 0.25±0.01?"); abs(predict_energy)<1e4 is an absolute-eV physical-sanity guard against
+absurd GPR extrapolations (raw magnitude; system abs energies ~-437 eV). Different questions
+(window vs sanity), so should not share a definition. Noted 1e4 could be made relative but would
+be redundant with the window filter and conflate concerns; it should stay absolute/loose, matching
+how _filter_unphysical and the abs(E)>1e4 checks already work in nested_sampler.py.
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~01:20 JST.
