@@ -761,6 +761,51 @@ while True:
         break
 live_structures.append(s); ...
 
+**Assessing the bounded-attempt version — it fixes the unbounded-loop risk, but has a key
+limitation the anchor approach does not.**
+
+Your idea: instead of `while True`, use a **bounded attempt count** — try up to `N` draws to find a
+structure in the 0.25±0.01 band, and **raise an error** if none is found within `N`. This is a
+reasonable robustness improvement over the unbounded `while True`, and it is the standard pattern
+for rejection sampling:
+
+```python
+max_attempts = 1000        # your "attempt value"
+found = False
+for _ in range(max_attempts):
+    s = sample_from_prior()
+    rel = (gpr.predict_energy(s) - E_ref) / N_atoms
+    if 0.24 <= rel <= 0.25 and abs(gpr.predict_energy(s)) < 1e4:
+        live_structures.append(s); found = True; break
+if not found:
+    raise RuntimeError(f"No structure found in [0.24, 0.25] eV/atom after {max_attempts} draws")
+```
+
+**Why this is good.** It cannot hang forever, and it gives a clear, debuggable failure signal
+("the DB has no structure near 0.25") instead of silently doing something unintended.
+
+**The limitation vs the anchor approach.** A bounded-attempt rejection **can still fail** when the
+DB is sparse in the 0.24–0.25 band — after `N` draws, if no structure lands in-band, it errors,
+even though a perfectly good "closest available" structure exists just outside the band. By
+contrast, the **anchor approach** (previous note) never fails: it deterministically takes the
+structure nearest 0.25 (e.g. 0.22), so the run always proceeds, gracefully degrading the start to
+"closest available ≈ 0.25." In other words:
+- **Bounded-attempt:** strict about the band, but hard-fails on sparse DBs.
+- **Anchor:** never fails, but softens the guarantee to "closest available to 0.25."
+
+**Which to prefer?** For a real DB, the anchor approach is usually better: it is deterministic,
+cannot error, and "closest available to 0.25" is almost always what you actually want (a structure
+at 0.22 vs erroring out entirely). The bounded-attempt version makes sense only if you have a hard
+requirement that the worst be *within* 0.25±0.01 — in which case the anchor's "closest" is not
+strict enough and you genuinely want to reject-and-error if the band is empty.
+
+**A hybrid that gets the best of both.** Use the anchor to find the closest structure; if it is
+within the band (`0.24 ≤ rel ≤ 0.25`), use it; if not, decide explicitly: (a) error, or (b) warn
+and proceed with the closest available. That keeps the deterministic no-loop property and lets you
+choose the strict-vs-forgiving policy. All three options are small, local changes to
+`initialize()` and none affects the rest of the sampler.
+
+
 **Assessing your proposal — yes, this is a cleaner and fully deterministic design.**
 
 Your approach: as a flag, (1) **immediately pick the DB structure closest to the desired energy

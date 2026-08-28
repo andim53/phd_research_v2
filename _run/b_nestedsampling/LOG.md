@@ -1778,3 +1778,27 @@ by lowest index for determinism, empty-pool error).
 **Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
 
 **Time:** 2026-08-28 ~01:00 JST.
+
+
+---
+
+## Session 2026-08-28 — README: assess bounded-attempt Notes block
+
+**Goal (user request):** answer the new `Notes:` block proposing a bounded-attempt version instead
+of while True: include an attempt value and raise an error if the criterion isn't found.
+
+**Clarified (per standing rule):** assess in the README (no code change); compare it against the
+earlier anchor-structure proposal, noting bounded-attempt can fail on sparse DBs whereas the
+anchor never fails (just degrades to closest-available).
+
+**Answer written (flag removed):** endorsed bounded-attempt as a robustness improvement over
+while True (cannot hang; clear error signal); gave a bounded-rejection code sketch with
+max_attempts and a RuntimeError. Compared to the anchor approach: bounded-attempt hard-fails if
+no structure lands in the 0.24-0.25 band after N draws, whereas the anchor deterministically takes
+the nearest (e.g. 0.22) and never fails. Positioned: bounded-attempt suits a hard "must be within
+0.25±0.01" requirement; anchor suits real DBs (never errors, closest-available is usually what you
+want). Proposed a hybrid (anchor, then choose error vs warn-and-proceed if outside the band).
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~01:10 JST.
