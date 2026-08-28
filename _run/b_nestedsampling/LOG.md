@@ -1649,3 +1649,30 @@ the volume weight, not the cutoff (E_max is only the initial-walker seeding).
 **Verification:** 0 `Notes:` flags remain; corrections applied; README grew to ~990 lines.
 
 **Time:** 2026-08-28 ~00:10 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer relative-max_E + initial-energy-window Notes block
+
+**Goal (user request):** answer the new `Notes:` block in the Fortran toy-model section
+(2 questions: can max_E be a relative eV/atom-above-min filter?; can we set an initial energy
+window, e.g. sample from 0.25 eV/atom above the global minimum?).
+
+**Clarified (per standing rule):** answer conceptually in the README grounded in code; do NOT
+modify code.
+
+**Answer written (flag removed), 2 parts:**
+Q1: Yes feasible, and partly already present as `--e-max-per-atom` (relative eV/atom filter on the
+DB before training). The internal max_E (1e4) is an ABSOLUTE sanity guard against unphysical GPR
+extrapolation, not a relative window selector — re-purposing it would wrongly drop physical
+structures. A runtime relative max_E could be added as a small change.
+Q2: Yes — the Fortran "windowed" idea. Upper bound via `--e-max-per-atom 0.25` (caps the prior);
+lower bound needs a new `--e-min-per-atom` flag (doesn't exist). Nuance: NS auto-starts at the top
+of whatever window you give it, so setting only the upper bound makes it start ~0.25 and descend to
+0; to exclude the ground state you need the lower bound. Noted the code works in absolute eV, not
+eV/atom (E_ref ~ -437 eV; relative per-atom = (E-E_ref)/N).
+
+**Verification:** 0 `Notes:` flags remain; answer renders at the Fortran section.
+
+**Time:** 2026-08-28 ~00:20 JST.

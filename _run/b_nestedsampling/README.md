@@ -610,6 +610,65 @@ volume weight is `ΔX = exp(−i/K) − exp(−(i+1)/K)` (lines 232–234). The 
 the formula for the volume fraction: `(K/(K+1))^i` (Fortran) vs `exp(−i/K)` (Python) — they are
 the same to leading order, `exp(−i/K) = [exp(−1/K)]^i ≈ (K/(K+1))^i`.
 
+**Q1. Can we turn `max_E` into a relative "eV/atom above the global minimum" filter?**
+
+Yes, that is both possible and, in fact, already partly implemented — but under a different name
+and at a different stage. Two distinct things are involved:
+
+1. **The internal `max_E` (in `_filter_unphysical(max_E=1e4)` and the `abs(E) > 1e4` guards)** is
+   an **absolute energy** check used to discard *unphysical GPR extrapolations* (|E| ≳ 1e4 eV). It
+   is meant as a sanity guard, not a physical energy-window selector. Re-purposing it to a relative
+   eV/atom threshold would be wrong for two reasons: (a) it would then also silently drop physical
+   structures, and (b) it is applied *inside* the sampler on every prediction, where you usually
+   do **not** want to filter, just to reject garbage.
+2. **The relative "eV/atom above the dataset minimum" filter already exists as the
+   `--e-max-per-atom` CLI flag** (in `main.py`). It drops DB structures with
+   `(E/atom − min E/atom) > value` **before** GPR training and before sampling. That is exactly a
+   "relative-to-global-minimum, per-atom" filter — just applied to the *dataset*, not as a runtime
+   `max_E`.
+
+So: to filter *which structures enter the pool* by relative eV/atom above the minimum, use
+`--e-max-per-atom`. What the code does **not** currently have is a runtime *relative* `max_E`
+filter applied during sampling. That could be added (see Q2) as a small change — convert the
+absolute check `abs(E) > max_E` into a relative one like `(E − E_ref)/N > threshold` or keep both.
+
+**Q2. Can we set the initial energy window ourselves, e.g. sample only a band starting 0.25
+eV/atom above the global minimum?**
+
+Yes — in fact this is precisely the "windowed" design the Fortran toy model uses (its `E_max`),
+and it is the idea behind "choose a higher-energy prior." It is feasible but requires a code
+change, because the current Python prior is a **uniform draw over the (filtered) database** with
+no explicit lower or upper energy window. To restrict sampling to a band `[0, 0.25]` eV/atom
+above the minimum you would:
+
+1. **Upper bound (the "start" of sampling):** filter the DB to keep only structures with
+   `(E/atom − min E/atom) ≤ 0.25` (this is `--e-max-per-atom 0.25`). This caps the prior window
+   at 0.25 eV/atom above the global minimum — the highest-energy structures you will ever sample.
+2. **Lower bound (optional, the "floor"):** if you want to *start* above the minimum rather than
+   at it, also require `(E/atom − min E/atom) ≥ some lower value`. The current code has **no** flag
+   for a lower bound; only an upper bound (`--e-max-per-atom`). Adding `--e-min-per-atom` would
+   restrict the prior to a window like `[0.05, 0.25]` eV/atom. Otherwise the prior includes the
+   global minimum itself, so sampling will also touch the very lowest structures.
+
+**Important nuance about what "starting from 0.25 eV/atom" means in NS.** Nested sampling does
+not need you to set the *start* — it **automatically starts at the top of whatever window you
+give it** (the highest-energy structure in the prior pool) and descends to the bottom. So:
+- If you only set the **upper** bound to 0.25 eV/atom (via `--e-max-per-atom 0.25`), NS starts
+  near 0.25 and automatically descends toward 0 (the global minimum). That matches "sample
+  starting from 0.25 eV/atom above the minimum and go down."
+- If you also want to **stop at 0.25** (i.e. only sample the window *above* 0.25, excluding the
+  ground state), you would need a **lower** bound flag (`--e-min-per-atom`), which does not exist
+  yet.
+
+**Practical note on your "already normalized per atom, 0 eV/atom at the minimum" description.**
+The code works in **absolute eV**, not eV/atom. `E_ref = db_energies.min()` is the minimum
+*absolute* energy (≈ −437 eV), and the relative quantity is `(E − E_ref)`, which in *per-atom*
+form is `(E − E_ref)/N`. The `--e-max-per-atom` threshold already uses exactly this per-atom
+relative form. So "0.25 eV/atom above the global minimum" maps directly to
+`--e-max-per-atom 0.25` for the upper bound, and a hypothetical `--e-min-per-atom 0.25` for the
+lower bound.
+
+
 **3. What would happen if I set `max_E` to 0.25 eV/atom above the lowest energy?**
 It would be a **serious bug**, because `max_E` in the Python code is an **absolute energy in eV**,
 NOT a relative "eV/atom above the minimum". It appears in `_filter_unphysical(max_E=1e4)` and in
