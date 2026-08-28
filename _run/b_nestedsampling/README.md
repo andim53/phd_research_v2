@@ -1619,6 +1619,11 @@ both are active, and `--perturb` is not wasted even though `--walk` is on.
 - `--rng`       RNG seed, default 42
 - `--analysis-dir`  directory for analysis outputs (default `<--output>/analysis`)
 - `--no-analysis`   skip the automatic analysis after sampling
+- `--no-posterior-xsf`  do NOT write the posterior structure `.xsf` files (fixed-T
+  `posterior_structures/` and temperature-free `posterior_T{KKK}/`); the
+  `posterior_summary.csv` (rank, energy, weight) is still written. Default off
+  (xsf saved as before). Note: disabling xsf means saved-run re-analysis via
+  `--analyze-only` cannot find the structures.
 - `--analyze-only <RUN_OUTPUT_DIR>`  re-run analysis on a saved run (see above)
 
 ## Outputs (written to `--output`)

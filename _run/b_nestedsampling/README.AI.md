@@ -116,6 +116,7 @@ pjsub j_nestedsampling.sh
 | `--rng` | `42` | RNG seed (reproducibility). |
 | `--analysis-dir` | `<--output>/analysis` | Analysis output dir. |
 | `--no-analysis` | off | Skip automatic analysis. |
+| `--no-posterior-xsf` | off | Skip writing posterior `.xsf` files (fixed-T `posterior_structures/` and temperature-free `posterior_T{KKK}/`); still writes `posterior_summary.csv`. Saved-run re-analysis (`--analyze-only`) needs the xsf. |
 | `--analyze-only <DIR>` | None | Re-run analysis on a saved run. |
 
 ## 4. Dependencies & environment

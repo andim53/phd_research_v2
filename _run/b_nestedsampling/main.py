@@ -20,7 +20,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import sys
@@ -192,6 +192,13 @@ def main():
     p.add_argument("--no-analysis", action="store_true",
                    help="Skip the state-density / landscape analysis that runs "
                         "automatically after sampling")
+    p.add_argument("--no-posterior-xsf", action="store_true",
+                   help="Do NOT write the posterior structure .xsf files (fixed-T "
+                        "posterior_structures/ and temperature-free posterior_T{KKK}/). "
+                        "The posterior_summary.csv (rank, energy, weight) is still "
+                        "written. Default: False (xsf files are saved as before). "
+                        "Note: disabling xsf means saved-run re-analysis via "
+                        "--analyze-only will not find the structures.")
     p.add_argument("--analyze-only", default=None, metavar="RUN_OUTPUT_DIR",
                    help="Re-run the state-density / landscape analysis on an "
                         "already-finished run's output directory (must contain "
@@ -318,7 +325,7 @@ def main():
 
     sampler.initialize()
     sampler.run(n_iterations=args.n_iters, progress_every=20)
-    sampler.save(args.output)
+    sampler.save(args.output, save_xsf=not args.no_posterior_xsf)
 
     # --- 3b. Temperature-free post-processing --------------------------------
     if args.temperature_free:
@@ -332,21 +339,24 @@ def main():
             structs, weights = sampler.posterior_at(beta)
             # per-T posterior structures + summary
             tdir = output_dir / f"posterior_T{int(T)}"
-            tdir.mkdir(exist_ok=True)
-            from ase.io import write as ase_write
+            tdir.mkdir(exist_ok=True)   # always created (holds posterior_summary.csv)
             order = np.argsort(-weights)
             summary_rows = []
             for rank, idx in enumerate(order):
                 s = structs[idx]
                 E = gpr.predict_energy(s)
                 w = weights[idx]
-                ase_write(tdir / f"posterior_{rank:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
+                if not args.no_posterior_xsf:
+                    from ase.io import write as ase_write
+                    ase_write(tdir / f"posterior_{rank:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
                 summary_rows.append((rank, E, w))
             np.savetxt(tdir / "posterior_summary.csv",
                        np.asarray(summary_rows, dtype=float), delimiter=',',
                        header='rank,energy_eV,weight', comments='')
             print(f"  T = {T:.1f} K:  Z = {Z:.6e}  (log Z = {logZ:.4f})  "
-                  f"F = {F:.4f} eV  -> {len(structs)} posterior samples")
+                  f"F = {F:.4f} eV  -> {len(structs)} posterior samples"
+                  + ("" if not args.no_posterior_xsf
+                     else " (xsf writing disabled by --no-posterior-xsf)"))
             therm_rows.append((T, beta, logZ, Z, F))
         np.savetxt(output_dir / "thermodynamics.csv",
                    np.asarray(therm_rows, dtype=float), delimiter=',',

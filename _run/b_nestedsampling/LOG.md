@@ -2502,3 +2502,34 @@ live-set correction. This is informative (quantifies how well binned g(E) reprod
 **Git:** _analysist is gitignored, so the script/PNGs are NOT committed (only this LOG).
 
 **Time:** 2026-08-28 ~18:30 JST.
+
+
+---
+
+## Session 2026-08-28 — Add --no-posterior-xsf flag; version bump 1.4.0 -> 1.5.0
+
+**Goal (user request):** edit the root nested-sampling code to add a flag controlling whether the
+posterior xsf files are saved or not.
+
+**Clarified (per standing rule):**
+- Flag: --no-posterior-xsf (store_true, default False = save xsf as now).
+- When set, skip the .xsf structure files but STILL write posterior_summary.csv.
+- Controls BOTH modes: fixed-T save() posterior_structures/ AND temperature-free per-T
+  posterior_T{KKK}/.
+
+**Code changes:**
+- nested_sampler.py: save() gained save_xsf param (default True); the fixed-T posterior .xsf
+  write loop is guarded by save_xsf (still writes posterior_summary.csv). Updated print message.
+- main.py: new --no-posterior-xsf CLI flag; passed to sampler.save(save_xsf=not flag); the
+  temperature-free per-T loop guards the .xsf writes (tdir always created for the summary;
+  posterior_summary.csv always written). Updated print message.
+- Version: main.py + nested_sampler.py 1.4.0 -> 1.5.0 (new feature + flag = minor bump).
+- Docs: README.md Options, README.AI.md Options table, VERSIONS.md.
+
+**Verification (real execution):** py_compile OK for both. Mock-GPR smoke test: fixed-T
+save(save_xsf=False) -> posterior_summary.csv written, NO posterior_structures dir, 4 CSVs
+present; save(save_xsf=True) -> 10 xsf written + summary. Behavior confirmed correct in both.
+
+**Git:** committed main.py, nested_sampler.py, README.md, README.AI.md, VERSIONS.md.
+
+**Time:** 2026-08-28 ~18:50 JST.

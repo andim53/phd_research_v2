@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 from pathlib import Path
@@ -605,8 +605,20 @@ class NestedSampler:
 
     # -- Save --
 
-    def save(self, output_dir: str):
-        """Save results."""
+    def save(self, output_dir: str, save_xsf: bool = True):
+        """Save results.
+
+        Parameters
+        ----------
+        output_dir : str
+            Directory to write outputs into.
+        save_xsf : bool
+            If True (default), write the posterior structure files as .xsf.
+            If False, skip the .xsf files but still write the posterior summary
+            CSV(s). (Disabled xsf means saved-run re-analysis via
+            ``load_saved_run`` / ``analyze_saved_output`` will not find the
+            structures.)
+        """
         out = Path(output_dir)
         out.mkdir(parents=True, exist_ok=True)
 
@@ -641,19 +653,22 @@ class NestedSampler:
                 if abs(self.gpr.predict_energy(s)) < 1e4]
             if phys_pairs:
                 phys_pairs.sort(key=lambda x: x[0], reverse=True)
-                xsf_dir = out / "posterior_structures"
-                xsf_dir.mkdir(exist_ok=True)
                 summary_rows = []
-                from ase.io import write
                 for i, (lw, s) in enumerate(phys_pairs):
                     w = np.exp(lw) if lw > -700 else 0.0
                     E = self.gpr.predict_energy(s)
-                    write(xsf_dir / f"posterior_{i:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
+                    if save_xsf:
+                        from ase.io import write
+                        xsf_dir = out / "posterior_structures"
+                        xsf_dir.mkdir(exist_ok=True)
+                        write(xsf_dir / f"posterior_{i:03d}_w{w:.4e}_E{E:.3f}.xsf", s)
                     summary_rows.append((i, E, w, lw))
                 np.savetxt(out / "posterior_summary.csv",
                            np.asarray(summary_rows, dtype=float), delimiter=',',
                            header='rank,energy_eV,weight,log_weight', comments='')
-                print(f"  Saved {len(phys_pairs)} posterior structures to {xsf_dir}")
+                print(f"  Saved {len(phys_pairs)} posterior samples to posterior_summary.csv"
+                      + (f" (+ {len(phys_pairs)} .xsf in posterior_structures)" if save_xsf
+                         else " (xsf writing disabled by save_xsf=False)"))
 
             np.savetxt(out / "final_live_energies.csv",
                        self.live_energies.reshape(-1, 1),
