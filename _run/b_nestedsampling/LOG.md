@@ -2091,3 +2091,19 @@ decide', 'no clone-and-MC walk length', '1.3.0'); remaining 'cannot create new c
 'no multi-step walk' references are all correctly framed as the DEFAULT without --walk.
 
 **Time:** 2026-08-28 ~03:20-03:35 JST.
+
+
+---
+
+## Session 2026-08-28 — Fix stale version in TUTORIAL Step 6c
+
+**Goal (user request):** the TUTORIAL's "## Step 6c — Dual-scale constrained MC walk (new in
+v1.3.0)" still said 1.3.0 — is this correct? No: the walk was added in 1.4.0.
+
+**Action taken:** changed Step 6c heading to "(new in v1.4.0)". (Step 6b, the windowed seeding, is
+correctly labelled v1.3.0.)
+
+**Verification:** grep shows TUTORIAL now has Step 6b (v1.3.0) and Step 6c (v1.4.0), consistent
+with the VERSIONS manifest.
+
+**Time:** 2026-08-28 ~03:40 JST.

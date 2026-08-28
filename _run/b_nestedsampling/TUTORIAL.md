@@ -130,7 +130,7 @@ Notes:
   `--e-max-per-atom 0.25` limits the pool; `--e-window-lo/hi` pins where the run starts.
 - Only the **initial** live set is affected; the sampling dynamics after iteration 1 are unchanged.
 
-## Step 6c — Dual-scale constrained MC walk (new in v1.3.0)
+## Step 6c — Dual-scale constrained MC walk (new in v1.4.0)
 `--walk` enables the Fortran-style clone-and-walk move in `sample_constrained`. When on, each new
 sample is produced by cloning a random surviving live point and evolving it with a sequence of
 Gaussian trial steps (accepting each only if `E < E_boundary` and `|E| < 1e4`); if the walk fails,
