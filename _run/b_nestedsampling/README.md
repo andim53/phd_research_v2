@@ -25,6 +25,18 @@ structure is more likely the lower its GPR-predicted energy is. In temperature-f
 logarithm) is what the code actually manipulates, because the raw likelihood spans
 hundreds of orders of magnitude (energies ~ −400 eV, `β ~ 40 eV⁻¹`).
 
+**What is the posterior, and what does "unnormalized" mean?** The **posterior** `P(x)`
+is the probability distribution over configurations *given* the energy surface — "how likely is
+each structure". It is the answer to "what should I believe about which structure is realized"
+after weighting each configuration by how good (low-energy) it is. **"Unnormalized"** means the
+weight is not yet divided by the total, so it does not sum/integrate to 1. The raw weight
+`L(x)·π(x)` (likelihood × prior) is the **unnormalized posterior**; dividing by the
+normalization `Z = ∫ L(x)·π(x) dx` gives the normalized posterior `P(x) = L(x)·π(x)/Z`, which
+does sum to 1. Nested sampling deliberately works with the *unnormalized* weight — because the
+normalization constant `Z` is exactly the quantity it is trying to compute. (So when you see
+"`L` is an unnormalized posterior weight", it means: `L·π` is the posterior up to the unknown
+factor `1/Z`.)
+
 **What is `beta`, and why does it not always appear in `log L`?** `beta = 1/(k_B·T)`
 is the **inverse temperature** (units eV⁻¹, `k_B = 8.617e-5 eV/K`). It is the thermodynamic
 knob: in **fixed-T mode** the likelihood is `L(x) = exp(-β·(E(x)−E_ref))`, so `β` sits
@@ -48,6 +60,31 @@ function**, so it is both the Bayesian evidence and the object from which all
 thermodynamics (free energy, heat capacity) is derived. It is the central quantity nested
 sampling is designed to compute.
 
+**What is a probability distribution, and why `P(x) = L(x)·π(x)/Z`?** A **probability
+distribution** is a normalized assignment of "how likely" each possible outcome is: a set of
+non-negative weights, one per configuration `x`, that sum (or integrate) to exactly 1. `P(x) =
+L(x)·π(x)/Z` is just "the prior guess `π(x)`, re-weighted by how good the structure is `L(x)`,
+then divided by the total `Z` so it sums to 1". **Why this form:** the prior `π` says how likely
+`x` was before energy was considered; the likelihood `L` says how good it is; their product is
+the relative belief after both; `Z` normalizes it.
+
+**Does nested sampling only "calculate how dense the energy differs"?** Not exactly. NS does
+not directly measure the *density* of states; it measures the **volume** of configuration space
+contained below each energy level — encoded in the surviving prior-volume fractions `X_i`
+(`X_i = exp(−i/K)`). The energy levels themselves come out in increasing order (top-down), and
+each sample carries the volume of its "shell" `ΔX_i = X_{i−1} − X_i`. Dividing that consumed
+volume by the shell's energy width gives the **density of states** `g(E) = ΔX/ΔE`. So NS gives
+you `(E_i, ΔX_i)` pairs, and the state density is a *derived* quantity, not what it samples.
+
+**How to compute the state density from the CSV result — example.** Each discarded sample in
+`evidence_history.csv` (fixed-T) or `samples.csv` (temperature-free) has an energy `E_i` and a
+prior-volume weight `w_i = ΔX_i = exp(−i/K) − exp(−(i+1)/K)`. To get `g(E)`:
+1. Choose bins spanning your energy range (e.g. width `ΔE = 0.05` eV).
+2. For each sample, add `w_i / ΔE` to the bin containing `E_i` (volume consumed, per unit energy).
+3. The result is the state-density histogram `g(E)` — the (weighted) number of configurations
+   per unit energy. This is *exactly* what `convert_to_density_of_states` does in the Fortran
+   toy model, and what the KDE in `state_density.py` reproduces with smoothing.
+
 **What is the posterior, its normalization constant, `π`, and `x`?** The **posterior**
 `P(x)` is the probability distribution over configurations *given* the energy surface — "how
 likely is each structure". It is `P(x) = L(x)·π(x)/Z`. The **normalization constant of the
@@ -61,6 +98,36 @@ atomic structure (all atomic coordinates). So the equation just says: total weig
 configuration = (how good it is, `L`) × (how much prior weight its region had, `π`), summed
 (`∫`) over all configurations `x`. In the discrete NS sum this becomes `Z = Σ_i w_i·L_i`,
 where `w_i` is the prior-volume weight of sample `i`.
+
+**What is the probability weight `π` (the prior)?** `π(x)` is the **prior** — the
+fraction of total prior probability your sampling starts by assigning to configuration `x`,
+*before* any energy information. It is a probability weight in the sense that the values are
+non-negative and sum to 1. Here the prior is the **empirical distribution over the database**:
+it is simply the actual distribution of the structures you already collected, used as the pool
+to draw new structures from. **Example:** if the combined DB has 1297 structures and you draw
+uniformly, each structure gets prior weight `π = 1/1297`; a region containing 900 of them has
+`≈ 900/1297 ≈ 0.69` of the total prior mass.
+
+**Does a DB that is dense at low energy (island) give a prior dominated by the island?** In
+this implementation — **yes**, because the prior is a uniform draw *over the DB structures*, so
+it inherits the DB's density. If 900 of 1297 structures are near the island and 397 near the
+flat, the prior assigns ~69% of its mass to the island region from the start. **Example:**
+drawing a new structure picks an island-like one ~69% of the time. This is a modelling choice:
+it biases sampling toward where you already have data. The Fortran toy model instead uses a
+*flat* prior (uniform `x`), which avoids this bias. Whether the DB-dense prior is "good" depends
+on whether you trust that the DB already covers the basins you care about (it makes sampling
+efficient there but can under-explore underexplored regions).
+
+**What is the prior-*volume* weight `w_i`, and how is it different from `π`?** `w_i = ΔX_i =
+X_{i−1} − X_i = exp(−(i−1)/K) − exp(−i/K)` is the **configuration-space volume** (measure) of
+the shell of samples removed at iteration `i` — the quadrature weight that turns the sample
+list into an integral for `Z`. **Difference from `π`:** `π` is the prior *probability density*
+(per unit configuration), a "how likely at one point" quantity; `w_i` is the *integrated prior
+volume* of a whole region (a chunk of `X`), a "how much measure did this sample represent"
+quantity. They play different roles: `π` sets the initial measure; `w_i` (computed from how the
+volume shrinks) is what actually weights each sample in `Z = Σ_i w_i·L_i`. **Example:** with
+`K = 50`, `w_1 = exp(0) − exp(−1/50) = 1 − 0.980 = 0.020` (the first sample represents 2% of the
+total prior volume), whereas `π` for one DB structure would be `1/1297 ≈ 0.00077`.
 
 **Why in log-space?** Because `Z` ranges from ~`10⁻²⁴²` early in the run to ~`10⁻⁴` at
 the end. A linear `Z` under/overflows float64 (max ~`10³⁰⁸`, min normal ~`10⁻³⁰⁸`, and
@@ -77,6 +144,14 @@ weighted slices over all iterations (plus a final live-set correction) to build 
 **"Geometrically"** means the remaining prior volume shrinks by a *constant
 multiplicative ratio* each iteration — like a geometric series. Nested sampling shows that
 after `i` iterations the surviving prior volume is `X_i = exp(−i/K)`.
+
+**What is a geometric series? — example.** A **geometric series/sequence** is a list
+where each term is the previous one multiplied by the *same constant ratio*. Example: `1, 1/2,
+1/4, 1/8, ...` (ratio `1/2` each step). Nested sampling's prior volume behaves this way:
+`X_i = exp(−i/K)`, so `X_{i+1}/X_i = exp(−1/K)` is the same ratio at every iteration. **Concrete
+example (K = 100):** `X_0 = 1`, `X_1 = exp(−0.01) ≈ 0.9900`, `X_2 ≈ 0.9802`, `X_3 ≈ 0.9704`, ...
+each step multiplies by the constant `0.990`. That "constant-ratio" property is exactly what the
+word *geometric* means here — the surviving volume shrinks by a fixed fraction per iteration.
 
 **What is the `exp(−1/K)` factor?** It is the fraction by which the prior volume shrinks on
 every single iteration: `X_{i+1}/X_i = exp(−1/K)`. Reason: with `K` live points the expected
@@ -97,6 +172,33 @@ configurations form a high-dimensional space (3N coordinates), so a distribution
 a volume (Lebesgue measure / count of distinct structures); `π(x)dx` is a probability element
 over that volume and `X` is the surviving fraction.
 
+**Why is `π` a "probability"? — explain without background.** A **probability** is just
+a number from 0 to 1 saying how likely something is (0 = never, 1 = always). **Example:** for 3
+configurations, `π = (0.2, 0.5, 0.3)` means "20% likely it's config A, 50% B, 30% C". The prior
+`π` is your *starting guess* of these likelihoods *before* you look at energy; they sum to 1. So
+"`π` is a probability" simply means "it is the pre-energy set of weights, normalized to sum to 1".
+
+**Is it better to choose a prior based on a higher energy (e.g. 0.25 eV/atom above the global
+minima), since sampling will slowly lower it?** Yes — that is precisely the right design for
+connecting the basins, and it is what the Fortran model does. NS starts from the top (high
+energy) and descends, so the prior's upper bound (where `X_0 = 1` is defined) should sit a small
+**margin above the energy barrier** separating the basins you care about — here, above the
+island↔flat barrier — so the full "window" containing *both* basins is inside the prior. If the
+cutoff were set below the barrier, crossing between basins would rely on rare lucky jumps.
+Choosing a prior whose upper energy is ~0.25 eV/atom above the global minimum (i.e. past the
+barrier, capturing both flat and island) makes the top-down pass correctly traverse the barrier
+and give properly weighted traffic between the two phases. (That is the "windowed" design in the
+Fortran header: `X_0=1` is the region past the barrier that includes BOTH basins.)
+
+**What is the "surviving fraction", why a fraction, how to compute it — without background.**
+The **surviving fraction** is how much of the starting configuration volume is still not yet
+"used up" after `i` iterations. It is a fraction because NS starts with the whole space (fraction
+`X_0 = 1`, i.e. 100%) and each step removes a slice, leaving `X_i`. **Example (K = 100):** after
+0 iterations 100% remains (`X_0 = 1`); after 100 iterations `X_100 = exp(−100/100) = exp(−1) ≈
+0.368` → 36.8% remains; after 300 iterations `X_300 = exp(−3) ≈ 0.0498` → ~5% remains. You
+compute it as `X_i = exp(−i/K)` (or `(K/(K+1))^i`). The lower it is, the more of the prior volume
+NS has already integrated, which is why papers run until it is negligible.
+
 **"Slice × likelihood"?** At each iteration the removed worst sample sits at the current
 prior-volume boundary; the thin shell of prior volume consumed between two successive energy
 levels is the **slice** `ΔX = X_{i−1} − X_i`, and the **likelihood** `L` is how good a sample
@@ -106,6 +208,16 @@ the newly-excluded region and `L` is its weight.
 
 **What is `K`?** `K = n_live`, the number of live points. It appears in `exp(−1/K)` because it
 sets the shrinkage rate and therefore the resolution/noise of the `Z` estimate.
+
+**What is the "shrinkage rate"? — without background.** The **shrinkage rate** is how
+fast the surviving volume `X` gets smaller from one iteration to the next. It is the constant
+ratio `X_{i+1}/X_i = exp(−1/K)`. It is called a "shrinkage" rate because `X` is always
+*decreasing* (NS keeps eating the prior volume). **How it shrinks:** each iteration removes the
+shell between two energy levels, so the remaining volume multiplies by `exp(−1/K)`. **Example:**
+with `K = 50`, each iteration leaves `exp(−1/50) ≈ 0.980` of the previous volume (2% eaten each
+step); with `K = 500` it leaves `exp(−1/500) ≈ 0.998` (only 0.2% eaten each step). So larger `K`
+= **slower** shrinkage = finer resolution in `Z` (but more samples). A slower shrinkage rate
+means each removed shell is thinner, which is why the statistical error of `Z` goes as `1/√K`.
 
 **What is `beta`?** `beta = 1/(k_B·T)` is the **inverse temperature** (units eV⁻¹, with
 `k_B = 8.617e-5 eV/K`). It is the thermodynamic knob in the likelihood: at T = 300 K,
@@ -419,6 +531,62 @@ of interest, because the energy levels and weights are `β`-independent.
 T, β, logZ, Z, and `F = −k_B T ln Z`. Derivatives of $\ln Z$ with respect to $\beta$
 would give $\langle E\rangle$ and $C_V(T)$ — useful for identifying phase transitions
 via heat-capacity peaks (a hallmark of the nested-sampling approach in the papers).
+
+## Nested sampling in 1D (Fortran toy model)
+
+`_tmp/nested_sampling_windowed_fixed.f` is a self-contained **Fortran** toy model of the
+*same* temperature-free nested-sampling algorithm the Python `NestedSampler` implements, but
+reduced to a **1D double-well potential** so every step is transparent and cheap to run. It
+maps one-to-one onto the Python concepts above.
+
+**The model.** The potential is an asymmetric double well
+`E(x) = A·(x²−1)² + B·x` (A = 1, B = 0.3, `x ∈ [−3, 3]`):
+- `x ≈ −1` — the **island** structure (global minimum, lower energy)
+- `x ≈ +1` — the **flat** structure (higher-energy metastable basin)
+- `x ≈ 0`  — the **energy barrier** separating the two basins
+
+`x` plays the role of the configuration variable (the README's `x`); `E(x)` plays the role of
+the energy surface (here exact, in the Python project a GPR surrogate). This is the flat-vs-island
+picture from the state-density analysis, in 1D.
+
+**Key design choice ("windowed").** `X_0 = 1` (the reference "entire configuration space") is
+deliberately defined NOT as the flat basin alone but as the region that extends **past the
+barrier and includes both basins** (`E_max = E_barrier + 0.10` margin). This is what makes
+correctly-weighted traffic between flat and island possible — the same reasoning as the
+"is it better to choose a higher-energy prior, 0.25 eV/atom above the global minimum?" note:
+the prior window must span the barrier to connect the two phases.
+
+**Routine-by-routine mapping to the Python code**
+
+| Fortran routine | What it does | Maps to (Python `NestedSampler`) |
+|---|---|---|
+| `energy(x,A,B)` | Exact potential `A(x²−1)²+Bx` | `gpr.predict_energy(atoms)` (here exact, not a surrogate) |
+| `gaussian_random()` | Box–Muller Gaussian draws for the rattle moves | `rng.normal(0, perturb, ...)` in `sample_from_prior` |
+| `locate_features` | Grid search for island/flat/barrier positions + energies | (diagnostic) `E_ref = min training energy`; the barrier is the flat↔island transition |
+| init loop (lines 66–77) | Draw `K=100` walkers uniform over `{E ≤ E_max}` via rejection sampling | `initialize()` drawing `n_live` prior samples (here a flat 1D prior, not a DB resample) |
+| main loop `dead_X(iter) = (K/(K+1))**iter` | Record surviving prior volume `X_i` each iteration | `X_i = exp(−i/K)` (`X_prev/X_this` in `step()`); `(K/(K+1))^i ≈ exp(−i/K)` |
+| `idx_worst = maxloc(walkers_E)` | Remove the worst (highest-energy) walker | `worst_idx = argmin(live_log_L)` (temperature-free ⇒ highest energy) |
+| clone + `constrained_walk` | Pick a random other walker and run an MCMC walk that keeps `E < dead_E(iter)` | `sample_constrained()` (draw until `log L > log_L_boundary`); **difference:** Fortran does a real multi-step MC decorrelation walk, Python does single random draws without the walk (the "walk length L" gap noted in the README) |
+| `constrained_walk` rattle | Mix of small (`0.05`) and large (`0.40`) Gaussian displacements, reject out-of-`[−L,L]` or above energy limit | `--perturb` (small Gaussian displacement of the Fe atoms); here two scales to also allow basin crossing |
+| `print_thermodynamics` | For T ∈ {0.05,0.1,0.2,0.3,0.5,1.0}: `Z=Σ ΔX·e^(−E/T)`, `U`, `F=−T ln Z`, `S=(U−F)/T` | `evaluate(beta)` per `--temperatures` value → `thermodynamics.csv` (Z, F); also gives `⟨E⟩` and entropy |
+| `convert_to_density_of_states` | Histogram `g(E) = Σ ΔX/ΔE` over bins spanning `[island−0.15, flat+0.15]` | `state_density.py` KDE over per-atom relative energies; the exact-histogram counterpart |
+
+**How it connects to the README.** Every concept from the README appears verbatim in this toy:
+- **Prior volume / shrinkage:** `X_i = (K/(K+1))^i` is the discrete form of the README's
+  `X_i = exp(−i/K)`; the per-iteration shell `ΔX = X_{i−1} − X_i` is the prior-volume weight
+  `w_i` used in `Z = Σ_i w_i·L_i`.
+- **Temperature-free mode:** the sampling never uses `β` — it ranks by energy alone (the
+  constraint is `E < E_dead`, i.e. `log L = −(E − E_ref)`), and all thermodynamics is computed
+  in post-processing at several T. This is exactly the "Physics of temperature-free mode" above.
+- **Density of states `g(E)`:** the final histogram is the README's `g(E) = ΔX/ΔE`, the 
+  configurational state density from which `Z(T) = ∫ g(E) e^(−βE) dE` and the flat-vs-island
+  probability follow.
+- **Convergence:** it runs 3000 iterations and papers-style records `dead_X` down to negligible
+  values, matching the "run until `X` is negligible" convergence criterion.
+
+This toy is the pedagogical skeleton of the whole project: solve it, and you have solved the
+conceptual structure of the Python pipeline. It is `_tmp/` scratch (gitignored), so it is not
+part of the reproducible deliverable — it exists to illustrate the algorithm.
 
 ## Usage (GPR accuracy vs energy range)
 `gpr_accuracy.py` trains the GPR on the combined 1297-structure dataset and reports

@@ -1536,3 +1536,33 @@ note that none currently exists in the repo / `_runs/*`.
 **Verification:** README updated; no `^Notes:` flags (none added).
 
 **Time:** 2026-08-27 ~23:20 JST.
+
+
+---
+
+## Session 2026-08-27 — README: answer the 6 new Notes blocks + add Fortran toy-model section
+
+**Goal (user request):** edit README.md to (1) answer the "To Do" notes and (2) explain
+`_tmp/nested_sampling_windowed_fixed.f` in a separate section. Clarified before acting
+(per standing rule): the "To Do Tag" = the 6 new uncommitted `Notes:` blocks (answer inline +
+remove flags); Fortran = explain-only, NO compile/run (gfortran not installed); placement = a
+dedicated top-level section near "Physics of temperature-free mode", conceptual + per-routine
+mapping, moderate depth.
+
+**Actions taken:**
+- Answered the 6 `Notes:` blocks inline (unnormalized posterior; probability distribution /
+  P=L·pi/Z / what NS "density" means / state density from CSV; prior weight pi + empirical
+  distribution + DB-dense-at-island prior + prior-volume weight vs pi; geometric series;
+  pi-as-probability + higher-energy prior (0.25 eV/atom) + surviving fraction; shrinkage rate),
+  each grounded in the code and given worked examples. Removed all 6 `Notes:` flags.
+- Added a top-level section "## Nested sampling in 1D (Fortran toy model)" after "Physics of
+  temperature-free mode": describes the 1D asymmetric double-well model (island/flat/barrier),
+  the "windowed" X_0=1 past-the-barrier design choice, a routine-by-routine mapping table to the
+  Python NestedSampler, and how each README concept (prior volume X=(K/(K+1))^i, temperature-free
+  mode, density of states g(E)=dX/dE, convergence) appears in the toy. Noted it is gitignored
+  _tmp scratch (illustrative, not a deliverable).
+
+**Verification:** 0 `Notes:` flags remain; new section renders between the physics and GPR-accuracy
+sections; README grew to 820 lines.
+
+**Time:** 2026-08-27 ~23:35-23:45 JST.
