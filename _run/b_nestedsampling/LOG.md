@@ -2142,3 +2142,40 @@ above ground state, --e-window-max-attempts 1000; --walk-steps 50 --walk-small 0
 --walk-large 0.40 --walk-mode both --output ./ns_output_tfree_walk_emax04 --rng 42
 
 **Time:** 2026-08-28 ~03:50-04:10 JST.
+
+
+---
+
+## Session 2026-08-28 — Create run dir _runs/b7_boron_walk_emax04_wind03035 (boron system, b6 params)
+
+**Goal (user request):** make a new _runs dir using the parameters of
+_runs/b6_tfree_walk_emax04 but for the boron system in dataset_boron.
+
+**Clarified (per standing rule):**
+- Name: b7_boron_walk_emax04_wind03035.
+- Params: same as b6 (temperature-free, n-live 100, n-iters 1000, temps 100,200,300,500,1000,
+  perturb 0.01, rng 42) + --e-max-per-atom 0.4, window [0.3,0.35], max-attempts 1000, walk
+  (steps 50, small 0.05, large 0.40, mode both), but --perturb-symbols Fe,B (boron moves too,
+  matching b5).
+- Scope: full self-contained copy (main.py + nested_sampling/ + scripts/ + dataset (boron,
+  copied as dataset/, 5 seeds) + j_*.sh + README + TUTORIAL).
+
+**Actions taken:**
+- Created _runs/b7_boron_walk_emax04_wind03035/ as a full self-contained copy: main.py (v1.4.0)
+  + nested_sampling/ + scripts/ from project root; dataset copied from dataset_boron/ (5 seeds
+  seed_0..4, Fe25Mg25O25B7 / 82 atoms).
+- Copied the CORRECT plot_structure_landscape.py (accepts s=25) from
+  _analysist/1_result/1_no_prior_control/nested_sampling/scripts/ into
+  nested_sampling/scripts/ (avoids the 's' TypeError; verified s=25 present).
+- Wrote j_b7_boron_walk_emax04_wind03035.sh (PJM, gpaw_env, OMP_NUM_THREADS=1) with
+  --perturb-symbols Fe,B and the same command line as b6 otherwise.
+- Wrote README.md + TUTORIAL.md describing the treatment (b6 params on boron), flags,
+  verification, and the boron high-energy-outlier note.
+- py_compile OK for run main.py + nested_sampler.py; j script executable; 5 seed DBs present.
+
+**Command line:** main.py --temperature-free --temperatures 100,200,300,500,1000 --n-live 100
+--n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B --e-max-per-atom 0.4 --e-window-lo 0.3
+--e-window-hi 0.35 --e-window-max-attempts 1000 --walk --walk-steps 50 --walk-small 0.05
+--walk-large 0.40 --walk-mode both --output ./ns_output_tfree_walk_emax04 --rng 42
+
+**Time:** 2026-08-28 ~04:20-04:40 JST.
