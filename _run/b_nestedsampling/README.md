@@ -614,8 +614,8 @@ the prior window must span the barrier to connect the two phases.
 | init loop (lines 66–77) | Draw `K=100` walkers uniform over `{E ≤ E_max}` via rejection sampling | `initialize()` drawing `n_live` prior samples (here a flat 1D prior, not a DB resample) |
 | main loop `dead_X(iter) = (K/(K+1))**iter` | Record surviving prior volume `X_i` each iteration | `X_i = exp(−i/K)` (`X_prev/X_this` in `step()`); `(K/(K+1))^i ≈ exp(−i/K)` |
 | `idx_worst = maxloc(walkers_E)` | Remove the worst (highest-energy) walker | `worst_idx = argmin(live_log_L)` (temperature-free ⇒ highest energy) |
-| clone + `constrained_walk` | Pick a random other walker and run an MCMC walk that keeps `E < dead_E(iter)` | `sample_constrained()` (draw until `log L > log_L_boundary`); **difference:** Fortran does a real multi-step MC decorrelation walk, Python does single random draws without the walk (the "walk length L" gap noted in the README) |
-| `constrained_walk` rattle | Mix of small (`0.05`) and large (`0.40`) Gaussian displacements, reject out-of-`[−L,L]` or above energy limit | `--perturb` (small Gaussian displacement of the Fe atoms); here two scales to also allow basin crossing |
+| clone + `constrained_walk` | Pick a random other walker and run an MCMC walk that keeps `E < dead_E(iter)` | `sample_constrained()` — by default independent rejection draws (`draw until log L > log_L_boundary`); with `--walk` it instead clones a random surviving live point and runs the dual-scale MC walk (Fortran-equivalent; see "Usage (dual-scale constrained MC walk)") |
+| `constrained_walk` rattle | Mix of small (`0.05`) and large (`0.40`) Gaussian displacements, reject out-of-`[−L,L]` or above energy limit | `--walk-small` / `--walk-large` (Å) with `--walk-mode` (`both`/`small`/`large`); default off, where the move is the small `--perturb` on the Fe atoms |
 | `print_thermodynamics` | For T ∈ {0.05,0.1,0.2,0.3,0.5,1.0}: `Z=Σ ΔX·e^(−E/T)`, `U`, `F=−T ln Z`, `S=(U−F)/T` | `evaluate(beta)` per `--temperatures` value → `thermodynamics.csv` (Z, F); also gives `⟨E⟩` and entropy |
 | `convert_to_density_of_states` | Histogram `g(E) = Σ ΔX/ΔE` over bins spanning `[island−0.15, flat+0.15]` | `state_density.py` KDE over per-atom relative energies; the exact-histogram counterpart |
 
@@ -638,123 +638,86 @@ rattle scales.**
   island basins.
 
 **Python — `sample_from_prior` (lines 207–219) + `sample_constrained` (lines ~280–293): a SINGLE
-small Gaussian perturb, no walk.**
+small Gaussian perturb, no walk — by DEFAULT.** (With `--walk` the Python code gains a
+Fortran-equivalent dual-scale MC walk; see below.)
 - The prior draw picks a random DB structure and applies **one** Gaussian displacement of std
-  `perturb` (default `--perturb 0.01`) to the Fe atoms only. There is **no multi-step walk** and
-  **no large-scale move**.
+  `perturb` (default `--perturb 0.01`) to the Fe atoms only. By default there is **no multi-step
+  walk** and **no large-scale move**.
 - `sample_constrained` then draws such points repeatedly (up to 500) until one satisfies
-  `log L > log_L_boundary` (i.e. `E < E_boundary`). It is a *rejection filter over independent
-  draws*, not a correlated walk.
+  `log L > log_L_boundary` (i.e. `E < E_boundary`). By default it is a *rejection filter over
+  independent draws*, not a correlated walk.
+- **With `--walk`** (v1.4.0), `sample_constrained` instead clones a random surviving live point
+  and runs a dual-scale Gaussian MC walk (`--walk-steps`, `--walk-small`, `--walk-large`,
+  `--walk-mode`) keeping `E < E_boundary` — matching the Fortran move.
 
 **Key differences**
-| Aspect | Fortran | Python |
-|---|---|---|
-| Move types | 2 scales (small 0.05, large 0.40) | 1 scale (`--perturb 0.01`) |
-| Steps per new sample | 40-step MC walk | single draw |
-| Correlation | walk decorrelates successive samples | independent draws |
-| Barrier crossing | large steps allow crossing | only via the DB pool already containing both sides |
-| Constraint | `E < E_max_local` on every walk step | `log L > log_L_boundary` on the accepted draw |
+| Aspect | Fortran | Python (default) | Python (`--walk`) |
+|---|---|---|---|
+| Move types | 2 scales (small 0.05, large 0.40) | 1 scale (`--perturb 0.01`) | 2 scales (`--walk-small` 0.05, `--walk-large` 0.40) |
+| Steps per new sample | 40-step MC walk | single draw | `--walk-steps`-step MC walk (default 40) |
+| Correlation | walk decorrelates successive samples | independent draws | walk decorrelates (mode `both`/`small`/`large`) |
+| Barrier crossing | large steps allow crossing | only via the DB pool already containing both sides | large steps allow crossing (`--walk-large`) |
+| Constraint | `E < E_max_local` on every walk step | `log L > log_L_boundary` on the accepted draw | `E < E_boundary` and `|E| < 1e4` on every walk step |
 
 **Why it matters.** The Fortran's large-step + walk is the standard "clone-and-MC-decorrelate"
 nested-sampling move: it lets a new sample diffuse *within* the allowed region and occasionally
 hop the barrier, which is what the papers do (the "walk length L" noted in the Fortran section).
-The Python code instead does **independent single-draw rejection**: it can only find a structure
-inside the current energy shell if such a structure already exists in the DB near that shell. It
-therefore **cannot create new configurations** — it merely re-draws from the database. This is the
-modelling gap flagged in the README (no clone-and-MC walk length L). The two-scale choice is
-tailored to a *continuous* 1D potential (Fortran); the Python single small perturb matches the
-*surrogate-constrained* setting where large moves make the Fingerprint GPR extrapolate to
-unphysical energies.
+By default the Python code instead does **independent single-draw rejection**: it can only find a
+structure inside the current energy shell if such a structure already exists in the DB near that
+shell, and **cannot create new configurations** — it merely re-draws from the database. Enabling
+`--walk` closes this gap (see "Usage (dual-scale constrained MC walk)"). The two-scale choice is
+tailored to a *continuous* 1D potential (Fortran); the Python `--walk` reuses it in the
+*surrogate-constrained* setting, where large moves can make the Fingerprint GPR extrapolate to
+unphysical energies — hence the kept `|E| < 1e4` guard and the advice to tune `--walk-large`
+conservatively.
 
-**How to implement the Fortran two-scale MC-walk sampling in Python.**
+**How the Fortran-style walk is now implemented in v1.4.0 (`--walk`).**
 
-The cleanest way is to add a **clone-and-MC-constrained-walk** method and use it inside
-`sample_constrained` (replacing the independent single draws with a correlated walk), exactly
-mirroring the Fortran's `constrained_walk`. Concretely:
+The clone-and-MC-constrained-walk described below is now a **real, flag-gated feature** of
+`NestedSampler` (v1.4.0) — it is implemented in `constrained_walk()` and activated by `--walk`
+(see "Usage (dual-scale constrained MC walk)"). The actual method mirrors the Fortran exactly:
 
 ```python
-def constrained_walk(self, x0, n_steps=40, small=0.05, large=0.40):
-    """MC walk from a clone x0, keeping E below the current energy limit."""
-    x = x0
-    E_limit = self.E_ref - self.log_L_boundary      # current E_boundary
-    for _ in range(n_steps):
-        scale = large if self.rng.random() < 0.5 else small
-        noise = self.rng.normal(0, scale, (len(self.perturb_indices), 3))
+# implemented in nested_sampling/nested_sampler.py (v1.4.0)
+def constrained_walk(self, x0):            # clone-and-MC, Fortran-style
+    x = x0.copy()
+    E_boundary = self.E_ref - self.log_L_boundary      # current E_boundary
+    valid = False
+    for _ in range(self.walk_steps):       # --walk-steps (default 40)
+        scale = self._choose_scale()       # --walk-mode: both/small/large
+        noise = self.rng.normal(0.0, scale, (len(self.perturb_indices), 3))
         trial = x.copy()
-        trial.positions[self.perturb_indices] += noise
+        trial.positions[self.perturb_indices] += noise   # all --perturb-symbols atoms, in Å
         Et = self.gpr.predict_energy(trial)
-        if abs(Et) < 1e4 and Et < E_limit:          # keep E below boundary
+        if abs(Et) < 1e4 and Et < E_boundary:            # keep E below boundary
             x = trial
-    return x
+            valid = True
+    return x if valid else None
 ```
 
-**What "walk" means, which atoms move, units, and how a new structure is produced.**
+`sample_constrained()` uses it as the **primary** move when `--walk` is set — it clones a random
+surviving live point and walks it; if the walk yields no valid point it falls back to the
+independent rejection draws, then to `sample_from_prior`.
 
-**(1) What is a "walk"?** A *walk* is a **sequence of many small/large random trial moves** taken
-one after another from a starting configuration (the clone), *not* a single jump. Each step tries
-a small displacement, keeps it only if it satisfies the constraint (`E < E_boundary`, `|E| < 1e4`),
-and the walker's position accumulates the accepted moves. After `n_steps` the final position is
-returned. This is exactly the Fortran `constrained_walk` loop (lines 160–175): it starts at `x = x0`
-and applies `step = 1..n_steps` trials, updating `x` only when the trial is accepted.
+**How the walk works (v1.4.0).**
+- **(1) "Walk"** — a sequence of `--walk-steps` small/large Gaussian trial moves from a clone, not
+  a single jump; each accepted step accumulates into the position, and the final structure is
+  returned (the Fortran `constrained_walk` loop, lines 160–175).
+- **(2) Which atoms move** — **all** `--perturb-symbols` atoms simultaneously each step
+  (`trial.positions[self.perturb_indices] += noise`), matching `sample_from_prior`.
+- **(3) Units** — displacements are in **Å** (ASE positions; the Gaussian std is
+  `--walk-small`/`--walk-large` in Å).
+- **(4) New structure** — the clone evolved by its accepted trial moves: a new, valid
+  configuration inside the current energy shell (`E < E_boundary`, `|E| < 1e4`).
+- **Design flags** — `--walk-steps` (walk length; Fortran `mixing_steps`=40, papers 100s–1000s),
+  `--walk-small` / `--walk-large` (the two scales; tune `large` conservatively against GPR
+  extrapolation), `--walk-mode` (`both` 50/50 | `small` | `large`).
 
-**(2) Does it perturb all `--perturb-symbols` atoms or just one?** **All** atoms matching
-`--perturb-symbols` — simultaneously, on every trial step. In the sketch,
-`noise = self.rng.normal(0, scale, (len(self.perturb_indices), 3))` draws a Gaussian displacement
-for **every** perturbed atom at once, and `trial.positions[self.perturb_indices] += noise` moves
-them all together — the same as `sample_from_prior`. (In the 1D Fortran there is only one
-coordinate `x`, so "all atoms" reduces to "the single coordinate"; in Python the deposition layer
-has many atoms and they all move.)
-
-**(3) Units.** The displacements are in **Angstrom (Å)**. ASE stores positions in Å, and the
-Gaussian `std` is `scale` in Å (matching `--perturb 0.01` = 0.01 Å). So `trial.positions += noise`
-adds Å-sized displacements.
-
-**(4) How it generates a new structure.** Starting from a **clone** of a random surviving live
-point, it: copy the clone → for each of `n_steps` trials, add an Å Gaussian displacement (scale =
-small or large, 50/50) to all perturbed atoms → accept the trial if `|E| < 1e4` and `E <
-E_boundary` (otherwise revert that trial) → after `n_steps`, return the accumulated configuration.
-So the returned structure is **the clone evolved by the accepted trial moves** — a new, valid
-configuration inside the current energy shell, which the independent-draw version of
-`sample_constrained` cannot produce.
-
-
-Then in `sample_constrained`, instead of (or as a fallback to) the independent rejection draws,
-**clone a random surviving live point** and walk it:
-
-```python
-# in sample_constrained: pick a random live structure as the clone
-idx = self.rng.integers(0, len(self.live_structures))
-x_new = self.constrained_walk(self.live_structures[idx].copy(),
-                              n_steps=walk_length, small=small_perturb,
-                              large=large_perturb)
-```
-
-**Design points to decide (all optional new CLI flags, e.g. `--walk-length`,
-`--small-perturb`, `--large-perturb`):**
-- **Walk length `n_steps`** — the Fortran uses `mixing_steps = 40`; longer = better decorrelation
-  but more GPR evaluations. The papers use L = 100s–1000s.
-- **Two scales** — small (local refinement) and large (barrier crossing). Choose them relative to
-  your `--perturb` and typical barrier width. **Caveat (from the Python-Fortran note):** the large
-  scale can make the Fingerprint GPR extrapolate to unphysical energies; keep the `|E| < 1e4`
-  guard and/or tune `large` conservatively.
-- **Which atoms move** — respect `perturb_indices` (the `--perturb-symbols` deposition layer), so
-  the substrate stays fixed, matching `sample_from_prior`.
-- **Constraint** — every accepted step must keep `E < E_boundary` (equivalently `log L >
-  log_L_boundary`) and `|E| < 1e4`; the Fortran uses exactly `E < E_max_local`. This is what makes
-  it a *constrained* walk and keeps the new sample inside the current prior-volume shell.
-- **Clone source** — pick a random surviving live point (like the Fortran's clone of a random
-  non-worst walker), NOT the discarded worst point. This gives the walk a valid starting
-  configuration already inside the region.
-
-**Why this closes the "walk length L" gap.** The current Python code only re-draws from the DB
-(no new configurations). Adding the walk lets a new sample *diffuse* within the allowed region and
-occasionally cross the barrier via a large step — exactly the clone-and-MC-decorrelate move the
-papers use, giving properly-weighted traffic between the flat and island basins that the
-independent-draw version cannot.
-
-
-
-**Does the Python code define an `E_max`? — the honest answer.** No — the Python
+**Why this closes the "walk length L" gap.** By default (no `--walk`) Python only re-draws from
+the DB and cannot create new configurations; enabling `--walk` lets a new sample *diffuse* within
+the allowed region and occasionally cross the barrier via a large step — the
+clone-and-MC-decorrelate move the papers use, giving properly-weighted traffic between the flat
+and island basins that the default independent-draw version cannot.**Does the Python code define an `E_max`? — the honest answer.** No — the Python
 `NestedSampler` does **not** set an explicit upper-energy `E_max` like the Fortran toy's
 `E_max = E_barrier + margin`. The two codes shape the prior window differently:
 

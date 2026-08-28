@@ -2058,3 +2058,36 @@ constrained_walk returns a structure below E_boundary; (4) sample_constrained (w
 structure; (5) walk-disabled rejection path still works. Removed the test file afterwards.
 
 **Time:** 2026-08-28 ~02:55-03:15 JST.
+
+
+---
+
+## Session 2026-08-28 — Reconcile README walk notes with the implemented 1.4.0 feature
+
+**Goal (user request):** check all the notes — is the README consistent with the 1.4.0 walking
+feature? Found it was NOT: several Fortran-section notes still described the walk as
+hypothetical/unimplemented.
+
+**Clarified (per standing rule):** update all stale walk notes to reflect the now-implemented
+--walk feature (mapping-table row, comparison+table framed as default, why-it-matters paragraph,
+and the 'How to implement' + design-points sections), and add a version note.
+
+**Edits (README.md):**
+1. Fortran mapping table 'clone + constrained_walk' row: now notes --walk clones a random live
+   point and runs the dual-scale MC walk (default = independent rejection).
+2. 'constrained_walk rattle' row: maps to --walk-small/--walk-large/--walk-mode (default off,
+   small --perturb).
+3. 'Fortran vs Python sampling moves': framed the Python 'single perturb, no walk' as the DEFAULT;
+   added a Python(--walk) column to the differences table; 'why it matters' now says enabling
+   --walk closes the gap.
+4. Replaced the entire stale 'How to implement ... design points to decide (--walk-length)'
+   section with 'How the Fortran-style walk is now implemented in v1.4.0 (--walk)' — shows the real
+   constrained_walk() implementation, the 4 how-it-works sub-answers (walk/which-atoms/units/new
+   structure) reframed to the actual code + flags, and the design flags
+   (--walk-steps/--walk-small/--walk-large/--walk-mode), plus the closes-the-gap note.
+
+**Verification:** grep confirms no stale markers remain ('How to implement', 'design points to
+decide', 'no clone-and-MC walk length', '1.3.0'); remaining 'cannot create new configurations' /
+'no multi-step walk' references are all correctly framed as the DEFAULT without --walk.
+
+**Time:** 2026-08-28 ~03:20-03:35 JST.
