@@ -480,6 +480,12 @@ Controls:
 Notes:
 - The walk perturbs **all** `--perturb-symbols` atoms simultaneously, in Å, matching
   `sample_from_prior`.
+- **`--perturb` is NOT redundant with `--walk`.** `--perturb` sets the Gaussian
+  displacement (std = `--perturb`, Å) of the base prior draw `sample_from_prior`, which
+  is still used for the **initial live-set draws** and as the **fallback** when the walk
+  fails. The walk uses its **own** `--walk-small` / `--walk-large` scales in
+  `sample_constrained`, independent of `--perturb`. So with `--walk` on, `--perturb`
+  still matters for initialization and fallback.
 - Large steps can make the Fingerprint GPR extrapolate to unphysical energies — the `|E| < 1e4`
   guard is kept, and you may want to tune `--walk-large` conservatively.
 - This closes the "walk length L" modelling gap (Python previously could not create new

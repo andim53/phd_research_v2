@@ -38,6 +38,14 @@ Key features / treatment (what differs from sibling runs):
   `--walk-steps 50` Gaussian trials (small 0.05 Å, large 0.40 Å, `--walk-mode both`
   = 50/50), accepting steps below the current energy boundary. Falls back to
   rejection draws if the walk fails.
+  - **`--perturb 0.01` vs `--walk` (not redundant):** `--perturb` and `--walk` are two
+    *different* moves and both are active here. `--perturb 0.01` sets the Gaussian
+    displacement (std = 0.01 Å) of the base prior draw `sample_from_prior`, used for
+    the **initial live-set draws** (the windowed anchor search + the capped fills)
+    and as the **fallback** when the walk fails. The **walk** uses its *own* scales
+    (`--walk-small 0.05` / `--walk-large 0.40`) in `sample_constrained`, independent
+    of `--perturb`. So `--perturb` still matters for initialization and fallback even
+    with `--walk` on.
 - Same base NS params as the reference `1_no_prior_control`/b4:
   `--n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe --rng 42`.
 

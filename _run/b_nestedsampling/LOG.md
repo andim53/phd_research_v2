@@ -2179,3 +2179,25 @@ _runs/b6_tfree_walk_emax04 but for the boron system in dataset_boron.
 --walk-large 0.40 --walk-mode both --output ./ns_output_tfree_walk_emax04 --rng 42
 
 **Time:** 2026-08-28 ~04:20-04:40 JST.
+
+
+---
+
+## Session 2026-08-28 — Document --perturb vs --walk interaction (b6 README/TUTORIAL + root README)
+
+**Goal (user request):** explain what --perturb 0.01 does given the --walk method, and write the
+clarification into the b6 README/TUTORIAL and the root README.
+
+**Answer (grounded in code):** --perturb and --walk are two DIFFERENT moves, both active in b6.
+--perturb sets the Gaussian displacement (std = --perturb) of the base prior draw
+sample_from_prior, used for the initial live-set draws (windowed anchor search + capped fills)
+and as the fallback when the walk fails. The walk uses its own --walk-small/--walk-large scales
+in sample_constrained, independent of --perturb. So --perturb is NOT redundant with --walk.
+
+**Edits:**
+- _runs/b6_tfree_walk_emax04/README.md: added a bullet under the --walk feature explaining
+  --perturb vs --walk (not redundant).
+- _runs/b6_tfree_walk_emax04/TUTORIAL.md: added a --perturb 0.01 bullet after the --walk flags.
+- README.md (root): added a note in the 'Usage (dual-scale constrained MC walk)' Notes list.
+
+**Time:** 2026-08-28 ~04:50 JST.

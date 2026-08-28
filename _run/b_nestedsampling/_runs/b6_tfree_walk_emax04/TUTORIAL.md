@@ -47,6 +47,11 @@ The job script runs `main.py` with the same command line and `OMP_NUM_THREADS=1`
   dual-scale constrained MC walk in `sample_constrained` (clone a random live point,
   50 Gaussian trials, small 0.05 / large 0.40, 50/50 both; accept steps below the
   energy boundary; fall back to rejection draws).
+- `--perturb 0.01` — the Gaussian displacement (std = 0.01 Å) of the base prior draw
+  `sample_from_prior`. It is **not** redundant with `--walk`: it still controls the
+  initial live-set draws (the windowed anchor search and the capped fills) and the
+  fallback rejection draws when the walk fails. The walk uses its own
+  `--walk-small`/`--walk-large` scales, independent of `--perturb`.
 
 ## Verification
 
