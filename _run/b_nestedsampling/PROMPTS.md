@@ -44,6 +44,21 @@ file — do not create a per-flag one.
 
 ---
 
+# FLAG: 20260828_1918
+
+## Original (before grammar fix)
+
+```
+The DB, at low energy were dominated with almost duplicated structure, so, the initial live point might also include duplicated structure. To counter that, we can use a novelty+force filter here: /home/think/Desktop/research/_run/9_novelFilter, for the dataset before the initial live points selection. Note that this is not a filter for GPR training. GPR still use all the dataset. Only use this filter when we were about to choose initial live points. What do you think? What is the good and the bad?
+```
+
+## Fixed grammar (after)
+
+```
+The DB is dominated at low energy by almost-duplicated structures, so the initial live points might also include duplicates. To counter that, we can apply the novelty+force filter here
+(/home/think/Desktop/research/_run/9_novelFilter) to the dataset before the initial-live-point selection. Note this is NOT a filter for GPR training: the GPR still uses the full dataset. Use this filter only when we are about to choose the initial live points. What do you think? What are the pros and cons?
+```
+
 # FLAG: 20260827_1638
 
 ## Original (before grammar fix)

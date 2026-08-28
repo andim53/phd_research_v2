@@ -1572,6 +1572,59 @@ walkers_x(idx_worst) = x_new             ! UNCONDITIONALLY replace
 walkers_E(idx_worst) = energy(x_new, A, B)
 ```
 
+**Assessment: applying a novelty+force filter to the DB only for the initial live-point
+selection (not for GPR training).**
+
+I read `_run/9_novelFilter/` (`run_filter.py`, `run_force_novel_filter.py`,
+`novel_filter/filter.py`). It greedily keeps a **distinct** subset of structures: processed in
+ascending energy, a structure is kept iff its min Euclidean fingerprint distance to every kept
+structure exceeds a threshold; the force filter keeps only structures whose `max|Fe force|` is
+small (so they are near genuine minima). The proposal is to run this on the DB **before drawing the
+initial live points** (leaving GPR training on the full DB).
+
+**The good.**
+- Your premise is correct: the DB is dense with near-duplicate low-energy (island) structures, so
+  uniform draws can seed the initial live set with several near-identical walkers. A novelty pass
+  would make the **initial live set more diverse** — each walker starts in a distinct basin, which
+  is exactly what you want for a good start.
+- The filter uses the **same Fingerprint descriptor / novelty metric** as the GPR, so it is
+  structurally consistent with how the surrogate sees structure.
+- Because it is applied only at **initialization** (not to GPR training), the surrogate still sees
+  all the data — the proposal correctly avoids the "throw away training data" problem.
+
+**The bad / caveats.**
+1. **The initial live set is small (K = n_live = 100), so the benefit is limited.** Even with
+   duplicates, 100 near-island walkers still span the island basin; the *diversity* gain is modest
+   compared to the cost. The **walk + rejection sampling** during the run already re-draw from the
+   **full DB**, so duplicates in the initial set do not persist — later live points are replaced
+   from the whole pool.
+2. **It does not change the prior-volume weighting.** `X_i = exp(-i/K)` is computed from
+   `n_live`, not from the DB size or a filtered subset. So filtering the DB does not reweight the
+   evidence `Z`; it only changes which structures seed the walkers.
+3. **Threshold tuning + cost.** The novelty threshold and the force threshold are new knobs to
+   tune; too aggressive a novelty threshold removes real minima, too weak keeps duplicates. And
+   running the greedy distance filter on 1158–1297 structures at every run start adds a
+   (one-time, moderate) cost.
+4. **Interaction with the windowed seeding.** In b6/b8 the initial live set is already anchored to
+   `[0.3, 0.35]` eV/atom (windowed seeding) and capped at 0.35. A novelty filter on the *whole*
+   DB could select structures outside that window; you would need to apply it *within* the
+   already-windowed/e-max subset for consistency.
+5. **Force filter caveat (from the filter's own docstring).** The Fe/MgO DB structures are
+   surrogate-relaxed with single-point DFT energies and **large residual forces** — they are NOT
+   converged minima. A strict force filter could discard most of the low-energy set you care
+   about.
+
+**Recommendation.** The idea is sound in principle but has limited payoff here because (a) the
+initial set is only ~100 points, (b) the walk/rejection re-draw from the full DB anyway, and (c) it
+does not change the prior-volume weighting. The cheapest high-value version: apply the **novelty**
+pass (not the force pass) **within the already-filtered dataset** (`--e-max-per-atom` subset) and
+**only to seed the initial live points**, keeping GPR training on the full set — and treat the
+novelty threshold as a tunable, not a fixed constant. If you mainly want to avoid duplicate
+walkers at startup, a cheaper alternative is to de-duplicate the initial live set by a simple
+energy/descriptor distance in `initialize()` itself (a small, local change) rather than adding a
+full filter dependency.
+
+
 **The Python code uses cloning too** — it just happens inside the walk.
 
 In `sample_constrained` (when `--walk` is on), Python clones a **random surviving live point** and

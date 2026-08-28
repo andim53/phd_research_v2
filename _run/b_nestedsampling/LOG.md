@@ -2668,3 +2668,33 @@ mistake, they don't use b7; b8 = the b6 system (plain Fe/MgO) with b6's params P
 - py_compile OK for run main.py + nested_sampler.py; j script executable.
 
 **Time:** 2026-08-28 ~19:50 JST.
+
+
+---
+
+## Session 2026-08-28 — README: assess novelty+force filter for initial live points; PROMPTS flag
+
+**Goal (user request):** answer the new '# Notes:' block proposing to apply the 9_novelFilter
+novelty+force filter to the DB before initial live-point selection (not for GPR training). Also a
+new PROMPTS.md entry (empty flag) was added.
+
+**Clarified (per standing rule):** give a grounded assessment (good/bad/recommendation).
+
+**Answer written (flag removed):** read _run/9_novelFilter (run_filter.py, run_force_novel_filter.py,
+filter.py). Good: removes near-duplicate low-energy structures from the initial live set (more
+diverse walkers, distinct basins); uses the same Fingerprint/novelty metric as the GPR; correctly
+keeps GPR training on the full DB. Bad: initial live set is only K=100 (limited gain); does not
+change prior-volume weighting X_i=exp(-i/K) (from n_live, not the DB); the walk/rejection re-draw
+from the full DB anyway so duplicates don't persist; adds novelty+force threshold tuning + cost;
+must be applied within the windowed/e-max subset for b6/b8 consistency; the Fe/MgO DB has large
+residual forces so a strict force filter could discard the low-energy set. Recommendation: apply
+only the novelty pass (not force) within the already-filtered dataset, only to seed initial live
+points; or cheaper: de-duplicate in initialize() directly.
+
+**PROMPTS.md:** assigned flag code 20260828_1918; added Original + Fixed-grammar blocks per the
+single-grammar-notes convention.
+
+**Verification:** '#' Notes flag removed (remaining 'Notes:' at line ~480 is the legit bulleted
+list).
+
+**Time:** 2026-08-28 ~19:20-19:30 JST.
