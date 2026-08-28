@@ -1997,3 +1997,27 @@ the walk lets a sample diffuse and cross the barrier).
 **Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
 
 **Time:** 2026-08-28 ~02:35 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer constrained-walk sub-questions Notes block
+
+**Goal (user request):** answer the new `Notes:` block with 4 sub-questions about the
+constrained_walk sketch: what 'walk' means; does it perturb all --perturb-symbols atoms or one;
+units; how a new structure is generated.
+
+**Clarified (per standing rule):** answer all 4 in the README (no code change).
+
+**Answer written (flag removed):** (1) walk = a sequence of many small/large random trial moves
+from a starting clone, accumulating accepted moves over n_steps (the Fortran constrained_walk
+loop, lines 160-175); (2) it perturbs ALL --perturb-symbols atoms simultaneously each trial
+(noise over len(perturb_indices) x 3, added via trial.positions[perturb_indices] += noise, same as
+sample_from_prior; 1D Fortran reduces to the single coordinate); (3) units = Angstrom (ASE
+positions in A; std = scale in A, matching --perturb 0.01); (4) new structure = clone + accumulated
+accepted trial moves, returned after n_steps — a new valid configuration inside the current energy
+shell that independent draws cannot produce.
+
+**Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
+
+**Time:** 2026-08-28 ~02:45 JST.

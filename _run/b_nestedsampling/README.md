@@ -659,6 +659,36 @@ def constrained_walk(self, x0, n_steps=40, small=0.05, large=0.40):
     return x
 ```
 
+**What "walk" means, which atoms move, units, and how a new structure is produced.**
+
+**(1) What is a "walk"?** A *walk* is a **sequence of many small/large random trial moves** taken
+one after another from a starting configuration (the clone), *not* a single jump. Each step tries
+a small displacement, keeps it only if it satisfies the constraint (`E < E_boundary`, `|E| < 1e4`),
+and the walker's position accumulates the accepted moves. After `n_steps` the final position is
+returned. This is exactly the Fortran `constrained_walk` loop (lines 160–175): it starts at `x = x0`
+and applies `step = 1..n_steps` trials, updating `x` only when the trial is accepted.
+
+**(2) Does it perturb all `--perturb-symbols` atoms or just one?** **All** atoms matching
+`--perturb-symbols` — simultaneously, on every trial step. In the sketch,
+`noise = self.rng.normal(0, scale, (len(self.perturb_indices), 3))` draws a Gaussian displacement
+for **every** perturbed atom at once, and `trial.positions[self.perturb_indices] += noise` moves
+them all together — the same as `sample_from_prior`. (In the 1D Fortran there is only one
+coordinate `x`, so "all atoms" reduces to "the single coordinate"; in Python the deposition layer
+has many atoms and they all move.)
+
+**(3) Units.** The displacements are in **Angstrom (Å)**. ASE stores positions in Å, and the
+Gaussian `std` is `scale` in Å (matching `--perturb 0.01` = 0.01 Å). So `trial.positions += noise`
+adds Å-sized displacements.
+
+**(4) How it generates a new structure.** Starting from a **clone** of a random surviving live
+point, it: copy the clone → for each of `n_steps` trials, add an Å Gaussian displacement (scale =
+small or large, 50/50) to all perturbed atoms → accept the trial if `|E| < 1e4` and `E <
+E_boundary` (otherwise revert that trial) → after `n_steps`, return the accumulated configuration.
+So the returned structure is **the clone evolved by the accepted trial moves** — a new, valid
+configuration inside the current energy shell, which the independent-draw version of
+`sample_constrained` cannot produce.
+
+
 Then in `sample_constrained`, instead of (or as a fallback to) the independent rejection draws,
 **clone a random surviving live point** and walk it:
 
