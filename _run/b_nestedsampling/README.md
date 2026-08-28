@@ -664,10 +664,13 @@ above the minimum you would:
    `(E/atom − min E/atom) ≤ 0.25` (this is `--e-max-per-atom 0.25`). This caps the prior window
    at 0.25 eV/atom above the global minimum — the highest-energy structures you will ever sample.
 2. **Lower bound (optional, the "floor"):** if you want to *start* above the minimum rather than
-   at it, also require `(E/atom − min E/atom) ≥ some lower value`. The current code has **no** flag
-   for a lower bound; only an upper bound (`--e-max-per-atom`). Adding `--e-min-per-atom` would
-   restrict the prior to a window like `[0.05, 0.25]` eV/atom. Otherwise the prior includes the
-   global minimum itself, so sampling will also touch the very lowest structures.
+   at it, also require `(E/atom − min E/atom) ≥ some lower value`. This is now provided by the
+   **windowed initial-live seeding** flags `--e-window-lo` / `--e-window-hi` (eV/atom above the
+   global minimum), which pin the initial live set's worst point into `[lo, hi]` while keeping
+   all lower structures (see "Usage (windowed initial-live seeding)"). With `--e-window-lo 0.24
+   --e-window-hi 0.25` you restrict the *initial* live set's top to the `[0.24, 0.25]` window.
+   Otherwise the prior includes the global minimum itself, so sampling will also touch the very
+   lowest structures.
 
 **How to force NS to start from 0.25 eV/atom above the global minimum, regardless of the
 initial DB draw.**
@@ -726,12 +729,14 @@ set (requiring `rel ≥ 0.25`) has real costs:
    to *exclude the region below 0.25 entirely* (i.e. never sample the ground state), which is
    physically unusual because the whole point of `Z` is to include the low-energy basin.
 
-**Recommendation.** Use `--e-max-per-atom 0.25` to set the window top, and (if you want to guard
-against accidental very-low starts) add the rejection condition in `initialize()` only as an
-optional `--e-min-per-atom` flag with a warning if too few structures satisfy it. That keeps the
-"start near the top" behavior without breaking the run or discarding the low-energy data you care
-about. (This is the same "windowed" reasoning as the Fortran `E_max`; the difference is that the
-Fortran can always fill its live set from a continuous potential, whereas your DB may not.)
+**Recommendation.** Use `--e-max-per-atom 0.25` to set the dataset-side window top, and (if you
+want to guard against accidental very-low starts) use the windowed initial-live seeding
+`--e-window-lo` / `--e-window-hi` (and `--e-window-max-attempts`), which now implements the
+bounded-attempt "start at the top" behaviour in `initialize()` with a clear `RuntimeError` if the
+band is not found. That keeps the "start near the top" behavior without breaking the run or
+discarding the low-energy data you care about. (This is the same "windowed" reasoning as the
+Fortran `E_max`; the difference is that the Fortran can always fill its live set from a
+continuous potential, whereas your DB may not — hence the bounded-attempt + error design.)
 
 **Understood — you want the initial live set's *worst* point at 0.25 eV/atom while *keeping*
 the lower-than-0.25 structures in the live set. Good news: that requires **no rejection and
@@ -749,8 +754,11 @@ lands close to 0.25 whenever the pool has structures near the top. The rest of t
 downward from there (including the <0.25 structures), exactly as you want. NS then descends from
 ~0.25 toward the minimum, weighting the whole range.
 
-**So the recipe is just one flag:** `--e-max-per-atom 0.25` (plus `--n-live`/`--n-iters` as
-usual). No `--e-min-per-atom`, no rejection loop, no wasted data.
+**So the dataset-side recipe is just one flag:** `--e-max-per-atom 0.25` (plus
+`--n-live`/`--n-iters` as usual). No rejection loop, no wasted data. (For the runtime *initial
+live set* window — pinning the worst into `[0.24, 0.25]` while keeping everything below — use the
+windowed seeding `--e-window-lo 0.24 --e-window-hi 0.25 --e-window-max-attempts ...`, see "Usage
+(windowed initial-live seeding)".)
 
 **How to guarantee the initial live set's worst point lands in the 0.25±0.01 band.**
 
@@ -942,16 +950,17 @@ give it** (the highest-energy structure in the prior pool) and descends to the b
   near 0.25 and automatically descends toward 0 (the global minimum). That matches "sample
   starting from 0.25 eV/atom above the minimum and go down."
 - If you also want to **stop at 0.25** (i.e. only sample the window *above* 0.25, excluding the
-  ground state), you would need a **lower** bound flag (`--e-min-per-atom`), which does not exist
-  yet.
+  ground state), use the windowed initial-live seeding `--e-window-lo` / `--e-window-hi` (and
+  `--e-window-max-attempts`), which pin the initial live set's worst point into `[lo, hi]` (see
+  "Usage (windowed initial-live seeding)").
 
 **Practical note on your "already normalized per atom, 0 eV/atom at the minimum" description.**
 The code works in **absolute eV**, not eV/atom. `E_ref = db_energies.min()` is the minimum
 *absolute* energy (≈ −437 eV), and the relative quantity is `(E − E_ref)`, which in *per-atom*
 form is `(E − E_ref)/N`. The `--e-max-per-atom` threshold already uses exactly this per-atom
 relative form. So "0.25 eV/atom above the global minimum" maps directly to
-`--e-max-per-atom 0.25` for the upper bound, and a hypothetical `--e-min-per-atom 0.25` for the
-lower bound.
+`--e-max-per-atom 0.25` for the upper bound, and `--e-window-lo 0.25` / `--e-window-hi 0.25` for
+the windowed initial-live seeding of the same band.
 
 
 **3. What would happen if I set `max_E` to 0.25 eV/atom above the lowest energy?**

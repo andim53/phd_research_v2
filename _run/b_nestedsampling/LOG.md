@@ -1890,3 +1890,34 @@ flags + new API params, per VERSIONS.md rules); add a per-version description as
 OK for main.py + nested_sampler.py.
 
 **Time:** 2026-08-28 ~01:55 JST.
+
+
+---
+
+## Session 2026-08-28 — Update README notes to reflect implemented windowed seeding (v1.3.0)
+
+**Goal (user request):** update all the README notes to include the newly-implemented windowed
+initial-live seeding change (previously described as hypothetical / not-implemented).
+
+**Clarified (per standing rule):** correct the README conceptual notes that still said the feature
+doesn't exist / is hypothetical (--e-min-per-atom 'does not exist'/'hypothetical'/'you would need a
+lower bound flag') to point to the now-implemented --e-window-lo/hi/max-attempts; keep the
+conceptual explanation.
+
+**Edits (README.md):**
+1. Q&A "lower bound (floor)" note: replaced 'no flag for a lower bound / Adding --e-min-per-atom'
+   with the implemented --e-window-lo/hi flags + pointer to the Usage section.
+2. "Recommendation" paragraph: now recommends the implemented windowed seeding flags (bounded
+   attempt + RuntimeError) instead of 'add an optional --e-min-per-atom flag'.
+3. Q&A "stop at 0.25" note: replaced 'you would need a lower bound flag (--e-min-per-atom), which
+   does not exist yet' with --e-window-lo/hi.
+4. "maps directly to" note: replaced 'a hypothetical --e-min-per-atom 0.25' with
+   --e-window-lo 0.25 / --e-window-hi 0.25.
+5. "So the recipe is just one flag" note: now distinguishes the dataset-side flag (--e-max-per-atom)
+   from the runtime initial-live-set window (--e-window-lo/hi), removing the stale 'No
+   --e-min-per-atom'.
+
+**Verification:** grep confirms 0 remaining occurrences of --e-min-per-atom / 'hypothetical' /
+'does not exist' in README.md.
+
+**Time:** 2026-08-28 ~02:05 JST.
