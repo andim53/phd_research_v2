@@ -1944,3 +1944,31 @@ feature.
 seeding)" and the implemented code.
 
 **Time:** 2026-08-28 ~02:15 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer Fortran-vs-Python sampling-move Notes block
+
+**Goal (user request):** answer the new `Notes:` block asking what is different between the
+Fortran's Gaussian random sampling (small + large step) and the current Python one.
+
+**Clarified (per standing rule):** explain the differences: Fortran uses TWO rattle scales
+(small=0.05, large=0.40) inside a multi-step MC walk (constrained_walk, mixing_steps=40) that
+decorrelates and can cross the barrier; Python uses ONE small Gaussian perturb (--perturb 0.01)
+and single draws with no MC walk; note how each relates to basin crossing and the 'walk length L'
+gap.
+
+**Answer written (flag removed):** contrasted the Fortran constrained_walk (2 Gaussian scales over
+a 40-step MC walk, accept only if E < E_max_local) vs Python sample_from_prior (single Gaussian
+perturb of std --perturb 0.01 to Fe atoms, no walk) + sample_constrained (independent rejection
+draws until log L > log_L_boundary). Included a table (move types, steps, correlation, barrier
+crossing, constraint) and a "why it matters" paragraph: the Fortran's large-step + walk is the
+clone-and-MC-decorrelate NS move that can cross the barrier (the papers' walk length L); Python
+cannot create new configurations, only re-draw from the DB (the modelling gap). Noted the two-scale
+choice fits a continuous 1D potential, while Python's single small perturb avoids Fingerprint-GPR
+extrapolation to unphysical energies.
+
+**Verification:** 0 `Notes:` flags remain; answer renders in the Fortran section.
+
+**Time:** 2026-08-28 ~02:25 JST.

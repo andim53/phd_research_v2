@@ -590,6 +590,54 @@ the prior window must span the barrier to connect the two phases.
 | `print_thermodynamics` | For T ∈ {0.05,0.1,0.2,0.3,0.5,1.0}: `Z=Σ ΔX·e^(−E/T)`, `U`, `F=−T ln Z`, `S=(U−F)/T` | `evaluate(beta)` per `--temperatures` value → `thermodynamics.csv` (Z, F); also gives `⟨E⟩` and entropy |
 | `convert_to_density_of_states` | Histogram `g(E) = Σ ΔX/ΔE` over bins spanning `[island−0.15, flat+0.15]` | `state_density.py` KDE over per-atom relative energies; the exact-histogram counterpart |
 
+**Fortran vs Python sampling moves — the difference.**
+
+The two codes move a walker/point in configuration space very differently when generating a new
+sample:
+
+**Fortran — `constrained_walk` (lines 154–176): a multi-step MC random walk with TWO Gaussian
+rattle scales.**
+- Starting from a clone of a random surviving walker (`x0`), it runs `n_steps = mixing_steps = 40`
+  trial steps.
+- Each step draws a Gaussian displacement from **one of two scales** (chosen 50/50 by `r2 < 0.5`):
+  a **small** step `small_step = 0.05` (local refinement) or a **large** step `large_step = 0.40`
+  (long-range jump / barrier crossing).
+- It accepts a trial `x_trial` only if it stays inside `[−L, L]` **and** `E(x_trial) <
+  E_max_local` (the current energy limit). This is a Metropolis-free constrained walk — it
+  *diffuses* 40 steps, so consecutive samples are decorrelated and the walk can climb over the
+  barrier via the occasional large step, giving properly-weighted traffic between the flat and
+  island basins.
+
+**Python — `sample_from_prior` (lines 207–219) + `sample_constrained` (lines ~280–293): a SINGLE
+small Gaussian perturb, no walk.**
+- The prior draw picks a random DB structure and applies **one** Gaussian displacement of std
+  `perturb` (default `--perturb 0.01`) to the Fe atoms only. There is **no multi-step walk** and
+  **no large-scale move**.
+- `sample_constrained` then draws such points repeatedly (up to 500) until one satisfies
+  `log L > log_L_boundary` (i.e. `E < E_boundary`). It is a *rejection filter over independent
+  draws*, not a correlated walk.
+
+**Key differences**
+| Aspect | Fortran | Python |
+|---|---|---|
+| Move types | 2 scales (small 0.05, large 0.40) | 1 scale (`--perturb 0.01`) |
+| Steps per new sample | 40-step MC walk | single draw |
+| Correlation | walk decorrelates successive samples | independent draws |
+| Barrier crossing | large steps allow crossing | only via the DB pool already containing both sides |
+| Constraint | `E < E_max_local` on every walk step | `log L > log_L_boundary` on the accepted draw |
+
+**Why it matters.** The Fortran's large-step + walk is the standard "clone-and-MC-decorrelate"
+nested-sampling move: it lets a new sample diffuse *within* the allowed region and occasionally
+hop the barrier, which is what the papers do (the "walk length L" noted in the Fortran section).
+The Python code instead does **independent single-draw rejection**: it can only find a structure
+inside the current energy shell if such a structure already exists in the DB near that shell. It
+therefore **cannot create new configurations** — it merely re-draws from the database. This is the
+modelling gap flagged in the README (no clone-and-MC walk length L). The two-scale choice is
+tailored to a *continuous* 1D potential (Fortran); the Python single small perturb matches the
+*surrogate-constrained* setting where large moves make the Fingerprint GPR extrapolate to
+unphysical energies.
+
+
 **Does the Python code define an `E_max`? — the honest answer.** No — the Python
 `NestedSampler` does **not** set an explicit upper-energy `E_max` like the Fortran toy's
 `E_max = E_barrier + margin`. The two codes shape the prior window differently:
