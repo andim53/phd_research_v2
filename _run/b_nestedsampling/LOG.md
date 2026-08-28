@@ -2629,3 +2629,16 @@ sample_constrained calls never cloned the worst live point; with False, the wors
 cloned. Behavior confirmed.
 
 **Time:** 2026-08-28 ~19:30 JST.
+
+
+---
+
+## Session 2026-08-28 — Update TUTORIAL.md with --walk-exclude-worst
+
+**Goal (user request):** update the TUTORIAL.md.
+
+**Action taken:** added the `--walk-exclude-worst` flag to the Step 6c (dual-scale constrained MC
+walk) flags list, noting it is new in v1.6.0 and that it clones only from live points excluding the
+worst (Fortran-style), default off.
+
+**Time:** 2026-08-28 ~19:40 JST.

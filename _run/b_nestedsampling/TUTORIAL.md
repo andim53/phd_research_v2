@@ -147,6 +147,10 @@ Flags:
 - `--walk-steps` — trial steps per walk (Fortran `mixing_steps`; default 40; papers use 100s–1000s).
 - `--walk-small` / `--walk-large` — Gaussian displacement scales in Å (defaults 0.05 / 0.40).
 - `--walk-mode` — `both` (50/50 small/large, Fortran default) | `small` | `large`.
+- `--walk-exclude-worst` — (new in v1.6.0) clone ONLY from live points EXCLUDING the
+  worst one, Fortran-style (the Fortran clones a random *other* walker, never the
+  one being replaced; by default Python clones uniformly over all live points).
+  Default off.
 
 Caveat: large steps can make the Fingerprint GPR extrapolate to unphysical energies; tune
 `--walk-large` conservatively (the `|E| < 1e4` guard is kept).
