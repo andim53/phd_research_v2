@@ -1921,3 +1921,26 @@ conceptual explanation.
 'does not exist' in README.md.
 
 **Time:** 2026-08-28 ~02:05 JST.
+
+
+---
+
+## Session 2026-08-28 — Add windowed-seeding usage to TUTORIAL.md
+
+**Goal (user request):** include in the TUTORIAL how to use the new windowed initial-live seeding
+feature.
+
+**Actions taken (TUTORIAL.md):**
+- Added "## Step 6b — Windowed initial-live seeding (new in v1.3.0)" after Step 6 (Internals):
+  a runnable example command, a 3-point "how it works" (anchor via bounded-attempt, rest capped
+  at hi, E_boundary pinned in [lo,hi]), the flags (--e-window-lo/hi, --e-window-max-attempts),
+  and notes (GPR-predicted energy, runtime-initial-live-set vs --e-max-per-atom dataset filter,
+  only the initial set is affected).
+- Added Common Pitfall 8: `--e-window-lo/hi` RuntimeError = empty band.
+- Added a verification-checklist item for windowed seeding (anchor rel energy in band, all initial
+  live <= hi).
+
+**Verification:** TUTORIAL.md updated; consistent with the README's "Usage (windowed initial-live
+seeding)" and the implemented code.
+
+**Time:** 2026-08-28 ~02:15 JST.

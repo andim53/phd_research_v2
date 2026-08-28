@@ -92,6 +92,44 @@ Posterior: 300 physical / 300 total
   `exp(-1/n_live)`, accumulates evidence via `logaddexp`, replaces with a new
   point constrained to `log L > log_L_boundary`.
 
+## Step 6b — Windowed initial-live seeding (new in v1.3.0)
+By default the `K` initial live points are uniform prior draws, so the run *starts* wherever the
+highest of those draws lands. If you want the run to start near a chosen energy (e.g. 0.25 eV/atom
+above the global minimum) while **keeping** all lower-energy structures, use the windowed seeding
+flags:
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python main.py --temperature-free \
+    --temperatures 100,200,300,500,1000 \
+    --n-live 100 --n-iters 1000 --perturb 0.01 \
+    --e-window-lo 0.24 --e-window-hi 0.25 --e-window-max-attempts 1000 \
+    --output ./ns_output_tfree_windowed --rng 42
+```
+
+How it works (in `initialize()`):
+1. **Anchor** — ONE live point (the "worst") is found by **bounded-attempt** search: draw up to
+   `--e-window-max-attempts` structures whose GPR-predicted `rel = (E − E_ref)/N` falls in
+   `[--e-window-lo, --e-window-hi]` (eV/atom above the global minimum). If none is found, a
+   `RuntimeError` is raised (the band is empty in the DB — widen it or raise max-attempts).
+2. **Rest** — the remaining `K−1` live points are uniform prior draws **capped at `--e-window-hi`**
+   (any draw above `hi` is rejected), so the worst can never exceed `hi`.
+3. The initial `E_boundary` (= `log_L_boundary = live_log_L.min()`) is then pinned in
+   `[lo, hi]`, and NS descends from there toward the global minimum — while the low-energy
+   structures below `lo` remain in the live set.
+
+Flags:
+- `--e-window-lo` / `--e-window-hi` — energy window (eV/atom above global min). Set **both** to
+  enable; `lo` must be ≤ `hi`.
+- `--e-window-max-attempts` — max draws to find a structure in the band (default 1000).
+
+Notes:
+- The window check uses the **GPR-predicted** energy of the sampled (perturbed) structure, matching
+  how the sampler ranks live points.
+- This is a *runtime initial-live-set* feature. The separate dataset-side filter is
+  `--e-max-per-atom` (drops DB structures before training/sampling). They are complementary:
+  `--e-max-per-atom 0.25` limits the pool; `--e-window-lo/hi` pins where the run starts.
+- Only the **initial** live set is affected; the sampling dynamics after iteration 1 are unchanged.
+
 ## Step 7 — Verifying the GPR fit
 The run prints a validation table for the first 5 training structures:
 ```
@@ -368,6 +406,10 @@ rejected manuscript (LT19702J). This project is a stepping stone toward that.
    `use_ray=False` in `build_gpr` (single-process hyperparameter opt).
 6. **Use the absolute env python** — base `python3` has no AGOX/ASE.
 7. **Ray stderr noise is expected** — don't mistake it for a crash.
+8. **`--e-window-lo/hi` RuntimeError = empty band** — if the DB has no structure in
+   `[lo, hi]` eV/atom, `initialize()` raises `RuntimeError` after
+   `--e-window-max-attempts` draws. Widen the window (or raise max-attempts); the
+   run cannot start if the band is unpopulated.
 
 ## Verification checklist
 - [ ] `Counter(get_chemical_symbols())` confirms one uniform composition across seeds
@@ -376,3 +418,5 @@ rejected manuscript (LT19702J). This project is a stepping stone toward that.
 - [ ] Live-energy range converges toward `E_ref` over iterations
 - [ ] `evidence_history.csv` + `posterior_structures/*.xsf` + analysis PNGs produced
 - [ ] If parsing `log_evidence.csv`, re-derive from `evidence_history.csv` (save bug)
+- [ ] (windowed seeding) run starts with the anchor's rel energy in `[--e-window-lo,
+      --e-window-hi]`; all initial live points ≤ `--e-window-hi`
