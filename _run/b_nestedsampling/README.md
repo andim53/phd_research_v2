@@ -1383,6 +1383,42 @@ Python adds log-space numerics (mandatory for real GPR energies), the `E_ref` sh
 relative energies, KDE smoothing, and writes structured CSVs/plots, whereas the Fortran toy uses
 plain linear sums and a hard histogram on the exact 1D potential.
 
+**What the Python code traces after every iteration (vs the Fortran's `weight_i = X_{i−1} − X_i`).**
+
+Python traces **exactly the same quantity** — the prior-volume shell weight `w_i = X_{i−1} − X_i` —
+plus the discarded sample's energy. It is computed in `step()` (lines 410–414):
+
+```python
+i = self.iteration
+X_prev = np.exp(-i / self.n_live)          # X_{i-1}
+X_this = np.exp(-(i + 1) / self.n_live)    # X_i
+delta_X = X_prev - X_this                  # w_i = X_{i-1} - X_i  (the shell weight)
+```
+
+So `delta_X` in Python is precisely the Fortran's `weight_i = X_{i-1} − X_i`. The only cosmetic
+difference is the formula: Python uses `X_i = exp(−i/K)` while the Fortran uses
+`X_i = (K/(K+1))**iter` — these agree to leading order (`exp(−1/K) ≈ K/(K+1)`).
+
+**What is stored after each iteration (bookkeeping):**
+
+- **Temperature-free mode (`step()` lines 431–434):** it appends
+  `sample_energies.append(E_worst)` (the discarded worst point's energy) and
+  `sample_prior_weights.append(delta_X)` (the shell weight `w_i`). These `(E_i, w_i)` pairs are
+  exactly what `evaluate()` later uses to build `Z(β) = Σ_i w_i·exp(−β(E_i−E_ref))` — the same
+  data the Fortran feeds into `print_thermodynamics`.
+- **Fixed-T mode (`step()` lines 426–430):** it appends the discarded structure to
+  `posterior_samples` and its weight in **log** form
+  `posterior_log_weights.append(log_L_min + log(delta_X))` (with `log_L_min` = the discarded
+  point's log-likelihood), and accumulates `log_Z` via `np.logaddexp`. The weight is stored as a
+  log-likelihood × shell weight product rather than a bare `delta_X`, because in fixed-T mode the
+  likelihood (with `β`) is folded into the evidence.
+
+**Bottom line:** after every iteration Python traces the **same** prior-volume shell weight
+`w_i = X_{i−1} − X_i` (as `delta_X`) and the discarded sample's energy — temperature-free stores
+them as plain `(E_i, w_i)`; fixed-T stores the posterior weight in log form and accumulates the
+evidence. This mirrors the Fortran's `dead_E(iter)` / `dead_X(iter)` tracking.
+
+
 
 **`--perturb` vs `--walk` — order, what each does, interaction, and "only `--walk`".**
 

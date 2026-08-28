@@ -2254,3 +2254,26 @@ per-atom normalization, KDE smoothing, and structured CSVs/plots.
 bulleted list in the walk Usage section).
 
 **Time:** 2026-08-28 ~05:10 JST.
+
+
+---
+
+## Session 2026-08-28 — README: answer trace-after-each-iteration Notes block
+
+**Goal (user request):** answer the new '# Notes:' block asking what the Python code traces after
+every iteration compared to the Fortran's weight_i = X_{i-1} - X_i.
+
+**Clarified (per standing rule):** answer grounded in code; explain the fixed-T vs temperature-free
+bookkeeping difference and the exp(-i/K) vs (K/(K+1))^i formula.
+
+**Answer written (flag removed):** Python traces the SAME prior-volume shell weight
+w_i = delta_X = exp(-i/K) - exp(-(i+1)/K) (= X_{i-1} - X_i), computed in step() lines 410-414, plus
+the discarded sample's energy. Temperature-free stores sample_energies (E_worst) +
+sample_prior_weights (delta_X) -> used by evaluate() for Z(beta); fixed-T stores
+posterior_log_weights (log_L_min + log(delta_X)) + accumulates log_Z via logaddexp. Noted the
+cosmetic formula difference (exp(-i/K) vs (K/(K+1))^i). Mirrors Fortran's dead_E/dead_X.
+
+**Verification:** '# Notes:' flag removed (remaining 'Notes:' at line ~480 is the legitimate
+bulleted list in the walk Usage section).
+
+**Time:** 2026-08-28 ~05:20 JST.
