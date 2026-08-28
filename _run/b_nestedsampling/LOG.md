@@ -1866,3 +1866,27 @@ to the new flags; added --e-window-lo/hi/max-attempts to the Options list; added
 "## Usage (windowed initial-live seeding)" section with an example.
 
 **Time:** 2026-08-28 ~01:30-01:50 JST.
+
+
+---
+
+## Session 2026-08-28 — Version bump 1.2.0 -> 1.3.0 + add descriptions
+
+**Goal (user request):** update the version and include a description for this version.
+
+**Clarified (per standing rule):** bump main.py + nested_sampler.py to 1.3.0 (minor bump: new CLI
+flags + new API params, per VERSIONS.md rules); add a per-version description as a new
+'Description' column in the VERSIONS.md table.
+
+**Actions taken:**
+- `nested_sampling/nested_sampler.py`: __version__ 1.2.0 -> 1.3.0.
+- `main.py`: __version__ 1.2.0 -> 1.3.0.
+- `VERSIONS.md`: added a 'Description' column to the source-code table; described the two bumped
+  files (main.py = new --e-window-lo/hi/max-attempts flags wired into both sampler branches;
+  nested_sampler.py = bounded-attempt windowed initial-live seeding helpers). Other rows left at
+  their existing versions with an empty description cell.
+
+**Verification (real execution):** grep confirms both files at __version__ = "1.3.0"; py_compile
+OK for main.py + nested_sampler.py.
+
+**Time:** 2026-08-28 ~01:55 JST.
