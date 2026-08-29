@@ -3054,3 +3054,28 @@ directly beneath it in the existing `# QnA` section.
 **Open items:** None.
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Answer QnA item 3 in README.md (n-live vs DB data / with-replacement)
+
+**Goal (user-confirmed via clarify):** Read the third question in the README `# QnA` section and
+answer it inline, code-grounded (same format as Q1/Q2).
+
+**Clarified (per standing rule):** keep the question and answer beneath it, correcting the premise
+(`--n-live` is live points, not DB data) and explaining the with-replacement behaviour + the real
+limits (duplication, novelty de-dup, cost).
+
+**Actions taken:**
+- Read `nested_sampling/nested_sampler.py` (`initialize()`, `sample_from_prior()`,
+  `sample_from_prior_novel()`) to ground the answer.
+- Added the answer beneath QnA item 3: (1) correction that `--n-live` = number of live points,
+  not DB rows; (2) sampling is with replacement (DB pool never consumed), so `n_live = 10000`
+  cannot "run out of data"; (3) real limits — init duplication vs the novelty threshold, filtering
+  shrinking the pool, more constrained-sampling fallbacks, and computational cost.
+
+**Results:** QnA item 3 answered in README.md. Docs only; no source code changed.
+
+**Open items:** None.
+
+**Time:** 2026-08-29 (JST).

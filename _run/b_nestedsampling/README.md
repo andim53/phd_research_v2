@@ -412,3 +412,47 @@ signals are `log Z` plateauing and `X_final` becoming negligible, **not** whethe
 energies are still decreasing. (If the energies are still far from `E_ref` at a *fixed* iteration
 count, it may mean the run is under-sampled — raise `--n-iters`/`--n-live` — but "energies still
 lowering" on its own is expected, not a failure.)
+
+3. --n-live is the data we picked from the db. Considering we perform multiple filtering procedure can it be possible for us to not enough data if we set n live as, for example, 10.000?
+
+**First, a correction: `--n-live` is NOT "the data picked from the DB".** `--n-live` (K) is the
+number of **live points** — how many simultaneous configurations the sampler keeps in its live set
+during the run (`initialize()` draws `self.n_live` live points, line 368). The DB is a separate
+thing: it is the **prior pool** of structures that new samples are drawn *from*. In
+`sample_from_prior()` (line 327) a draw picks a random DB structure, copies it, and adds a small
+perturb: `idx = rng.integers(0, len(db_structures)); base = db_structures[idx].copy()`. So `n_live`
+is "how many walkers", not "how many DB rows you took".
+
+**Can you run out of data if `n_live = 10000`? No — sampling is with replacement.** Every draw
+copies a DB structure without removing it (`db_structures` is never consumed/shrunk), so the same
+DB structure can be re-drawn any number of times. A 10,000-point live set does not need 10,000
+*distinct* DB structures; it just draws 10,000 times (with replacement) from whatever the
+(filtered) pool contains. So you will not "run out of data" in the sense of exhausting the pool.
+
+**The real limits you should think about instead:**
+
+1. **Duplicate DB bases at initialization.** If `n_live` is much larger than the number of
+   *distinct* structures in the (filtered) pool, the initial live set will contain many copies of
+   the same DB base (each with a tiny different perturb). This is exactly what the
+   `--novelty-threshold` de-duplication addresses (`sample_from_prior_novel`, lines 302–318): it
+   tries to keep each initial live point ≥ the threshold apart in Fingerprint space. But with a
+   sparse pool and a large `n_live`, finding enough mutually-novel points can become impossible,
+   and the code then *falls back* to the most-novel candidate after `--novelty-max-attempts`
+   (line 317) — it degrades gracefully rather than failing, but you may not achieve full spacing.
+2. **Filtering shrinks the pool.** `--e-max-per-atom` (and windowed seeding caps) reduce how many
+   distinct structures are available. A very small filtered pool + large `n_live` maximizes
+   duplication at init. The perturb still makes each live point a distinct *structure*, so they
+   are not literally identical, but their diversity is limited by the pool.
+3. **Constrained sampling can fall back more often.** Each iteration replaces the worst live point
+   with a draw constrained to beat the current energy boundary (`sample_constrained`). With a small
+   filtered pool and a tight window, valid constrained draws are rarer, so the sampler falls back to
+   an unconstrained prior draw more often. This does not crash, but it can slow the descent / reduce
+   the quality of `Z`.
+4. **Computational cost.** Larger `n_live` → more GPR predictions per iteration (every live point
+   is re-evaluated) and more memory. `n_live = 10000` is far above the literature-scale range
+   (K 500–5000) and will be slow, with diminishing returns on the `Z` error (`∝ 1/√K`).
+
+**Bottom line.** You will not run out of data (with-replacement draws from the DB pool), so
+`n_live = 10000` is *possible* — but it is generally unnecessary: it mainly increases duplication
+at init (countered by the novelty threshold, which itself needs a diverse-enough pool), raises
+cost, and gives only marginal `Z`-accuracy gains over K in the hundreds–thousands.
