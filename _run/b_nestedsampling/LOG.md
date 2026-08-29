@@ -2757,3 +2757,39 @@ threshold. Name starts with b9.
 - py_compile OK for run main.py + nested_sampler.py; j script executable.
 
 **Time:** 2026-08-28 ~20:20 JST.
+
+---
+
+## Session 2026-08-29 — Reorganize root README.md (deduplicate / consolidate)
+
+**Goal (user-confirmed via clarify):** The root `README.md` had grown to ~1921
+lines with duplicated, unorganized, and redundant content. Reorganize it into a
+concise human overview, per four user-confirmed decisions.
+
+**Clarify decisions (all user-confirmed):**
+1. Consolidate all "What is X?" conceptual notes (beta, posterior, evidence,
+   prior, state density, etc.) into ONE "Concepts and physics" appendix, each
+   concept defined exactly once (drop all repeats).
+2. Design-dialogue Q&A (Fortran-vs-Python walk, 0.25 eV/atom prior, novelty
+   filter): keep only the parts documenting real implemented flags (--walk,
+   --e-window, --novelty) as concise Usage text; remove exploratory back-and-forth
+   and dead-end proposals (e.g. the unimplemented --e-anchor-per-atom).
+3. Keep ONE authoritative CLI table and ONE file layout in README; remove the
+   duplicated Options list and the second Layout block (README.AI keeps its own spec).
+4. Target a concise overview well under ~400 lines.
+
+**Actions taken:**
+- Rewrote `README.md`: 1921 -> 361 lines (129954 -> 20702 bytes).
+- New structure: What it does, Environment, Usage (full / temperature-free /
+  windowed seeding / --walk / novelty filter / gpr_accuracy / analyze-only /
+  thermodynamics plot), Job (HPC), CLI reference (single table, grounded in
+  `main.py` arg parser), Outputs, Analysis outputs, Key decisions and tradeoffs,
+  Concepts and physics (consolidated), Layout.
+- Verified CLI flags against `main.py` (no --e-anchor-per-atom; all real flags
+  present). Docs only; no source code changed.
+
+**Results:** README.md rewritten and verified (361 lines). No source code touched.
+
+**Open items:** Commit the README rewrite (pending owner confirmation).
+
+**Time:** 2026-08-29 (JST).
