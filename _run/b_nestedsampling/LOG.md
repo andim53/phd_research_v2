@@ -2926,3 +2926,36 @@ code/docs (382 files) with regenerable outputs and `_archive/` still ignored.
 **Open items:** None.
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Analyze b6 run outputs (temperature-free NS) like b9
+
+**Goal (user-confirmed via clarify):** Reproduce for the b6 run
+(`_analysist/b6_tfree_walk_emax04/`) the same analysis that was done for b9, using the same
+naming/placement pattern (`analysis_<ns_output_name>/` inside the run dir).
+
+**Clarify decisions (all user-confirmed):**
+1. Analyze the primary run `ns_output_tfree_walk_emax04` (the one documented in the b6 README).
+2. Match b9 exactly: run `analyze_tfree_outputs.py` (9 standard PNGs) + write a DISCUSSION.md;
+   skip `conf_space_deltaz.png` (b9 did not produce it).
+3. Output to `_analysist/b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04/`.
+
+**Actions taken:**
+- Ran `analyze_tfree_outputs.py --data b6_tfree_walk_emax04/ns_output_tfree_walk_emax04
+  --outdir b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04 --n-atoms 75`.
+  Produced the 9 standard PNGs.
+- Wrote `analysis_ns_output_tfree_walk_emax04/DISCUSSION.md` grounded in the real b6 numbers.
+
+**Results (b6):**
+- 1000 discarded samples, energy `-430.94 .. -410.73 eV` (weighted mean `-419.50 eV`); final
+  live set `-436.69 .. -430.94 eV` (mean `-432.60 eV`).
+- Weighted g(E) peak at `+0.154 eV/atom` above the ground state (peak g ~14.3 config./eV).
+- logZ rises monotonically with T (`-40.09 -> -17.15` over 100-1000 K); F rises 0.35 -> 1.48 eV;
+  C_V ~ 0 (no resolved phase transition in this window).
+- Sanity: sum(w_i) = 0.99995 ~= 1 - exp(-1000/100) (consistent).
+
+**Open items:** Commit decision pending (analysis outputs under `_analysist/`; PNGs gitignored,
+DISCUSSION.md now trackable after the flat-structure `.gitignore` change).
+
+**Time:** 2026-08-29 (JST).
