@@ -3079,3 +3079,41 @@ limits (duplication, novelty de-dup, cost).
 **Open items:** None.
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Create run dirs b10 (Fe/MgO iter sweep) and b11 (B-doped iter sweep)
+
+**Goal (user-confirmed via clarify):** Create two new `_runs` dirs:
+- **b10** = plain Fe/MgO, same params as `_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty`,
+  swept over `--n-iters` 5000 / 10000 / 20000.
+- **b11** = B-doped Fe/MgO (boron dataset), same params as b9 (incl. `--novelty-threshold 1.0`),
+  `--perturb-symbols Fe,B`, swept over `--n-iters` 5000 / 10000 / 20000.
+
+**Clarify decisions (all user-confirmed):**
+1. b10: one run dir `b10_femgo_walk_emax04_exclworst_noxsf_novelty/` with THREE job scripts
+   (j_b10_..._iter5000/_iter10000/_iter20000.sh) + shared main.py/dataset, each with its own
+   output dir. ONLY `--n-iters` differs from b9; n-live=100 and everything else identical.
+2. b11: same params as b9 INCLUDING novelty threshold, but on the B-doped dataset with
+   `--perturb-symbols Fe,B`, and ALSO swept over 5000/10000/20000 like b10 (three job scripts).
+3. Version: main.py v1.7.0 (project root), copied with nested_sampling/ + scripts/ + dataset.
+
+**Actions taken:**
+- Copied b9 run dir as base for both; removed b9 job scripts + `__pycache__`.
+- b10: kept plain Fe/MgO dataset (13 seeds); wrote 3 job scripts (iter5000/10000/20000) identical
+  to b9 except `--n-iters` and output dir; rewrote README.md + TUTORIAL.md.
+- b11: replaced dataset with `dataset_boron/` (5 seeds, Fe25Mg25O25B7 / 82 atoms); wrote 3 job
+  scripts with `--perturb-symbols Fe,B` and the three `--n-iters`; rewrote README.md + TUTORIAL.md.
+- Verified: all 6 job scripts executable; `py_compile` OK for both main.py + nested_sampler.py;
+  b10 DB glob = 13, b11 DB glob = 5; `plot_structure_landscape.py` present in both
+  `nested_sampling/scripts/` (accepts `s=`); no `__pycache__` left in run dirs.
+- main.py derives n_atoms/composition from data (no 75-atom/13-seed hardcode), so b11's 82-atom
+  boron system loads correctly.
+
+**Results:** `_runs/b10_..._novelty/` and `_runs/b11_boron_..._novelty/` created, each with
+3 HPC job scripts + README + TUTORIAL + main.py(v1.7.0) + nested_sampling + scripts + dataset.
+Code + docs tracked; DBs/xsf/png/outputs gitignored.
+
+**Open items:** None (launch on HPC via pjsub when ready).
+
+**Time:** 2026-08-29 (JST).
