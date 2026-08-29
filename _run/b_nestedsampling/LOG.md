@@ -2996,3 +2996,37 @@ created and discoverable by name; related skill reference updated to the flat la
 **Open items:** None.
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Add analysis-reproduction command to b6/b9 DISCUSSION.md + template docs
+
+**Goal (user-confirmed via clarify):** Include the python running code (the analyzer command +
+its parameters) that produced each result in the b6 and b9 DISCUSSION.md, and update the tfree
+analysis skill and all instructions that reference/use it to also require this.
+
+**Clarify decisions (all user-confirmed):**
+1. Code = the analyzer invocation `analyze_tfree_outputs.py --data <ns_output> --outdir
+   <run>/analysis_<ns_output_name> --n-atoms 75` with the actual paths for each run.
+2. Placement = a short "Analysis reproduction (command used)" block right after the Script line
+   in each DISCUSSION.md.
+3. Scope = the dedicated skill (agox-tfree-analysis) + AGENTS.md §3c + the agox-nested-sampling
+   skill reference that mentions it.
+
+**Actions taken:**
+- b6 DISCUSSION.md: added the reproduction block after the Script line (exact command with
+  `--data b6_tfree_walk_emax04/ns_output_tfree_walk_emax04 --outdir
+  b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04 --n-atoms 75`) + parameter notes.
+- b9 DISCUSSION.md: same block with the b9 paths.
+- agox-tfree-analysis skill: added required step 0 in "Write the DISCUSSION.md" — an
+  "Analysis reproduction (command used)" block with the exact command + per-parameter notes.
+- AGENTS.md §3c: added the MUST-include reproduction-block requirement after the Script line.
+- agox-nested-sampling skill reference (analyzing-tfree-run-and-no-xsf-landscape.md): added
+  section 2a documenting the reproduction-command requirement.
+
+**Results:** b6/b9 DISCUSSION.md now carry the exact reproduction command; the template docs
+(skill + AGENTS.md §3c + related reference) now require it for future runs.
+
+**Open items:** None.
+
+**Time:** 2026-08-29 (JST).

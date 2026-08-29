@@ -244,6 +244,10 @@ $PY analyze_tfree_outputs.py \
 - **Write a `DISCUSSION.md`** in the output dir mirroring the b6/b9 structure (run/data/script
   header; sampling & energy window; weighted histogram; live set; thermodynamics; C_V; sanity;
   interpretation & caveats; next steps) — grounded in the real numbers the analyzer printed.
+  **The DISCUSSION.md MUST include an "Analysis reproduction (command used)" block right after
+  the Script line** with the exact analyzer command + parameters for that run (full python path +
+  `--data <run>/<ns_output_name> --outdir <run>/analysis_<ns_output_name> --n-atoms 75`) and a
+  one-line explanation of each parameter, so the analysis is reproducible.
 - **Skip `conf_space_deltaz.png`** unless the run has `posterior_*.xsf` (a `--no-posterior-xsf`
   run cannot produce it — say so in the DISCUSSION).
 - **Log** the session in `LOG.md` (append-only); **commit** the trackable parts (LOG.md + the
