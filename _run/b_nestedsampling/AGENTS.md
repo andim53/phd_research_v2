@@ -211,6 +211,49 @@ named once and recognized across prompts.
 
 ---
 
+## 3c. Temperature-free (tfree) analysis task template
+
+When the owner asks to **"analyze tfree"** for a run (or to reproduce the b6/b9 analysis for a
+temperature-free NS run), follow this template. Invoke the `agox-tfree-analysis` skill
+(discoverable by name) for the full step-by-step procedure.
+
+**Clarify before beginning (per standing rule).** At minimum confirm:
+1. **Which ns_output dir** — a run dir may hold several `ns_output_*` outputs (e.g. b6 has
+   `ns_output_tfree_walk_emax04` and `ns_output_tfree_walk_emax04_01Perturb`). Default to the one
+   documented in that run's `README.md`; ask if ambiguous.
+2. **Output placement + naming** — follow the b6/b9 pattern:
+   `<run_dir>/analysis_<ns_output_name>/` (the analysis dir name mirrors the ns_output dir name).
+3. **Extras** — replicate the b9 output exactly (9 PNGs + DISCUSSION.md, skip the delta-Z
+   landscape) unless the run has posterior `.xsf` and the owner wants `conf_space_deltaz.png` too.
+4. **Commit** — confirm scope (per the flat `_analysist/` `.gitignore`: PNGs gitignored; a
+   `DISCUSSION.md` is now trackable).
+
+**Procedure (once clarified):**
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+cd /home/think/Desktop/research/_run/b_nestedsampling/_analysist
+$PY analyze_tfree_outputs.py \
+    --data <run_dir>/<ns_output_name> \
+    --outdir <run_dir>/analysis_<ns_output_name> \
+    --n-atoms 75
+```
+- Uses `_analysist/analyze_tfree_outputs.py` (numpy + matplotlib only, no AGOX).
+- Produces the **9 standard PNGs** + a printed textual summary (samples convergence, weighted
+  `g(E)` histogram, cumulative Z sanity check, live histogram, `Z`/`log Z`/`F`, heat capacity,
+  configurational state density, `Z`-consistency, combined summary).
+- **Write a `DISCUSSION.md`** in the output dir mirroring the b6/b9 structure (run/data/script
+  header; sampling & energy window; weighted histogram; live set; thermodynamics; C_V; sanity;
+  interpretation & caveats; next steps) — grounded in the real numbers the analyzer printed.
+- **Skip `conf_space_deltaz.png`** unless the run has `posterior_*.xsf` (a `--no-posterior-xsf`
+  run cannot produce it — say so in the DISCUSSION).
+- **Log** the session in `LOG.md` (append-only); **commit** the trackable parts (LOG.md + the
+  DISCUSSION.md) after confirming scope.
+
+**Deliverables check:** 9 PNGs + `DISCUSSION.md` in `<run_dir>/analysis_<ns_output_name>/`,
+LOG.md updated, committed per scope.
+
+---
+
 ## 4. Environment (invariant)
 
 - Python: `/home/think/miniconda3/envs/agox_v2/bin/python` (AGOX 3.10.2 + ASE 3.25.0 +

@@ -2959,3 +2959,40 @@ naming/placement pattern (`analysis_<ns_output_name>/` inside the run dir).
 DISCUSSION.md now trackable after the flat-structure `.gitignore` change).
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Add tfree-analysis task template (AGENTS.md §3c + skill)
+
+**Goal (user-confirmed via clarify):** Turn the previous b6/b9 temperature-free analysis task
+into a reusable template — directory naming/placement, code use, clarify-before-begin — recorded
+in AGENTS.md so that next time the owner says "analyze tfree" the task can be invoked.
+
+**Clarify decisions (all user-confirmed):**
+1. Home: add a new AGENTS.md section (3c "Temperature-free (tfree) analysis task template").
+2. Also create a dedicated, auto-discoverable skill (`agox-tfree-analysis`) so the task can be
+   invoked by name next time.
+3. Scope: self-contained tfree run dir (like b6/b9) — `ns_output_*/` + `analysis_<ns_output_name>/`
+   inside the run dir; run `analyze_tfree_outputs.py --data <ns_output> --outdir
+   <run>/analysis_<ns_output_name> --n-atoms 75`; write DISCUSSION.md; skip `conf_space_deltaz.png`
+   unless xsf present.
+4. Commit after logging.
+
+**Actions taken:**
+- AGENTS.md: added `## 3c. Temperature-free (tfree) analysis task template` between §3b and §4,
+  covering the clarify-first items (which ns_output, placement/naming, extras, commit scope), the
+  analyzer command, the 9 PNGs, DISCUSSION.md structure, the delta-Z caveat, and logging/commit.
+- Created skill `agox-tfree-analysis` (research category) documenting the full step-by-step
+  template with a clarify-before-begin section, procedure, DISCUSSION.md outline, delta-Z caveat,
+  logging/commit, and a verification checklist.
+- Updated the `agox-nested-sampling` skill's
+  `references/analyzing-tfree-run-and-no-xsf-landscape.md` to the flat `_analysist/` layout
+  (analyzer path `_analysist/analyze_tfree_outputs.py`, `plot_conf_space_deltaz.py`, new gitignore
+  policy) and cross-linked the new `agox-tfree-analysis` skill.
+
+**Results:** AGENTS.md now documents the tfree-analysis template; `agox-tfree-analysis` skill
+created and discoverable by name; related skill reference updated to the flat layout.
+
+**Open items:** None.
+
+**Time:** 2026-08-29 (JST).
