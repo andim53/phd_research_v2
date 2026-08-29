@@ -359,3 +359,22 @@ b_nestedsampling/
 
 See `README.AI.md` for the machine-readable spec and `TUTORIAL.md` for
 step-by-step reproduction.
+
+# QnA
+
+1. What does the --temperatures 100, 200, 300, 500, 1000 parameters do? Do they get the output of the posterior xsf file?
+
+`--temperatures` is used only in **temperature-free** mode (`--temperature-free`). It is a
+comma-separated list of temperatures (K) at which the single temperature-free sample set is
+evaluated in post-processing. For each listed T the code (`main.py` post-processing) computes
+`beta = 1/(k_B*T)`, the partition function `Z`/`log Z`, the free energy `F = -k_B*T*log Z`, and
+re-derives the weighted posterior at that temperature (`posterior_at(beta)`). For each T it
+writes a directory `posterior_T{KKK}/` holding `posterior_summary.csv` (rank, energy_eV, weight)
+and, unless `--no-posterior-xsf` is set, the posterior structure `.xsf` files
+(`posterior_{rank}_w{...}_E{...}.xsf`). One row per T is also written to `thermodynamics.csv`
+(`T_K,beta_eV-1,logZ,Z,F_eV`).
+
+So **yes** — the posterior `.xsf` files are produced, one set per temperature, under each
+`posterior_T{KKK}/` dir. The posterior differs across temperatures because the weights are
+re-computed from the same samples by the Boltzmann factor at each T: low T concentrates weight on
+the low-energy (island) structures, high T spreads it over the higher-entropy (flat) ones.

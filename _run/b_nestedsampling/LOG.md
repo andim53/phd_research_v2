@@ -2793,3 +2793,29 @@ concise human overview, per four user-confirmed decisions.
 **Open items:** Commit the README rewrite (pending owner confirmation).
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Answer QnA question in README.md (--temperatures / posterior xsf)
+
+**Goal (user-confirmed via clarify):** A `# QnA` section was added to the root
+`README.md` with the question "What does the --temperatures 100, 200, 300, 500,
+1000 parameters do? Do they get the output of the posterior xsf file?" Read the
+question and answer it in the README.
+
+**Clarified (per standing rule):** keep the question and add a concise, grounded
+answer directly beneath it in the existing `# QnA` section.
+
+**Actions taken:**
+- Read `main.py` post-processing (lines 352-386) to ground the answer in the code.
+- Added the answer beneath the QnA question: `--temperatures` is used only in
+  temperature-free mode; per T it computes Z/logZ, F=-k_B*T*logZ, and the weighted
+  posterior; writes `posterior_T{KKK}/` (posterior_summary.csv always, posterior_*.xsf
+  unless --no-posterior-xsf) and one row per T in thermodynamics.csv. Answer: yes,
+  posterior .xsf files are produced, one set per temperature.
+
+**Results:** QnA answered in README.md. Docs only; no source code changed.
+
+**Open items:** Commit the README change (pending owner confirmation).
+
+**Time:** 2026-08-29 (JST).
