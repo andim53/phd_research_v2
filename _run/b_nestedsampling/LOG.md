@@ -3030,3 +3030,27 @@ analysis skill and all instructions that reference/use it to also require this.
 **Open items:** None.
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Answer QnA item 2 in README.md (NS convergence / log Z vs T)
+
+**Goal (user-confirmed via clarify):** Read the second question in the README `# QnA` section and
+answer it inline, code-grounded (same format as Q1).
+
+**Clarified (per standing rule):** keep the question and add a concise, code-grounded answer
+directly beneath it in the existing `# QnA` section.
+
+**Actions taken:**
+- Read `nested_sampling/nested_sampler.py` (`run()`, `step()`, `evaluate()`) to ground the answer.
+- Added the answer beneath QnA item 2 covering: (1) convergence defined by `log Z` plateauing and
+  `X_final = exp(-n_iters/n_live)` being negligible (not by energies stopping); (2) `log Z` vs T
+  being the temperature dependence of the partition function, not a convergence test; (3) energy
+  lowering after 100 iters being *designed* NS behaviour (worst point removed each step), not a
+  sign of non-convergence.
+
+**Results:** QnA item 2 answered in README.md. Docs only; no source code changed.
+
+**Open items:** None.
+
+**Time:** 2026-08-29 (JST).

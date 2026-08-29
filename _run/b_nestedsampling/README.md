@@ -378,3 +378,37 @@ So **yes** — the posterior `.xsf` files are produced, one set per temperature,
 `posterior_T{KKK}/` dir. The posterior differs across temperatures because the weights are
 re-computed from the same samples by the Boltzmann factor at each T: low T concentrates weight on
 the low-energy (island) structures, high T spreads it over the higher-entropy (flat) ones.
+
+2. How do we define convergence for nested sampling? What does the log Z vs T represent? If sample energies shows sign of energy lowering even after 100 iterations, does that mean it hasn't converge?
+
+**How is convergence defined?** Nested sampling is exact once it has consumed (almost) all the
+prior volume, so convergence is judged by the evidence and the remaining prior volume — NOT by
+the sample energies stopping. Concretely:
+1. **`log Z` plateaus** — plotting `log Z` vs iteration (`evidence_history.csv` in fixed-T), the
+   curve flattens and stops changing by more than a small tolerance (typically ≲ 0.1–0.5 nats).
+2. **Remaining prior volume is negligible** — `X_final = exp(-n_iters/n_live)` (printed by
+   `run()`; line 578/597). When `X_final` is tiny (e.g. `exp(-10) ≈ 4.5e-5` for 1000 iters / 100
+   live), the final live-set correction (lines 580–582 fixed-T, 643–650 temperature-free) no
+   longer changes `Z` materially.
+3. **The energy limit has descended** to the global-minimum / phase-transition region — i.e. the
+   worst live-point energy (`E_boundary`) has reached near `E_ref`.
+Our code stops at a fixed `--n-iters`; you check convergence by plotting `log Z` vs iteration for
+a plateau and by inspecting `X_final`.
+
+**What does `log Z` vs T represent?** From `thermodynamics.csv` (temperature-free
+`evaluate(beta)`, lines 620–652), `log Z` rises monotonically with T. This is the temperature
+dependence of the partition function: higher T broadens the Boltzmann weight
+`exp(-beta(E-E_ref))`, so more probability mass is included and `Z` grows (e.g. b6: logZ −40 →
+−17 over 100→1000 K). It is **not** itself a convergence test — it is the physics of how the
+evidence scales with temperature, from which `F = -k_B T ln Z`, mean energy, and `C_V(T)` follow.
+
+**Does energy lowering after 100 iterations mean it hasn't converged? No.** Discarded-sample
+energies descending is the *designed* behaviour of NS, not a sign of non-convergence. Each
+`step()` removes the worst (highest-energy) live point (`argmin(live_log_L)`, line 500), so the
+removed samples' energies descend monotonically by construction, and the live-set boundary
+(`E_boundary`) creeps down toward `E_ref`. Energies will keep dropping for as long as the run
+continues — that is exactly how NS drains the prior volume top-down. The correct convergence
+signals are `log Z` plateauing and `X_final` becoming negligible, **not** whether the sample
+energies are still decreasing. (If the energies are still far from `E_ref` at a *fixed* iteration
+count, it may mean the run is under-sampled — raise `--n-iters`/`--n-live` — but "energies still
+lowering" on its own is expected, not a failure.)
