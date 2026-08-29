@@ -2819,3 +2819,40 @@ answer directly beneath it in the existing `# QnA` section.
 **Open items:** Commit the README change (pending owner confirmation).
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Analyze b9 run outputs (temperature-free NS + novelty)
+
+**Goal (user-confirmed via clarify):** Analyze the b9 run outputs at
+`_analysist/1_result/b9_femgo_walk_emax04_exclworst_noxsf_novelty/` "much like" the b6
+analysis output, using `_analysist/0_analy/analyze_tfree_outputs.py`.
+
+**Clarify decisions (all user-confirmed):**
+1. Output dir: `_analysist/1_result/b9_..._novelty/analysis_tfree/`.
+2. Run the analyzer AND write a b9 DISCUSSION.md (mirroring b6's structure); skip the b6-only
+   `conf_space_deltaz.png` because b9 was run with `--no-posterior-xsf` (no posterior .xsf to
+   build the delta-Z landscape from).
+3. Commit decision revised after inspection: outputs live under gitignored `_analysist/1_result/`
+   (consistent with untracked b6_analysis_out), so leave them uncommitted; log the session only.
+
+**Actions taken:**
+- Ran `analyze_tfree_outputs.py --data <b9>/ns_output_tfree_..._novelty --outdir <b9>/analysis_tfree --n-atoms 75`.
+  Produced the 9 standard PNGs: samples_energy_vs_iter, samples_weighted_histogram,
+  samples_cumulative_Z, live_energy_hist, thermodynamics_Z_F, thermodynamics_Cv,
+  state_density_gE, state_density_Z_consistency, tfree_analysis_summary.
+- Wrote `analysis_tfree/DISCUSSION.md` grounded in the real b9 numbers.
+
+**Results (b9):**
+- 1000 discarded samples, energy `-424.20 .. -407.17 eV` (weighted mean `-413.51 eV`); final
+  live set `-435.91 .. -424.22 eV` (mean `-429.17 eV`).
+- Weighted g(E) peak at `+0.148 eV/atom` above the ground state (peak g ~21.3 config./eV).
+- logZ rises monotonically with T (`-130.69 -> -26.18` over 100-1000 K); F rises 1.13 -> 2.26 eV;
+  C_V ~ 0 (no resolved phase transition in this window).
+- Sanity: sum(w_i) = 0.99995 ~= 1 - exp(-1000/100) (consistent).
+- No posterior .xsf (--no-posterior-xsf), so no delta-Z landscape possible.
+
+**Open items:** None. Outputs are regenerable artifacts (gitignored); re-runnable via
+`analyze_tfree_outputs.py`.
+
+**Time:** 2026-08-29 (JST).
