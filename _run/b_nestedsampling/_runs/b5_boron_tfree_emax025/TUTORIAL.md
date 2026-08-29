@@ -13,7 +13,7 @@ Step-by-step guide to reproduce this run in isolation. Level: intermediate.
 
 Runs nested sampling on the **B-doped** Fe/MgO dataset (5 seeds, seed_0..4, B doped
 into the Fe layer) in **temperature-free mode**, with the same NS parameters as the
-reference `_analysist/1_result/1_no_prior_control`, plus a relative high-energy cut:
+reference `_analysist/1_no_prior_control`, plus a relative high-energy cut:
 
 ```
 main.py --temperature-free --temperatures 100,200,300,500,1000 \
@@ -77,7 +77,7 @@ Sanity checks:
   `nested_sampling/scripts/plot_structure_landscape.py` (resolved via the package dir
   on sys.path). It must also accept the `s=` argument (the current `state_density.py`
   passes `s=5`); use the version from
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` — NOT the stale
+  `_analysist/1_no_prior_control/nested_sampling/scripts/` — NOT the stale
   `dataset_boron/scripts/` copy (which lacks `s=` and causes
   `TypeError: ... unexpected keyword argument 's'` in the landscape analysis). This run
   has the corrected version.

@@ -72,7 +72,7 @@ Sanity checks:
 - **`scripts` module required + correct version:** `nested_sampling/scripts/plot_structure_landscape.py`
   MUST be present (it is, in this run) or `state_density.py` fails to import. It must
   also accept the `s=` argument (the current `state_density.py` passes `s=5`); use the
-  version from `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` — NOT
+  version from `_analysist/1_no_prior_control/nested_sampling/scripts/` — NOT
   the stale `dataset_boron/scripts/` copy (which lacks `s=` and causes
   `TypeError: ... unexpected keyword argument 's'` in the landscape analysis).
 - **`--e-max-per-atom` is RELATIVE** to the dataset minimum (keep `E/atom − min ≤

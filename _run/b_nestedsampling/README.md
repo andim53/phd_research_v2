@@ -352,7 +352,7 @@ b_nestedsampling/
 ├── gpr_accuracy.py          # GPR accuracy vs energy range / Fe_z / rattling analysis
 ├── README.md / README.AI.md / LOG.md / TUTORIAL.md / VERSIONS.md / AGENTS.md / PROMPTS.md
 ├── _runs/                   # self-contained HPC run dirs
-├── _analysist/              # analysed results (0_analy/, 1_result/)
+├── _analysist/              # per-run analysed results (b1_... b9_...) + reference
 ├── _archives/               # archived artifacts
 └── _tmp/                    # scratch output
 ```

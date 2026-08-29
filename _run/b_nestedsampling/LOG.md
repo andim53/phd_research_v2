@@ -2879,3 +2879,50 @@ self-references in DISCUSSION.md to update (it does not hard-code its own folder
 consistent with prior session.)
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-29 — Update docs for the new flat `_analysist/` structure
+
+**Goal (user-confirmed via clarify):** The `_analysist/` directory was restructured from the
+old `0_analy/` + `1_result/` two-level layout to a flat per-run layout. Update all md notes that
+describe/reference the old structure (including AGENTS.md) to reflect the current layout.
+
+**Clarify decisions (all user-confirmed):**
+1. Scope: update main docs (AGENTS.md, README.AI.md, README.md) AND all per-run README/TUTORIAL
+   in `_analysist/` and `_runs/` that referenced old `_analysist/1_result/...` paths.
+2. LOG.md stays append-only: only append a new entry; do not rewrite historical entries.
+3. .gitignore: replace the obsolete `_analysist/0_analy/` + `_analysist/1_result/` lines with the
+   flat-structure policy (ignore `_analysist/_archive/`; rely on defensive patterns for
+   regenerable outputs; keep per-run code/docs and root analysis scripts trackable).
+
+**Actions taken (new flat layout):**
+```
+_analysist/
+├── 1_no_prior_control/       # shared reference run
+├── b1_... ... b9_.../        # per-run analysis dirs
+├── analyze_tfree_outputs.py   # analysis scripts at the _analysist root
+├── plot_conf_space_deltaz.py
+└── _archive/                  # superseded analysis (gitignored)
+```
+- AGENTS.md: rewrote the `_analysist/` layout block (section 3a); updated the reference path
+  `_analysist/1_result/1_no_prior_control/...` -> `_analysist/1_no_prior_control/...`.
+- README.AI.md: updated section 2 layout line + section 2a `_analysist/` description + reference path.
+- README.md: updated the Layout tree `_analysist/` line.
+- .gitignore: replaced the two obsolete `_analysist/0_analy/` + `_analysist/1_result/` lines with
+  `_analysist/_archive/` (+ comment).
+- 12 per-run README/TUTORIAL files in `_analysist/` and `_runs/` (b2/b4/b5/b6): rewrote
+  `_analysist/1_result/1_no_prior_control` -> `_analysist/1_no_prior_control`.
+- b9 DISCUSSION.md header: `_analysist/1_result/b9_...` -> `_analysist/b9_...`,
+  `_analysist/0_analy/analyze_tfree_outputs.py` -> `_analysist/analyze_tfree_outputs.py`, and the
+  analysis dir reference updated to `analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty`.
+- Left archived content (`_analysist/_archive/0_analy/b6_analysis_out/DISCUSSION.md`,
+  `_runs/_archives/b7_.../README.md`) untouched (superseded/historical records).
+
+**Results:** No `_analysist/1_result` or `_analysist/0_analy` references remain in any active
+(non-archive, non-LOG) md file. `.gitignore` now resolves `_analysist/` to its trackable
+code/docs (382 files) with regenerable outputs and `_archive/` still ignored.
+
+**Open items:** None.
+
+**Time:** 2026-08-29 (JST).

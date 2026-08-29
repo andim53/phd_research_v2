@@ -7,7 +7,7 @@ package) + the B-doped dataset (`dataset_boron/`, copied as `dataset/`).
 ## What this run does
 
 Runs the **nested-sampling pipeline** (`main.py`) on the **B-doped Fe/MgO** dataset,
-with the **same NS parameters as the reference run** `_analysist/1_result/1_no_prior_control`:
+with the **same NS parameters as the reference run** `_analysist/1_no_prior_control`:
 
 ```
 main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
@@ -40,7 +40,7 @@ copied from the stale `dataset_boron/scripts/` version, which does **not** accep
 `plot_structure_landscape(..., s=5, ...)`.
 
 **Fix (applied):** copied the correct `plot_structure_landscape.py` (accepts `s=25`)
-from the reference `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`
+from the reference `_analysist/1_no_prior_control/nested_sampling/scripts/`
 into `nested_sampling/scripts/`. Verified: accepts `s=` and all kwargs
 `state_density.py` passes (none missing); compiles. Resubmit `pjsub j_b2_boron_ns.sh`
 to complete the analysis.

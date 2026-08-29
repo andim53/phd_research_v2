@@ -3,7 +3,7 @@
 Run directory: `_runs/b4_tfree_emax025/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.2.0 + `nested_sampling/`
 package) + the plain **Fe/MgO (no Boron)** dataset (13 seeds, same system as
-`_analysist/1_result/1_no_prior_control`).
+`_analysist/1_no_prior_control`).
 
 ## What this run does
 
@@ -53,7 +53,7 @@ but the `plot_structure_landscape.py` copied from `dataset_boron/scripts/` does 
 accept an `s` argument (stale signature) → `TypeError`.
 
 **Fix (applied):** copied the correct `plot_structure_landscape.py` from the reference
-`_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` (which accepts
+`_analysist/1_no_prior_control/nested_sampling/scripts/` (which accepts
 `s=25`) into `nested_sampling/scripts/`. Verified: the corrected version accepts `s=`
 and all kwargs `state_density.py` passes (no missing arguments); compiles.
 

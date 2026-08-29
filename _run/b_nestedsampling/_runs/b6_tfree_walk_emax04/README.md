@@ -3,7 +3,7 @@
 Run directory: `_runs/b6_tfree_walk_emax04/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.4.0 + `nested_sampling/`
 package) + the plain **Fe/MgO (no Boron)** dataset (13 seeds, same system as
-`_analysist/1_result/1_no_prior_control`).
+`_analysist/1_no_prior_control`).
 
 ## What this run does
 
@@ -54,7 +54,7 @@ Key features / treatment (what differs from sibling runs):
 - `main.py` and `nested_sampling/` copied from the project root at **v1.4.0**
   (includes the dual-scale walk and windowed-seeding features).
 - `nested_sampling/scripts/plot_structure_landscape.py` copied from
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` — the CORRECT
+  `_analysist/1_no_prior_control/nested_sampling/scripts/` — the CORRECT
   version that accepts `s=`, so the final state-density/landscape analysis will not
   crash with the `TypeError: plot_structure_landscape() got an unexpected keyword
   argument 's'` bug.

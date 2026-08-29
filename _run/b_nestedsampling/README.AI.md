@@ -44,7 +44,7 @@ b_nestedsampling/
 ├── AGENTS.md                    # Governing rules for AI agents
 ├── PROMPTS.md                   # Prompt log + grammar-notes scaffold
 ├── _runs/                       # (scaffolded) self-contained run dirs (HPC)
-├── _analysist/                  # (scaffolded) analysis outputs (0_analy/, 1_result/)
+├── _analysist/                  # per-run analysed results (b1_... b9_...) + reference
 ├── _archives/                   # (scaffolded) archived artifacts
 └── _tmp/                        # (scaffolded) scratch output
 ```
@@ -55,11 +55,14 @@ b_nestedsampling/
   in isolation. HPC per-seed runs carry a per-run `README.md` + `TUTORIAL.md`.
   **NS run dirs must copy `plot_structure_landscape.py` into
   `nested_sampling/scripts/` from the reference
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` ONLY** (accepts
+  `_analysist/1_no_prior_control/nested_sampling/scripts/` ONLY** (accepts
   `s=`); do NOT use the stale `dataset_boron/scripts/` version (lacks `s=` → crashes
   the landscape analysis with `TypeError: ... unexpected keyword argument 's'`).
-- **`_analysist/`** — analysed/intermediate results (`0_analy/`, `1_result/`,
-  notebooks). Outputs regenerable/gitignored; analysis code tracked.
+- **`_analysist/`** — per-run analysed results, one self-contained dir per run
+  (`b1_...` … `b9_...`) mirroring `_runs/`, plus the shared reference
+  `1_no_prior_control/`, root-level analysis scripts (`analyze_tfree_outputs.py`,
+  `plot_conf_space_deltaz.py`), and an archived `_archive/`. Outputs
+  regenerable/gitignored; analysis code and per-run docs tracked.
 - **`_archives/`** — archived artifacts; **`_tmp/`** — scratch output. Both
   gitignored.
 

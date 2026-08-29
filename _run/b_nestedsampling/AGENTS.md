@@ -138,9 +138,9 @@ MUST accept an `s` argument or the final landscape analysis crashes with
 `TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`.
 
 - **ONLY valid source:** the reference
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py`
+  `_analysist/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py`
   (accepts `s=25`). Always copy from here:
-  `cp _analysist/1_result/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py <run>/nested_sampling/scripts/`
+  `cp _analysist/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py <run>/nested_sampling/scripts/`
 - **DO NOT use** `dataset_boron/scripts/plot_structure_landscape.py` — it is a STALE
   version that lacks the `s=` argument and will crash the landscape analysis (this was
   the cause of the b4/b5 `TypeError`).
@@ -151,19 +151,24 @@ regenerable-data exclusions.
 ### `_analysist/` — analysed results
 
 Analysed/intermediate results live in `_analysist/`, kept separate from both the
-project root and `_runs/` so raw runs are never mixed with their analysis.
+project root and `_runs/` so raw runs are never mixed with their analysis. Each
+run's analysis gets its **own self-contained directory** under `_analysist/`,
+mirroring the `_runs/<NN>_<descriptor>` naming, plus a shared reference run and
+an archive for superseded analysis.
 
-Expected layout (matching the repo-root `.gitignore`):
+Current layout:
 ```
 _analysist/
-├── 0_analy/               # intermediate analysis / staging
-├── 1_result/              # final analysed results
-├── main_analyst.ipynb     # analysis notebook (gitignored if large)
-└── main_test.ipynb        # scratch/testing notebook (gitignored)
+├── 1_no_prior_control/       # shared reference run (plain Fe/MgO, no prior/window)
+├── b1_.../ ... b9_.../        # per-run analysis dirs (<NN>_<descriptor>)
+├── analyze_tfree_outputs.py   # analysis scripts live at the _analysist root
+├── plot_conf_space_deltaz.py
+└── _archive/                  # superseded analysis (e.g. old 0_analy/), gitignored
 ```
 
 Analysis outputs are regenerable artifacts and are gitignored; only the
-analysis code/notebooks the owner chooses to track are tracked.
+analysis code/scripts and per-run README/DISCUSSION docs the owner chooses to
+track are tracked.
 8. **Do not modify another profile's skills/plugins/cron/memories** unless the owner
    explicitly directs it.
 
