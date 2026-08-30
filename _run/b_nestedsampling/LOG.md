@@ -4872,3 +4872,41 @@ the DISCUSSION.md references and command are updated.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Full tfree analysis of b12 boron3 iter10000 (mirror b10 iter20000)
+
+**Goal (user-confirmed via clarify):** Perform the complete analysis set for the b12 boron3
+iter10000 result, mirroring the b10 iter20000 analysis — all graphs + a full DISCUSSION.md.
+
+**Clarify decisions (all user-confirmed):**
+1. Run ALL analyses: tfree analyzer (9 PNGs + DISCUSSION.md), compare_state_density_gE.py,
+   plot_dead_energy.py, plot_ns_boltzmann_prob.py — producing all 12 PNGs + full DISCUSSION.md.
+2. --n-atoms 78 (B3Fe25Mg25O25, boron3 system, 6 seeds).
+3. Output to analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron3_iter10000/ under b12.
+
+**Actions taken:**
+- Ran analyze_tfree_outputs.py (--data b12_..._boron3_iter10000, --n-atoms 78) -> 9 standard PNGs.
+- Ran compare_state_density_gE.py (--run b12, --ns-output analysis_..._boron3_iter10000,
+  --n-atoms 78 --e-max 0.8) -> compare_state_density_gE.png.
+- Ran plot_dead_energy.py -> dead_energy_vs_iteration.png.
+- Ran plot_ns_boltzmann_prob.py (--n-atoms 78 --linewidth 3 --figsize 4 --temperatures
+  100 298 573 623 673 773 --legend-loc "upper left" --legend-label "{T} K {ref}"
+  --area-norm --annotate-critical) -> binding_probability_vs_temperature.png.
+- Wrote full DISCUSSION.md mirroring b10's structure with b12's real numbers + the same
+  temperature/paper discussion (section 9, refs [1]-[5]).
+
+**Results (b12 boron3 iter10000, 78 atoms, 10000 iters):**
+- discarded samples 10000; energy range -455.38 .. -424.24 eV; weighted mean -430.77 eV.
+- final live set -455.47 .. -455.15 eV (tight cluster near ground state).
+- g(E) peak +0.299 eV/atom (g=14.9); dataset KDE peak +0.135 eV/atom (543 structures).
+- log Z -71.7 -> -44.7 (100->1000 K); F 0.62 -> 3.85 eV; Cv ~ 0.
+- dead_E ~98.5% monotonic (148/9999 up steps); weighted mean saturates +0.316 eV/atom.
+- Boltzmann: Z grows with T (7.6e-10 -> 9.67); 100 K + 5 critical temps with [N] markers.
+- All 12 PNGs produced (2100x1200 std; binding 1200x1200; compare 2064x852; summary 3300x2400;
+  Z_F 4200x1200) + DISCUSSION.md.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
