@@ -4643,3 +4643,26 @@ flag and use 4x4.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: --legend-loc flag, legend to top-left
+
+**Goal (user-confirmed via clarify):** Move the legend of the b10 iter20000
+binding_probability_vs_temperature.png to the top-left, and add a flag to control the legend location.
+
+**Clarify decisions (all user-confirmed):**
+1. Add a --legend-loc flag (string, default 'upper right') controlling the legend location via
+   matplotlib loc strings (e.g. 'upper left').
+2. Re-run with --legend-loc 'upper left'.
+
+**Actions taken:**
+- Added `--legend-loc` (default "upper right") arg; used `loc=args.legend_loc` in ax.legend().
+- Bumped `__version__` 1.4.0 -> 1.4.1.
+- py_compile OK; re-ran b10 iter20000 with --legend-loc "upper left"; PNG regenerated (1200x1200).
+
+**Results:** The legend is now at the top-left of the binding_probability_vs_temperature.png.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

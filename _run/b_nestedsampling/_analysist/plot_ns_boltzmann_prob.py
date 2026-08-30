@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 
 import argparse
 import glob
@@ -115,6 +115,9 @@ def main():
     p.add_argument("--figsize", type=float, default=5,
                    help="figure size in inches (square: width=height=this value). "
                         "Default 5.")
+    p.add_argument("--legend-loc", default="upper right",
+                   help="legend location (matplotlib loc string, e.g. 'upper left'). "
+                        "Default 'upper right'.")
     args = p.parse_args()
 
     # --- load NS samples (energy_eV + prior_weight) ---
@@ -192,7 +195,7 @@ def main():
     else:
         ax.set_ylim(0, 1.05)
     ax.set_xlim(0, grid.max())
-    ax.legend(frameon=False, loc="upper right", fontsize=9)
+    ax.legend(frameon=False, loc=args.legend_loc, fontsize=9)
 
     os.makedirs(args.outdir, exist_ok=True)
     out_path = os.path.join(args.outdir, args.outname)
