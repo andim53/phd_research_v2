@@ -4234,3 +4234,32 @@ lines drawn on the Boltzmann plot (matching the reference ~0.074/0.255 values).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: add --area-norm flag (area normalization)
+
+**Goal (user-confirmed via clarify):** Add a flag to `plot_ns_boltzmann_prob.py` that uses
+probability area-normalization like `_tmp/probability_normalization/Making_Prob_area_norm.py`
+(each curve's area/integral = 1 via the trapezoidal rule).
+
+**Clarify decisions (all user-confirmed):**
+1. Add a --area-norm flag that, when set, normalizes each temperature curve so its area
+   (integral over energy) = 1 (trapezoid), instead of peak-normalizing.
+2. The area-normalized version plots the existing P(E) curves (g(E)·exp(-beta·E)/Z from the NS
+   KDE) area-normalized, y-label 'Probability Density (Area = 1)'.
+
+**Actions taken:**
+- Added `--area-norm` flag and `trapezoid` import.
+- When --area-norm is set, each curve is normalized by its trapezoidal area (integral = 1);
+  otherwise peak-normalized (default).
+- y-label switches to "Probability Density (Area = 1)" when --area-norm is set.
+- Bumped `__version__` 1.2.0 -> 1.3.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000 with --area-norm; PNG regenerated (1500x1200).
+
+**Results:** Area-normalized Boltzmann probability plot produced (each temperature curve has
+area = 1). flat/island dashed lines retained.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

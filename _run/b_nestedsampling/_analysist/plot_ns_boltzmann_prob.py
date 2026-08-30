@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import argparse
 import glob
@@ -42,6 +42,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
+from scipy.integrate import trapezoid
 from scipy.signal import find_peaks
 from scipy.stats import gaussian_kde
 
@@ -105,6 +106,10 @@ def main():
     p.add_argument("--temperatures", type=float, nargs="+",
                    default=[100, 200, 300, 500, 1000],
                    help="temperatures (K) to plot. Default 100 200 300 500 1000.")
+    p.add_argument("--area-norm", action="store_true",
+                   help="normalize each temperature curve so its area (integral over energy) "
+                        "= 1 via the trapezoidal rule (like Making_Prob_area_norm.py), "
+                        "instead of peak-normalizing. y-label 'Probability Density (Area = 1)'.")
     args = p.parse_args()
 
     # --- load NS samples (energy_eV + prior_weight) ---
@@ -151,8 +156,12 @@ def main():
         log_num = np.log(np.maximum(gE, 1e-300)) - beta * (grid - grid.min())
         log_Z = np.log(np.sum(np.exp(log_num)))
         probs = np.exp(log_num - log_Z)          # P(E,T), normalized over the grid
-        # Peak-normalize each curve to its own max (=1) for visibility (like the reference)
-        probs_plot = probs / probs.max()
+        # Normalize for display: peak-normalize (default) OR area-normalize (--area-norm)
+        if args.area_norm:
+            area = trapezoid(probs, grid)
+            probs_plot = probs / area if area > 0 else probs   # area (integral) = 1
+        else:
+            probs_plot = probs / probs.max()     # peak = 1
         ax.plot(grid, probs_plot, color=colors[i % len(colors)],
                 lw=1.6, label=f"{T} K")
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
@@ -167,7 +176,8 @@ def main():
             t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
 
     ax.set_xlabel(E_LABEL)
-    ax.set_ylabel("Probability P(E) (peak-normalized)")
+    ax.set_ylabel("Probability Density (Area = 1)" if args.area_norm
+                  else "Probability P(E) (peak-normalized)")
     ax.set_ylim(0, 1.05)
     ax.set_xlim(0, grid.max())
     ax.legend(frameon=False, loc="upper right", fontsize=9)
