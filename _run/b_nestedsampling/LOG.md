@@ -4102,3 +4102,21 @@ scatter marker size are controllable via --figsize and --scatter-size.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: remove black outline from PCA scatter
+
+**Goal (user-confirmed? — simple, direct instruction):** Remove the black outline (edgecolors)
+from the PCA scatter points inside the Configurational Space panel.
+
+**Actions taken:**
+- Removed `edgecolors="black", linewidth=0.5` from the PCA scatter call.
+- Bumped `__version__` 2.8.0 -> 2.8.1 (patch).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2064x852).
+
+**Results:** The PCA scatter points no longer have a black outline.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

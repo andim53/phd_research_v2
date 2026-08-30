@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.8.0"
+__version__ = "2.8.1"
 
 import argparse
 import glob
@@ -207,7 +207,7 @@ def main():
     vmin, vmax = np.nanmin(z_data), np.nanmax(z_data)
     sc = ax_scat.scatter(X_eigen, E_rel_ds, c=z_data, cmap="PuBu", s=args.scatter_size,
                          norm=mcolors.Normalize(vmin=vmin, vmax=vmax),
-                         edgecolors="black", linewidth=0.5, alpha=0.8, zorder=2)
+                         alpha=0.8, zorder=2)
     cbar = fig.colorbar(sc, ax=ax_scat, pad=0.02)
     cbar.set_label(r"$\Delta z$ (Å)")
     cbar.set_ticks(np.linspace(vmin, vmax, 5))
