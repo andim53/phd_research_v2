@@ -3593,3 +3593,33 @@ data to start from AGOX iteration 10, mirroring `_analysist/scripts/process_data
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — analyze_tfree_outputs.py: add --style-pipeline flag (run_analysis_indices rcParams)
+
+**Goal (user-confirmed via clarify):** Add a flag to `_analysist/analyze_tfree_outputs.py` that
+applies the same rcParams style as `run_analysis_indices.py` to its resulting plots. Re-run for
+the b10 iter20000 analysis dir using the new style.
+
+**Clarify decisions (all user-confirmed):**
+1. Flag name: `--style-pipeline` — applies run_analysis_indices.py's rcParams (serif font,
+   ticks-in on top/right, no grid, dpi 300).
+2. Applied only when the flag is set (default: current style unchanged).
+3. Applied at the very start (right after matplotlib import / in main before make_analysis) so
+   all 9 figures share the style.
+
+**Actions taken:**
+- Added `PIPELINE_RCPARAMS` dict + `apply_pipeline_style()` helper (copied run_analysis_indices.py
+  rcParams).
+- Added `--style-pipeline` CLI flag; calls `apply_pipeline_style()` when set.
+- Bumped `__version__` 1.0.0 -> 1.1.0 (behavior/API change -> minor).
+- py_compile OK.
+- Re-ran b10 iter20000 with `--style-pipeline` (--n-atoms 75); all 9 PNGs regenerated.
+
+**Results:** b10 iter20000 analysis figures regenerated in the run_analysis_indices rcParams
+style (serif, ticks-in on all sides, no grid, dpi 300). Data unchanged (same numbers as before).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
