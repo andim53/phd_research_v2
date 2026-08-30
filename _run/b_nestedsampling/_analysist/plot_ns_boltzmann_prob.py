@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 
 import argparse
 import glob
@@ -110,6 +110,8 @@ def main():
                    help="normalize each temperature curve so its area (integral over energy) "
                         "= 1 via the trapezoidal rule (like Making_Prob_area_norm.py), "
                         "instead of peak-normalizing. y-label 'Probability Density (Area = 1)'.")
+    p.add_argument("--linewidth", type=float, default=1.6,
+                   help="line thickness of the P(E) temperature curves. Default 1.6.")
     args = p.parse_args()
 
     # --- load NS samples (energy_eV + prior_weight) ---
@@ -165,7 +167,7 @@ def main():
             probs_plot = probs / probs.max()     # peak = 1
         max_display = max(max_display, probs_plot.max())
         ax.plot(grid, probs_plot, color=colors[i % len(colors)],
-                lw=1.6, label=f"{T} K")
+                lw=args.linewidth, label=f"{T} K")
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
 
     # dashed vertical lines at the flat/island energies (black, white outline)

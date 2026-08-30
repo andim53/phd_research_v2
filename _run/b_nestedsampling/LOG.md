@@ -4589,3 +4589,27 @@ Seed 0, and saves 5 xsf structures.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: add --linewidth flag, re-run at 2.0
+
+**Goal (user-confirmed via clarify):** Add a parameter for the P(E) temperature-curve line
+thickness in `plot_ns_boltzmann_prob.py`, then re-run for the b10 iter20000
+binding_probability_vs_temperature.png with thickness 2.0.
+
+**Clarify decisions (all user-confirmed):**
+1. Add a --linewidth flag (float, default 1.6) controlling the P(E) temperature-curve line
+   thickness; re-run with --linewidth 2.0.
+2. Only the P(E) temperature curves (the lw=1.6 lines), not the flat/island axvlines.
+
+**Actions taken:**
+- Added `--linewidth` (default 1.6) arg; used `lw=args.linewidth` in the temperature-curve plot.
+- Bumped `__version__` 1.3.1 -> 1.3.2.
+- py_compile OK; re-ran for b10 iter20000 with --linewidth 2.0; PNG regenerated (1500x1200).
+
+**Results:** The binding_probability_vs_temperature.png now uses 2.0 line thickness.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
