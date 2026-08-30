@@ -23,13 +23,13 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
   /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
       --run b10_femgo_walk_emax04_exclworst_noxsf_novelty \
       --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
-      --n-atoms 75 [--e-max 0.8] [--simple] \
+      --n-atoms 75 [--e-max 0.8] [--simple] [--max-delta-z 5.578] [--scatter-edge] \
       --outname compare_state_density_gE.png
 """
 
 from __future__ import annotations
 
-__version__ = "2.9.2"
+__version__ = "2.10.0"
 
 import argparse
 import glob
@@ -138,6 +138,15 @@ def main():
                    help="figure width in inches (height fixed at 3). Default 7.")
     p.add_argument("--scatter-size", type=int, default=5,
                    help="PCA scatter marker size s. Default 5.")
+    p.add_argument("--max-delta-z", type=float, default=5.578,
+                   help="Max delta Z (Angstrom) shown on the PCA colorbar "
+                        "(colorbar vmax). Values above this clip to the top "
+                        "color, extending the colorbar beyond the data max. "
+                        "Default 5.578.")
+    p.add_argument("--scatter-edge", action="store_true",
+                   help="Draw a thin black outline (edgecolors='black', "
+                        "linewidth 0.3) around each PCA scatter marker. "
+                        "Default off.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     p.add_argument("--delta-z-lines", action="store_true",
@@ -263,10 +272,11 @@ def main():
     # Panel 1 (far left): Configurational Space (PCA scatter of dataset), colored by
     # delta Z (Fe island height) with a PuBu colorbar (like 71_conf_space.py).
     ax_scat = axes[0]
-    vmin, vmax = np.nanmin(z_data), np.nanmax(z_data)
+    vmin, vmax = np.nanmin(z_data), args.max_delta_z
+    edge_kw = dict(edgecolors="black", linewidths=0.3) if args.scatter_edge else {}
     sc = ax_scat.scatter(X_eigen, E_rel_ds, c=z_data, cmap="PuBu", s=args.scatter_size,
                          norm=mcolors.Normalize(vmin=vmin, vmax=vmax),
-                         alpha=0.8, zorder=2)
+                         alpha=0.8, zorder=2, **edge_kw)
     cbar = fig.colorbar(sc, ax=ax_scat, pad=0.02)
     cbar.set_label(r"$\Delta z$ (Å)")
     cbar.set_ticks(np.linspace(vmin, vmax, 5))

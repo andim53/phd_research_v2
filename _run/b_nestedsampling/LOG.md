@@ -5068,3 +5068,35 @@ unchanged (island 0.034, flat 0.183 eV/atom) as expected (they depend on energy 
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (2) — compare_state_density_gE.py: --max-delta-z + --scatter-edge flags
+
+**Goal (user-confirmed via clarify):** Edit the b12 `compare_state_density_gE.png` so the PCA
+colorbar's Max Delta Z is controllable via a flag (use Max delta Z = 5.578 A), and add a flag to
+draw a thin black outline around the scatter markers.
+
+**Clarify decisions (all user-confirmed):**
+1. `--max-delta-z <float>` (default 5.578): sets the PCA colorbar vmax; vmin stays auto (data
+   min). Values above max clip to the top color, extending the colorbar beyond the data max.
+2. `--scatter-edge` (boolean, default OFF): draws a thin black outline
+   (`edgecolors='black'`, `linewidths=0.3`) on the PCA scatter markers.
+
+**Actions taken:**
+- Added `--max-delta-z` (default 5.578) — used as the colorbar `vmax` (was `np.nanmax(z_data)`
+  = 5.393 for b12).
+- Added `--scatter-edge` (default off) — passes `edgecolors="black", linewidths=0.3` to
+  `ax_scat.scatter` when set.
+- Updated the usage docstring; bumped `__version__` 2.9.2 -> 2.10.0.
+- py_compile OK; re-ran for b12 boron3 iter10000 with the exact documented command.
+
+**Results (real output):**
+- Re-run (default, no --scatter-edge): colorbar now vmax=5.578 (extends past the 5.393 data
+  max); `compare_state_density_gE.png` regenerated (268800 bytes, 2064x852).
+- `--scatter-edge` run: saved successfully (no error), outline applied.
+- delta Z range for b12 dataset = 0.000 .. 5.393 A (data max < 5.578 flag default).
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
