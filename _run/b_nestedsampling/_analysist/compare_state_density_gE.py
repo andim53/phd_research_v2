@@ -10,20 +10,21 @@ KDE g(E), both in per-atom relative-energy units `(E - min)/n_atoms`, each
 referenced to its OWN minimum so the density SHAPES are compared on the same
 eV/atom axis.
 
-Dataset parameters mirror the ns_output (`--e-max-per-atom 0.4`, n_atoms 82 for
-boron) so the dataset curve reflects the same filtered pool the sampler used.
+Dataset parameters: the KDE is built on ALL dataset structures (no energy
+filter); only the PLOT is clipped to the NS g(E) E-E_min max so both curves
+share the same eV/atom range. n_atoms 82 for boron.
 
 Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
   /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
       --run b11_boron_walk_emax04_exclworst_noxsf_novelty \
       --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter20000 \
-      --n-atoms 82 --e-max-per-atom 0.4 \
+      --n-atoms 82 \
       --outname compare_state_density_gE.png
 """
 
 from __future__ import annotations
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 import argparse
 import os
@@ -63,9 +64,6 @@ def main():
                         "under the run's ns_output dir and state_density_gE.png)")
     p.add_argument("--n-atoms", type=int, default=82,
                    help="atoms per structure (boron Fe25Mg25O25B7 = 82). Default 82.")
-    p.add_argument("--e-max-per-atom", type=float, default=None,
-                   help="relative eV/atom filter on the dataset (mirrors --e-max-per-atom). "
-                        "Default None = keep all.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     args = p.parse_args()
@@ -93,22 +91,18 @@ def main():
     binw = edges_g[1] - edges_g[0]
     g_ns = hist_g / binw
 
-    # --- dataset DFT energies + filter (mirror main.py) ---
+    # --- dataset DFT energies (ALL structures, no energy filter) ---
     energies = load_dataset_energies(dataset_dir)
-    if args.e_max_per_atom is not None:
-        e_per_atom = energies / args.n_atoms
-        keep = (e_per_atom - e_per_atom.min()) <= args.e_max_per_atom
-        energies = energies[keep]
-        print(f"  --e-max-per-atom {args.e_max_per_atom}: kept "
-              f"{energies.size} / {e_per_atom.size} dataset structures")
-    print(f"  dataset: {energies.size} structures")
+    print(f"  dataset: {energies.size} structures (all, unfiltered)")
 
     # --- dataset KDE g(E), relative to its OWN minimum ---
     E_rel_ds = (energies - energies.min()) / args.n_atoms
     kde = gaussian_kde(E_rel_ds)
     # KDE integrates to 1 (a normalized density); NS histogram integrates to
     # sum(Ws) ~= 1 (the consumed prior volume). Scale KDE so both integrate to 1.
-    grid = np.linspace(0, max(E_rel_ns.max(), E_rel_ds.max()), 400)
+    # Plot x-range is capped at the NS g(E) E-E_min max so both curves share the
+    # same max; the full-dataset KDE (which may extend further) is only drawn up to it.
+    grid = np.linspace(0, E_rel_ns.max(), 400)
     g_ds = kde(grid)
 
     # --- overlay plot ---

@@ -3250,3 +3250,38 @@ script to refresh the existing compare_state_density_gE.png if desired.)
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: KDE on all dataset, plot capped at NS max
+
+**Goal (user-confirmed via clarify):** Change `_analysist/compare_state_density_gE.py` so the
+dataset KDE g(E) is built on ALL dataset structures (no energy filter), and only the PLOT is
+clipped to the NS g(E) E-E_min max so both curves share the same eV/atom range.
+
+**Clarify decisions (all user-confirmed):**
+1. KDE built on ALL dataset structures (ignore --e-max-per-atom entirely).
+2. Remove the --e-max-per-atom flag entirely (no longer applies; NS samples already carry the
+   run's filter).
+3. Cap the plot x-axis at the NS E-E_min max (E_rel_ns.max()); the full-dataset KDE is drawn only
+   up to that max.
+
+**Actions taken:**
+- Updated the docstring (KDE on all structures, plot clipped to NS max).
+- Removed the `--e-max-per-atom` argument and its filter block.
+- Changed the grid to `np.linspace(0, E_rel_ns.max(), 400)` (capped at NS max) instead of
+  `max(E_rel_ns.max(), E_rel_ds.max())`.
+- Bumped `__version__` 1.0.1 -> 1.1.0 (behavior change).
+- Ran for b11 iter20000; PNG regenerated (2100x1200).
+
+**Results (b11 iter20000):**
+- dataset: 496 structures (all, unfiltered, was 266 after the 0.4 filter).
+- KDE peak now at ~ +0.373 eV/atom (g~1.28) — shifted up and broadened vs the filtered version
+  (+0.129, g~3.7) because the full dataset includes higher-energy outliers (E_rel up to 5.64
+  eV/atom), which pull the KDE mass to higher energy.
+- Plot x-range capped at NS max 0.401 eV/atom.
+- NS g(E) peak unchanged at +0.341 eV/atom (g~12.3).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
