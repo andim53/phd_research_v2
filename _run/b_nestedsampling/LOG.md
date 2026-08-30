@@ -3832,3 +3832,38 @@ as the reference conf_space.png. Density line thickness (0.9) and labels already
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: rewrite to 3-panel figure (v2.0.0)
+
+**Goal (user-confirmed via clarify):** Rewrite `compare_state_density_gE.py` so its output is a
+3-panel figure matching the reference `analysis_indices/conf_space.png` formatting:
+[Configurational Space] | [dataset State Density] | [NS State Density]. The NS panel uses NS only
+(no GPR+LCB overlay).
+
+**Clarify decisions (all user-confirmed):**
+1. Final output = 3-panel figure: Config Space (PCA scatter, left) | dataset State Density KDE
+   (middle) | NS State Density KDE (right, NS only), all sharing the energy y-axis, formatted like
+   the reference conf_space.png (rcParams, e_limit 0->0.8, figsize style).
+2. NS State Density = gaussian KDE of NS sample energies (per-atom relative), matching the
+   reference smooth KDE style.
+3. Output filename: default `compare_state_density_gE.png`.
+4. Config Space panel computed from the b10 DATASET structures (Fingerprint PC1 vs relative energy).
+
+**Actions taken:**
+- Rewrote the script to: load dataset structures (not just energies), fit Fingerprint PCA,
+  compute dataset + NS KDEs, and build a 3-panel `sharey` figure (width_ratios [1,2.5,2.5],
+  figsize (6,3), energy y-axis e_limit (0-0.1, 0.8, 5), serif/ticks-in/no-grid, labels E_LABEL /
+  DENSITY_LABEL / SCATTER_LABEL).
+- Removed the old 2-curve overlay (no GPR+LCB on the NS panel).
+- Bumped `__version__` 1.9.0 -> 2.0.0 (major rewrite).
+- py_compile OK; ran for b10 iter20000 (--n-atoms 75 --e-max 0.8); PNG regenerated (1790x852).
+
+**Results:** b10 iter20000 3-panel figure produced: Config Space (dataset PCA) | dataset State
+Density | NS State Density, matching the reference conf_space.png formatting/scale. NS KDE peak
+~ +0.018 eV/atom, dataset KDE peak ~ +0.076 eV/atom.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

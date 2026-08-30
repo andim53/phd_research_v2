@@ -1,41 +1,51 @@
 #!/usr/bin/env python3
 """
-Compare the nested-sampling state density g(E) from a temperature-free run's
-`samples.csv` (prior-weight-weighted histogram, exactly as `state_density_gE.png`
-in `analyze_tfree_outputs.py`) against a gaussian-KDE state density computed
-directly from the run's DATASET (the seed DB structures' DFT energies).
+Compare the nested-sampling (NS) state density g(E) against the dataset state
+density, and show the dataset's configurational space — as a single 3-panel
+figure that mirrors the reference `analysis_indices/conf_space.png` formatting:
 
-Produces a single overlay plot: the NS weighted-histogram g(E) and the dataset
-KDE g(E), both in per-atom relative-energy units `(E - min)/n_atoms`, each
-referenced to its OWN minimum so the density SHAPES are compared on the same
-eV/atom axis.
+  [Configurational Space] | [dataset State Density] | [NS State Density]
 
-Dataset parameters: the KDE is built on ALL dataset structures (no energy
-filter); only the PLOT is clipped to the NS g(E) E-E_min max so both curves
-share the same eV/atom range. n_atoms 82 for boron.
+- Panel 1 (far left): Configurational Space — PCA scatter (Fingerprint PC1 vs
+  per-atom relative energy) of the dataset structures, like the reference
+  conf_space.png panel.
+- Panel 2 (middle): dataset State Density — gaussian KDE of the dataset DFT
+  energies (per-atom relative).
+- Panel 3 (far right): NS State Density — gaussian KDE of the NS sample energies
+  (per-atom relative). NS only (no GPR+LCB overlay).
 
-Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
+All three panels share the same energy (y) axis, e_limit 0->0.8 eV/atom (5 ticks),
+and the formatting matches the reference conf_space.png (serif, ticks-in, no grid,
+energy y-label '$E_{i}-E_{glob}$ (eV/atom)', state-density x-label
+'State Density (config./eV)', scatter x-label '$\\psi_{1d}(a.u.)$').
+
+Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
   /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
-      --run b11_boron_walk_emax04_exclworst_noxsf_novelty \
-      --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter20000 \
-      --n-atoms 82 --figsize 6 [--simple] \
+      --run b10_femgo_walk_emax04_exclworst_noxsf_novelty \
+      --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+      --n-atoms 75 [--e-max 0.8] [--simple] \
       --outname compare_state_density_gE.png
 """
 
 from __future__ import annotations
 
-__version__ = "1.9.0"
+__version__ = "2.0.0"
 
 import argparse
+import glob
 import os
 
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
 from scipy.stats import gaussian_kde
 
-import analyze_tfree_outputs as ato  # reuse load_samples + the NS g(E) recipe
+from agox.databases import Database
+from agox.models.descriptors.fingerprint import Fingerprint
+
+import analyze_tfree_outputs as ato  # reuse load_samples
 
 # --- Plotting style: same rcParams as run_analysis_indices.py (reference pipeline) ---
 plt.rcParams.update({
@@ -57,45 +67,54 @@ plt.rcParams.update({
     "figure.dpi": 300,
 })
 
-E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"   # matches run_analysis_indices.py
+E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"       # matches run_analysis_indices.py
 DENSITY_LABEL = "State Density (config./eV)"  # matches run_analysis_indices.py density axis
+SCATTER_LABEL = r"$\psi_{1d}(a.u.)$"           # matches run_analysis_indices.py scatter axis
+E_LIMIT = (0.0 - 0.1, 0.8, 5)                 # energy axis 0 -> 0.8 eV/atom, 5 ticks
 
 
-def load_dataset_energies(dataset_dir: str):
-    """Load + filter dataset DFT energies, mirroring main.py's load_all_seeds."""
-    import glob
-    from agox.databases import Database
+def load_dataset_structures(dataset_dir: str):
+    """Load structures + DFT energies from dataset/seed_*/1_db/db_*.db (mirrors main.py)."""
     db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
     if not db_paths:
         raise FileNotFoundError(f"No DBs matched in {dataset_dir}")
-    energies = []
+    structures, energies = [], []
     for p in db_paths:
         db = Database(filename=p)
         db.restore_to_memory()
         traj = db.restore_to_trajectory()
+        structures.extend(traj)
         energies.extend(a.get_potential_energy() for a in traj)
-    return np.asarray(energies, dtype=float)
+    return structures, np.asarray(energies, dtype=float)
+
+
+def fit_pca(structures):
+    """PC1 of the AGOX Fingerprint descriptors (structural landscape axis)."""
+    fp = Fingerprint.from_atoms(structures[0])
+    data = np.array([fp.create_features(s).flatten() for s in structures])
+    Xc = data - np.mean(data, axis=0)
+    cov = np.cov(Xc, rowvar=False)
+    evals, evecs = np.linalg.eigh(cov)
+    order = np.argsort(evals)[::-1]
+    return Xc @ evecs[:, order[0]], fp
 
 
 def main():
-    p = argparse.ArgumentParser(description="Overlay NS g(E) with dataset-KDE g(E)")
+    p = argparse.ArgumentParser(
+        description="3-panel figure: Config Space | dataset State Density | NS State Density")
     p.add_argument("--run", required=True,
-                   help="b11 run dir name under _analysist/ (contains dataset/ and the "
+                   help="run dir name under _analysist/ (contains dataset/ and the "
                         "analysis_<ns_output> dir)")
     p.add_argument("--ns-output", required=True,
-                   help="analysis_<ns_output_name> dir name (the one holding samples.csv "
-                        "under the run's ns_output dir and state_density_gE.png)")
+                   help="analysis_<ns_output_name> dir name (holds the ns_output samples.csv "
+                        "and receives the output PNG)")
     p.add_argument("--n-atoms", type=int, default=82,
-                   help="atoms per structure (boron Fe25Mg25O25B7 = 82). Default 82.")
-    p.add_argument("--figsize", type=float, default=6,
-                   help="figure size in inches (square: width=height=this value). "
-                        "Default 6.")
+                   help="atoms per structure (boron = 82, Fe/MgO = 75). Default 82.")
+    p.add_argument("--e-max", type=float, default=0.8,
+                   help="max E - E_glob (eV/atom) for the shared energy y-axis. Default 0.8 "
+                        "(matches the reference conf_space.png).")
     p.add_argument("--simple", action="store_true",
-                   help="simplified version: no title; legend uses short labels "
-                        "'GPR+LCB g(E)' and 'NS g(E)' only.")
-    p.add_argument("--e-max-rel", type=float, default=None,
-                   help="max E - E_min (eV/atom) for the plot x-axis cap. "
-                        "Default None = use the NS g(E) max (E_rel_ns.max()).")
+                   help="simplified version: no title; short legend labels.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     args = p.parse_args()
@@ -103,9 +122,8 @@ def main():
     _HERE = os.path.dirname(os.path.abspath(__file__))
     run_dir = os.path.join(_HERE, args.run)
     dataset_dir = os.path.join(run_dir, "dataset")
-    out_dir = os.path.join(run_dir, args.ns_output)          # analysis dir (writes PNG here)
-    # samples.csv lives in the ns_output dir: the analysis dir name is "analysis_<ns_output_name>",
-    # so the ns_output dir is the same name minus the leading "analysis_" prefix.
+    out_dir = os.path.join(run_dir, args.ns_output)   # analysis dir (writes PNG here)
+    # samples.csv lives in the ns_output dir: analysis_<name> -> <name>
     ns_name = args.ns_output
     if ns_name.startswith("analysis_"):
         ns_name = ns_name[len("analysis_"):]
@@ -113,72 +131,83 @@ def main():
     if not os.path.isdir(ns_dir):
         raise FileNotFoundError(f"ns_output dir not found: {ns_dir}")
 
-    # --- NS weighted-histogram g(E) (exact recipe from state_density_gE.png) ---
+    # --- NS sample energies (per-atom relative) ---
     iters, Es, Ws = ato.load_samples(os.path.join(ns_dir, "samples.csv"))
-    rel_min = Es.min()
-    E_rel_ns = (Es - rel_min) / args.n_atoms
-    n_bins = 50
-    hist_g, edges_g = np.histogram(E_rel_ns, bins=n_bins, weights=Ws)
-    centers_ns = 0.5 * (edges_g[:-1] + edges_g[1:])
-    binw = edges_g[1] - edges_g[0]
-    g_ns_abs = hist_g / binw            # absolute config./eV
-    peak_ns = g_ns_abs.max()
-    g_ns = g_ns_abs / peak_ns           # peak-normalized (=1) for shape comparison
+    E_ref_ns = Es.min()
+    E_rel_ns = (Es - E_ref_ns) / args.n_atoms
+    print(f"  NS samples: {Es.size}, E range [{E_rel_ns.min():.4f}, {E_rel_ns.max():.4f}] eV/atom")
 
-    # --- dataset DFT energies (ALL structures, no energy filter) ---
-    energies = load_dataset_energies(dataset_dir)
-    print(f"  dataset: {energies.size} structures (all, unfiltered)")
+    # --- dataset structures + energies ---
+    structs, energies = load_dataset_structures(dataset_dir)
+    print(f"  dataset: {len(structs)} structures, {len(structs[0])} atoms each")
+    E_ref_ds = energies.min()
+    E_rel_ds = (energies - E_ref_ds) / args.n_atoms
 
-    # --- dataset KDE g(E), relative to its OWN minimum ---
-    E_rel_ds = (energies - energies.min()) / args.n_atoms
-    kde = gaussian_kde(E_rel_ds)
-    # KDE integrates to 1 (a normalized density); NS histogram integrates to
-    # sum(Ws) ~= 1 (the consumed prior volume).
-    # Plot x-range cap: --e-max-rel if given, else the NS g(E) E-E_min max, so both
-    # curves share the same max; the full-dataset KDE is only drawn up to it.
-    emax_plot = args.e_max_rel if args.e_max_rel is not None else E_rel_ns.max()
-    grid = np.linspace(0, emax_plot, 400)
-    g_ds_abs = kde(grid)
-    peak_ds = g_ds_abs.max()
-    g_ds = g_ds_abs / peak_ds           # peak-normalized (=1) for shape comparison
+    # PCA scatter (Configurational Space panel)
+    X_eigen, _ = fit_pca(structs)
 
-    # --- overlay plot (both peak-normalized to 1 so shapes are comparable) ---
-    # Axes transposed: energy on Y, state density on X (per request).
-    fig, ax = plt.subplots(figsize=(args.figsize, args.figsize))
-    if args.simple:
-        ns_label, ds_label = "NS g(E)", "GPR+LCB g(E)"
-    else:
-        ns_label = f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)"
-        ds_label = f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)"
-    # NS weighted histogram: bars spanning the density axis, with energy as the y-value.
-    # Use horizontal bars (barh): x = density (g_ns), y = energy (centers_ns).
-    ax.barh(centers_ns, g_ns, height=binw * 0.9, alpha=0.5, label=ns_label)
-    # KDE curve: x = density (g_ds), y = energy (grid).
-    ax.plot(g_ds, grid, "r-", lw=2, label=ds_label)
-    ax.set_ylabel(E_LABEL)                       # energy on Y
-    ax.set_xlabel(DENSITY_LABEL)                 # state density on X
+    # --- shared energy axis ---
+    min_e, max_e, nticks = E_LIMIT[0], args.e_max, E_LIMIT[2]
+    eticks = np.round(np.linspace(min_e, max_e, nticks), 1)
+    energy_grid = np.linspace(min_e, max_e, 200)
+
+    # --- dataset KDE and NS KDE (smooth, matching the reference density style) ---
+    ds_kde = gaussian_kde(E_rel_ds)
+    ds_density = ds_kde.evaluate(energy_grid)
+    ns_kde = gaussian_kde(E_rel_ns)
+    ns_density = ns_kde.evaluate(energy_grid)
+
+    # --- 3-panel figure, shared energy y-axis, formatted like reference conf_space.png ---
+    # widths: scatter (1), dataset density (2.5), NS density (2.5); figsize proportional to (3,3).
+    ratios = [1, 2.5, 2.5]
+    fig, axes = plt.subplots(1, 3, figsize=(6, 3), sharey=True,
+                             gridspec_kw={'width_ratios': ratios})
+    fig.subplots_adjust(wspace=0.1)
+
+    # Panel 1 (far left): Configurational Space (PCA scatter of dataset)
+    ax_scat = axes[0]
+    ax_scat.scatter(X_eigen, E_rel_ds, c="white", s=5, edgecolors="black",
+                    linewidth=0.5, alpha=0.8, zorder=2)
+    ax_scat.set_xlabel(SCATTER_LABEL)
+    ax_scat.xaxis.set_minor_locator(AutoMinorLocator())
+    ax_scat.set_xlim(np.min(X_eigen) - 0.1, np.max(X_eigen) + 0.1)
+
+    # Panel 2 (middle): dataset State Density (KDE)
+    ax_ds = axes[1]
+    ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4)
+    ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
+    ax_ds.set_xlabel(DENSITY_LABEL)
+
+    # Panel 3 (far right): NS State Density (KDE, NS only)
+    ax_ns = axes[2]
+    ax_ns.plot(ns_density, energy_grid, color="tab:red", lw=0.9, zorder=4)
+    ax_ns.fill_betweenx(energy_grid, 0, ns_density, color="tab:red", alpha=0.12, zorder=3)
+    ax_ns.set_xlabel(DENSITY_LABEL)
     if not args.simple:
-        ax.set_title("State density shape: NS samples vs dataset (KDE)\npeak-normalized")
-    ax.set_xlim(0, 1.05)
-    ax.legend(fontsize=8)
-    fig.tight_layout()
+        ax_ns.set_title("NS State Density", fontsize=10)
+
+    # shared energy y-axis styling on the left panel
+    axes[0].set_ylabel(E_LABEL)
+    for ax in axes:
+        ax.set_ylim(min_e, max_e)
+        ax.set_yticks(eticks)
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
 
     out_path = os.path.join(out_dir, args.outname)
-    fig.savefig(out_path, dpi=300)
+    fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"  saved -> {out_path}")
 
     # --- printed summary ---
     print("=" * 60)
-    print("State-density comparison (peak-normalized)")
+    print("3-panel state-density comparison")
     print("=" * 60)
-    print(f"NS samples       : {Es.size} (prior-volume weighted)")
-    print(f"  g(E) peak at   : {centers_ns[np.argmax(g_ns_abs)]:.4f} eV/atom (abs g={peak_ns:.3f})")
-    print(f"Dataset (DFT)    : {energies.size} structures")
-    print(f"  KDE peak at    : {grid[np.argmax(g_ds_abs)]:.4f} eV/atom (abs g={peak_ds:.3f})")
+    print(f"NS samples       : {Es.size}")
+    print(f"  NS KDE peak at : {energy_grid[np.argmax(ns_density)]:.4f} eV/atom (abs g={ns_density.max():.3f})")
+    print(f"Dataset (DFT)    : {len(structs)} structures")
+    print(f"  DS KDE peak at : {energy_grid[np.argmax(ds_density)]:.4f} eV/atom (abs g={ds_density.max():.3f})")
     print(f"n_atoms          : {args.n_atoms}")
-    print(f"NS E range       : [{E_rel_ns.min():.4f}, {E_rel_ns.max():.4f}] eV/atom (rel. own min)")
-    print(f"DS E range       : [{E_rel_ds.min():.4f}, {E_rel_ds.max():.4f}] eV/atom (rel. own min)")
+    print(f"energy y-axis    : [{min_e:.2f}, {max_e:.2f}] eV/atom ({nticks} ticks)")
 
 
 if __name__ == "__main__":
