@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.5.2"
+__version__ = "1.5.3"
 
 import argparse
 import glob
@@ -191,9 +191,9 @@ def main():
         else:
             probs_plot = probs / probs.max()     # peak = 1
         max_display = max(max_display, probs_plot.max())
-        # legend label via the configurable template: {T}=temp, {ref}=[N] marker (or empty)
+        # legend label via the configurable template: {T}=bare temperature, {ref}=[N] marker (or empty)
         ref = CRITICAL_REF[T] if (args.annotate_critical and T in CRITICAL_REF) else ""
-        label = args.legend_label.format(T=f"{T} K", ref=ref)
+        label = args.legend_label.format(T=f"{T}", ref=ref)
         ax.plot(grid, probs_plot, color=colors[i % len(colors)],
                 lw=args.linewidth, label=label)
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")

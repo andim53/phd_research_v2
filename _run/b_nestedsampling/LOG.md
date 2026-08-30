@@ -4825,3 +4825,23 @@ legend label and temp as controllable flags; include the full command in the DIS
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: fix duplicated 'K' in legend labels
+
+**Problem:** The legend showed duplicated units (e.g. '100.0 K K [1]'). Root cause: the default
+--legend-label template was '{T} K {ref}' but {T} was substituted as f"{T} K", so the 'K' appeared
+twice.
+
+**Fix:**
+- Changed {T} substitution to the bare numeric value (f"{T}") so the template '{T} K {ref}'
+  renders '100.0 K [1]' (no duplication).
+- Bumped `__version__` 1.5.2 -> 1.5.3.
+- py_compile OK; re-ran for b10 iter20000; PNG regenerated (1200x1200).
+
+**Results:** Legend labels no longer duplicate the 'K' unit.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
