@@ -3408,3 +3408,25 @@ simplified version.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: add --e-max-rel flag (plot x-axis cap)
+
+**Goal (user-confirmed? — simple, low-stakes flag addition):** Add a `--e-max-rel` flag to control
+the max E - E_min (eV/atom) used as the plot x-axis cap. Re-run the simple figure at max 0.7 and
+figsize 4x4.
+
+**Actions taken:**
+- Added `--e-max-rel` (float, default None) — if set, the plot grid is capped at this value;
+  otherwise falls back to the NS g(E) E-E_min max.
+- Bumped `__version__` 1.6.0 -> 1.7.0 (API/behavior change -> minor).
+- Ran with `--simple --figsize 4 --e-max-rel 0.7`; wrote to `compare_state_density_gE_simple.png`.
+
+**Results:** `compare_state_density_gE_simple.png` now 1200x1200 px (4x4 in), x-axis capped at
+E-E_min = 0.7 eV/atom, no title, legend "NS g(E)" / "GPR+LCB g(E)". KDE peak in-window ~ +0.372
+eV/atom (abs g 1.277); NS g(E) peak unchanged at 0.341 eV/atom.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

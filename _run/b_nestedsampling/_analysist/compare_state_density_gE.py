@@ -24,7 +24,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.6.0"
+__version__ = "1.7.0"
 
 import argparse
 import os
@@ -70,6 +70,9 @@ def main():
     p.add_argument("--simple", action="store_true",
                    help="simplified version: no title; legend uses short labels "
                         "'GPR+LCB g(E)' and 'NS g(E)' only.")
+    p.add_argument("--e-max-rel", type=float, default=None,
+                   help="max E - E_min (eV/atom) for the plot x-axis cap. "
+                        "Default None = use the NS g(E) max (E_rel_ns.max()).")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     args = p.parse_args()
@@ -108,9 +111,10 @@ def main():
     kde = gaussian_kde(E_rel_ds)
     # KDE integrates to 1 (a normalized density); NS histogram integrates to
     # sum(Ws) ~= 1 (the consumed prior volume).
-    # Plot x-range is capped at the NS g(E) E-E_min max so both curves share the
-    # same max; the full-dataset KDE (which may extend further) is only drawn up to it.
-    grid = np.linspace(0, E_rel_ns.max(), 400)
+    # Plot x-range cap: --e-max-rel if given, else the NS g(E) E-E_min max, so both
+    # curves share the same max; the full-dataset KDE is only drawn up to it.
+    emax_plot = args.e_max_rel if args.e_max_rel is not None else E_rel_ns.max()
+    grid = np.linspace(0, emax_plot, 400)
     g_ds_abs = kde(grid)
     peak_ds = g_ds_abs.max()
     g_ds = g_ds_abs / peak_ds           # peak-normalized (=1) for shape comparison
