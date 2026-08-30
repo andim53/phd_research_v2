@@ -4340,3 +4340,28 @@ on the state density g(E). Embed the figure; use real numbers.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — b10 iter20000 DISCUSSION.md: probability-density write-up (5c)
+
+**Goal (user-confirmed via clarify):** Add a dedicated section to the b10 iter20000 DISCUSSION.md
+explaining the binding_probability_vs_temperature.png figure: what a probability density is, why
+Area = 1, and why values exceed 1.
+
+**Clarify decisions (all user-confirmed):**
+1. New dedicated section '5c. Discussion: Probability Density, Area = 1, and values > 1'.
+2. Embed the binding_probability_vs_temperature.png figure reference.
+3. Conceptual/educational tone grounded in this run's values (peaks ~10-13).
+
+**Actions taken:**
+- Added section 5c to DISCUSSION.md explaining: probability vs probability density (units 1/energy,
+  can exceed 1), why area is normalized to 1 (total probability), and why the narrow NS distributions
+  produce peaks ~10-13 (p_max ~ 1/sigma), requiring the auto-scaled y-axis.
+
+**Results:** DISCUSSION.md now documents the probability-density concepts behind the
+binding_probability_vs_temperature.png figure.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

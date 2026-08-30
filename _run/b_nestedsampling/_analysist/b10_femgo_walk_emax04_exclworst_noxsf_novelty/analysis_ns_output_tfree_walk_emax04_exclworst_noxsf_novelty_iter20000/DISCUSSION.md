@@ -250,6 +250,69 @@ behaviour of the NS weighted ensemble.
 
 ---
 
+## 5c. Discussion: Probability Density, why Area = 1, and why values exceed 1
+
+The `binding_probability_vs_temperature.png` figure (above, or as regenerated with
+`--area-norm`) plots what is formally a **probability density**, not a probability. Understanding
+that distinction is the key to the whole figure.
+
+### What a Probability Density is
+
+A **probability** `P(A)` is a number between 0 and 1 that answers "what fraction of the total
+probability lies in region A?". A **probability density** `p(E)` answers a different question:
+"how concentrated is the probability per unit of the variable `E`?" It is defined so that the
+probability of a small energy interval `[E, E+dE]` is
+
+```
+P(E in [E, E+dE]) = p(E) · dE
+```
+
+So `p(E)` has **units of 1/energy** (here 1/(eV/atom)). It can be *any* non-negative value,
+including values much larger than 1 — only its integral (the area under the curve) is a
+probability and therefore lies between 0 and 1 (or is normalized to 1).
+
+A probability (mass) is like "how much water is in a bucket"; a probability density is like "how
+deep the water is at a point". A bucket can hold at most its volume (≤ 1), but the water *depth*
+at one spot can be any number — a narrow bucket can be very deep even though it holds little
+water. The same idea applies here: a narrow distribution can have a very tall peak.
+
+### Why Area = 1
+
+"Area = 1" means we have normalized the density so that the **total probability over the whole
+energy range is exactly 1**:
+
+```
+∫ p(E) dE = 1
+```
+
+This is the requirement that *every* configuration is somewhere: the probability of finding the
+system at *any* energy must sum to 1. In the code, `P(E,T) = g(E)·exp(−β(E−E_ref))/Z(T)` is
+already normalized so `Σ_E P = 1` (it is divided by the partition function `Z(T)`). The extra
+"area = 1" step (the `--area-norm` flag, using the trapezoidal rule `area = trapezoid(probs, grid);
+probs /= area`) converts the discrete sum into a continuous integral normalization, so the
+plotted curve satisfies `∫ p(E) dE = 1` exactly. This is what makes it a genuine probability
+*density* rather than an arbitrary bell curve, and it is what allows different temperatures to be
+compared on the same footing.
+
+### Why the peak value is above 1
+
+Because `p(E)` is a density, its peak height is set by the **width** of the distribution, not by
+the total probability. For a distribution with unit area and characteristic width `σ`, the peak
+is roughly `p_max ≈ 1/σ`. In this run the temperature-free NS distributions are **narrow**
+(energy spread only a fraction of an eV/atom), so the unit-area density peaks reach values of
+**~10–13** (e.g. 100 K ≈ 13.2, 1000 K ≈ 12.5) — i.e. the probability is concentrated into a
+narrow energy window, so the density there is high. This is exactly the expected behaviour: the
+NS weighted ensemble occupies only a small band of configurations, so its probability density is
+locally large even though its total integral is 1.
+
+**Summary:** the curve height is *not* a probability (it is not "chance = 13"), it is a
+density ("chance per unit energy = 13"). The area under each curve is 1 (total probability), and
+the peak exceeds 1 simply because the distribution is narrow. This is why the y-axis in the
+`--area-norm` figure must auto-scale (it goes up to ~13.9) — the 0–1 scale would otherwise clip
+the curves.
+
+---
+
 ## 6. Cumulative weighted evidence (sanity check)
 
 `sum(w_i) = 1.000000` over the 20000 discarded samples (`samples_cumulative_Z.png`).
