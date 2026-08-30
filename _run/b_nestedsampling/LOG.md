@@ -3801,3 +3801,34 @@ Data unchanged (NS peak 0.306, dataset KDE peak 0.076 eV/atom).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_conf_space_deltaz.py: match reference state-density energy scale/axis
+
+**Goal (user-confirmed via clarify):** In `plot_conf_space_deltaz.py`, make the state-density
+panel use the same energy scale, thickness, and axis as the reference
+`b10_.../analysis_indices/conf_space.png` (produced by run_analysis_indices.py with --e-max 0.8).
+
+**Clarify decisions (all user-confirmed):**
+1. Match the reference density panel: energy axis e_limit (0->0.8 eV/atom, 5 ticks),
+   dens_line_weight, and the reference labels ($E_{i}-E_{glob}$ y-axis + State Density x-axis).
+2. Hardcode e_limit = (0.0-0.1, 0.8, 5) in plot_conf_space_deltaz.py (matching the b10
+   analysis_indices run's --e-max 0.8).
+
+**Actions taken:**
+- Changed `plot_conf_space_deltaz.py` e_limit from data-derived (e_max+0.1) to
+  `(0.0 - 0.1, 0.8, 5)`, matching the reference conf_space.png energy axis.
+- Verified dens_line_weight=0.9 and density_x_label="State Density\n(config./eV)" already match
+  the reference (no change needed); the y-axis label is set by plot_structure_landscape to
+  `$E_{i}-E_{glob}$ (eV/atom)` automatically.
+- Bumped `__version__` 1.0.0 -> 1.1.0 (behavior change -> minor).
+- py_compile OK. Test-ran on b6 posterior_T300 (1100 xsf) to /tmp -> conf_space_deltaz.png
+  produced successfully (b10 has no posterior xsf due to --no-posterior-xsf); temp cleaned.
+
+**Results:** The deltaz state-density panel now uses the same 0->0.8 eV/atom energy axis (5 ticks)
+as the reference conf_space.png. Density line thickness (0.9) and labels already matched.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
