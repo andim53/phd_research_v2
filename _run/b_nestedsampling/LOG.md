@@ -4397,3 +4397,26 @@ spike' not supported).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Revise b10 diagnosis sections to Fortran terminology + relative eV/atom
+
+**Goal (user-confirmed? — simple edit of the just-written diagnosis):** Edit the diagnosis
+sections in README.md and the b10 iter20000 DISCUSSION.md to use the terminology from the Fortran
+reference `_tmp/nested_sampling_windowed_fixed.f` (dead_E, dead_X, idx_worst, constrained_walk,
+E_max_local, shell weight dX, island/flat basin) and to express energies as relative eV/atom.
+
+**Actions taken:**
+- README.md "## Diagnosis: discarded-energy trajectory (b10 iter20000)": added the Fortran
+  terminology (idx_worst=maxloc(walkers_E), dead_X(iter)=(K/(K+1))^iter, constrained_walk capped
+  at E_max_local=dead_E) and converted all energies to relative eV/atom (E-E_min)/N with
+  E_min=-436.888 eV, N=75 (E[0]~+0.396 eV/atom; island min=0; band ~+0.04..+0.23 eV/atom;
+  weighted mean ~+0.312 eV/atom); shell weight dX = dead_X(i-1)-dead_X(i).
+- DISCUSSION.md "## 7b": applied the same Fortran terminology + relative eV/atom changes.
+
+**Results:** Both diagnosis sections now use Fortran vocabulary and relative eV/atom units.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
