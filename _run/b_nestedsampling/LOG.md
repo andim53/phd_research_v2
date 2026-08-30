@@ -3152,3 +3152,42 @@ Code + docs tracked; DBs/xsf/png/outputs gitignored.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — tfree analysis of all 4 b11 (boron) ns_outputs (iter1000/5000/10000/20000)
+
+**Goal (user-confirmed via clarify):** Perform the tfree analysis for all ns_outputs of
+`_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/` (the boron iteration sweep).
+
+**Clarify decisions (all user-confirmed):**
+1. Analyze all FOUR ns_outputs (iter1000, iter5000, iter10000, iter20000), each into
+   `<run_dir>/analysis_<ns_output_name>/`.
+2. Use `--n-atoms 82` (boron = Fe25Mg25O25B7, 82 atoms) so per-atom relative energies are correct.
+3. Per-output output set = b9/b10-style: `analyze_tfree_outputs.py` (9 PNGs) + DISCUSSION.md,
+   SKIP `conf_space_deltaz.png` (b11 also `--no-posterior-xsf`, no xsf).
+4. Commit trackable parts (LOG.md + the DISCUSSION.md files); PNGs gitignored.
+
+**Actions taken:**
+- Ran `analyze_tfree_outputs.py --data <run>/ns_output_..._boron_iter{1000,5000,10000,20000}
+  --outdir <run>/analysis_..._boron_iter{...} --n-atoms 82` for all four.
+- Wrote a DISCUSSION.md per output with the required "Analysis reproduction (command used)"
+  block + real numbers.
+
+**Results (key finding: iter1000 is NOT converged; 5000+ are):**
+- iter1000: 1000 samples; discarded E -464.33..-448.84 (weighted mean -453.22); live set
+  STILL SPREAD -481.63..-464.33 (did not descend to minimum); logZ -27.94 -> -15.94;
+  g(E) peak ~ +0.168 eV/atom; sum(w)=0.99995. **Incomplete run** - evidence underestimated.
+- iter5000: 5000 samples; discarded E -481.65..-448.84 (mean -453.22); live set TIGHT
+  -481.74..-480.61 (converged to minimum); logZ -52.82 -> -38.81; g(E) peak ~ +0.340; sum(w)=1.0.
+- iter10000: 10000 samples; live set -481.74..-477.83; logZ -53.38 -> -38.81; g(E) peak ~ +0.340;
+  sum(w)=1.0. (Matches iter5000, converged.)
+- iter20000: 20000 samples; live set -481.75..-477.70; logZ -53.38 -> -38.81; g(E) peak ~ +0.341;
+  sum(w)=1.0. (Matches iter5000, converged.)
+- KEY: unlike b10 (Fe/MgO, converged at 5000), b11 boron needs >1000 iterations. At 5000 the
+  evidence has fully converged (logZ -52.8 -> -38.8, live set at minimum); iter1000 is incomplete
+  (logZ -27.9 -> -15.9, live set still high).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
