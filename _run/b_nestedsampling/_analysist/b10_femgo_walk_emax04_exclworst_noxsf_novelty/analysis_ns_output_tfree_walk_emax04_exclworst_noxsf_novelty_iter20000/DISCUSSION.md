@@ -463,4 +463,42 @@ alone ([digital.csic](https://digital.csic.es/bitstream/10261/127277/1/Enhanced%
 - **Fe₃O₄/MgO/CoFeB MTJs:** strong temperature-dependent TMR over ~473–673 K. [aip](https://aip.scitation.org/doi/pdf/10.1063/1.4917018)
 - **Capping-layer effects (Pt-capped):** annealing T giving max TMR depends on capping layer (~623 K for Pt). [pmc](https://pmc.ncbi.nlm.nih.gov/articles/PMC10534786/)
 
-**Relevance to this analysis:** the NS `binding_probability_vs_temperature.png` (plotted at 100/300/500/1000 K, and now area-normalized) shows how the sampled configurational ensemble re-weights with temperature. It is the *thermodynamic* counterpart to these *fabrication* temperatures: the physically relevant annealing/process temperatures above (≈298–773 K) fall inside the 100–1000 K range used here, so the thermodynamic weights at 298/473/573/623/673 K can be read directly off the curve to guide which structure types dominate at each practical processing temperature.
+**Relevance to this analysis:** the NS `binding_probability_vs_temperature.png` (now plotted at the
+critical fabrication temperatures 298/373/473/573/623/673/773 K, area-normalized, with [N]
+reference markers on each curve) shows how the sampled configurational ensemble re-weights with
+temperature. It is the *thermodynamic* counterpart to these *fabrication* temperatures: the
+thermodynamic weight at each critical temperature can be read directly off the curve to guide
+which structure types dominate at each practical processing temperature.
+
+### References (critical-temperature [N] markers on the plot)
+
+- **[1] Scheike, T., Xiang, Q., Wen, Z., Sukegawa, H., Ohkubo, T., Hono, K., and Mitani, S.,
+  2022, Appl. Phys. Lett. 120, 032404.** *Exceeding 400% tunnel magnetoresistance at room
+  temperature in epitaxial Fe/MgO/Fe(001) spin-valve-type magnetic tunnel junctions.* (298 K —
+  Fe/FeCo deposition, no intentional heating.)
+- **[2] Recommended screening condition (no specific paper):** mildly heated Fe/FeCo deposition
+  at ≈373 K for crystalline Fe-rich FeCo/MgO; optimum is stack-dependent (verify with AFM,
+  XRD/RHEED, XRR).
+- **[3] Recommended screening condition (no specific paper):** moderately heated Fe/FeCo
+  deposition at ≈473 K as an upper screening point (watch for grain coarsening / islanding /
+  interface intermixing).
+- **[4] Marnitz, L., et al., 2015, AIP Advances 5, 047103.** *Sign change in the tunnel
+  magnetoresistance of Fe₃O₄/MgO/Co-Fe-B magnetic tunnel junctions depending on the annealing
+  temperature and the interface treatment.* (473–573 K — low-to-moderate CoFeB/MgO annealing.)
+- **[5] Kim, G., et al., 2023, Nanomaterials 13, 2591.** *The influence of capping layers on
+  tunneling magnetoresistance and microstructure in CoFeB/MgO/CoFeB magnetic tunnel junctions
+  upon annealing.* (623 K — common CoFeB/MgO optimization point; Pt-capped max TMR ≈ 350 °C.)
+- **[6] Lv, W., Fidalgo, C., Cardoso, S., and Freitas, P. P., 2019, J. Magn. Magn. Mater. 478,
+  178.** *The annealing effect on memory state stability and interlayer coupling in perpendicular
+  magnetic tunnel junctions with ultrathin MgO barrier.* (573–673 K — standard CoFeB/MgO
+  crystallization; 673 K high annealing limit.)
+- **[7] Narayananellore, S. K., Doko, N., Matsuo, N., Saito, H., and Yuasa, S., 2017, Sensors 17,
+  2424.** *Effect of MgO underlying layer on the growth of GaOx tunnel barrier in epitaxial
+  Fe/GaOx/(MgO)/Fe magnetic tunnel junction structure.* (up to ≈773 K — in situ barrier
+  crystallization / oxidation treatment.)
+
+Additional supporting references cited in the temperature table:
+- **Epitaxial Fe/MgO/Fe(001) monoatomic interface roughness:** Duluard, A., et al., 2015,
+  Phys. Rev. B 91, 174403. *Enhanced magnetoresistance by monoatomic roughness in epitaxial
+  Fe/MgO/Fe tunnel junctions.* (MgO deposition near RT, interface-step / TMR.)
+- **Perpendicular CoFeB/MgO/CoFeB pMTJ annealing degradation:** refer to [6] (PMC5304246).

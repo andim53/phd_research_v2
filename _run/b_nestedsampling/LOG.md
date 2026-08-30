@@ -4736,3 +4736,36 @@ temperature list.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — critical temperatures + [N] annotations on Boltzmann plot + references
+
+**Goal (user-confirmed via clarify; last clarify timed out -> used recommended defaults):**
+Update the b10 iter20000 binding_probability_vs_temperature.png to use the critical
+temperatures from DISCUSSION.md section 9 (298/373/473/573/623/673/773 K) with [N] reference
+markers, and add the paper references to the DISCUSSION.md in the '[N] Authors, Year, Journal
+Vol, page.' format.
+
+**Decisions (recommended defaults, clarify timed out):**
+1. Plot all 7 critical temps as the temperature curves.
+2. Add a --annotate-critical flag that annotates each curve with its [N] marker.
+3. Add a numbered 'References' list to the DISCUSSION.md; 373/473 K marked as 'recommended
+   screening, no specific paper'.
+
+**Actions taken:**
+- plot_ns_boltzmann_prob.py v1.5.0: added CRITICAL_REF map (298->[1] Scheike 2022, 373->[2]
+  screening, 473->[3] screening, 573->[4] Marnitz 2015, 623->[5] Kim 2023, 673->[6] Lv 2019,
+  773->[7] Narayananellore 2017) and --annotate-critical annotation at each curve peak.
+- Re-ran with --temperatures 298 373 473 573 623 673 773 --annotate-critical --area-norm
+  --linewidth 3 --figsize 4 --legend-loc "upper left"; PNG regenerated (1200x1200).
+- DISCUSSION.md: updated section 9 relevance + added 'References (critical-temperature [N]
+  markers)' list with formatted [N] citations + supporting Duluard 2015 PRB reference.
+- py_compile OK.
+
+**Results:** The Boltzmann plot now uses the 7 critical temperatures with [N] markers; the
+DISCUSSION.md has a formatted reference list.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

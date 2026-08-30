@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.4.2"
+__version__ = "1.5.0"
 
 import argparse
 import glob
@@ -118,7 +118,22 @@ def main():
     p.add_argument("--legend-loc", default="upper right",
                    help="legend location (matplotlib loc string, e.g. 'upper left'). "
                         "Default 'upper right'.")
+    p.add_argument("--annotate-critical", action="store_true",
+                   help="annotate each temperature curve with its [N] reference marker "
+                        "(critical fabrication temperatures).")
     args = p.parse_args()
+
+    # --- [N] reference map for the critical fabrication temperatures (from the
+    # b10 iter20000 DISCUSSION.md section 9 temperature discussion) ---
+    CRITICAL_REF = {
+        298.0: "[1]",    # Fe/FeCo deposition, no heating (Scheike 2022)
+        373.0: "[2]",    # Mildly heated Fe/FeCo deposition (recommended screening)
+        473.0: "[3]",    # Moderately heated Fe/FeCo deposition (recommended screening)
+        573.0: "[4]",    # CoFeB/MgO annealing 473-573 K (Marnitz 2015)
+        623.0: "[5]",    # CoFeB/MgO optimization point (Kim 2023)
+        673.0: "[6]",    # CoFeB/MgO annealing limit (Lv 2019)
+        773.0: "[7]",    # In situ barrier crystallization / oxidation (Narayananellore 2017)
+    }
 
     # --- load NS samples (energy_eV + prior_weight) ---
     iters, Es, Ws = ato.load_samples(os.path.join(args.ns_output, "samples.csv"))
@@ -174,6 +189,12 @@ def main():
         max_display = max(max_display, probs_plot.max())
         ax.plot(grid, probs_plot, color=colors[i % len(colors)],
                 lw=args.linewidth, label=f"{T} K")
+        # annotate critical temperatures with their [N] reference marker at the curve peak
+        if args.annotate_critical and T in CRITICAL_REF:
+            pmax = int(np.argmax(probs_plot))
+            ax.annotate(CRITICAL_REF[T], (grid[pmax], probs_plot[pmax]),
+                        textcoords="offset points", xytext=(6, 6), fontsize=8,
+                        color=colors[i % len(colors)], fontweight="bold")
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
 
     # dashed vertical lines at the flat/island energies (black, white outline)
