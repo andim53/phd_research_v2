@@ -4692,3 +4692,23 @@ white-outlined legend text.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: re-run with --area-norm (area=1 normalization)
+
+**Goal (user-confirmed? — simple re-run with the existing flag):** Regenerate the b10 iter20000
+binding_probability_vs_temperature.png using the area-normalization (integral = 1), like
+Making_Prob_area_norm.py.
+
+**Actions taken:**
+- Re-ran plot_ns_boltzmann_prob.py with --area-norm (kept --linewidth 3 --figsize 4
+  --temperatures 100 300 500 1000 --legend-loc "upper left").
+- PNG regenerated (1200x1200).
+
+**Results:** The binding_probability_vs_temperature.png is now the area-normalized
+(Probability Density, Area = 1) version.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
