@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.3.0"
+__version__ = "2.4.0"
 
 import argparse
 import glob
@@ -157,7 +157,7 @@ def main():
     eticks = np.round(np.linspace(min_e, max_e, nticks), 1)
     energy_grid = np.linspace(min_e, max_e, 200)
 
-    # --- dataset KDE (GPR+LCB panel; smooth) and NS weighted histogram ---
+    # --- dataset KDE (GPR+LCB panel; smooth) and NS weighted histogram + KDE ---
     ds_kde = gaussian_kde(E_rel_ds)
     ds_density = ds_kde.evaluate(energy_grid)
     # NS state density = prior-weight-weighted histogram of the ns_output samples.csv
@@ -166,7 +166,10 @@ def main():
     ns_hist, ns_edges = np.histogram(E_rel_ns, bins=n_bins_ns, weights=Ws)
     ns_centers = 0.5 * (ns_edges[:-1] + ns_edges[1:])
     ns_binw = ns_edges[1] - ns_edges[0]
-    ns_density = ns_hist / ns_binw  # config./eV
+    ns_density = ns_hist / ns_binw  # config./eV (histogram)
+    # KDE smoothing of the same NS energies, weighted by prior_weight.
+    ns_kde = gaussian_kde(E_rel_ns, weights=Ws)
+    ns_kde_density = ns_kde.evaluate(energy_grid)
 
     # --- 3-panel figure, shared energy y-axis, formatted like reference conf_space.png ---
     # widths: PCA (Configurational Space) LARGE, both State Density panels THINNER
@@ -192,10 +195,11 @@ def main():
     ax_ds.set_xlabel(DENSITY_LABEL)
 
     # Panel 3 (far right): NS State Density — prior-weight-weighted histogram (barh,
-    # x = density, y = energy), NS only.
+    # x = density, y = energy) with KDE smoothing overlaid, NS only.
     ax_ns = axes[2]
     ax_ns.barh(ns_centers, ns_density, height=ns_binw * 0.9, color="tab:red",
-               alpha=0.6, label="NS")
+               alpha=0.35, label="NS")
+    ax_ns.plot(ns_kde_density, energy_grid, color="tab:red", lw=1.5, zorder=4)
     ax_ns.set_xlabel(DENSITY_LABEL)
     # no titles (all panels titleless); single shared legend (GPR+LCB = left/middle, NS = right)
     fig.legend(loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False, fontsize=9)

@@ -3954,3 +3954,32 @@ KDE (peak ~ +0.076 eV/atom). Data source: ns_output samples.csv (no xsf — b10 
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: add KDE smoothing to NS State Density histogram
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`, add KDE smoothing to the
+NS State Density histogram.
+
+**Clarify decisions (all user-confirmed):**
+1. Show BOTH on the NS panel: the prior-weight-weighted histogram (bars) AND a KDE-smoothed curve
+   overlaid (from the same samples.csv energies).
+2. Weighted KDE using the samples.csv prior_weight (respects NS prior-volume weighting).
+3. Histogram bars (alpha) + overlaid KDE curve, both labeled 'NS'.
+
+**Actions taken:**
+- Added a prior-weight-weighted `gaussian_kde(E_rel_ns, weights=Ws)` and evaluated it on the
+  energy grid.
+- Overlaid the KDE curve (tab:red, lw 1.5) on top of the NS histogram bars (bars alpha lowered
+  to 0.35).
+- Bumped `__version__` 2.3.0 -> 2.4.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2052x887).
+
+**Results:** The NS State Density panel now shows the prior-weight-weighted histogram bars with a
+KDE-smoothed curve overlaid (both weighted by prior_weight). Histogram peak ~ +0.306 eV/atom,
+dataset KDE peak ~ +0.076 eV/atom.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
