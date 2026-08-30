@@ -3501,3 +3501,37 @@ DBs/xsf/png/outputs gitignored.
 **Open items:** None (launch on HPC via pjsub when ready).
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Create run dir b13 (GPR accuracy on boron3 dataset, b3 params)
+
+**Goal (user-confirmed via clarify):** Create a new `_runs` dir starting with **b13** that runs
+the GPR-accuracy analysis like `_runs/b3_gpr_accuracy_boron_cv50`, but on the new
+`dataset_boron3` dataset, using the same parameters as b3.
+
+**Clarify decisions (all user-confirmed):**
+1. Parameters: exactly b3's — `--cv --cv-folds 50 --fez --uncertainty --bin-width 0.1
+   --e-max-per-atom 0.67 --output ./out_fez`.
+2. Run dir name: `b13_gpr_accuracy_boron3_cv50`.
+3. Code: copy project-root `gpr_accuracy.py` v1.5.1 (same version as b3) + dataset_boron3 as
+   `dataset/` (excluding the empty seed_6).
+4. Outputs: same as b3 (Fe_z system + energy range, out_fez/).
+
+**Actions taken:**
+- Copied b3 run dir as base; removed b3 job script + .out + pycache.
+- Replaced dataset with `dataset_boron3` (6 non-empty seeds; seed_6 empty/excluded); removed the
+  embedded `.git` from `dataset/scripts` (avoids the gitlink issue seen in b12).
+- Wrote `j_b13_gpr_accuracy_boron3_cv50.sh` (24 cores, gpaw_env, `--e-max-per-atom 0.67`).
+- Rewrote README.md, TUTORIAL.md, DISCUSSION.md for the boron3 system (DISCUSSION scaffolded
+  pending the actual run results).
+- Verified: 6 seeds / 597 structures / 78 atoms (B3Fe25Mg25O25); `--e-max-per-atom 0.67` keeps
+  568/597; gpr_accuracy.py v1.5.1; py_compile OK; no stale b3 refs; no pycache.
+
+**Results:** `_runs/b13_gpr_accuracy_boron3_cv50/` created (job script + README + TUTORIAL +
+DISCUSSION + gpr_accuracy.py v1.5.1 + dataset). Results pending the HPC run.
+
+**Open items:** Run `j_b13_...sh` on HPC (or local at reduced folds) to produce out_fez/ results,
+then fill in DISCUSSION.md.
+
+**Time:** 2026-08-30 (JST).
