@@ -35,6 +35,7 @@ Versioning rules:
 | `scripts/add_adsorbate_to_hollows.py` | 1.0.0 |
 | `scripts/global_permutation_generator.py` | 1.0.0 |
 | `_analysist/run_analysis_indices.py` | 2.0.0 |
+| `_analysist/run_analysis_a_runs.py` | 1.0.0 |
 | `_analysist/scripts/calculate_relative_energy.py` | 1.0.0 |
 | `_analysist/scripts/plot_structure_landscape.py` | 1.0.0 |
 | `_analysist/scripts/process_database.py` | 1.0.0 |

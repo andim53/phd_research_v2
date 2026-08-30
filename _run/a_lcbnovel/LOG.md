@@ -1392,3 +1392,50 @@ instead of the `FOLDER_MAP` + `process_database` Stage-1 flow.
 
 ### Time
 ~30 min.
+
+## 2026-08-31 — Session: Add single-seed analyzer run_analysis_a_runs.py for the a-runs
+
+### Goal (user request, confirmed via clarify)
+Make a new analysis code like `_analysist/run_analysis_indices.py` but tailored to
+analyze the per-seed a-run outputs (e.g. `a1_mgofe_Seed3_Iter300/output`).
+
+### Clarify (confirmed)
+- **Purpose:** same 3-stage analysis (best-so-far progression / landscape / Boltzmann
+  P(T)) as a dedicated single-seed analyzer for the a-runs, taking `--dataset`
+  pointing at the run's `output/` dir.
+- **Scope:** just `a1_mgofe_Seed3_Iter300` for validation (single seed_3).
+- **Location/name:** `_analysist/run_analysis_a_runs.py` (alongside
+  run_analysis_indices.py).
+- **Deliverables:** full version/doc/verify/commit pass.
+
+### Actions taken
+1. Wrote `_analysist/run_analysis_a_runs.py` (v1.0.0), a sibling of the ported
+   multi-seed runner. Key difference: Stage 1 labels the curve with the actual seed
+   number (`Seed 3`, via `_seed_label_from_path`) and writes
+   `progression_seed_split_Seed3.png` (not positional `Seed 0`), while keeping the
+   same low-energy-window bullets + global ground-state .xsf export. Stages 2/3 are
+   identical to the reference. CLI: `--dataset --outdir --e-max --normalize-density
+   --start-iter`. Only `scripts/plot_structure_landscape.py` is imported.
+2. Updated `VERSIONS.md` (`_analysist/run_analysis_a_runs.py` 1.0.0).
+
+### Results
+- `py_compile` clean under the `agox_v2` env python.
+- Ran on **a1** (`--dataset a1_mgofe_Seed3_Iter300/output`): 291/300 structures /
+  75 atoms (iteration >= 10); wrote
+  `progression_plots/progression_seed_split_Seed3.png` + 5 xsf, `conf_space.png`,
+  `binding_probability_vs_temperature.png` under
+  `a1_mgofe_Seed3_Iter300/analysis_a_runs/`.
+
+### Decisions & reasoning
+- Reused the b_nestedsampling-ported loader/Stage-2/Stage-3 verbatim so figure
+  styling and semantics stay consistent across the project's analysis toolchain.
+- Made the new script generic via `--dataset` (it discovers whatever
+  `seed_*/1_db/db_*.db` it finds) but labels the progression by the real seed number
+  so single-seed a-runs read correctly.
+
+### Open items / next steps
+- (Optional) run a10 the same way (`--dataset a10_mgofeb_Seed3_Iter500/output`) if
+  its analysis is wanted; the script is reusable for any a-run.
+
+### Time
+~25 min.
