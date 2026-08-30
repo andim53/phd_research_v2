@@ -5277,3 +5277,34 @@ KDE-smoothed g(E) grid value below a threshold is turned into 0 before P(E,T) is
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (9) — b10 area-norm PNG regenerated with --gE-min 1.0 + DISCUSSION command update
+
+**Goal (user-confirmed via clarify):** Regenerate the b10 `binding_probability_vs_temperature.png`
+(area-norm) using its current full param set PLUS `--gE-min 1.0`, and add the full run parameters
++ python command to DISCUSSION.md.
+
+**Clarify decisions (all user-confirmed):**
+1. Regenerate with the current full param set: `--area-norm --annotate-critical --n-atoms 75
+   --linewidth 3 --figsize 4 --temperatures 100 298 573 623 673 773` PLUS `--gE-min 1.0`.
+2. Update the existing 'area-norm' regen command block in DISCUSSION.md to include `--gE-min
+   1.0`, and add the full command + parameter explanation.
+
+**Actions taken:**
+- Re-ran `plot_ns_boltzmann_prob.py` for b10 with the full param set + `--gE-min 1.0`
+  (`--area-norm --annotate-critical ... --gE-min 1.0`), writing to
+  `binding_probability_vs_temperature.png`.
+- Updated the DISCUSSION.md 'area-norm' command block: added `--gE-min 1.0` to the command and
+  the parameter explanation, plus a regeneration note.
+
+**Results (real output):**
+- `[--gE-min 1.0] zeroed 249/400 g(E) grid points below threshold`.
+- T=100 K max P ≈ 7.1e-2 (area-norm, masked); dataset KDE peaks [0.0766, 0.2508, 0.5103]
+  eV/atom (island 0.0766, flat 0.2508).
+- `binding_probability_vs_temperature.png` regenerated (1200x1200).
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).

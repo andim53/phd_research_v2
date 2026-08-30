@@ -531,7 +531,7 @@ Run from `_analysist/`:
     --n-atoms 75 --linewidth 3 --figsize 4 \
     --temperatures 100 298 573 623 673 773 \
     --legend-loc "upper left" --legend-label "{T} K {ref}" \
-    --area-norm --annotate-critical
+    --area-norm --gE-min 1.0 --annotate-critical
 ```
 
 Parameters: `--ns-output` = the run's temperature-free output dir (samples.csv); `--dataset` =
@@ -541,8 +541,15 @@ thickness; `--figsize 4` = 4×4 in square figure; `--temperatures 100 298 573 62
 = the 6 plotted temperatures (100 K without reference + the 5 critical fabrication temperatures);
 `--legend-loc "upper left"` = legend position; `--legend-label "{T} K {ref}"` = legend label
 format (appends the `[N]` reference marker for critical temperatures); `--area-norm` = normalize
-each curve so its area = 1 (Probability Density); `--annotate-critical` = append the `[N]`
+each curve so its area = 1 (Probability Density); `--gE-min 1.0` = zero out any KDE-smoothed
+state-density grid point below g(E) = 1.0 (turned into 0) BEFORE P(E,T) is computed — removes
+low-density outliers; `--annotate-critical` = append the `[N]`
 reference marker to the legend label of the critical temperatures.
+
+**Regeneration note (--gE-min):** with `--gE-min 1.0`, 249/400 g(E) grid points were zeroed
+(outliers below g=1 removed before P). The area-normalized curves therefore peak differently
+from the earlier no-mask version (e.g. T=100 K max P ≈ 7.1e-2 here vs the unmasked area-norm
+value).
 
 ### References (critical-temperature [N] markers on the plot)
 
