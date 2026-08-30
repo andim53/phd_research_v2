@@ -5100,3 +5100,31 @@ draw a thin black outline around the scatter markers.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (3) — compare_state_density_gE.py: b12 re-run with --flip-pca + --delta-z-lines
+
+**Goal (user-confirmed via clarify):** Regenerate the b12 `compare_state_density_gE.png` keeping
+all current parameters (`--max-delta-z 5.578`, `--scatter-edge`), and additionally flip the PCA
+x-axis (`--flip-pca`) and use the PCA-delta-Z-derived island/flat dashlines (`--delta-z-lines`).
+
+**Clarify decisions (all user-confirmed):**
+1. Keep ALL current params + add `--flip-pca` and `--delta-z-lines` (island/flat from the
+   actual PCA delta-Z data, not the fixed reference energies).
+2. Dashline mode = `--delta-z-lines` (island ~0.034, flat ~0.183 eV/atom for b12).
+
+**Actions taken:**
+- No code change needed (all flags already exist in v2.10.0).
+- Re-ran for b12 boron3 iter10000 with the full combined flag set:
+  `--n-atoms 78 --e-max 0.8 --max-delta-z 5.578 --scatter-edge --flip-pca --delta-z-lines`.
+
+**Results (real output):**
+- island = 0.034 eV/atom (mean dZ 3.847 A), flat = 0.183 eV/atom (#low-dZ 21, low-dZ thresh
+  1.283 A) from the PCA delta-Z data.
+- `compare_state_density_gE.png` regenerated (272120 bytes, 2064x852) with the flipped PCA,
+  delta-Z-derived dashlines, colorbar vmax 5.578, and scatter outline.
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
