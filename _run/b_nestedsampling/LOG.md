@@ -3983,3 +3983,34 @@ dataset KDE peak ~ +0.076 eV/atom.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: PCA delta-Z cbar (PuBu) + GPR+LCB peak/notes
+
+**Goal (user-confirmed via clarify):** Use `_analysist/codes` as a reference. For the PCA panel,
+color the scatter by delta Z (Fe island height) with a PuBu colorbar. For the GPR+LCB State
+Density panel, add dashed lines at the KDE peaks and notes 'flat' and 'island'.
+
+**Clarify decisions (all user-confirmed):**
+1. Compute delta Z per dataset structure (max Fe z - min Fe z, Angstrom), color PCA scatter with
+   cmap='PuBu', add a colorbar labeled '$\Delta z$ (Å)' with ticks (like 71_conf_space.py).
+2. Add dashed hlines at the GPR+LCB KDE peak(s) (red dashed), using scipy find_peaks (like
+   36_find_density_peak.py).
+3. Add text notes 'flat' (~0.255) and 'island' (~0.074 eV/atom) on the GPR+LCB panel.
+
+**Actions taken:**
+- Added `delta_z_fe()` helper (max Fe z - min Fe z) and `find_peaks` + `mcolors` imports.
+- Computed z_data (relative delta Z) for the dataset structures.
+- PCA scatter now colored by z_data with cmap='PuBu', a colorbar labeled '$\Delta z$ (Å)' with
+  5 ticks.
+- GPR+LCB panel: dashed hlines at KDE peaks (red), and 'flat'/'island' text notes.
+- Bumped `__version__` 2.4.0 -> 2.5.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2061x887).
+
+**Results:** The 3-panel figure now has a PuBu delta-Z colorbar on the PCA scatter and dashed
+peak lines + flat/island notes on the GPR+LCB State Density panel.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

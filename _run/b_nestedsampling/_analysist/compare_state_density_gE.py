@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.4.0"
+__version__ = "2.5.0"
 
 import argparse
 import glob
@@ -39,7 +39,9 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib import colors as mcolors
 from matplotlib.ticker import AutoMinorLocator
+from scipy.signal import find_peaks
 from scipy.stats import gaussian_kde
 
 from agox.databases import Database
@@ -105,6 +107,17 @@ def fit_pca(structures):
     return Xc @ evecs[:, order[0]], fp
 
 
+def delta_z_fe(atoms) -> float:
+    """Fe island height delta Z = max(Fe z) - min(Fe z), in Angstrom."""
+    pos = atoms.get_positions()
+    sym = atoms.get_chemical_symbols()
+    fe = [i for i, s in enumerate(sym) if s == "Fe"]
+    if not fe:
+        return np.nan
+    z = pos[fe, 2]
+    return float(z.max() - z.min())
+
+
 def main():
     p = argparse.ArgumentParser(
         description="3-panel figure: Config Space | dataset State Density | NS State Density")
@@ -151,6 +164,10 @@ def main():
 
     # PCA scatter (Configurational Space panel)
     X_eigen, _ = fit_pca(structs)
+    # delta Z (Fe island height) per dataset structure, for the scatter colorbar
+    z_data = np.array([delta_z_fe(s) for s in structs])
+    z_data = z_data - np.nanmin(z_data)   # relative delta Z (Angstrom)
+    print(f"  delta Z range: {np.nanmin(z_data):.3f} .. {np.nanmax(z_data):.3f} Angstrom")
 
     # --- shared energy axis ---
     min_e, max_e, nticks = E_LIMIT[0], args.e_max, E_LIMIT[2]
@@ -180,10 +197,17 @@ def main():
                              gridspec_kw={'width_ratios': ratios})
     fig.subplots_adjust(wspace=0.1)
 
-    # Panel 1 (far left): Configurational Space (PCA scatter of dataset)
+    # Panel 1 (far left): Configurational Space (PCA scatter of dataset), colored by
+    # delta Z (Fe island height) with a PuBu colorbar (like 71_conf_space.py).
     ax_scat = axes[0]
-    ax_scat.scatter(X_eigen, E_rel_ds, c="white", s=5, edgecolors="black",
-                    linewidth=0.5, alpha=0.8, zorder=2)
+    vmin, vmax = np.nanmin(z_data), np.nanmax(z_data)
+    sc = ax_scat.scatter(X_eigen, E_rel_ds, c=z_data, cmap="PuBu", s=5,
+                         norm=mcolors.Normalize(vmin=vmin, vmax=vmax),
+                         edgecolors="black", linewidth=0.5, alpha=0.8, zorder=2)
+    cbar = fig.colorbar(sc, ax=ax_scat, pad=0.02)
+    cbar.set_label(r"$\Delta z$ (Å)")
+    cbar.set_ticks(np.linspace(vmin, vmax, 5))
+    cbar.set_ticklabels([f"{t:.2f}" for t in np.linspace(vmin, vmax, 5)])
     ax_scat.set_xlabel(SCATTER_LABEL)
     ax_scat.xaxis.set_minor_locator(AutoMinorLocator())
     ax_scat.set_xlim(np.min(X_eigen) - 0.1, np.max(X_eigen) + 0.1)
@@ -192,6 +216,15 @@ def main():
     ax_ds = axes[1]
     ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4, label="GPR+LCB")
     ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
+    # dashed lines at the GPR+LCB KDE peak(s) (like 36_find_density_peak.py)
+    ds_peaks, _ = find_peaks(ds_density, prominence=np.max(ds_density) * 0.05)
+    for pk in ds_peaks:
+        ax_ds.hlines(energy_grid[pk], 0, ds_density[pk], colors="red",
+                     linestyles="--", alpha=0.5)
+    # notes: flat and island at the reference energies
+    for note_e, note_txt in [(0.255, "flat"), (0.074, "island")]:
+        ax_ds.text(0.02, note_e, note_txt, color="blue", fontsize=8,
+                   ha="left", va="bottom")
     ax_ds.set_xlabel(DENSITY_LABEL)
 
     # Panel 3 (far right): NS State Density — prior-weight-weighted histogram (barh,
