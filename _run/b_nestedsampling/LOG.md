@@ -4712,3 +4712,27 @@ Making_Prob_area_norm.py.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — b10 iter20000 DISCUSSION.md: add temperature-usage discussion (section 9)
+
+**Goal (user-confirmed? — doc write-up):** Analyze the provided "Important temperatures" note and
+write a temperature-usage discussion (including a temp list with papers) in the b10 iter20000
+DISCUSSION.md.
+
+**Actions taken:**
+- Added "## 9. Temperature usage discussion (Fe/MgO MTJ fabrication context)" to DISCUSSION.md:
+  - Explained the NS --temperatures sweep vs physical fabrication temperatures.
+  - Table of important temperatures (≈298, 373, 473, 773, 473-573, 573-673, 623, 673 K), their
+    process/effect, and example papers (arxiv, digital.csic, mdpi, aip, pmc).
+  - Recommended deposition (298/373/473 K) and annealing (573/623/673 K) series.
+  - Surface-roughness interpretation + key papers list.
+  - Relevance to this analysis (NS thermodynamic weights at 100-1000 K).
+
+**Results:** DISCUSSION.md now includes a temperature-usage discussion with a paper-referenced
+temperature list.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

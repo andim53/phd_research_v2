@@ -406,3 +406,61 @@ not harmful, they only refine the already-resolved low-energy tail of `g(E)`.
   (0.255 eV/atom) peaks.
 - Since `log Z` is converged across 5000/10000/20000, further iteration increases add little;
   consider widening the window or raising `--n-live` for finer phase-transition features.
+
+---
+
+## 9. Temperature usage discussion (Fe/MgO MTJ fabrication context)
+
+This run's temperature-free NS analysis uses a post-processing temperature sweep
+(`--temperatures`, default 100/200/300/500/1000 K) purely to evaluate the *same* sampled
+ensemble at different `β = 1/(k_B T)` — it does not change the sampling itself. In an MTJ-fabrication
+sense, temperature plays a very different, physical role: it controls surface diffusion, interface
+interdiffusion, crystallinity, and barrier ordering during Fe/FeCo (or CoFeB) deposition and
+post-deposition annealing. The table below lists the practically important temperatures (converted
+from °C via `T(K) = T(°C) + 273.15`) and their effects, with representative papers.
+
+### List of important temperatures, their effect, and the paper
+
+| T (K) | Process | Effect | Example paper |
+|---|---|---|---|
+| ≈298 | Fe/FeCo deposition, no intentional heating | Limits interdiffusion; helps preserve smooth, continuous metallic surface | Epitaxial Fe/MgO/Fe(001), 417% TMR at RT / 914% at 3 K — [arxiv 2011.08739](https://arxiv.org/abs/2011.08739) |
+| ≈373 | Mildly heated Fe/FeCo deposition | Increases adatom surface diffusion; may improve texture/continuity | Recommended screening condition for crystalline Fe-rich FeCo/MgO |
+| ≈473 | Moderately heated Fe/FeCo deposition | Can improve crystallinity; may promote grain coarsening/islanding/intermixing | Recommended upper screening point for crystalline Fe-rich FeCo/MgO |
+| ≈298 | MgO deposition near RT | Sharp Fe/MgO (FeCo/MgO) interface; limits interdiffusion | Fe/MgO/Fe(001) interface-step / TMR study — [digital.csic Enhanced magnetoresistance](https://digital.csic.es/bitstream/10261/127277/1/Enhanced%20magnetoresistance.pdf) |
+| up to ≈773 | In situ barrier crystallization / oxidation treatment | Ordered oxide barrier / improved crystallinity | Fe/GaOx/(MgO)/Fe annealed at 500 °C ≈ 773 K under O₂ — [mdpi 17(10):2424](https://www.mdpi.com/1424-8220/17/10/2424/pdf) |
+| ≈473–573 | Low-to-moderate CoFeB/MgO annealing | Relaxes amorphous CoFeB; begins interface structural evolution | Fe₃O₄/MgO/CoFeB MTJs annealed 200–400 °C ≈ 473–673 K — [aip 10.1063/1.4917018](https://aip.scitation.org/doi/pdf/10.1063/1.4917018) |
+| ≈573–673 | Standard CoFeB/MgO crystallization | Crystallizes CoFeB adjacent to MgO; develops high-TMR/PMA interface | CoFeB/MgO MTJ studies at ≈300–400 °C ≈ 573–673 K — [pmc 5304246](https://pmc.ncbi.nlm.nih.gov/articles/PMC5304246/) |
+| ≈623 | Common CoFeB/MgO optimization point | Balances crystallization vs thermal degradation; capping-dependent TMR max | Pt-capped CoFeB/MgO/CoFeB max TMR near 623 K — [pmc 10534786](https://pmc.ncbi.nlm.nih.gov/articles/PMC10534786/) |
+| ≈673 | High CoFeB/MgO annealing limit | Max crystallization in some stacks; risk of B diffusion/roughening/oxidation/TMR loss | Perpendicular MTJ annealing degradation — [pmc 5304246](https://pmc.ncbi.nlm.nih.gov/articles/PMC5304246/) |
+
+### Recommended temperature series
+
+- **Deposition (surface flattening before MgO):** `T_dep = 298, 373, 473 K` (≈ 25, 100, 200 °C).
+- **Post-deposition annealing:** `T_anneal = 573, 623, 673 K` (≈ 300, 350, 400 °C).
+- **Most practical initial condition:** Fe/FeCo deposition ≈298 K, MgO deposition ≈298–373 K,
+  anneal ≈573–623 K.
+
+### Interpretation for surface roughness
+
+- **298 K:** safest baseline (minimal interdiffusion / thermal damage).
+- **373 K:** test point for enhanced surface diffusion and improved film continuity.
+- **473 K:** useful upper screening point; watch for grain growth / islanding.
+- **573–623 K:** practical annealing range for crystallinity and interface ordering.
+- **673 K:** high-temperature condition; use only if the stack is thermally stable.
+- **773 K:** specialized high-temperature treatment, not a routine starting point for Fe/MgO.
+
+Atomic-scale roughness is decisive: monoatomic Fe steps at Fe/MgO interfaces strongly modify the
+tunnelling conductance and TMR. The optimum temperature should therefore be chosen from the
+combination of AFM roughness, XRD/RHEED texture, XRR interface width, and TMR — not from TMR
+alone ([digital.csic](https://digital.csic.es/bitstream/10261/127277/1/Enhanced%20magnetoresistance.pdf)).
+
+### Key papers
+
+- **Epitaxial Fe/MgO/Fe(001):** 417% TMR at RT, 914% at 3 K — epitaxial growth ↔ high TMR. [arxiv](https://arxiv.org/abs/2011.08739)
+- **Fe/MgO/Fe(001) monoatomic interface roughness:** Fe steps modify tunnelling/TMR; need atomically flat interface. [digital.csic](https://digital.csic.es/bitstream/10261/127277/1/Enhanced%20magnetoresistance.pdf)
+- **Fe/GaOx/(MgO)/Fe(001):** in situ annealing to ~773 K under O₂ forms single-crystalline oxide barrier. [mdpi](https://www.mdpi.com/1424-8220/17/10/2424/pdf)
+- **CoFeB/MgO/CoFeB pMTJs:** annealing-dependent TMR / RA product; excessive annealing degrades performance. [pmc](https://pmc.ncbi.nlm.nih.gov/articles/PMC5304246/)
+- **Fe₃O₄/MgO/CoFeB MTJs:** strong temperature-dependent TMR over ~473–673 K. [aip](https://aip.scitation.org/doi/pdf/10.1063/1.4917018)
+- **Capping-layer effects (Pt-capped):** annealing T giving max TMR depends on capping layer (~623 K for Pt). [pmc](https://pmc.ncbi.nlm.nih.gov/articles/PMC10534786/)
+
+**Relevance to this analysis:** the NS `binding_probability_vs_temperature.png` (plotted at 100/300/500/1000 K, and now area-normalized) shows how the sampled configurational ensemble re-weights with temperature. It is the *thermodynamic* counterpart to these *fabrication* temperatures: the physically relevant annealing/process temperatures above (≈298–773 K) fall inside the 100–1000 K range used here, so the thermodynamic weights at 298/473/573/623/673 K can be read directly off the curve to guide which structure types dominate at each practical processing temperature.
