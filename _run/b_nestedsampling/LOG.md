@@ -3680,3 +3680,29 @@ thousands separators, so large iteration numbers are readable and not crowded.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — analyze_tfree_outputs.py: fix crowded x-axis in summary samples-energy panel
+
+**Goal (user-confirmed via clarify):** The 'samples energy' panel in `tfree_analysis_summary.png`
+(axes[0,0]) still showed crowded 20,000-iteration x-ticks (the formatter from the prior fix was
+only on plot 1a). Apply thousands separators + MaxNLocator + 45° label rotation to the summary
+panel, and to BOTH it and the standalone samples_energy_vs_iter for consistency.
+
+**Clarify decisions (all user-confirmed):**
+1. Summary samples-energy panel (axes[0,0]): thousands separators + MaxNLocator(nbins=6) + 45° rotation.
+2. Apply to BOTH the standalone samples_energy_vs_iter (1a) AND the summary panel.
+
+**Actions taken:**
+- Added `ax.tick_params(axis="x", rotation=45)` to the standalone samples_energy_vs_iter (1a).
+- Added the same formatter + MaxNLocator + rotation to the summary axes[0,0] samples-energy panel.
+- Bumped `__version__` 1.2.1 -> 1.2.2 (patch).
+- py_compile OK; re-ran b10 iter20000 (--style-pipeline --relative-energy); both samples_energy_vs_iter.png and tfree_analysis_summary.png regenerated.
+
+**Results:** Both energy-vs-iteration x-axes now use evenly spaced ticks with thousands
+separators and 45°-rotated labels, so the 20,000-iteration ticks are readable and not crowded.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

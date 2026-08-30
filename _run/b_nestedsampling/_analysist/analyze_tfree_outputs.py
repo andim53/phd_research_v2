@@ -32,7 +32,7 @@ Usage (only needs numpy + matplotlib, no AGOX):
 
 from __future__ import annotations
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 import argparse
 import os
@@ -155,6 +155,7 @@ def make_analysis(data_dir, outdir, n_atoms=75, relative_energy=False):
     # x-axis: evenly spaced ticks with thousands separators (e.g. 5,000 / 10,000 / 20,000)
     ax.xaxis.set_major_locator(MaxNLocator(nbins=6, integer=True))
     ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(v):,}"))
+    ax.tick_params(axis="x", rotation=45)
     ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "samples_energy_vs_iter.png"), dpi=300)
     plt.close(fig)
@@ -282,6 +283,10 @@ def make_analysis(data_dir, outdir, n_atoms=75, relative_energy=False):
     fig, axes = plt.subplots(2, 2, figsize=(11, 8))
     axes[0, 0].plot(iters, Es_plot, ".", ms=2, alpha=0.3)
     axes[0, 0].set(xlabel="iter", ylabel=energy_xlabel); axes[0, 0].set_title("samples energy")
+    # x-axis: evenly spaced ticks with thousands separators + rotated for readability
+    axes[0, 0].xaxis.set_major_locator(MaxNLocator(nbins=6, integer=True))
+    axes[0, 0].xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(v):,}"))
+    axes[0, 0].tick_params(axis="x", rotation=45)
     axes[0, 1].bar(centers, g, width=binw * 0.9, alpha=0.6)
     axes[0, 1].set(xlabel=energy_xlabel, ylabel="g(E)"); axes[0, 1].set_title("weighted g(E) proxy")
     axes[1, 0].hist(live_plot, bins=30, color="green", alpha=0.6)
