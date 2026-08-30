@@ -4014,3 +4014,35 @@ peak lines + flat/island notes on the GPR+LCB State Density panel.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: per-panel legends, black notes/lines, square PCA
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`: (1) GPR+LCB legend inside
+its State Density panel (upper right); (2) NS legend inside its State Density panel (upper right);
+(3) flat/island notes + peak lines in black; (4) additional black dashed line in the NS panel at
+the flat/island energies; (5) PCA panel square ratio.
+
+**Clarify decisions (all user-confirmed):**
+1. GPR+LCB legend at upper right inside its panel.
+2. NS legend at upper right inside its panel.
+3. flat/island note text AND peak dashed lines -> black.
+4. Additional black dashed line in NS panel at flat/island reference energies.
+5. Remove shared top legend; make PCA panel square (set_aspect).
+
+**Actions taken:**
+- Moved legends into each State Density panel (ax_ds.legend / ax_ns.legend, loc='upper right').
+- Changed flat/island text and GPR+LCB peak hlines to black.
+- Added black axhline at flat (0.255) and island (0.074) in the NS panel.
+- Added `ax_scat.set_aspect("equal")` for a square PCA panel; removed the shared fig.legend.
+- Bumped `__version__` 2.5.0 -> 2.6.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2064x852).
+
+**Results:** Each State Density panel now has its own top-right legend; flat/island notes and peak
+lines are black; the NS panel has black dashed lines at the flat/island energies; the PCA panel is
+square.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

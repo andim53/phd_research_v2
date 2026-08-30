@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.5.0"
+__version__ = "2.6.0"
 
 import argparse
 import glob
@@ -211,20 +211,22 @@ def main():
     ax_scat.set_xlabel(SCATTER_LABEL)
     ax_scat.xaxis.set_minor_locator(AutoMinorLocator())
     ax_scat.set_xlim(np.min(X_eigen) - 0.1, np.max(X_eigen) + 0.1)
+    ax_scat.set_aspect("equal")   # square ratio for the PCA panel
 
     # Panel 2 (middle): dataset State Density (KDE) -> GPR+LCB
     ax_ds = axes[1]
     ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4, label="GPR+LCB")
     ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
-    # dashed lines at the GPR+LCB KDE peak(s) (like 36_find_density_peak.py)
+    # dashed lines at the GPR+LCB KDE peak(s) (like 36_find_density_peak.py), black
     ds_peaks, _ = find_peaks(ds_density, prominence=np.max(ds_density) * 0.05)
     for pk in ds_peaks:
-        ax_ds.hlines(energy_grid[pk], 0, ds_density[pk], colors="red",
+        ax_ds.hlines(energy_grid[pk], 0, ds_density[pk], colors="black",
                      linestyles="--", alpha=0.5)
-    # notes: flat and island at the reference energies
+    # notes: flat and island at the reference energies (black text)
     for note_e, note_txt in [(0.255, "flat"), (0.074, "island")]:
-        ax_ds.text(0.02, note_e, note_txt, color="blue", fontsize=8,
+        ax_ds.text(0.02, note_e, note_txt, color="black", fontsize=8,
                    ha="left", va="bottom")
+    ax_ds.legend(loc="upper right", frameon=False, fontsize=9)
     ax_ds.set_xlabel(DENSITY_LABEL)
 
     # Panel 3 (far right): NS State Density — prior-weight-weighted histogram (barh,
@@ -233,9 +235,11 @@ def main():
     ax_ns.barh(ns_centers, ns_density, height=ns_binw * 0.9, color="tab:red",
                alpha=0.35, label="NS")
     ax_ns.plot(ns_kde_density, energy_grid, color="tab:red", lw=1.5, zorder=4)
+    # additional black dashed line at the flat/island reference energies (NS panel)
+    for note_e in (0.255, 0.074):
+        ax_ns.axhline(note_e, color="black", linestyle="--", lw=1.0, alpha=0.6)
+    ax_ns.legend(loc="upper right", frameon=False, fontsize=9)
     ax_ns.set_xlabel(DENSITY_LABEL)
-    # no titles (all panels titleless); single shared legend (GPR+LCB = left/middle, NS = right)
-    fig.legend(loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False, fontsize=9)
 
     # shared energy y-axis styling on the left panel
     axes[0].set_ylabel(E_LABEL)
