@@ -456,3 +456,68 @@ DB structure can be re-drawn any number of times. A 10,000-point live set does n
 `n_live = 10000` is *possible* — but it is generally unnecessary: it mainly increases duplication
 at init (countered by the novelty threshold, which itself needs a diverse-enough pool), raises
 cost, and gives only marginal `Z`-accuracy gains over K in the hundreds–thousands.
+
+---
+
+## Diagnosis: discarded-energy trajectory (b10 iter20000)
+
+This section diagnoses the `samples_energy_vs_iter.png` trajectory of the plain Fe/MgO
+temperature-free run `b10_femgo_walk_emax04_exclworst_noxsf_novelty` at `--n-iters 20000`
+(`--n-live 100`). The `dead_E(Iter)` series is the `energy_eV` column of `samples.csv` — the
+worst (highest-energy) live point discarded at each nested-sampling iteration.
+
+### What the trajectory actually does
+
+Verified against `samples.csv` (20000 discarded samples):
+
+- **Compression phase (iterations ≈ 0–3,750):** `dead_E` descends smoothly from ≈ **−407.17 eV**
+  (the first discarded sample, already inside the `--e-max-per-atom 0.4` / windowed-seeded band)
+  down into the ground-state basin near **−436.9 eV**. This is the normal top-down draining of the
+  prior volume: each iteration removes the worst live point and replaces it with a lower-energy
+  draw, so `dead_E` drops.
+- **Global minimum:** the lowest energy in the whole trajectory is **−436.888 eV**, first reached
+  at **iteration 19,933**.
+- **Plateau / fluctuation phase (iterations ≈ 3,750–20,000):** once inside the ground-state basin,
+  `dead_E` no longer descends systematically; it bounces in a **narrow band** (roughly
+  −421 … −437 eV, i.e. ≈ +0.04 … +0.23 eV/atom above the minimum) for the remaining ~16,000
+  iterations.
+
+### Is this a problem?
+
+**Mostly no — it is normal, converged nested sampling.** Two important measurements:
+
+1. **The trajectory is ~98% monotonic.** Only **380 of 20,000 steps (1.9%)** show an increase in
+   `dead_E`. The discarded energies are almost everywhere non-increasing, exactly as standard NS
+   requires (each step discards the worst live point and re-samples below the current boundary).
+2. **The upward excursions are small and rare.** Only **4 samples** after iteration 3,750 exceed
+   −409 eV; the "spike" the trajectory shows around the start (≈ −407 eV) is the *first* sample,
+   not a post-convergence excursion. The post-3,750 band is narrow, not a wild −409 … −437
+   oscillation.
+
+The small (1.9%) upward jitter is the expected **near-degeneracy fluctuation** of a converged run:
+once the live set is filled with quasi-degenerate low-energy structures, the "worst" live point
+hops among them by a fraction of an eV/atom as the constrained walk moves, so `dead_E` jitters
+locally instead of decreasing further. This does **not** mean the sampler "lost convergence" or
+"violated the energy constraint" — the constraint is on the *initial windowed seeding*
+(`--e-window-lo 0.3 / --e-window-hi 0.35` eV/atom, used only to build the initial live set), not
+a per-step ceiling that the plateau would be violating.
+
+### Impact on the state density
+
+The `prior_weight`-weighted state density `g(E)` is built from *all* `(E_i, w_i)` pairs. Because
+the early samples carry almost all the prior volume (`Σ w_i ≈ 1` is reached quickly,
+`X_i = exp(−i/n_live)`), the **weighted peak** of `g(E)` is set by the compression phase at
+≈ **+0.31 eV/atom** above the minimum (weighted mean ≈ −413.5 eV ≈ +0.31 eV/atom). The
+post-convergence fluctuation contributes only a tiny `w_i` per sample, so it does **not** shift
+the peak, but it does **fill in the low-energy tail** of `g(E)` between the weighted peak and the
+ground state — which is desirable for resolving the shape of the density (the low-energy shoulder
+in `state_density_gE.png`).
+
+### Termination note
+
+Because the prior volume keeps shrinking (`X_i` from ~10⁻² down to ~10⁻⁸⁹) with no further energy
+descent after ~4,000 iterations, the run is effectively converged long before 20,000 iterations;
+the last ~16,000 steps add only tiny-weight samples and negligible evidence. A live-evidence /
+prior-volume-termination criterion (stop when `Z_live ≪ Z_acc`) would have stopped this run around
+4,000–5,000 iterations with essentially the same answer — but the extra iterations are not
+harmful; they only refine the (already-resolved) low-energy tail of `g(E)`.

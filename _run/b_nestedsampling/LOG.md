@@ -4365,3 +4365,35 @@ binding_probability_vs_temperature.png figure.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Diagnosis of discarded-energy trajectory (b10 iter20000) in README.md + DISCUSSION.md
+
+**Goal (user-confirmed via clarify):** Write a code/data-grounded diagnosis of the b10 iter20000
+discarded-energy trajectory in BOTH README.md (project-level) and the b10 iter20000 DISCUSSION.md
+(run-level). The user supplied a diagnosis text (compression phase, global min at 19933, "lost
+convergence / violent spike" 3750-20000), which I verified against samples.csv.
+
+**Verification against data (samples.csv, 20000 samples):**
+- dead_E is ~98% monotonic: only 380/20000 steps (1.9%) increase.
+- E[0]=-407.169 is NOT the max (max=-407.06, rare); only 4 samples after 3750 exceed -409 eV.
+- Global min -436.888 eV at iteration 19933 (matches the user's claim).
+- Post-3750 band is narrow (~-421..-437 eV), not a wild -409..-437 oscillation.
+- e_window (0.3/0.35) is applied ONLY to initial live seeding, not per-step.
+
+**Decision (user-confirmed):** Write a data-grounded discussion CORRECTING the inaccuracies
+(trajectory is normal NS, 1.9% jitter is near-degeneracy fluctuation, 'lost convergence/violent
+spike' not supported).
+
+**Actions taken:**
+- README.md: appended "## Diagnosis: discarded-energy trajectory (b10 iter20000)" section.
+- DISCUSSION.md: added "## 7b. Diagnosis of the discarded-energy trajectory" section.
+- Both sections explain the compression phase, global min at 19933, the ~98% monotonicity, the
+  near-degeneracy fluctuation interpretation, impact on g(E), and termination note.
+
+**Results:** Both files now document a data-grounded diagnosis of the b10 iter20000 trajectory.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

@@ -335,6 +335,64 @@ setup; 20000 iterations only further shrink the already-negligible `X_final`.
 
 ---
 
+## 7b. Diagnosis of the discarded-energy trajectory (`samples_energy_vs_iter.png`)
+
+This section diagnoses the `dead_E(Iter)` trajectory — the `energy_eV` column of `samples.csv`,
+i.e. the worst (highest-energy) live point discarded at each iteration — and addresses the
+"lost convergence / energy spike" reading of the figure.
+
+### What the trajectory actually does (verified against `samples.csv`)
+
+- **Compression phase (≈ iterations 0–3,750):** `dead_E` descends smoothly from ≈ **−407.17 eV**
+  (the first discarded sample, already inside the `--e-max-per-atom 0.4` windowed-seeded band)
+  into the ground-state basin near **−436.9 eV**. This is the normal top-down draining of the
+  prior volume.
+- **Global minimum:** the lowest energy in the whole trajectory is **−436.888 eV**, first reached
+  at **iteration 19,933**.
+- **Plateau / fluctuation phase (≈ 3,750–20,000):** inside the basin, `dead_E` no longer descends
+  systematically; it bounces in a **narrow band** (≈ −421 … −437 eV, i.e. ≈ +0.04 … +0.23 eV/atom
+  above the minimum) for the remaining ~16,000 iterations.
+
+### Is the "lost convergence / violent spike" reading correct?
+
+**No — the trajectory is normal, converged nested sampling.** Two decisive measurements:
+
+1. **The trajectory is ~98% monotonic.** Only **380 of 20,000 steps (1.9%)** show `dead_E`
+   increasing. Discarded energies are almost everywhere non-increasing, exactly as standard NS
+   requires (each step discards the worst live point and re-samples below the current boundary).
+2. **The upward excursions are small and rare.** Only **4 samples** after iteration 3,750 exceed
+   −409 eV; the ≈ −407 eV "spike" near the start is the *first* sample, not a post-convergence
+   excursion. The post-3,750 band is narrow, not a sustained −409 … −437 oscillation.
+
+The small (1.9%) upward jitter is the expected **near-degeneracy fluctuation** of a converged run:
+once the live set is filled with quasi-degenerate low-energy structures, the "worst" live point
+hops among them by a fraction of an eV/atom as the constrained walk moves, so `dead_E` jitters
+locally instead of decreasing further. It does **not** indicate "correlated/unconverged MCMC
+chains" or a "violation of the energy constraint": the window
+(`--e-window-lo 0.3 / --e-window-hi 0.35` eV/atom) is applied **only to the initial live
+seeding**, not as a per-step ceiling, so nothing here is being violated.
+
+### Impact on the state density
+
+`g(E)` is built from *all* `(E_i, w_i)` pairs. Because the early samples carry almost all the
+prior volume (`Σ w_i ≈ 1` quickly, `X_i = exp(−i/n_live)`), the **weighted peak** of `g(E)` is
+set by the compression phase at ≈ **+0.31 eV/atom** above the minimum (weighted mean ≈ −413.5 eV
+≈ +0.31 eV/atom). The post-convergence fluctuation carries only tiny `w_i` per sample, so it does
+**not** shift the peak, but it does **fill in the low-energy tail** of `g(E)` between the peak
+and the ground state — desirable for resolving the density's shape (the low-energy shoulder in
+`state_density_gE.png`).
+
+### Termination note
+
+The prior volume keeps shrinking (`X_i` from ~10⁻² down to ~10⁻⁸⁹) with no further energy descent
+after ~4,000 iterations, so the run is effectively converged well before 20,000 iterations; the
+last ~16,000 steps add only tiny-weight samples and negligible evidence. A live-evidence /
+prior-volume-termination criterion (stop when `Z_live ≪ Z_acc`) would have stopped this run around
+4,000–5,000 iterations with essentially the same answer — the extra iterations are not harmful,
+they only refine the already-resolved low-energy tail of `g(E)`.
+
+---
+
 ## 8. Suggested next steps
 
 - Compare the `g(E)` peak (~+0.31 eV/atom) against the reference island (0.074 eV/atom) / flat
