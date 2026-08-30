@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.8.1"
+__version__ = "2.9.0"
 
 import argparse
 import glob
@@ -140,6 +140,12 @@ def main():
                    help="PCA scatter marker size s. Default 5.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
+    p.add_argument("--delta-z-lines", action="store_true",
+                   help="locate the island/flat dashed lines from the ACTUAL PCA delta-Z data "
+                        "(bin dataset structures by per-atom energy; island = low-energy bin "
+                        "below 0.1 eV/atom with highest mean delta-Z; flat = ~0.2 eV/atom bin "
+                        "with lowest mean delta-Z). Default off: use fixed reference energies "
+                        "(island 0.074, flat 0.255 eV/atom).")
     args = p.parse_args()
 
     _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -172,6 +178,50 @@ def main():
     z_data = np.array([delta_z_fe(s) for s in structs])
     z_data = z_data - np.nanmin(z_data)   # relative delta Z (Angstrom)
     print(f"  delta Z range: {np.nanmin(z_data):.3f} .. {np.nanmax(z_data):.3f} Angstrom")
+
+    # --- island / flat energies ---
+    if args.delta_z_lines:
+        # delta-Z-derived: bin the dataset structures by per-atom relative energy and
+        # compute the mean relative delta-Z in each bin, using the ACTUAL PCA delta-Z data:
+        #   island = the low-energy bin (< 0.1 eV/atom) with the HIGHEST mean delta-Z
+        #            (most concentrated tall Fe islands / most corrugated low-E region);
+        #   flat   = the bin near ~0.2 eV/atom (0.15-0.30) with the LOWEST mean delta-Z
+        #            (the flattest, least-corrugated region).
+        nz_bins = 60
+        dz_bins = np.linspace(0, args.e_max, nz_bins)
+        dz_centers = 0.5 * (dz_bins[:-1] + dz_bins[1:])
+        ok = ~np.isnan(z_data)
+        E_bin = E_rel_ds[ok]
+        Z_bin = z_data[ok]
+        mean_dz = np.full(len(dz_centers), np.nan)
+        for k in range(len(dz_centers)):
+            sel = (E_bin >= dz_bins[k]) & (E_bin < dz_bins[k + 1])
+            if sel.sum() > 0:
+                mean_dz[k] = Z_bin[sel].mean()
+        # island: within E < 0.1 eV/atom, highest mean delta-Z
+        low_mask = dz_centers < 0.1
+        if low_mask.sum() and np.isfinite(np.where(low_mask, mean_dz, np.nan)).any():
+            k_island = int(np.nanargmax(np.where(low_mask, mean_dz, -np.inf)))
+            island_e = float(dz_centers[k_island])
+        else:
+            k_island = None
+            island_e = 0.074
+        # flat: near ~0.2 eV/atom (0.15-0.30), lowest mean delta-Z
+        flat_mask = (dz_centers >= 0.15) & (dz_centers <= 0.30)
+        if flat_mask.sum() and np.isfinite(np.where(flat_mask, mean_dz, np.nan)).any():
+            k_flat = int(np.nanargmin(np.where(flat_mask, mean_dz, np.inf)))
+            flat_e = float(dz_centers[k_flat])
+        else:
+            k_flat = None
+            flat_e = 0.255
+        print(f"  [--delta-z-lines] island = {island_e:.3f} eV/atom "
+              f"(mean dZ {mean_dz[k_island]:.3f} A) | flat = {flat_e:.3f} eV/atom "
+              f"(mean dZ {mean_dz[k_flat]:.3f} A)")
+    else:
+        # fixed reference energies (default behaviour)
+        island_e, flat_e = 0.074, 0.255
+        print(f"  [default] island = {island_e} eV/atom | flat = {flat_e} eV/atom "
+              f"(fixed reference; use --delta-z-lines for PCA delta-Z-derived)")
 
     # --- shared energy axis ---
     min_e, max_e, nticks = E_LIMIT[0], args.e_max, E_LIMIT[2]
@@ -220,18 +270,31 @@ def main():
     ax_ds = axes[1]
     ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4, label="GPR+LCB")
     ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
-    # dashed lines at the GPR+LCB KDE peak(s) (like 36_find_density_peak.py), black,
-    # full-width (reaching the end of the x-axis like the NS panel), with white outline
-    ds_peaks, _ = find_peaks(ds_density, prominence=np.max(ds_density) * 0.05)
-    for pk in ds_peaks:
-        ln = ax_ds.axhline(energy_grid[pk], color="black", linestyle="--",
-                           alpha=0.5, lw=1.2)
-        ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
-    # notes: flat and island at the reference energies (black text, white outline)
-    for note_e, note_txt in [(0.255, "flat"), (0.074, "island")]:
-        t = ax_ds.text(0.02, note_e, note_txt, color="black", fontsize=8,
-                       ha="left", va="bottom")
-        t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
+    if args.delta_z_lines:
+        # dashed lines at the delta-Z-derived island/flat energies (black, full-width,
+        # white outline)
+        for note_e in (island_e, flat_e):
+            ln = ax_ds.axhline(note_e, color="black", linestyle="--",
+                               alpha=0.6, lw=1.2)
+            ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
+        # notes: flat and island at those energies (black text, white outline)
+        for note_e, note_txt in [(flat_e, "flat"), (island_e, "island")]:
+            t = ax_ds.text(0.02, note_e, note_txt, color="black", fontsize=8,
+                           ha="left", va="bottom")
+            t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
+    else:
+        # default: dashed lines at the GPR+LCB KDE peak(s) (like 36_find_density_peak.py),
+        # black, full-width, with white outline
+        ds_peaks, _ = find_peaks(ds_density, prominence=np.max(ds_density) * 0.05)
+        for pk in ds_peaks:
+            ln = ax_ds.axhline(energy_grid[pk], color="black", linestyle="--",
+                               alpha=0.5, lw=1.2)
+            ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
+        # notes: flat and island at the reference energies (black text, white outline)
+        for note_e, note_txt in [(0.255, "flat"), (0.074, "island")]:
+            t = ax_ds.text(0.02, note_e, note_txt, color="black", fontsize=8,
+                           ha="left", va="bottom")
+            t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
     ax_ds.legend(loc="upper right", frameon=False, fontsize=9)
     ax_ds.set_xlabel(DENSITY_LABEL)
 
@@ -241,11 +304,16 @@ def main():
     ax_ns.barh(ns_centers, ns_density, height=ns_binw * 0.9, color="tab:red",
                alpha=0.35, label="NS")
     ax_ns.plot(ns_kde_density, energy_grid, color="tab:red", lw=1.5, zorder=4)
-    # additional black dashed line at the flat/island reference energies (NS panel),
-    # with a small white outline
-    for note_e in (0.255, 0.074):
-        ln = ax_ns.axhline(note_e, color="black", linestyle="--", lw=1.0, alpha=0.6)
-        ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
+    if args.delta_z_lines:
+        # dashed line at the delta-Z-derived island/flat energies (NS panel)
+        for note_e in (island_e, flat_e):
+            ln = ax_ns.axhline(note_e, color="black", linestyle="--", lw=1.0, alpha=0.6)
+            ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
+    else:
+        # default: dashed line at the flat/island reference energies (NS panel)
+        for note_e in (0.255, 0.074):
+            ln = ax_ns.axhline(note_e, color="black", linestyle="--", lw=1.0, alpha=0.6)
+            ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
     ax_ns.legend(loc="upper right", frameon=False, fontsize=9)
     ax_ns.set_xlabel(DENSITY_LABEL)
 

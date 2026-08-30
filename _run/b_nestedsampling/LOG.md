@@ -4942,3 +4942,40 @@ eV/atom at 100 K — confirming the low-T Boltzmann narrowing toward the island.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: --delta-z-lines flag (PCA delta-Z island/flat)
+
+**Goal (user-confirmed via clarify + out-of-band):** For the b12 boron3 iter10000
+compare_state_density_gE.png, draw the island/flat dashed lines from the ACTUAL PCA delta-Z data,
+and add a flag for this new treatment.
+
+**Clarify decisions (all user-confirmed):**
+1. Method: bin the dataset structures by per-atom relative energy, compute mean delta-Z per bin;
+   island = low-energy bin (< 0.1 eV/atom) with the HIGHEST mean delta-Z (concentrated tall Fe
+   islands); flat = ~0.2 eV/atom region bin with the LOWEST mean delta-Z.
+2. Replace BOTH the fixed 0.074/0.255 reference lines/notes AND the GPR+LCB find_peaks lines with
+   the single delta-Z-derived island/flat lines, drawn identically in both the GPR+LCB and NS
+   panels.
+3. Re-run for b12 boron3 iter10000.
+4. (Out-of-band) Include a --delta-z-lines flag toggling the new treatment; default off keeps the
+   original fixed-reference + find_peaks behaviour.
+
+**Actions taken:**
+- Added `--delta-z-lines` flag (default off).
+- Added delta-Z-derived island/flat detection (60 bins, mean dZ per bin, island=max-dZ bin<0.1,
+  flat=min-dZ bin 0.15-0.30).
+- Panel 2 (GPR+LCB) and Panel 3 (NS): when --delta-z-lines, draw dashed lines + notes at the
+  derived island/flat energies; default keeps find_peaks + fixed 0.074/0.255.
+- Bumped `__version__` 2.8.1 -> 2.9.0.
+- py_compile OK; re-ran for b12 with --delta-z-lines; PNG regenerated (2064x852).
+
+**Results (b12 boron3 iter10000, delta-Z-derived):**
+- island = 0.034 eV/atom (mean dZ 3.847 A) — low-energy, high-corrugation (concentrated tall Fe
+  islands).
+- flat = 0.251 eV/atom (mean dZ 0.654 A) — ~0.25 eV/atom, low-corrugation flat region.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
