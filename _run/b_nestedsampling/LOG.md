@@ -3315,3 +3315,29 @@ directly comparable.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: professional square graph, no grid
+
+**Goal (user-confirmed via clarify):** Make the comparison plot more professional: remove the
+grid and make the figure square.
+
+**Clarify decisions (all user-confirmed):**
+1. Square figure (equal width/height, figsize=(6,6)), not square axes.
+2. Minimal publication-style: remove grid, keep clean axes (ticks, labels, legend, title).
+
+**Actions taken:**
+- Changed `figsize=(7,4)` -> `figsize=(6,6)` (square).
+- Removed `ax.grid(alpha=0.3)`.
+- Bumped `__version__` 1.2.0 -> 1.3.0 (behavior change).
+- Ran for b11 iter20000; PNG regenerated.
+
+**Results (b11 iter20000):**
+- PNG now 1800x1800 px (square, 6x6 in at 300 dpi), no grid.
+- Data unchanged: NS g(E) peak 12.326 at 0.341 eV/atom; KDE peak 1.277 at 0.373 eV/atom;
+  both peak-normalized.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

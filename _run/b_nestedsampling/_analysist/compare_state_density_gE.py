@@ -24,7 +24,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import argparse
 import os
@@ -110,7 +110,7 @@ def main():
     g_ds = g_ds_abs / peak_ds           # peak-normalized (=1) for shape comparison
 
     # --- overlay plot (both peak-normalized to 1 so shapes are comparable) ---
-    fig, ax = plt.subplots(figsize=(7, 4))
+    fig, ax = plt.subplots(figsize=(6, 6))
     ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5,
            label=f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)")
     ax.plot(grid, g_ds, "r-", lw=2,
@@ -119,7 +119,7 @@ def main():
     ax.set_ylabel(r"$g(E)$ / $g(E)_{max}$  (peak-normalized)")
     ax.set_title("State density shape: NS samples vs dataset (KDE) — peak-normalized")
     ax.set_ylim(0, 1.05)
-    ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.legend(fontsize=8)
     fig.tight_layout()
 
     out_path = os.path.join(out_dir, args.outname)
