@@ -31,11 +31,13 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
   .../plot_ns_boltzmann_prob.py --ns-output <ns_output> --outdir <analysis> \
       --outname binding_probability_vs_temperature_pure.png \
       --n-atoms 75 --pure --temperatures 100 298 573 623 673 773 --annotate-critical
+  # ... plus zero g(E) grid points below 1 (outlier removal) before computing P:
+  ... --pure --gE-min 1.0 ...
 """
 
 from __future__ import annotations
 
-__version__ = "1.7.0"
+__version__ = "1.8.0"
 
 import argparse
 import glob
@@ -199,6 +201,11 @@ def main():
                         "computed, with NO peak-normalization and NO area-normalization "
                         "(proper probability density, integral ~1). Mutually exclusive with "
                         "--area-norm.")
+    p.add_argument("--gE-min", type=float, default=None,
+                   help="Zero out state-density outlier grid points: any KDE-smoothed g(E) "
+                        "grid value strictly BELOW this threshold is set to 0 BEFORE "
+                        "P(E,T) is computed. Pass e.g. --gE-min 1.0 to turn g(E)<1 into 0. "
+                        "Default None (no masking).")
     p.add_argument("--linewidth", type=float, default=1.6,
                    help="line thickness of the P(E) temperature curves. Default 1.6.")
     p.add_argument("--figsize", type=float, default=5,
@@ -240,6 +247,15 @@ def main():
     ns_kde = gaussian_kde(rel, weights=Ws)       # same as the NS g(E) KDE in compare_state_density_gE.py
     grid = np.linspace(0, rel.max() + 0.02, 400)
     gE = ns_kde.evaluate(grid)                   # config./eV
+
+    # --- optional state-density outlier masking: zero g(E) grid points below --gE-min ---
+    n_masked = 0
+    if args.gE_min is not None:
+        n_masked = int((gE < args.gE_min).sum())
+        gE = gE.copy()
+        gE[gE < args.gE_min] = 0.0
+        print(f"  [--gE-min {args.gE_min}] zeroed {n_masked}/{len(gE)} g(E) grid "
+              f"points below threshold (outliers removed before P(E,T))")
 
     # --- flat/island energies (dataset KDE peaks by default, or PCA delta-Z with flag) ---
     flat_e, island_e = None, None

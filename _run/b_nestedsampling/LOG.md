@@ -5244,3 +5244,36 @@ balance between rising state density and falling Boltzmann factor.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (8) — plot_ns_boltzmann_prob.py: --gE-min flag (zero g(E) outliers < threshold)
+
+**Goal (user-confirmed via clarify):** Edit the b10 pure graph
+(`binding_probability_vs_temperature_pure.png`) so it has a flag to remove g(E) outliers — any
+KDE-smoothed g(E) grid value below a threshold is turned into 0 before P(E,T) is computed.
+
+**Clarify decisions (all user-confirmed):**
+1. `--gE-min <float>` (default None → no masking): any g(E) grid value strictly below the
+   threshold is set to 0. Use `--gE-min 1.0` to turn g(E)<1 into 0.
+2. The mask is applied to the KDE-smoothed g(E) grid BEFORE P(E,T) is computed (the natural
+   interpretation — the outlier region of the state density is removed before it feeds P).
+3. Default OFF — the graph looks as it does now unless `--gE-min` is passed.
+
+**Actions taken:**
+- `plot_ns_boltzmann_prob.py` 1.7.0 → 1.8.0: added `--gE-min` flag; after computing
+  `gE = ns_kde.evaluate(grid)`, zeroes grid points with `gE < args.gE_min` before the P(E,T)
+  loop; prints the number of zeroed points.
+- Updated the usage docstring; py_compile OK.
+- Re-ran b10 pure with `--pure --gE-min 1.0 --annotate-critical` (same other params).
+
+**Results (real output):**
+- `[--gE-min 1.0] zeroed 249/400 g(E) grid points below threshold`.
+- T=100 K max P rose 1.386e-2 → 7.1e-2 (the zeroed low-g region no longer contributes; mass
+  renormalizes over the surviving g(E) region); higher-T curves only mildly affected
+  (298 K 1.018e-2 → 1.410e-2, 773 K 1.263e-2 → 1.349e-2).
+- `binding_probability_vs_temperature_pure.png` regenerated (1200x1200).
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
