@@ -3561,3 +3561,35 @@ using b10's dataset.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — run_analysis_indices.py: add start_iter filter (iteration >= 10)
+
+**Goal (user-confirmed via clarify):** In `_analysist/run_analysis_indices.py`, filter the loaded
+data to start from AGOX iteration 10, mirroring `_analysist/scripts/process_database.py`'s
+`start_iter` (default 10). Re-run the b10 and b11 analysis_indices so outputs reflect it.
+
+**Clarify decisions (all user-confirmed):**
+1. Method: mirror process_database.py — `get_all_structures_data()` + filter
+   `d.get("iteration", 0) >= start_iter`, then `db_to_atoms()`.
+2. Add a `--start-iter` CLI flag (default 10), not hardcoded.
+3. Re-run both b10 and b11 analysis_indices after the edit.
+
+**Actions taken:**
+- Changed `load_all_seeds(dataset_dir)` -> `load_all_seeds(dataset_dir, start_iter=10)`: reads raw
+  structure dicts, keeps `iteration >= start_iter`, converts via `db_to_atoms`.
+- Added `--start-iter` CLI flag (default 10); prints it; passes to load_all_seeds.
+- Bumped `__version__` 1.0.0 -> 1.1.0 (behavior/API change -> minor).
+- py_compile OK.
+- Re-ran b10 and b11 analysis_indices (e-max 0.8, start-iter 10).
+
+**Results:**
+- b10 (Fe/MgO): 1297 -> 1180 structures (91/seed for 100-structure seeds, 88/97 for seed_12),
+  75 atoms. conf_space.png + binding_probability_vs_temperature.png regenerated.
+- b11 (boron): 496 -> 451 structures (91/seed for 100-structure seeds, 87/96 for seed_4),
+  82 atoms. conf_space.png + binding_probability_vs_temperature.png regenerated.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

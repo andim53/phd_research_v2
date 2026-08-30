@@ -24,7 +24,7 @@ Usage (needs agox_v2 conda env for AGOX Fingerprint + ASE + scipy):
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import glob
@@ -82,8 +82,10 @@ COLORS_PLASMA = ['#0d0887', '#47039f', '#7301a8', '#9c176d', '#bd3752',
 # ---------------------------------------------------------------------------
 # Data loading — all seed DBs -> structures + DFT energies
 # ---------------------------------------------------------------------------
-def load_all_seeds(dataset_dir: str):
-    """Load every structure/energy from dataset/seed_*/1_db/db_*.db."""
+def load_all_seeds(dataset_dir: str, start_iter: int = 10):
+    """Load every structure/energy from dataset/seed_*/1_db/db_*.db, keeping only
+    structures with AGOX iteration >= start_iter (inclusive), mirroring
+    process_database.py's start_iter filter (get_all_structures_data()['iteration'])."""
     db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
     if not db_paths:
         raise FileNotFoundError(f"No DBs matched {os.path.join(dataset_dir, 'seed_*/1_db/db_*.db')}")
@@ -91,10 +93,14 @@ def load_all_seeds(dataset_dir: str):
     for p in db_paths:
         db = Database(filename=p)
         db.restore_to_memory()
-        traj = db.restore_to_trajectory()
-        structures.extend(traj)
-        energies.extend(a.get_potential_energy() for a in traj)
-        print(f"  {os.path.relpath(p)}: {len(traj)} structures")
+        # mirror process_database.py: read raw structure dicts, filter by iteration
+        raw = db.get_all_structures_data()
+        kept = [d for d in raw if d.get("iteration", 0) >= start_iter]
+        atoms_list = [db.db_to_atoms(d) for d in kept]
+        structures.extend(atoms_list)
+        energies.extend(a.get_potential_energy() for a in atoms_list)
+        print(f"  {os.path.relpath(p)}: {len(atoms_list)}/{len(raw)} structures "
+              f"(iteration >= {start_iter})")
     energies = np.asarray(energies, dtype=float)
     return structures, energies
 
@@ -210,6 +216,10 @@ def main():
                              "each stage's default.")
     parser.add_argument("--normalize-density", action="store_true",
                         help="normalize the Stage 2 state-density panel to [0,1]")
+    parser.add_argument("--start-iter", type=int, default=10,
+                        help="keep only structures with AGOX iteration >= this value "
+                             "(inclusive), mirroring process_database.py's start_iter. "
+                             "Default 10.")
     args = parser.parse_args()
 
     print("=" * 70)
@@ -220,10 +230,12 @@ def main():
         print(f"e-max  : {args.e_max} eV/atom")
     if args.normalize_density:
         print("normalize-density: True")
+    print(f"start-iter : {args.start_iter} (iteration >= {args.start_iter})")
     print("=" * 70)
 
-    structures, energies = load_all_seeds(args.dataset)
-    print(f"\nTotal: {len(structures)} structures, {len(structures[0])} atoms each")
+    structures, energies = load_all_seeds(args.dataset, start_iter=args.start_iter)
+    print(f"\nTotal: {len(structures)} structures, {len(structures[0])} atoms each "
+          f"(iteration >= {args.start_iter})")
 
     os.makedirs(args.outdir, exist_ok=True)
     step2_landscape(structures, energies, args.outdir,
