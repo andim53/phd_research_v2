@@ -18,13 +18,13 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
   /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
       --run b11_boron_walk_emax04_exclworst_noxsf_novelty \
       --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter20000 \
-      --n-atoms 82 --figsize 6 \
+      --n-atoms 82 --figsize 6 [--simple] \
       --outname compare_state_density_gE.png
 """
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 import argparse
 import os
@@ -67,6 +67,9 @@ def main():
     p.add_argument("--figsize", type=float, default=6,
                    help="figure size in inches (square: width=height=this value). "
                         "Default 6.")
+    p.add_argument("--simple", action="store_true",
+                   help="simplified version: no title; legend uses short labels "
+                        "'GPR+LCB g(E)' and 'NS g(E)' only.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     args = p.parse_args()
@@ -114,13 +117,17 @@ def main():
 
     # --- overlay plot (both peak-normalized to 1 so shapes are comparable) ---
     fig, ax = plt.subplots(figsize=(args.figsize, args.figsize))
-    ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5,
-           label=f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)")
-    ax.plot(grid, g_ds, "r-", lw=2,
-            label=f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)")
+    if args.simple:
+        ns_label, ds_label = "NS g(E)", "GPR+LCB g(E)"
+    else:
+        ns_label = f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)"
+        ds_label = f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)"
+    ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5, label=ns_label)
+    ax.plot(grid, g_ds, "r-", lw=2, label=ds_label)
     ax.set_xlabel("E - E_min (eV/atom)")
     ax.set_ylabel(r"$g(E)$ / $g(E)_{max}$  (peak-normalized)")
-    ax.set_title("State density shape: NS samples vs dataset (KDE)\npeak-normalized")
+    if not args.simple:
+        ax.set_title("State density shape: NS samples vs dataset (KDE)\npeak-normalized")
     ax.set_ylim(0, 1.05)
     ax.legend(fontsize=8)
     fig.tight_layout()

@@ -3383,3 +3383,28 @@ the (square) figure size in `_analysist/compare_state_density_gE.py`, then re-ru
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: add --simple flag (no title, short legend)
+
+**Goal (user-confirmed? — simple, low-stakes flag addition):** Add a `--simple` flag that removes
+the title and uses simplified legend labels ("GPR+LCB g(E)" and "NS g(E)" only). Re-run with the
+simplified version.
+
+**Actions taken:**
+- Added `--simple` (store_true) flag.
+- In the plot: when `--simple`, use short legend labels and skip the title; otherwise keep the
+  detailed labels + two-line title.
+- Updated docstring usage with `[--simple]`.
+- Bumped `__version__` 1.5.0 -> 1.6.0 (API/behavior change -> minor).
+- Ran with `--simple` (figsize 6); saved to a SEPARATE file
+  `compare_state_density_gE_simple.png` so the non-simple `compare_state_density_gE.png` is kept.
+  (Clarify on outname timed out; defaulted to keeping both files.)
+
+**Results:** `compare_state_density_gE_simple.png` (1800x1800) produced with no title and legend
+"NS g(E)" / "GPR+LCB g(E)". Data unchanged.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
