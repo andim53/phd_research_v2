@@ -97,6 +97,89 @@ de-duplicated the initial live set.
 
 ---
 
+## 2b. Discussion: samples_energy_vs_iter.png (weighted running mean, staleness, fluctuation)
+
+![samples_energy_vs_iter.png](samples_energy_vs_iter.png)
+
+### What the weighted running mean is and how it is calculated
+
+The red curve in `samples_energy_vs_iter.png` is a **prior-weight-weighted running mean** of the
+discarded-sample energies. At each iteration index `n` it is
+
+```
+⟨E⟩_n = Σ_{i≤n} w_i E_i / Σ_{i≤n} w_i
+```
+
+where `E_i` is the discarded sample's energy and `w_i` is its `prior_weight`
+(`w_i = X_{i-1} − X_i`, the prior-volume shell weight, from `samples.csv`). It is "running"
+because it uses only the first `n` samples, and "weighted" because each `E_i` counts in
+proportion to how much prior volume that sample consumed — so samples early in the run (which
+sit on large `X` shells, hence larger `w_i`) dominate the average.
+
+### What it represents
+
+It is a **cumulative, noise-smoothed view of the ensemble's typical energy** as the NS run
+progresses. Because the early discarded samples carry most of the prior weight, the running mean
+is a robust estimator of the *weighted* center of the sampled distribution, and it is the same
+quantity that drives the state density `g(E) = Σ w_i / ΔE` (each sample contributes its prior
+weight to the density at its energy). So the running mean's position reflects *where the
+probability mass of the ensemble sits*, not the instantaneous worst-sample energy.
+
+### Why it "stales" (plateaus) and its impact on the state density
+
+In this run the weighted running mean saturates at **+0.312 eV/atom** (relative to the global
+minimum, `E_min = −436.89 eV`; the per-atom relative energy is `(E − E_min)/75`) after only
+~1000 iterations and stays essentially constant for the remaining ~19000 iterations (it is
++0.312 eV/atom at iter 1000 and still +0.312 eV/atom at iter 20000). This "staleness" is
+**expected** and is not a bug:
+
+- The early samples carry nearly all the prior weight (`Σ w_i ≈ 1` is reached quickly because
+  `X_i = exp(−i/n_live)` collapses), so once those are accumulated the running mean stops
+  changing — later samples contribute vanishingly small `w_i`.
+- Consequently the running mean is **insensitive to what the sampler does after the first few
+  hundred iterations**; it reports the early, low-weight-mass-averaged level, not the late-time
+  descent.
+
+**Impact on the state density:** `g(E)` is built from *all* `(E_i, w_i)` pairs, not just the
+running mean, so the plateau does **not** erase the low-energy side of `g(E)`. What it does mean
+is that the **weighted center** of `g(E)` is fixed at ≈ +0.31 eV/atom above the minimum, and the
+histogram's overall mass is dominated by the high-`w_i` early samples. The plateau therefore
+tells us the *weighted* peak position of `g(E)` is stable, even though the raw discarded
+energies keep changing.
+
+### Why the discarded energy fluctuates after ~4000 iterations, and its impact
+
+The raw, individual `E_i` values do **not** plateau — they keep fluctuating in a band around
+**+0.04 … +0.23 eV/atom** (relative to the minimum; e.g. iter 4000 ≈ +0.097, iter 10000 ≈ +0.216,
+iter 20000 ≈ +0.053 eV/atom) with a standard deviation of roughly **0.044–0.049 eV/atom**
+throughout. After ~4000 iterations the sampler has already entered the ground-state basin
+(relative min = 0 eV/atom), so each iteration's worst live point is drawn from a **narrow but
+finite spread of near-minimum configurations**; the energy of the worst walker hops up and down
+as the walker moves, without a systematic trend. This is the characteristic **noisy plateau** of
+a converged NS run once `X_i` is negligible.
+
+**What the fluctuation means:** it is *not* a sign that NS has failed to converge. It simply
+reflects that, near the ground state, the live set contains many quasi-degenerate low-energy
+structures, so the "worst" one at any step bounces among them. The systematic descent is over;
+only the per-iteration ordering noise remains.
+
+**Impact on the state density:** this fluctuation is actually *desirable* for `g(E)`. The
+scatter of `E_i` over the band near the minimum populates several histogram bins below the
+weighted peak, which is exactly what resolves the **low-energy tail** of `g(E)`. Because each of
+these late samples carries only a tiny `w_i`, the fluctuation contributes a small but nonzero
+density to the ground-state side of the histogram — it does **not** shift the weighted peak
+(which is set by the early, high-weight samples), but it does fill in the shape of `g(E)`
+between the peak and the minimum. Without that fluctuation, `g(E)` would be a sharp spike at the
+weighted-mean energy; with it, `g(E)` has the resolved, physically meaningful low-energy
+shoulder that appears in `state_density_gE.png`.
+
+In short: the **stale weighted mean** fixes the *center* of `g(E)`; the **post-convergence
+fluctuation** fills in its *shape*. Both are normal NS behaviour, and together they give a
+`g(E)` whose weighted peak sits at ≈ +0.31 eV/atom while its low-energy tail extends down toward
+the global minimum.
+
+---
+
 ## 3. Prior-weight histogram (configurational state-density proxy)
 
 The `prior_weight`-weighted energy histogram (`samples_weighted_histogram.png`) is a proxy for the

@@ -4314,3 +4314,29 @@ energy each iteration). In the AGOX output this = samples.csv energy_eV per iter
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — b10 iter20000 DISCUSSION.md: samples_energy_vs_iter write-up
+
+**Goal (user-confirmed via clarify):** Add a dedicated section to the b10 iter20000 DISCUSSION.md
+explaining the samples_energy_vs_iter.png figure: weighted running mean (what/how/represents),
+the 'stale' plateau at ~-413.5 eV, and the post-4000-iteration fluctuation, plus their impacts
+on the state density g(E). Embed the figure; use real numbers.
+
+**Clarify decisions (all user-confirmed):**
+1. New dedicated section '2b. Discussion: samples_energy_vs_iter.png'.
+2. Embed the samples_energy_vs_iter.png image.
+3. Use real numbers (weighted mean plateaus at -413.511 eV; raw Es fluctuate ~-420..-434 eV,
+   std ~3.3-3.7).
+
+**Actions taken:**
+- Added section 2b to DISCUSSION.md with the weighted-running-mean definition/formula,
+  interpretation, staleness explanation, and post-4000 fluctuation discussion, all grounded in
+  the real data. Embedded the figure.
+
+**Results:** DISCUSSION.md now documents the samples_energy_vs_iter.png analysis.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
