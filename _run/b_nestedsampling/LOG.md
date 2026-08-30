@@ -4477,3 +4477,34 @@ boron3) dataset, outputting to a new b12 analysis_indices dir.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — run_analysis_indices.py: add Stage 1 best-so-far progression plot
+
+**Goal (user-confirmed via clarify):** Add a per-seed best-so-far progression plot to
+`run_analysis_indices.py`, like the reference `_archive/_analysist/0_analy/idx_19/progression_plots/
+progression_seed_split_19.png` (source: `_archive/_analysist/scripts/process_database.py`'s
+plot_best_so_far).
+
+**Clarify decisions (all user-confirmed):**
+1. Per-seed best-so-far progression (each seed's min-relative-energy-per-atom vs candidate index,
+   Seed 0 in bold black on top).
+2. Add as a new 'Stage 1' step running BEFORE Stage 2/3, outputting to the same outdir.
+3. Match the reference styling (per-seed lines, Seed 0 black/bold on top, 'Evaluated Candidates'
+   x, '$E_{i}-E_{glob}$ (eV/atom)' y, legend outside, no top/right spines).
+
+**Actions taken:**
+- Added `load_all_seeds_by_seed()` (per-seed structures/energies, iteration >= start_iter).
+- Added `step1_progression()` mirroring process_database.py's plot_best_so_far:
+  per-seed np.minimum.accumulate(rel_e_atom), Seed 0 black/bold zorder 50, reference styling.
+- Wired `step1_progression` into main() before step2_landscape.
+- Updated docstring; bumped `__version__` 1.1.0 -> 1.2.0.
+- py_compile OK; ran for b12 dataset; progression plot generated
+  (b12_.../analysis_indices/progression_plots/progression_seed_split_0.png).
+
+**Results:** Stage 1 progression plot added and produced for b12. All 3 stages run.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

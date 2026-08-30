@@ -7,11 +7,14 @@ project's flat dataset layout. Instead of an index/folder map + Stage-1 DB
 processing, this loads ALL seed databases directly (like main.py's load_all_seeds)
 and runs the same analyses:
 
+  Stage 1 — Best-so-far progression plot (per-seed, like process_database.py's
+            plot_best_so_far -> progression_seed_split_<idx>.png).
   Stage 2 — Landscape analysis & evaluation (scripts/plot_structure_landscape.py):
             PCA landscape (Fingerprint PC1) + per-atom KDE state density.
   Stage 3 — Boltzmann probability (per-atom KDE + Pi = rho*exp(-dE/kT)/Z), vs T.
 
 Produces, under <outdir>:
+  progression_plots/progression_seed_split_0.png   (Stage 1 best-so-far progression)
   conf_space.png                          (Stage 2 landscape + state density)
   binding_probability_vs_temperature.png  (Stage 3 Boltzmann P(T))
 
@@ -24,7 +27,7 @@ Usage (needs agox_v2 conda env for AGOX Fingerprint + ASE + scipy):
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import glob
@@ -103,6 +106,87 @@ def load_all_seeds(dataset_dir: str, start_iter: int = 10):
               f"(iteration >= {start_iter})")
     energies = np.asarray(energies, dtype=float)
     return structures, energies
+
+
+def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
+    """Load per-seed structures + energies from dataset/seed_*/1_db/db_*.db,
+    filtered by iteration >= start_iter. Returns an ordered dict
+    {seed_label: (structures, energies)} plus the flattened structures/energies."""
+    from collections import OrderedDict
+    db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
+    if not db_paths:
+        raise FileNotFoundError(f"No DBs matched {os.path.join(dataset_dir, 'seed_*/1_db/db_*.db')}")
+    seed_data = OrderedDict()
+    all_structs, all_energies = [], []
+    for i, p in enumerate(db_paths):
+        db = Database(filename=p)
+        db.restore_to_memory()
+        raw = db.get_all_structures_data()
+        kept = [d for d in raw if d.get("iteration", 0) >= start_iter]
+        atoms_list = [db.db_to_atoms(d) for d in kept]
+        e_list = np.asarray([a.get_potential_energy() for a in atoms_list], dtype=float)
+        seed_data[f"Seed {i}"] = (atoms_list, e_list)
+        all_structs.extend(atoms_list)
+        all_energies.extend(e_list)
+        print(f"  {os.path.relpath(p)}: {len(atoms_list)}/{len(raw)} structures "
+              f"(iteration >= {start_iter})")
+    return seed_data, all_structs, np.asarray(all_energies, dtype=float)
+
+
+# ---------------------------------------------------------------------------
+# Stage 1 — Best-so-far progression plot (per-seed)
+# ---------------------------------------------------------------------------
+def step1_progression(dataset_dir, outdir, start_iter=10):
+    """Per-seed best-so-far relative-energy-per-atom progression plot, mirroring
+    _archive/_analysist/scripts/process_database.py's plot_best_so_far (the source
+    of progression_seed_split_<idx>.png). Seed 0 is highlighted in bold black on top."""
+    print("\n[STAGE 1] Best-so-far progression plot")
+    from matplotlib.ticker import AutoMinorLocator
+
+    seed_data, _, _ = load_all_seeds_by_seed(dataset_dir, start_iter=start_iter)
+
+    fig, ax = plt.subplots(figsize=(6, 3.5))
+    max_y, max_x = 0, 0
+    sorted_seed_names = list(seed_data.keys())
+    cmap = plt.get_cmap("tab10")
+    for i, s_name in enumerate(sorted_seed_names):
+        s_structs, s_energies = seed_data[s_name]
+        if not s_structs:
+            continue
+        # relative energy per atom within this seed (mirrors calculate_relative_energy)
+        e_min = s_energies.min()
+        s_rel_e_atom = np.asarray([(e - e_min) / len(a) for e, a in zip(s_energies, s_structs)])
+        s_best_so_far = np.minimum.accumulate(s_rel_e_atom)  # progressive minimum
+        # highlight Seed 0 in bold black on top (reference styling)
+        if i == 0:
+            current_color, linewidth, zorder = "black", 2.0, 50
+        else:
+            current_color, linewidth, zorder = cmap((i - 1) % 10), 1.5, 1
+        ax.plot(range(len(s_best_so_far)), s_best_so_far,
+                label=s_name, lw=linewidth, color=current_color, zorder=zorder)
+        max_y = max(max_y, np.max(s_rel_e_atom))
+        max_x = max(max_x, len(s_best_so_far))
+
+    ax.set_xlabel("Evaluated Candidates")
+    ax.set_ylabel(r"$E_{i}-E_{glob}$ (eV/atom)")
+    ax.set_xlim(0, max_x)
+    ax.set_ylim(0, max_y * 1.1)
+    ax.xaxis.set_minor_locator(AutoMinorLocator())
+    ax.yaxis.set_minor_locator(AutoMinorLocator())
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.tick_params(axis="both", which="both", top=False, right=False,
+                   labeltop=False, labelright=False)
+    ax.legend(loc="upper left", fontsize=9, ncol=1, frameon=True,
+              bbox_to_anchor=(1.02, 1), borderaxespad=0.)
+    plt.tight_layout()
+
+    plot_dir = os.path.join(outdir, "progression_plots")
+    os.makedirs(plot_dir, exist_ok=True)
+    out_path = os.path.join(plot_dir, "progression_seed_split_0.png")
+    plt.savefig(out_path, dpi=300)
+    plt.close(fig)
+    print(f"  -> progression plot saved to {out_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -238,6 +322,7 @@ def main():
           f"(iteration >= {args.start_iter})")
 
     os.makedirs(args.outdir, exist_ok=True)
+    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter)
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density)
     step3_probability(structures, energies, args.outdir, e_max=args.e_max)
