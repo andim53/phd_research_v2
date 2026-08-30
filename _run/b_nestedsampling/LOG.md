@@ -5154,3 +5154,27 @@ base b10 parameters (documented in its DISCUSSION.md) plus the new `--scatter-ed
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (5) — compare_state_density_gE.py: b10 re-run with b12's figsize (7)
+
+**Goal:** Regenerate the b10 `compare_state_density_gE.png` using the same figsize as the b12
+figure (2064x852). The b12 figure used the script default `--figsize 7` (no --figsize passed in
+its regeneration), while b10 used `--figsize 6`.
+
+**Clarify:** Not needed — unambiguous (match b12's figsize; b12 was generated with the default 7).
+
+**Actions taken:**
+- No code change needed.
+- Re-ran for b10 Fe/MgO iter20000 with `--n-atoms 75 --figsize 7 --scatter-edge` (kept the
+  base b10 params + scatter-edge from the previous session).
+
+**Results (real output):**
+- b10 PNG regenerated at 269727 bytes, dimensions **2064x852** — identical to the b12 figure's
+  dimensions (2064x852).
+- Peaks unchanged: NS 0.3062 eV/atom (g 18.134), dataset 0.0764 eV/atom (g 6.091).
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
