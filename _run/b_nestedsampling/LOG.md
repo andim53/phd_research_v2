@@ -3706,3 +3706,31 @@ separators and 45°-rotated labels, so the 20,000-iteration ticks are readable a
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: NS vs dataset for b10 iter20000
+
+**Goal (user-confirmed via clarify):** Run `compare_state_density_gE.py` for the b10 iter20000
+analysis dir, comparing the NS state density with the GPR+LCB-only b10 dataset (KDE).
+
+**Clarify decision (user-confirmed):** `--run b10_femgo_walk_emax04_exclworst_noxsf_novelty
+--ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 --n-atoms 75
+--figsize 6`, default `--e-max-rel` (NS max), default outname compare_state_density_gE.png,
+full (non-simple) style.
+
+**Actions taken:**
+- Ran `compare_state_density_gE.py` with the above params (b10 is Fe/MgO, 75 atoms).
+
+**Results (b10 iter20000):**
+- NS g(E): peak at +0.306 eV/atom (abs g 18.13), from 20000 prior-weight-weighted samples.
+- Dataset (GPR+LCB DFT, 1297 structures): KDE peak at +0.076 eV/atom (abs g 4.88).
+- NS E range 0..0.398 eV/atom (rel. own min); DS E range 0..0.675 eV/atom.
+- Saved `compare_state_density_gE.png` (1800x1800) in the b10 iter20000 analysis dir.
+- The two peaks differ strongly: the NS weighted ensemble peaks high (~0.31 eV/atom), while the
+  raw dataset KDE peaks low (~0.08 eV/atom) — NS weights configuration-space volume (higher),
+  whereas the dataset is densest near the lower-energy region.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
