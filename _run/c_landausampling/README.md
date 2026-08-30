@@ -202,3 +202,7 @@ c_landausampling/
 
 See `README.AI.md` for the machine-readable spec and `TUTORIAL.md` for
 step-by-step reproduction.
+
+# QnA
+
+What is --n-bins? What do they do?
