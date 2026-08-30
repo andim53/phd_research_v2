@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.4.1"
+__version__ = "1.4.2"
 
 import argparse
 import glob
@@ -195,7 +195,10 @@ def main():
     else:
         ax.set_ylim(0, 1.05)
     ax.set_xlim(0, grid.max())
-    ax.legend(frameon=False, loc=args.legend_loc, fontsize=9)
+    leg = ax.legend(frameon=False, loc=args.legend_loc, fontsize=9)
+    # white outline on the legend text (patheffects.withStroke)
+    for t in leg.get_texts():
+        t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
 
     os.makedirs(args.outdir, exist_ok=True)
     out_path = os.path.join(args.outdir, args.outname)

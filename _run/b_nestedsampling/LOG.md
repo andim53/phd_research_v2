@@ -4666,3 +4666,29 @@ binding_probability_vs_temperature.png to the top-left, and add a flag to contro
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: temps 100/300/500/1000K + white legend outline
+
+**Goal (user-confirmed via clarify):** Re-run the b10 iter20000 binding_probability_vs_temperature.png
+with temperatures 100, 300, 500, 1000 K, and add a white outline to the legend text.
+
+**Clarify decisions (all user-confirmed):**
+1. Use temperatures 100, 300, 500, 1000 K (4 curves).
+2. Apply a white outline (patheffects.withStroke) to the legend text.
+3. Re-run the graph.
+
+**Actions taken:**
+- Added white outline (patheffects.withStroke, lw 2) to legend text via leg.get_texts().
+- Re-ran with --temperatures 100 300 500 1000 (kept --linewidth 3 --figsize 4 --legend-loc
+  "upper left").
+- Bumped `__version__` 1.4.1 -> 1.4.2.
+- py_compile OK; PNG regenerated (1200x1200).
+
+**Results:** The binding_probability_vs_temperature.png now plots 100/300/500/1000 K curves with
+white-outlined legend text.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
