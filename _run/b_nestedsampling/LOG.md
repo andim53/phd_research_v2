@@ -5128,3 +5128,29 @@ x-axis (`--flip-pca`) and use the PCA-delta-Z-derived island/flat dashlines (`--
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (4) — compare_state_density_gE.py: b10 re-run with --scatter-edge
+
+**Goal (user-confirmed via clarify):** Regenerate the b10 `compare_state_density_gE.png` using the
+base b10 parameters (documented in its DISCUSSION.md) plus the new `--scatter-edge` outline flag.
+
+**Clarify decisions (all user-confirmed):**
+1. Use the base b10 parameters (`--n-atoms 75 --figsize 6`) + add `--scatter-edge`. No
+   `--flip-pca`, no `--delta-z-lines`, no `--max-delta-z` override.
+
+**Actions taken:**
+- No code change needed (the `--scatter-edge` flag exists in v2.10.0).
+- Re-ran for b10 Fe/MgO iter20000 with:
+  `--n-atoms 75 --figsize 6 --scatter-edge --outname compare_state_density_gE.png`.
+
+**Results (real output):**
+- dataset 1180 structures (iteration >= 10), 75 atoms each; delta Z range 0.000 .. 5.570 A.
+- Fixed reference dashlines (island 0.074, flat 0.255 eV/atom) — default mode (no delta-z-lines).
+- NS hist peak at 0.3062 eV/atom (abs g 18.134); dataset KDE peak at 0.0764 eV/atom (abs g 6.091).
+- `compare_state_density_gE.png` regenerated (242415 bytes) with the thin black scatter outline.
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
