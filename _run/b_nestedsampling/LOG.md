@@ -4074,3 +4074,31 @@ notes in both State Density panels now have a small white outline.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: full-width GPR+LCB peak lines + --figsize/--scatter-size
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`: (1) make the GPR+LCB
+State Density peak dashed lines reach the end of the x-axis (like the NS axhline); (2) add a
+--figsize flag controlling figure width; (3) add a --scatter-size flag controlling the PCA
+scatter s.
+
+**Clarify decisions (all user-confirmed):**
+1. GPR+LCB peak lines -> full-width axhline (like the NS panel).
+2. --figsize flag (float, default 7) = figure width in inches; height fixed at 3.
+3. --scatter-size flag (int, default 5) controlling PCA scatter s.
+
+**Actions taken:**
+- Changed GPR+LCB peak lines from hlines (0->peak density) to full-width axhline.
+- Added `--figsize` (default 7) -> figsize=(args.figsize, 3).
+- Added `--scatter-size` (default 5) -> scatter s=args.scatter_size.
+- Bumped `__version__` 2.7.0 -> 2.8.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000 (--figsize 7 --scatter-size 5); PNG regenerated (2064x852).
+
+**Results:** The GPR+LCB peak dashed lines now span the full x-axis; the figure width and PCA
+scatter marker size are controllable via --figsize and --scatter-size.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

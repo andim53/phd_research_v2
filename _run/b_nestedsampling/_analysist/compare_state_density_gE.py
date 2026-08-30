@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.7.0"
+__version__ = "2.8.0"
 
 import argparse
 import glob
@@ -134,6 +134,10 @@ def main():
                         "(matches the reference conf_space.png).")
     p.add_argument("--simple", action="store_true",
                    help="simplified version: no title; short legend labels.")
+    p.add_argument("--figsize", type=float, default=7,
+                   help="figure width in inches (height fixed at 3). Default 7.")
+    p.add_argument("--scatter-size", type=int, default=5,
+                   help="PCA scatter marker size s. Default 5.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     args = p.parse_args()
@@ -193,7 +197,7 @@ def main():
     # (matches the reference conf_space.png where the PCA scatter is the wide panel
     # and the density panel is thin).
     ratios = [2.5, 1, 1]
-    fig, axes = plt.subplots(1, 3, figsize=(7, 3), sharey=True,
+    fig, axes = plt.subplots(1, 3, figsize=(args.figsize, 3), sharey=True,
                              gridspec_kw={'width_ratios': ratios})
     fig.subplots_adjust(wspace=0.1)
 
@@ -201,7 +205,7 @@ def main():
     # delta Z (Fe island height) with a PuBu colorbar (like 71_conf_space.py).
     ax_scat = axes[0]
     vmin, vmax = np.nanmin(z_data), np.nanmax(z_data)
-    sc = ax_scat.scatter(X_eigen, E_rel_ds, c=z_data, cmap="PuBu", s=5,
+    sc = ax_scat.scatter(X_eigen, E_rel_ds, c=z_data, cmap="PuBu", s=args.scatter_size,
                          norm=mcolors.Normalize(vmin=vmin, vmax=vmax),
                          edgecolors="black", linewidth=0.5, alpha=0.8, zorder=2)
     cbar = fig.colorbar(sc, ax=ax_scat, pad=0.02)
@@ -217,11 +221,11 @@ def main():
     ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4, label="GPR+LCB")
     ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
     # dashed lines at the GPR+LCB KDE peak(s) (like 36_find_density_peak.py), black,
-    # with a small white outline
+    # full-width (reaching the end of the x-axis like the NS panel), with white outline
     ds_peaks, _ = find_peaks(ds_density, prominence=np.max(ds_density) * 0.05)
     for pk in ds_peaks:
-        ln = ax_ds.hlines(energy_grid[pk], 0, ds_density[pk], colors="black",
-                          linestyles="--", alpha=0.5, lw=1.2)
+        ln = ax_ds.axhline(energy_grid[pk], color="black", linestyle="--",
+                           alpha=0.5, lw=1.2)
         ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
     # notes: flat and island at the reference energies (black text, white outline)
     for note_e, note_txt in [(0.255, "flat"), (0.074, "island")]:
