@@ -157,3 +157,47 @@ a flag for swapping times per iteration, modeled on the reference
   (`--perturb-symbols Fe,B --swap-prob ...`).
 
 **Time:** ~2026-08-30 20:50–21:10 (JST).
+
+---
+
+## Session 2026-08-30 (3) — Scaffold run dirs `_runs/c1` and `_runs/c2`
+
+**Goal (user-confirmed via clarify):** Create two self-contained run dirs under
+`_runs/`: c1 uses the plain Fe/MgO `dataset`, c2 uses the B3-doped
+`dataset_boron3`.
+
+**Clarify decisions (all user-confirmed):**
+1. **Naming:** `_runs/c1_mgofe_N40_Emax04` and `_runs/c2_boron3_N40_Emax04`
+   (`<NN>_<descriptor>` convention).
+2. **Params:** default for both — `--n-bins 40 --e-max 0.40 --mc-steps 20000000
+   --small-step 0.05 --large-step 0.40 --temperatures 100..1000`.
+3. **Swap:** c2 (boron3) enables the swap move — `--perturb-symbols Fe,B
+   --swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05`. c1 (Fe/MgO) uses
+   `--perturb-symbols Fe` with no swap (single mobile species).
+4. **Launch:** scaffold only (batch scripts + per-run README/TUTORIAL + code +
+   dataset copies), ready to launch later — do NOT `pjsub`.
+
+**Actions taken:**
+- Created `_runs/c1_mgofe_N40_Emax04/` and `_runs/c2_boron3_N40_Emax04/`.
+- Copied `main.py` (v1.1.0) + `wang_landau/` package into each (self-contained).
+- Copied the datasets self-contained: `dataset/` (13 DBs, Fe/MgO) into c1,
+  `dataset_boron3/` (7 DBs, B3Fe25Mg25O25) into c2. Removed embedded `.git`
+  gitlinks.
+- Wrote `j_c1_mgofe_N40_Emax04.sh` (dataset, Fe, no swap) and
+  `j_c2_boron3_N40_Emax04.sh` (dataset_boron3, Fe,B, swap) — bare PJM scripts
+  (`gpaw_env`, 24 cores).
+- Wrote per-run `README.md` + `TUTORIAL.md` for each run dir.
+
+**Results (real output):**
+- Both run dirs compile standalone:
+  `$PY -m py_compile <run>/main.py <run>/wang_landau/*.py` → OK (v1.1.0).
+- c2 dataset confirmed B3Fe25Mg25O25 / 78 atoms.
+- Git staging: 91 files (code + docs + `latt_log.md`); regenerable data
+  (`.db/.xsf/.png/.csv/.out`) correctly excluded by `.gitignore`.
+
+**Open items:**
+- Launch the runs on HPC when ready: `pjsub
+  _runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04.sh` and `pjsub
+  _runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04.sh`.
+
+**Time:** ~2026-08-30 21:15–21:30 (JST).
