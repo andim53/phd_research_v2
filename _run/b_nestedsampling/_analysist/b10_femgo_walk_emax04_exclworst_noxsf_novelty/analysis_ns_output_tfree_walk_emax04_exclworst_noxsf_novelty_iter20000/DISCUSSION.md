@@ -20,6 +20,39 @@ Parameters: `--data` = the run's temperature-free output dir (samples.csv,
 final_live_energies.csv, thermodynamics.csv); `--outdir` = this analysis dir;
 `--n-atoms 75` = atoms per structure (Fe/MgO) for the per-atom relative-energy units of the state density.
 
+---
+
+## NS vs dataset state-density comparison
+
+The figure below overlays the **NS g(E)** (prior-weight-weighted histogram of the 20,000
+discarded samples) against the **GPR+LCB g(E)** (gaussian KDE of the b10 dataset's DFT energies),
+both peak-normalized to 1 for a direct shape comparison.
+
+![compare_state_density_gE.png](compare_state_density_gE.png)
+
+**Command + parameters that produced it** (run from `_analysist/`):
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
+    --run b10_femgo_walk_emax04_exclworst_noxsf_novelty \
+    --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --n-atoms 75 --figsize 6 \
+    --outname compare_state_density_gE.png
+```
+
+Parameters: `--run` = b10 run dir (contains `dataset/` and the analysis dir); `--ns-output` = the
+analysis dir name (holds the ns_output `samples.csv` + this PNG); `--n-atoms 75` = atoms per
+structure (Fe/MgO); `--figsize 6` = square figure size in inches; `--outname` = the output
+filename. The dataset KDE uses **all** dataset structures (unfiltered); the plot x-range is capped
+at the NS max E−E_min.
+
+**Resulting peaks:** NS g(E) at +0.306 eV/atom (abs g 18.1); dataset KDE at +0.076 eV/atom
+(abs g 4.9). The NS weighted ensemble peaks high (~0.31 eV/atom) while the raw dataset KDE peaks
+low (~0.08 eV/atom) — NS weights configuration-space volume (which sits higher), whereas the
+dataset is densest near the lower-energy region.
+
+---
+
 This document discusses the results of the temperature-free nested-sampling (NS) run on the
 plain Fe/MgO (no-Boron) system, using b9's treatment (temperature-free; `--e-max-per-atom 0.4`;
 window `[0.3, 0.35]`; `--walk` with `--walk-exclude-worst`; `--no-posterior-xsf`;

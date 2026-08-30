@@ -3734,3 +3734,23 @@ full (non-simple) style.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — b10 iter20000 DISCUSSION.md: include NS-vs-dataset comparison + command
+
+**Goal (user-confirmed? — simple doc edit, no clarify needed):** In the b10 iter20000
+DISCUSSION.md, include the `compare_state_density_gE.png` graph and the command+parameters that
+produced it.
+
+**Actions taken:**
+- Added an "NS vs dataset state-density comparison" section after the Analysis reproduction
+  block: embeds `compare_state_density_gE.png`, the exact `compare_state_density_gE.py` command
+  (--run b10_..., --ns-output analysis_..._iter20000, --n-atoms 75, --figsize 6, --outname), the
+  parameter meanings, and the resulting peaks (NS +0.306, dataset KDE +0.076 eV/atom).
+
+**Results:** DISCUSSION.md now documents the comparison figure + reproduction command.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
