@@ -27,7 +27,7 @@ Usage (needs agox_v2 conda env for AGOX Fingerprint + ASE + scipy):
 
 from __future__ import annotations
 
-__version__ = "1.2.1"
+__version__ = "1.3.0"
 
 import argparse
 import glob
@@ -41,6 +41,7 @@ import matplotlib.pyplot as plt
 
 from agox.databases import Database
 from agox.models.descriptors.fingerprint import Fingerprint
+from ase.io import write as ase_write
 from scipy.stats import gaussian_kde
 
 # --- paths: make the self-contained scripts/ importable ----------------------
@@ -149,6 +150,11 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
 
     seed_data, _, _ = load_all_seeds_by_seed(dataset_dir, start_iter=start_iter)
 
+    # Capture Seed 0's filtered structures/energies for the bullet scatter + xsf export
+    seed0_structs = None
+    seed0_rel_e = None
+    seed0_n = 0
+
     fig, ax = plt.subplots(figsize=(6, 3.5))
     max_y, max_x = 0, 0
     sorted_seed_names = list(seed_data.keys())
@@ -167,6 +173,11 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
             s_structs = [a for a, m in zip(s_structs, mask) if m]
         if len(s_rel_e_atom) == 0:
             continue
+        # remember Seed 0's filtered data (index 0 in sorted_seed_names) for bullets/xsf
+        if i == 0:
+            seed0_structs = s_structs
+            seed0_rel_e = s_rel_e_atom
+            seed0_n = len(s_rel_e_atom)
         s_best_so_far = np.minimum.accumulate(s_rel_e_atom)  # progressive minimum
         # highlight Seed 0 in bold black on top (reference styling)
         if i == 0:
@@ -192,8 +203,60 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
               bbox_to_anchor=(1.02, 1), borderaxespad=0.)
     plt.tight_layout()
 
+    # --- Bullet scatter on Seed 0: lowest-energy candidate in each evaluated-candidate
+    # window (0-20, 20-40, 40-60, 60-80), plus the global ground state. Save each as xsf. ---
     plot_dir = os.path.join(outdir, "progression_plots")
     os.makedirs(plot_dir, exist_ok=True)
+    if seed0_structs is not None:
+        # global minimum across ALL data (for the ground-state bullet)
+        global_min_e = min(
+            (energies.min() for _, (_, energies) in seed_data.items() if len(energies) > 0),
+            default=None)
+        gs_struct = None
+        if global_min_e is not None:
+            for s_name, (s_structs, s_energies) in seed_data.items():
+                if len(s_energies) > 0:
+                    gi = int(s_energies.argmin())
+                    gs_struct = s_structs[gi]
+                    break
+
+        windows = [(0, 20), (20, 40), (40, 60), (60, 80)]
+        saved = []
+        for (wlo, whi) in windows:
+            idxs = [j for j in range(seed0_n) if wlo <= j < whi]
+            if not idxs:
+                continue
+            jmin = idxs[int(np.argmin(seed0_rel_e[idxs]))]  # lowest-energy candidate in window
+            # bullet at (candidate_index, rel_energy_per_atom) on Seed 0
+            ax.plot(jmin, seed0_rel_e[jmin], "o", color="black", ms=7,
+                    zorder=60, mfc="gold", mec="black")
+            # save the structure
+            fname = os.path.join(plot_dir, f"seed0_min_w{wlo}-{whi}.xsf")
+            ase_write(fname, seed0_structs[jmin])
+            saved.append(fname)
+        # global ground state bullet (lowest across all data), plotted at its seed-0 candidate
+        # position if it is in Seed 0, else at the last candidate with its rel energy
+        if global_min_e is not None and gs_struct is not None:
+            # ground-state rel-energy-per-atom relative to seed0's absolute minimum
+            seed0_min_abs = min(
+                (energies.min() for _, (_, energies) in seed_data.items()
+                 if len(energies) > 0), default=global_min_e)
+            gs_rel = (global_min_e - seed0_min_abs) / len(gs_struct)
+            # locate the nearest seed-0 candidate index to the ground-state energy
+            gs_x = seed0_n - 1
+            if len(seed0_rel_e) > 0:
+                gs_x = int(np.argmin(np.abs(seed0_rel_e - gs_rel)))
+            ax.plot(gs_x, gs_rel, "*", color="black", ms=14, zorder=61,
+                    mfc="lime", mec="black")
+            fname = os.path.join(plot_dir, "global_gs.xsf")
+            ase_write(fname, gs_struct)
+            saved.append(fname)
+        if saved:
+            print(f"  -> saved {len(saved)} xsf structures:")
+            for f in saved:
+                print(f"     {f}")
+    plt.tight_layout()
+
     out_path = os.path.join(plot_dir, "progression_seed_split_0.png")
     plt.savefig(out_path, dpi=300)
     plt.close(fig)

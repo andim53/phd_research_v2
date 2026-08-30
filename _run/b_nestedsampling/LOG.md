@@ -4536,3 +4536,34 @@ relative-per-atom), matching the Stage 2/3 energy cap.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — run_analysis_indices.py: Seed-0 bullet scatter + xsf export in progression plot
+
+**Goal (user-confirmed via clarify):** In the b12 progression plot (progression_seed_split_0.png),
+add bullet scatters on Seed 0 marking the current-lowest-energy candidate in each evaluated-candidate
+window (0-20, 20-40, 40-60, 60-80) plus the global ground state (lowest across all data), and save
+each bulleted structure as an xsf file.
+
+**Clarify decisions (all user-confirmed):**
+1. Within Seed 0's filtered candidates (x = candidate index), mark the single lowest-energy
+   candidate in each window with a bullet at (candidate_index, rel_energy); plus one bullet for the
+   global ground state (lowest across ALL data).
+2. Save each bulleted structure (4 bin-minima + global ground state) as its own .xsf in
+   progression_plots/, named seed0_min_w0-20.xsf, ..., global_gs.xsf.
+3. Bullet y-position uses relative energy per atom (E - seed0_min)/n_atoms, same as the y-axis.
+
+**Actions taken:**
+- Added `ase.io.write` import; captured Seed 0's filtered structures/rel energies in the loop.
+- Added bullet scatter (gold 'o' for window minima, lime '*' for global ground state) + xsf export
+  (seed0_min_w{lo}-{hi}.xsf, global_gs.xsf).
+- Bumped `__version__` 1.2.1 -> 1.3.0.
+- py_compile OK; re-ran for b12; 5 xsf files saved + progression plot regenerated.
+
+**Results:** b12 progression plot now shows 4 window-minimum bullets + global ground-state bullet on
+Seed 0, and saves 5 xsf structures.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
