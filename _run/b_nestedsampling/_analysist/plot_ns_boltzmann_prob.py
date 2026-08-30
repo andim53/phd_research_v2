@@ -31,15 +31,18 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
+import glob
 import os
 
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib import patheffects
+from scipy.signal import find_peaks
 from scipy.stats import gaussian_kde
 
 import analyze_tfree_outputs as ato  # reuse load_samples
@@ -68,11 +71,30 @@ E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"   # matches the other analyses
 K_B = 8.617333262e-5                       # eV/K
 
 
+def load_dataset_energies(dataset_dir: str):
+    """Load + filter dataset DFT energies from seed DBs (mirrors compare_state_density_gE.py)."""
+    from agox.databases import Database
+    db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
+    if not db_paths:
+        raise FileNotFoundError(f"No DBs matched in {dataset_dir}")
+    energies = []
+    for p in db_paths:
+        db = Database(filename=p)
+        db.restore_to_memory()
+        traj = db.restore_to_trajectory()
+        energies.extend(a.get_potential_energy() for a in traj)
+    return np.asarray(energies, dtype=float)
+
+
 def main():
     p = argparse.ArgumentParser(
         description="Plot NS Boltzmann probability P(E) vs relative energy at several T")
     p.add_argument("--ns-output", required=True,
                    help="ns_output dir containing samples.csv (the NS run's output)")
+    p.add_argument("--dataset", default=None,
+                   help="dataset dir (contains seed_*/1_db/db_*.db) to compute the "
+                        "KDE state density and find the flat/island peaks. If omitted, "
+                        "the flat/island dashed lines are not drawn.")
     p.add_argument("--outdir", required=True,
                    help="output dir for the PNG")
     p.add_argument("--outname", default="binding_probability_vs_temperature.png",
@@ -97,13 +119,31 @@ def main():
     grid = np.linspace(0, rel.max() + 0.02, 400)
     gE = ns_kde.evaluate(grid)                   # config./eV
 
+    # --- flat/island from the DATASET KDE state density (like compare_state_density_gE.py) ---
+    flat_e, island_e = None, None
+    if args.dataset is not None:
+        ds_energies = load_dataset_energies(args.dataset)
+        ds_rel = (ds_energies - ds_energies.min()) / args.n_atoms
+        ds_kde = gaussian_kde(ds_rel)
+        ds_grid = np.linspace(0, ds_rel.max() + 0.02, 400)
+        ds_density = ds_kde.evaluate(ds_grid)
+        ds_peaks, _ = find_peaks(ds_density, prominence=np.max(ds_density) * 0.05)
+        peak_es = np.sort(ds_grid[ds_peaks])     # ascending energy
+        if len(peak_es) >= 2:
+            island_e, flat_e = peak_es[0], peak_es[1]   # lowest = island, next = flat
+        elif len(peak_es) == 1:
+            island_e = peak_es[0]
+        print(f"  dataset KDE peaks (eV/atom): {peak_es.round(4).tolist()}")
+        print(f"  island={island_e:.4f}, flat={flat_e:.4f}" if flat_e is not None
+              else f"  island={island_e:.4f} (no flat peak)")
+
     fig, ax = plt.subplots(figsize=(5, 4))
     # colors: a perceptually ordered set for the temperatures
     colors = ["#0d0887", "#47039f", "#7301a8", "#9c176d", "#bd3752",
               "#d8546a", "#ed7953", "#fb9f4a", "#fdca42", "#f0f928"]
 
     print("=" * 60)
-    print("NS Boltzmann probability (g(E) * exp(-beta*E) / Z from g(E)))")
+    print("NS Boltzmann probability (g(E) * exp(-beta*E) / Z from g(E))")
     print("=" * 60)
     for i, T in enumerate(args.temperatures):
         beta = 1.0 / (K_B * T)
@@ -116,6 +156,15 @@ def main():
         ax.plot(grid, probs_plot, color=colors[i % len(colors)],
                 lw=1.6, label=f"{T} K")
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
+
+    # dashed vertical lines at the flat/island energies (black, white outline)
+    for note_e, note_txt in [(flat_e, "flat"), (island_e, "island")]:
+        if note_e is not None:
+            ln = ax.axvline(note_e, color="black", linestyle="--", lw=1.2, alpha=0.6)
+            ln.set_path_effects([patheffects.withStroke(linewidth=2.5, foreground="white")])
+            t = ax.text(note_e, 0.05, note_txt, color="black", fontsize=8,
+                        ha="left", va="bottom", rotation=90)
+            t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
 
     ax.set_xlabel(E_LABEL)
     ax.set_ylabel("Probability P(E) (peak-normalized)")

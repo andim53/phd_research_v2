@@ -4206,3 +4206,31 @@ Curves peak-normalized and visible.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: add flat/island dashed lines from dataset KDE peaks
+
+**Goal (user-confirmed via clarify):** Add dashed lines on the energy axis of the NS Boltzmann
+probability plot showing 'flat' and 'island', computed from a KDE state density of the b10 DATASET
+(like compare_state_density_gE.py) and finding its peaks.
+
+**Clarify decisions (all user-confirmed):**
+1. Compute a gaussian KDE of the dataset per-atom relative energies, find peaks via find_peaks,
+   assign the lowest-energy peak as 'island' and the next as 'flat'.
+2. Draw black dashed vertical lines at the island/flat energies with white-outlined text notes.
+3. Add a --dataset arg (required for computing the dataset KDE/peaks).
+
+**Actions taken:**
+- Added `--dataset` arg, `load_dataset_energies()`, and `gaussian_kde`/`find_peaks`/`patheffects`.
+- Computed the dataset KDE state density, found peaks, assigned island (lowest) and flat (next).
+- Drew black dashed axvline at island/flat energies with white-outlined 'flat'/'island' notes.
+- Bumped `__version__` 1.1.0 -> 1.2.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000 with --dataset; PNG regenerated (1500x1200).
+
+**Results:** Dataset KDE peaks: 0.0766 (island), 0.2508 (flat), 0.5103 eV/atom. Dashed flat/island
+lines drawn on the Boltzmann plot (matching the reference ~0.074/0.255 values).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
