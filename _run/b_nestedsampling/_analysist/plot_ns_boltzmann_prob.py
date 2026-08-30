@@ -28,7 +28,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import argparse
 import os
@@ -102,13 +102,17 @@ def main():
         log_num = log_w - beta * (Es - E_ref)          # log of numerator
         log_Z = np.log(np.sum(np.exp(log_num)))        # log partition function
         probs = np.exp(log_num - log_Z)                # P_i(T), normalized
+        # Peak-normalize each curve to its own max (=1) so it is visible on a 0-1 axis
+        # (raw NS Boltzmann probabilities are tiny ~1e-2; this matches the reference
+        # Stage 3 which divides by probs.max()).
+        probs_plot = probs / probs.max()
         order = np.argsort(rel)
-        ax.plot(rel[order], probs[order], color=colors[i % len(colors)],
+        ax.plot(rel[order], probs_plot[order], color=colors[i % len(colors)],
                 lw=1.6, label=f"{T} K")
-        print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}")
+        print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
 
     ax.set_xlabel(E_LABEL)
-    ax.set_ylabel("Probability P(E)")
+    ax.set_ylabel("Probability P(E) (peak-normalized)")
     ax.set_ylim(0, 1.05)
     ax.set_xlim(0, rel.max() + 0.02)
     ax.legend(frameon=False, loc="upper right", fontsize=9)

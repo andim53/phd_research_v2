@@ -4153,3 +4153,27 @@ broadens/shifts to higher energy. PNG regenerated; DISCUSSION.md documents it.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: fix blank plot (peak-normalize P(E))
+
+**Problem:** The `binding_probability_vs_temperature.png` looked almost blank. Root cause: the NS
+Boltzmann probabilities are tiny (max ~0.02) because the prior_weight values are small and the
+energy spread is ~30 eV; on a linear 0-1 y-axis everything sat near 0.
+
+**Fix (user-confirmed via clarify):** Peak-normalize each temperature curve to its own max (=1)
+before plotting (like the reference Stage 3 which divides by probs.max()).
+
+**Actions taken:**
+- `plot_ns_boltzmann_prob.py` now plots `probs/probs.max()` per temperature; y-label updated to
+  "Probability P(E) (peak-normalized)"; prints max P per T.
+- Bumped `__version__` 1.0.0 -> 1.0.1.
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (1500x1200).
+
+**Results:** Curves are now visible on the 0-1 axis. max P per T: 100K=1.97e-2, 200K=1.49e-2,
+300K=1.65e-2, 500K=1.64e-2, 1000K=1.42e-2.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
