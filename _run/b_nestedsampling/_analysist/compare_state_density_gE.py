@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.9.1"
+__version__ = "2.9.2"
 
 import argparse
 import glob
@@ -146,6 +146,9 @@ def main():
                         "below 0.1 eV/atom with highest mean delta-Z; flat = ~0.2 eV/atom bin "
                         "with lowest mean delta-Z). Default off: use fixed reference energies "
                         "(island 0.074, flat 0.255 eV/atom).")
+    p.add_argument("--flip-pca", action="store_true",
+                   help="flip the PCA x-axis (multiply PC1 coordinates by -1) so the right side "
+                        "of the PCA appears on the left. Default off.")
     args = p.parse_args()
 
     _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -174,6 +177,8 @@ def main():
 
     # PCA scatter (Configurational Space panel)
     X_eigen, _ = fit_pca(structs)
+    if args.flip_pca:
+        X_eigen = -X_eigen          # flip the PCA x-axis (right side -> left side)
     # delta Z (Fe island height) per dataset structure, for the scatter colorbar
     z_data = np.array([delta_z_fe(s) for s in structs])
     z_data = z_data - np.nanmin(z_data)   # relative delta Z (Angstrom)

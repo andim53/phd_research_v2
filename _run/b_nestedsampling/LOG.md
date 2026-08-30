@@ -5044,3 +5044,27 @@ low delta-Z, and asked what parameter was used.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — compare_state_density_gE.py: --flip-pca flag
+
+**Goal (user-confirmed via clarify):** Add a flag to flip the x-axis of the PCA graph (multiply
+by -1) so the right side of the PCA appears on the left, and re-run for b12 boron3 iter10000.
+
+**Clarify decisions (all user-confirmed):**
+1. Add a --flip-pca flag that multiplies X_eigen by -1, keeping the colorbar/energy axis
+   unchanged; re-run for b12 boron3 iter10000.
+
+**Actions taken:**
+- Added `--flip-pca` flag (default off); applies X_eigen = -X_eigen right after fit_pca.
+- Bumped `__version__` 2.9.1 -> 2.9.2.
+- py_compile OK; re-ran for b12 boron3 iter10000 with --flip-pca --delta-z-lines;
+  compare_state_density_gE.png regenerated (2064x852).
+
+**Results:** The PCA x-axis is flipped (right side on the left); delta-Z-derived island/flat lines
+unchanged (island 0.034, flat 0.183 eV/atom) as expected (they depend on energy bins, not PC1).
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
