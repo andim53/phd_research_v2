@@ -5308,3 +5308,28 @@ KDE-smoothed g(E) grid value below a threshold is turned into 0 before P(E,T) is
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (10) — b10 area-norm PNG: drop 100 K (temperatures 298..773)
+
+**Goal:** Regenerate the b10 area-norm `binding_probability_vs_temperature.png` with the SAME
+parameters as the previous session but WITHOUT the 100 K temperature curve.
+
+**Clarify:** Not needed — unambiguous (same command, drop 100 from --temperatures).
+
+**Actions taken:**
+- Re-ran `plot_ns_boltzmann_prob.py` for b10 with `--temperatures 298 573 623 673 773`
+  (100 K removed), keeping all other params (`--area-norm --gE-min 1.0 --annotate-critical
+  --n-atoms 75 --linewidth 3 --figsize 4 --legend-loc "upper left" --legend-label "{T} K {ref}"`).
+- Updated the DISCUSSION.md 'area-norm' command block: `--temperatures 298 573 623 673 773`
+  (5 critical temps, 100 K omitted) + adjusted parameter explanation.
+
+**Results (real output):**
+- 5 curves plotted (298, 573, 623, 673, 773 K); 100 K curve removed.
+- `[--gE-min 1.0] zeroed 249/400 g(E) grid points below threshold`.
+- `binding_probability_vs_temperature.png` regenerated (1200x1200).
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).

@@ -529,7 +529,7 @@ Run from `_analysist/`:
     --outdir b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
     --outname binding_probability_vs_temperature.png \
     --n-atoms 75 --linewidth 3 --figsize 4 \
-    --temperatures 100 298 573 623 673 773 \
+    --temperatures 298 573 623 673 773 \
     --legend-loc "upper left" --legend-label "{T} K {ref}" \
     --area-norm --gE-min 1.0 --annotate-critical
 ```
@@ -537,8 +537,8 @@ Run from `_analysist/`:
 Parameters: `--ns-output` = the run's temperature-free output dir (samples.csv); `--dataset` =
 the b10 dataset dir (for the flat/island KDE-peak reference lines); `--outdir`/`--outname` =
 output PNG location; `--n-atoms 75` = atoms per structure (Fe/MgO); `--linewidth 3` = curve
-thickness; `--figsize 4` = 4×4 in square figure; `--temperatures 100 298 573 623 673 773`
-= the 6 plotted temperatures (100 K without reference + the 5 critical fabrication temperatures);
+thickness; `--figsize 4` = 4×4 in square figure; `--temperatures 298 573 623 673 773`
+= the 5 critical fabrication temperatures (100 K omitted from the earlier version);
 `--legend-loc "upper left"` = legend position; `--legend-label "{T} K {ref}"` = legend label
 format (appends the `[N]` reference marker for critical temperatures); `--area-norm` = normalize
 each curve so its area = 1 (Probability Density); `--gE-min 1.0` = zero out any KDE-smoothed
