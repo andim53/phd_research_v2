@@ -3867,3 +3867,32 @@ Density | NS State Density, matching the reference conf_space.png formatting/sca
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: AGOX start-iter filter + PCA-large/thin-density widths
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`, filter the dataset to
+AGOX iteration >= 10 (like run_analysis_indices.py / process_database.py), and make the PCA
+(Configurational Space) panel LARGE with the two State Density panels THINNER.
+
+**Clarify decisions (all user-confirmed):**
+1. Filter dataset structures/energies by AGOX iteration >= 10 (matching run_analysis_indices.py's
+   start_iter 10 default).
+2. Width ratios [2.5, 1, 1]: PCA large, both State Density panels thin.
+3. Both dataset and NS State Density panels get the thin width.
+
+**Actions taken:**
+- `load_dataset_structures` now takes `start_iter=10` and filters via
+  `get_all_structures_data()` + `db_to_atoms()` (iteration >= 10), mirroring the reference.
+- Changed width_ratios [1,2.5,2.5] -> [2.5,1,1] and figsize (6,3) -> (7,3).
+- Bumped `__version__` 2.0.0 -> 2.1.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2191x852).
+
+**Results:** b10 iter20000 dataset now filtered to 1180/1297 structures (iteration >= 10), matching
+the reference analysis_indices run. The 3-panel figure now has a large PCA panel and two thin
+State Density panels. NS KDE peak ~ +0.018 eV/atom, dataset KDE peak ~ +0.076 eV/atom.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

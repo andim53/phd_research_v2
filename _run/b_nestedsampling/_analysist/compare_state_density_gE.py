@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import argparse
 import glob
@@ -73,8 +73,10 @@ SCATTER_LABEL = r"$\psi_{1d}(a.u.)$"           # matches run_analysis_indices.py
 E_LIMIT = (0.0 - 0.1, 0.8, 5)                 # energy axis 0 -> 0.8 eV/atom, 5 ticks
 
 
-def load_dataset_structures(dataset_dir: str):
-    """Load structures + DFT energies from dataset/seed_*/1_db/db_*.db (mirrors main.py)."""
+def load_dataset_structures(dataset_dir: str, start_iter: int = 10):
+    """Load structures + DFT energies from dataset/seed_*/1_db/db_*.db, keeping only
+    AGOX structures with iteration >= start_iter (mirrors run_analysis_indices.py /
+    process_database.py's start_iter filter via get_all_structures_data()['iteration'])."""
     db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
     if not db_paths:
         raise FileNotFoundError(f"No DBs matched in {dataset_dir}")
@@ -82,9 +84,13 @@ def load_dataset_structures(dataset_dir: str):
     for p in db_paths:
         db = Database(filename=p)
         db.restore_to_memory()
-        traj = db.restore_to_trajectory()
-        structures.extend(traj)
-        energies.extend(a.get_potential_energy() for a in traj)
+        raw = db.get_all_structures_data()
+        kept = [d for d in raw if d.get("iteration", 0) >= start_iter]
+        atoms_list = [db.db_to_atoms(d) for d in kept]
+        structures.extend(atoms_list)
+        energies.extend(a.get_potential_energy() for a in atoms_list)
+        print(f"  {os.path.basename(p)}: {len(atoms_list)}/{len(raw)} structures "
+              f"(iteration >= {start_iter})")
     return structures, np.asarray(energies, dtype=float)
 
 
@@ -137,9 +143,9 @@ def main():
     E_rel_ns = (Es - E_ref_ns) / args.n_atoms
     print(f"  NS samples: {Es.size}, E range [{E_rel_ns.min():.4f}, {E_rel_ns.max():.4f}] eV/atom")
 
-    # --- dataset structures + energies ---
-    structs, energies = load_dataset_structures(dataset_dir)
-    print(f"  dataset: {len(structs)} structures, {len(structs[0])} atoms each")
+    # --- dataset structures + energies (AGOX start-iter filter >= 10) ---
+    structs, energies = load_dataset_structures(dataset_dir, start_iter=10)
+    print(f"  dataset: {len(structs)} structures (iteration >= 10), {len(structs[0])} atoms each")
     E_ref_ds = energies.min()
     E_rel_ds = (energies - E_ref_ds) / args.n_atoms
 
@@ -158,9 +164,11 @@ def main():
     ns_density = ns_kde.evaluate(energy_grid)
 
     # --- 3-panel figure, shared energy y-axis, formatted like reference conf_space.png ---
-    # widths: scatter (1), dataset density (2.5), NS density (2.5); figsize proportional to (3,3).
-    ratios = [1, 2.5, 2.5]
-    fig, axes = plt.subplots(1, 3, figsize=(6, 3), sharey=True,
+    # widths: PCA (Configurational Space) LARGE, both State Density panels THINNER
+    # (matches the reference conf_space.png where the PCA scatter is the wide panel
+    # and the density panel is thin).
+    ratios = [2.5, 1, 1]
+    fig, axes = plt.subplots(1, 3, figsize=(7, 3), sharey=True,
                              gridspec_kw={'width_ratios': ratios})
     fig.subplots_adjust(wspace=0.1)
 
