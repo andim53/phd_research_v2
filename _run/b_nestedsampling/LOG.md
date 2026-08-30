@@ -3430,3 +3430,40 @@ eV/atom (abs g 1.277); NS g(E) peak unchanged at 0.341 eV/atom.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Add run_analysis_indices.py (GPR+LCB-only dataset analysis) + run for b11
+
+**Goal (user-confirmed via clarify):** Reproduce the reference
+`_archive/_analysist/run_analysis_indices.py` (AGOX Stage 2 landscape + Stage 3 Boltzmann
+probability) as a new code in `_run/b_nestedsampling/_analysist`, run it on the b11 boron
+dataset, and save outputs under a new dir in the b11 run dir.
+
+**Clarify decisions (all user-confirmed):**
+1. Adapt to a single-run analyzer: load all seed DBs directly (like main.py load_all_seeds)
+   instead of the index/folder-map + Stage-1 processing.
+2. Produce Stage 2 (conf_space.png PCA-landscape + state-density) + Stage 3
+   (binding_probability_vs_temperature.png).
+3. Output dir: `b11_boron_walk_emax04_exclworst_noxsf_novelty/analysis_indices/`.
+4. Copy process_database.py + plot_structure_landscape.py (self-contained scripts/ dir), + the
+   needed calculate_relative_energy.py dep.
+5. Name the code `run_analysis_indices.py` (same as reference).
+
+**Actions taken:**
+- Copied `scripts/plot_structure_landscape.py`, `scripts/process_database.py`,
+  `scripts/calculate_relative_energy.py` into `_analysist/scripts/`.
+- Wrote `_analysist/run_analysis_indices.py` (v1.0.0): loads all seed DBs -> PCA (Fingerprint
+  PC1) + KDE state density (Stage 2) + Boltzmann P(T) (Stage 3), mirroring the reference logic
+  and rcParams.
+- py_compile OK for the code + copied scripts.
+- Ran on the b11 dataset: `--dataset b11_.../dataset --outdir b11_.../analysis_indices --e-max 0.8`.
+
+**Results (b11 dataset):**
+- Loaded 496 structures (seed_0..3 = 100 each, seed_4 = 96), 82 atoms each.
+- `analysis_indices/conf_space.png` (852x852) + `analysis_indices/binding_probability_vs_temperature.png` (1200x900) generated.
+- e-max 0.8 eV/atom used for both plots.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
