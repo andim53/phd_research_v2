@@ -4420,3 +4420,35 @@ E_max_local, shell weight dX, island/flat basin) and to express energies as rela
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — New plot_ns_histogram_iterations.py: NS state-density g(E) vs iterations
+
+**Goal (user-confirmed via clarify):** New analysis code in `_analysist/` plotting the
+prior-weight-weighted state-density histogram g(E) (like samples_weighted_histogram.png),
+comparing the impact of multiple iteration counts (1000/5000/10000/20000), from the b10 iter20000
+ns_output. Save PNG in the analysis_indices dir; code in _analysist/.
+
+**Clarify decisions (all user-confirmed):**
+1. Derive the 1000-iteration g(E) from the iter20000 run's samples.csv (first 1000 samples +
+   prior weights), since b10 has no iter1000 ns_output. Single-run comparison at 1000/5000/10000/20000.
+2. Prior-weight-weighted histogram of discarded energies (config./eV), vs per-atom relative energy
+   (E-E_min)/n_atoms.
+3. Overlay all four g(E) curves on one plot with a legend.
+4. Output PNG to analysis_indices; code in _analysist/; commit code + LOG (PNG gitignored).
+5. Use ONE shared global minimum (iter20000 E_min=-436.888 eV) as E_ref for all iterations.
+
+**Actions taken:**
+- Created `_analysist/plot_ns_histogram_iterations.py` (v1.0.0): loads the iter20000 samples.csv,
+  computes the prior-weight-weighted histogram g(E) for the first-N samples at each requested
+  iteration count (shared global E_min), overlays all curves, saves PNG.
+- Ran for b10 iter20000 -> analysis_indices/ns_histogram_state_density_iterations.png (2100x1200).
+- py_compile OK.
+
+**Results:** g(E) peak converges across iterations: 1000->20.54, 5000->16.83, 10000->17.23,
+20000->18.13 config./eV, all peaking at ~+0.306 eV/atom. Confirms g(E) is stable by 1000 iters.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
