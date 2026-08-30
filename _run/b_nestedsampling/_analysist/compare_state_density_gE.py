@@ -24,7 +24,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.8.0"
+__version__ = "1.9.0"
 
 import argparse
 import os
@@ -143,19 +143,23 @@ def main():
     g_ds = g_ds_abs / peak_ds           # peak-normalized (=1) for shape comparison
 
     # --- overlay plot (both peak-normalized to 1 so shapes are comparable) ---
+    # Axes transposed: energy on Y, state density on X (per request).
     fig, ax = plt.subplots(figsize=(args.figsize, args.figsize))
     if args.simple:
         ns_label, ds_label = "NS g(E)", "GPR+LCB g(E)"
     else:
         ns_label = f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)"
         ds_label = f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)"
-    ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5, label=ns_label)
-    ax.plot(grid, g_ds, "r-", lw=2, label=ds_label)
-    ax.set_xlabel(E_LABEL)                       # energy on X (matches run_analysis_indices.py)
-    ax.set_ylabel(DENSITY_LABEL)                 # state density on Y
+    # NS weighted histogram: bars spanning the density axis, with energy as the y-value.
+    # Use horizontal bars (barh): x = density (g_ns), y = energy (centers_ns).
+    ax.barh(centers_ns, g_ns, height=binw * 0.9, alpha=0.5, label=ns_label)
+    # KDE curve: x = density (g_ds), y = energy (grid).
+    ax.plot(g_ds, grid, "r-", lw=2, label=ds_label)
+    ax.set_ylabel(E_LABEL)                       # energy on Y
+    ax.set_xlabel(DENSITY_LABEL)                 # state density on X
     if not args.simple:
         ax.set_title("State density shape: NS samples vs dataset (KDE)\npeak-normalized")
-    ax.set_ylim(0, 1.05)
+    ax.set_xlim(0, 1.05)
     ax.legend(fontsize=8)
     fig.tight_layout()
 

@@ -3779,3 +3779,25 @@ x/y labels. Data unchanged (NS peak 0.306, dataset KDE peak 0.076 eV/atom).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: energy on Y, state density on X
+
+**Goal (user-confirmed? — simple, direct instruction):** Swap the axes in
+`compare_state_density_gE.py` so energy is on the Y axis and state density on the X axis.
+
+**Actions taken:**
+- Changed the plot to transposed orientation: NS histogram uses `barh` (x = density g_ns,
+  y = energy centers_ns); KDE curve plots `(g_ds, grid)` so energy is on Y.
+- x-label -> DENSITY_LABEL (State Density), y-label -> E_LABEL (energy).
+- xlim 0..1.05 (was ylim).
+- Bumped `__version__` 1.8.0 -> 1.9.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000 (--n-atoms 75, --figsize 6); PNG regenerated (1800x1800).
+
+**Results:** The comparison plot now has energy on the Y axis and state density on the X axis.
+Data unchanged (NS peak 0.306, dataset KDE peak 0.076 eV/atom).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
