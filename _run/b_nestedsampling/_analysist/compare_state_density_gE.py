@@ -24,7 +24,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import argparse
 import os
@@ -117,7 +117,7 @@ def main():
             label=f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)")
     ax.set_xlabel("E - E_min (eV/atom)")
     ax.set_ylabel(r"$g(E)$ / $g(E)_{max}$  (peak-normalized)")
-    ax.set_title("State density shape: NS samples vs dataset (KDE) — peak-normalized")
+    ax.set_title("State density shape: NS samples vs dataset (KDE)\npeak-normalized")
     ax.set_ylim(0, 1.05)
     ax.legend(fontsize=8)
     fig.tight_layout()

@@ -3341,3 +3341,24 @@ grid and make the figure square.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: fix cut-off title (wrap to two lines)
+
+**Goal (user-confirmed via clarify):** The long single-line title was clipped at the top of the
+square figure. Wrap it onto two lines with an explicit line break.
+
+**Clarify decision (user-confirmed):** Wrap the title onto two lines
+("State density shape: NS samples vs dataset (KDE)\npeak-normalized"), keep figsize=6x6.
+
+**Actions taken:**
+- Split the title with an explicit `\n` into two lines.
+- Bumped `__version__` 1.3.0 -> 1.4.0.
+- Ran for b11 iter20000; PNG regenerated (1800x1800, still square).
+
+**Results:** Title now fits on two lines within the square figure; no clipping. Data unchanged.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
