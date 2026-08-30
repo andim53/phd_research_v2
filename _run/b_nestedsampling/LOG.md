@@ -3535,3 +3535,29 @@ DISCUSSION + gpr_accuracy.py v1.5.1 + dataset). Results pending the HPC run.
 then fill in DISCUSSION.md.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Run analysis_indices for b10 (Fe/MgO dataset, e-max 0.8)
+
+**Goal (user-confirmed via clarify):** Perform the same `analysis_indices` analysis that was done
+for b11 (run_analysis_indices.py: Stage 2 PCA landscape + Stage 3 Boltzmann P(T)) on the b10 run,
+using b10's dataset.
+
+**Clarify decisions (all user-confirmed):**
+1. Target: b10's DATASET (`b10_femgo_walk_emax04_exclworst_noxsf_novelty/dataset`, 13 seeds).
+2. Output dir: `b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_indices/` (mirrors b11).
+3. `--e-max 0.8` (same as b11).
+
+**Actions taken:**
+- Ran `run_analysis_indices.py --dataset b10_.../dataset --outdir b10_.../analysis_indices
+  --e-max 0.8` (reusing the code + scripts added in the b11 analysis_indices task).
+
+**Results (b10 dataset):**
+- Loaded 1297 structures (13 seeds), 75 atoms each (plain Fe/MgO).
+- `analysis_indices/conf_space.png` (852x852) + `analysis_indices/binding_probability_vs_temperature.png` (1200x900) generated.
+- e-max 0.8 eV/atom used for both plots.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
