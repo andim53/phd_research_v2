@@ -4796,3 +4796,32 @@ in the legend labels. 10 K peak P=0.647 (very peaked at low T).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: --legend-label flag + drop 10/50 K + command in DISCUSSION
+
+**Goal (user-confirmed via clarify):** Edit the previous graph: don't use 10 and 50 K; make the
+legend label and temp as controllable flags; include the full command in the DISCUSSION.md.
+
+**Clarify decisions (all user-confirmed):**
+1. Temperatures: 100, 298, 373, 473, 573, 623, 673, 773 K (drop 10/50 K; keep 100 K without ref
+   + the 7 critical temps).
+2. Add a --legend-label flag (string format template, default '{T} K {ref}') controlling the
+   legend label.
+3. Add the full command (all flags) to the b10 iter20000 DISCUSSION.md section 9.
+
+**Actions taken:**
+- Added `--legend-label` (default "{T} K {ref}") arg; label built via template with {T}/{ref}.
+- Bumped `__version__` 1.5.1 -> 1.5.2.
+- Re-ran with --temperatures 100 298 373 473 573 623 673 773 --annotate-critical --area-norm
+  --linewidth 3 --figsize 4 --legend-loc "upper left"; PNG regenerated (1200x1200).
+- DISCUSSION.md: added "Command used to produce the figure (with all flags)" block + parameter
+  explanation; updated relevance text to note 100 K + 7 critical temps and [N] in legend labels.
+
+**Results:** The plot now uses 8 curves (100 + 7 critical temps); legend label is configurable via
+--legend-label; the full command is documented in the DISCUSSION.md.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

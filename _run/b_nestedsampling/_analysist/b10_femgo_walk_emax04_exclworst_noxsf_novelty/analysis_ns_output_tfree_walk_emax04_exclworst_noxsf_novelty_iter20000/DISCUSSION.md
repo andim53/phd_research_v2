@@ -464,11 +464,37 @@ alone ([digital.csic](https://digital.csic.es/bitstream/10261/127277/1/Enhanced%
 - **Capping-layer effects (Pt-capped):** annealing T giving max TMR depends on capping layer (~623 K for Pt). [pmc](https://pmc.ncbi.nlm.nih.gov/articles/PMC10534786/)
 
 **Relevance to this analysis:** the NS `binding_probability_vs_temperature.png` (now plotted at the
-critical fabrication temperatures 298/373/473/573/623/673/773 K, area-normalized, with [N]
-reference markers on each curve) shows how the sampled configurational ensemble re-weights with
-temperature. It is the *thermodynamic* counterpart to these *fabrication* temperatures: the
-thermodynamic weight at each critical temperature can be read directly off the curve to guide
-which structure types dominate at each practical processing temperature.
+critical fabrication temperatures 298/373/473/573/623/673/773 K plus 100 K, area-normalized, with
+[N] reference markers in the legend labels) shows how the sampled configurational ensemble
+re-weights with temperature. It is the *thermodynamic* counterpart to these *fabrication*
+temperatures: the thermodynamic weight at each critical temperature can be read directly off the
+curve to guide which structure types dominate at each practical processing temperature.
+
+### Command used to produce the figure (with all flags)
+
+Run from `_analysist/`:
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
+    --ns-output b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --dataset b10_femgo_walk_emax04_exclworst_noxsf_novelty/dataset \
+    --outdir b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --outname binding_probability_vs_temperature.png \
+    --n-atoms 75 --linewidth 3 --figsize 4 \
+    --temperatures 100 298 373 473 573 623 673 773 \
+    --legend-loc "upper left" --legend-label "{T} K {ref}" \
+    --area-norm --annotate-critical
+```
+
+Parameters: `--ns-output` = the run's temperature-free output dir (samples.csv); `--dataset` =
+the b10 dataset dir (for the flat/island KDE-peak reference lines); `--outdir`/`--outname` =
+output PNG location; `--n-atoms 75` = atoms per structure (Fe/MgO); `--linewidth 3` = curve
+thickness; `--figsize 4` = 4×4 in square figure; `--temperatures 100 298 373 473 573 623 673 773`
+= the 8 plotted temperatures (100 K without reference + the 7 critical fabrication temperatures);
+`--legend-loc "upper left"` = legend position; `--legend-label "{T} K {ref}"` = legend label
+format (appends the `[N]` reference marker for critical temperatures); `--area-norm` = normalize
+each curve so its area = 1 (Probability Density); `--annotate-critical` = append the `[N]`
+reference marker to the legend label of the critical temperatures.
 
 ### References (critical-temperature [N] markers on the plot)
 
