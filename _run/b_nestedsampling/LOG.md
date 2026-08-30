@@ -5013,3 +5013,34 @@ treatment as compare_state_density_gE.py --delta-z-lines.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — delta-Z flat line: highest-count low-dZ bin (both scripts consistent)
+
+**Goal (user-confirmed via clarify):** The user reported the flat/island dash lines in the b12
+compare_state_density_gE.png were not at the energy where the PCA shows the high concentration of
+low delta-Z, and asked what parameter was used.
+
+**Clarify decisions (all user-confirmed):**
+1. Keep the energy-bin approach, but make the FLAT line use the bin with the HIGHEST COUNT of
+   low-delta-Z points (rather than the lowest mean), so it follows the dense low-dZ cloud.
+2. Low delta-Z = relative delta-Z below the 25th percentile.
+3. Island detection unchanged (low-energy bin < 0.1 eV/atom with highest mean delta-Z).
+
+**Actions taken:**
+- compare_state_density_gE.py v2.9.1: flat = argmax of per-bin low-dZ count (threshold =
+  np.nanpercentile(z_data, 25)).
+- plot_ns_boltzmann_prob.py v1.6.1: applied the SAME flat detection in delta_z_island_flat so the
+  two scripts stay consistent.
+- py_compile OK; re-ran both b12 boron3 iter10000 PNGs with --delta-z-lines:
+  - compare_state_density_gE.png (2064x852)
+  - binding_probability_vs_temperature.png (1200x1200)
+
+**Results (b12 boron3 iter10000, --delta-z-lines):**
+- island = 0.034 eV/atom (mean dZ 3.847 A); flat = 0.183 eV/atom (#low-dZ 21, low-dZ thresh
+  1.283 A) — both scripts now agree on flat = 0.183 eV/atom.
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).

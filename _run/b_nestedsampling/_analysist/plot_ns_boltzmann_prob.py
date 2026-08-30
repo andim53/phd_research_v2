@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.6.0"
+__version__ = "1.6.1"
 
 import argparse
 import glob
@@ -120,10 +120,11 @@ def delta_z_fe(atoms) -> float:
 
 def delta_z_island_flat(structures, energies, n_atoms, e_max=0.8):
     """Locate island/flat energies from the actual PCA delta-Z data:
-    bin the dataset structures by per-atom relative energy and compute the mean relative
-    delta-Z in each bin; island = low-energy bin (< 0.1 eV/atom) with HIGHEST mean delta-Z;
-    flat = ~0.2 eV/atom region (0.15-0.30) bin with LOWEST mean delta-Z. Mirrors
-    compare_state_density_gE.py --delta-z-lines."""
+    bin the dataset structures by per-atom relative energy and use the ACTUAL delta-Z data:
+      island = low-energy bin (< 0.1 eV/atom) with HIGHEST mean delta-Z;
+      flat   = the energy bin with the HIGHEST COUNT of LOW-delta-Z points, where low
+               delta-Z = relative delta-Z below its 25th percentile.
+    Mirrors compare_state_density_gE.py --delta-z-lines."""
     e_rel = (np.asarray(energies, dtype=float) - np.asarray(energies).min()) / n_atoms
     z_data = np.array([delta_z_fe(s) for s in structures])
     z_data = z_data - np.nanmin(z_data)          # relative delta Z (Angstrom)
@@ -133,10 +134,13 @@ def delta_z_island_flat(structures, energies, n_atoms, e_max=0.8):
     ok = ~np.isnan(z_data)
     E_bin, Z_bin = e_rel[ok], z_data[ok]
     mean_dz = np.full(len(dz_centers), np.nan)
+    low_count = np.zeros(len(dz_centers), dtype=int)
+    low_dz_thresh = np.nanpercentile(z_data, 25)
     for k in range(len(dz_centers)):
         sel = (E_bin >= dz_bins[k]) & (E_bin < dz_bins[k + 1])
         if sel.sum() > 0:
             mean_dz[k] = Z_bin[sel].mean()
+            low_count[k] = int((Z_bin[sel] <= low_dz_thresh).sum())
     # island: within E < 0.1 eV/atom, highest mean delta-Z
     low_mask = dz_centers < 0.1
     if low_mask.sum() and np.isfinite(np.where(low_mask, mean_dz, np.nan)).any():
@@ -144,14 +148,15 @@ def delta_z_island_flat(structures, energies, n_atoms, e_max=0.8):
         island_e = float(dz_centers[k_island])
         island_dz = float(mean_dz[k_island])
     else:
+        k_island = None
         island_e, island_dz = 0.074, np.nan
-    # flat: near ~0.2 eV/atom (0.15-0.30), lowest mean delta-Z
-    flat_mask = (dz_centers >= 0.15) & (dz_centers <= 0.30)
-    if flat_mask.sum() and np.isfinite(np.where(flat_mask, mean_dz, np.nan)).any():
-        k_flat = int(np.nanargmin(np.where(flat_mask, mean_dz, np.inf)))
+    # flat: energy bin with the highest count of low-delta-Z points (dense low-dZ cloud)
+    if low_count.max() > 0:
+        k_flat = int(np.argmax(low_count))
         flat_e = float(dz_centers[k_flat])
         flat_dz = float(mean_dz[k_flat])
     else:
+        k_flat = None
         flat_e, flat_dz = 0.255, np.nan
     return island_e, island_dz, flat_e, flat_dz
 
