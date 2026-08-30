@@ -4287,3 +4287,30 @@ auto-scales to ~13.9). flat/island lines retained.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — New plot_dead_energy.py: NS dead_E(Iter) vs iteration
+
+**Goal (user-confirmed via clarify):** New analysis showing the list/highest energy across all
+iterations — the dead_E(Iter) trace like the Fortran reference
+`_tmp/nested_sampling_windowed_fixed.f` (where dead_E(iter) = worst/highest-energy walker's
+energy each iteration). In the AGOX output this = samples.csv energy_eV per iteration.
+
+**Clarify decisions (all user-confirmed):**
+1. dead_E(Iter) = samples.csv energy_eV per iteration (the discarded worst sample).
+2. Output: a plot of dead_E(Iter) vs iteration (the discarded-sample energy descent curve).
+3. Save code in _analysist/, PNG in the b10 iter20000 analysis dir; commit code + LOG.
+
+**Actions taken:**
+- Created `_analysist/plot_dead_energy.py` (v1.0.0): loads samples.csv, plots dead_E(Iter)
+  (energy_eV) vs iteration with a weighted running mean, thousands-separator x-axis.
+- Ran for b10 iter20000: PNG saved (2100x1200) to the analysis dir.
+- py_compile OK.
+
+**Results:** dead_E range -436.89 .. -407.06 eV over 20000 iterations; descends from -407.17 eV
+(iter 0) to -432.93 eV (final). PNG regenerated.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
