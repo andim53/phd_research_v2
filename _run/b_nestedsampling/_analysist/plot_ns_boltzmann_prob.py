@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.5.1"
 
 import argparse
 import glob
@@ -187,14 +187,13 @@ def main():
         else:
             probs_plot = probs / probs.max()     # peak = 1
         max_display = max(max_display, probs_plot.max())
-        ax.plot(grid, probs_plot, color=colors[i % len(colors)],
-                lw=args.linewidth, label=f"{T} K")
-        # annotate critical temperatures with their [N] reference marker at the curve peak
+        # legend label: append the [N] citation marker when this is a critical temperature
         if args.annotate_critical and T in CRITICAL_REF:
-            pmax = int(np.argmax(probs_plot))
-            ax.annotate(CRITICAL_REF[T], (grid[pmax], probs_plot[pmax]),
-                        textcoords="offset points", xytext=(6, 6), fontsize=8,
-                        color=colors[i % len(colors)], fontweight="bold")
+            label = f"{T} K {CRITICAL_REF[T]}"
+        else:
+            label = f"{T} K"
+        ax.plot(grid, probs_plot, color=colors[i % len(colors)],
+                lw=args.linewidth, label=label)
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
 
     # dashed vertical lines at the flat/island energies (black, white outline)

@@ -4769,3 +4769,30 @@ DISCUSSION.md has a formatted reference list.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: [N] in legend labels + add 10/50/100 K
+
+**Goal (user-confirmed via clarify):** Move the [N] citation into the legend labels (e.g.
+'298.0 K [1]'), remove the on-curve annotations, and add 10/50/100 K curves without references,
+alongside the 7 critical temps.
+
+**Clarify decisions (all user-confirmed):**
+1. Move [N] into the legend label; remove on-curve [N] annotations.
+2. Add 10, 50, 100 K as additional curves WITHOUT reference markers, alongside the 7 critical temps.
+3. Re-run the graph.
+
+**Actions taken:**
+- Changed the legend label to append CRITICAL_REF[T] (e.g. "298.0 K [1]") when annotate-critical
+  and T is critical; removed the on-curve annotate block.
+- Bumped `__version__` 1.5.0 -> 1.5.1.
+- Re-ran with --temperatures 10 50 100 298 373 473 573 623 673 773 --annotate-critical --area-norm
+  --linewidth 3 --figsize 4 --legend-loc "upper left"; PNG regenerated (1200x1200).
+
+**Results:** The plot now has 10 curves: 10/50/100 K (no ref) + 298-773 K critical temps with [N]
+in the legend labels. 10 K peak P=0.647 (very peaked at low T).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
