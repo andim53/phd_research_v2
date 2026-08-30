@@ -3467,3 +3467,37 @@ dataset, and save outputs under a new dir in the b11 run dir.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — Create run dir b12 (boron3 dataset, b11 params, iter sweep)
+
+**Goal (user-confirmed via clarify):** Create a new `_runs` dir starting with **b12** using the
+new `dataset_boron3` dataset, with the same parameters as
+`_runs/b11_boron_walk_emax04_exclworst_noxsf_novelty`.
+
+**Clarify decisions (all user-confirmed):**
+1. Iteration config: one b12 run dir with THREE job scripts (5000/10000/20000), same as b11's
+   sweep.
+2. Params: identical to b11 — temperature-free, `--e-max-per-atom 0.4`, window [0.3,0.35],
+   `--walk` + `--walk-exclude-worst`, `--no-posterior-xsf`, `--novelty-threshold 1.0`,
+   `--perturb-symbols Fe,B`, n-live 100, rng 42.
+3. Run dir name: `b12_boron3_walk_emax04_exclworst_noxsf_novelty`.
+4. Dataset: copy `dataset_boron3` as `dataset/`, excluding the empty `seed_6`.
+
+**Actions taken:**
+- Copied b11 run dir as base; removed b11 job scripts + pycache.
+- Replaced dataset with `dataset_boron3` (6 non-empty seeds; seed_6 empty/excluded).
+- Wrote 3 job scripts (iter5000/10000/20000) identical to b11 except run/output names use
+  `_boron3_`; rewrote README.md + TUTORIAL.md for the boron3 system.
+- Verified: 6 seeds / 597 structures / 78 atoms (B3Fe25Mg25O25); `--e-max-per-atom 0.4` keeps
+  448/597; py_compile OK (main.py + nested_sampler.py); correct plot_structure_landscape.py
+  bundled; no stale b11 refs in run code; no pycache left.
+
+**Results:** `_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/` created (3 job scripts +
+README + TUTORIAL + main.py v1.7.0 + nested_sampling + scripts + dataset). 28 trackable files;
+DBs/xsf/png/outputs gitignored.
+
+**Open items:** None (launch on HPC via pjsub when ready).
+
+**Time:** 2026-08-30 (JST).
