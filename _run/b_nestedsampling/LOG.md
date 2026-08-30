@@ -3117,3 +3117,38 @@ Code + docs tracked; DBs/xsf/png/outputs gitignored.
 **Open items:** None (launch on HPC via pjsub when ready).
 
 **Time:** 2026-08-29 (JST).
+
+---
+
+## Session 2026-08-30 — tfree analysis of all 3 b10 ns_outputs (iter5000/10000/20000)
+
+**Goal (user-confirmed via clarify):** Perform the tfree analysis for all ns_outputs of
+`_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/` (the iteration sweep).
+
+**Clarify decisions (all user-confirmed):**
+1. Analyze all three ns_outputs (iter5000, iter10000, iter20000), each into
+   `<run_dir>/analysis_<ns_output_name>/`.
+2. Per-output output set = b9-style: `analyze_tfree_outputs.py` (9 PNGs) + DISCUSSION.md,
+   `--n-atoms 75`, SKIP `conf_space_deltaz.png` (b10 run with `--no-posterior-xsf`, no xsf).
+3. Commit trackable parts (LOG.md + the DISCUSSION.md files); PNGs gitignored.
+
+**Actions taken:**
+- Ran `analyze_tfree_outputs.py --data <run>/ns_output_..._iter{5000,10000,20000}
+  --outdir <run>/analysis_..._iter{...} --n-atoms 75` for all three.
+- Wrote a DISCUSSION.md per output with the required "Analysis reproduction (command used)"
+  block + real numbers.
+
+**Results (all three are essentially converged):**
+- iter5000: 5000 samples; weighted mean E -413.51 eV; logZ -46.41 -> -39.42 (100->1000 K);
+  g(E) peak ~ +0.305 eV/atom (peak g ~16.8); sum(w)=1.0; C_V ~ 0.
+- iter10000: 10000 samples; weighted mean E -413.51 eV; logZ -46.41 -> -39.42; g(E) peak
+  ~ +0.306 (g~17.2); sum(w)=1.0.
+- iter20000: 20000 samples; weighted mean E -413.51 eV; logZ -46.41 -> -39.42; g(E) peak
+  ~ +0.306 (g~18.1); sum(w)=1.0.
+- KEY convergence finding: log Z is essentially identical across 5000/10000/20000 (diff
+  <= 0.002 nats) -> the evidence has already converged by 5000 iterations for this setup; larger
+  n-iters only shrinks the already-negligible X_final.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
