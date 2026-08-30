@@ -1439,3 +1439,61 @@ analyze the per-seed a-run outputs (e.g. `a1_mgofe_Seed3_Iter300/output`).
 
 ### Time
 ~25 min.
+
+## 2026-08-31 — Session: Fix AtomsTooClose crash in B-doped a10 run (add_adsorbate_to_hollows)
+
+### Goal (user request, confirmed via clarify)
+The a10 B-doped run
+(`_analysist/a10_mgofeb_Seed3_Iter500/j_a10.sh.6597643.out`) crashed at iteration 1
+with `gpaw.utilities.AtomsTooClose: Atoms are too close, e.g. 8.88e-16 A`. Fix the
+root cause in the project-root script.
+
+### Clarify (confirmed)
+- **Fix approach:** proper hollow-site detection — find real hollows (centroids of 4
+  adjacent Fe atoms forming a square in the Fe layer) and place B there, skipping any
+  site that would overlap an existing atom.
+- **Scope:** fix the project-root `scripts/add_adsorbate_to_hollows.py`, then sync the
+  fixed copy into the run-dir copies (a10 + other `_runs/` snapshots) so they stay
+  current with the root (AGENTS.md rule).
+- **Deliverables:** full workflow pass (bump __version__, VERSIONS.md + LOG.md,
+  py_compile + re-run seed-3 doping locally to prove no overlap, commit).
+
+### Root cause
+`add_adsorbate_to_hollows` shuffled the 25 Fe atoms, grouped them into quartets of 4
+**consecutive shuffled** atoms, and placed B at the mean-xy of each quartet. Those
+quartets are not real geometric hollow sites, so the centroid could land exactly on
+top of an existing Fe atom. Reproduced locally: seed 3 placed B idx 28 at
+`(4.305, 4.305, 20.0)`, identical to Fe idx 6 -> AtomsTooClose (~0 A). Other seeds
+avoided the collision by chance, so only a10 (seed 3) crashed. The buggy grouping
+also silently capped B at 6 atoms (couldn't form 7 quartets from 25 Fe), giving
+B6Fe25 instead of the requested B7Fe25.
+
+### Actions taken
+1. Rewrote `scripts/add_adsorbate_to_hollows.py` v1.0.0 -> 1.1.0:
+   - `_find_square_hollows`: detects real hollows as centroids of 4 nearest-neighbour
+     Fe atoms forming a square (side = NN spacing), deduplicated.
+   - `add_adsorbate_to_hollows`: shuffles the detected hollows, takes `num_atoms`,
+     and rejects any site within 0.5 A of an existing atom (collision safety).
+2. Synced the fixed copy into all run-dir snapshots under `_runs/` (a1-a10, 73) and
+   the `_analysist/` copies.
+3. Updated `VERSIONS.md` (`scripts/add_adsorbate_to_hollows.py` 1.0.0 -> 1.1.0).
+
+### Results
+- `py_compile` clean under the `agox_v2` env python.
+- Re-ran seed-3 doping locally (the exact failing case) plus seeds 4-11: all now give
+  **B7Fe25** with **min_dist = 2.029 A** (B sits ~2.03 A from surrounding Fe in the
+  hollow center) — no overlap. Also now yields the requested 7 B atoms (was capped at
+  6).
+
+### Decisions & reasoning
+- Proper hollow detection fixes the physics (B in a real 4-Fe hollow) rather than just
+  dodging the collision, and it makes placement deterministic and seed-robust.
+- Kept the same function signature so root `main.py` needs no change.
+- Synced run copies to satisfy the AGENTS.md "keep run copies current" rule.
+
+### Open items / next steps
+- (HPC) re-launch the a10 run (seed 3, 500 iters) with the fixed doping to confirm the
+  search proceeds past iteration 1.
+
+### Time
+~40 min.

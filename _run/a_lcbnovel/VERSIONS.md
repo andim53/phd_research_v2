@@ -32,7 +32,7 @@ Versioning rules:
 | `scripts/build_mgo_stack.py` | 1.0.0 |
 | `scripts/hetero_struct_randomize.py` | 1.0.0 |
 | `scripts/plot_structure.py` | 1.0.0 |
-| `scripts/add_adsorbate_to_hollows.py` | 1.0.0 |
+| `scripts/add_adsorbate_to_hollows.py` | 1.1.0 |
 | `scripts/global_permutation_generator.py` | 1.0.0 |
 | `_analysist/run_analysis_indices.py` | 2.0.0 |
 | `_analysist/run_analysis_a_runs.py` | 1.0.0 |
