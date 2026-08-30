@@ -313,6 +313,54 @@ the curves.
 
 ---
 
+## 5d. Why does 100 K concentrate probability on the "island"?
+
+The figure below is the same Boltzmann probability, but **peak-normalized to 1** (no `--area-norm`)
+at the very low temperatures 1, 10, 50, and 100 K:
+
+![binding_probability_vs_temperature_peaknorm.png](binding_probability_vs_temperature_peaknorm.png)
+
+**Command + parameters that produced it** (run from `_analysist/`):
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
+    --ns-output b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --dataset b10_femgo_walk_emax04_exclworst_noxsf_novelty/dataset \
+    --outdir b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --outname binding_probability_vs_temperature_peaknorm.png \
+    --n-atoms 75 --linewidth 3 --figsize 4 \
+    --temperatures 1 10 50 100 \
+    --legend-loc "upper left"
+```
+
+(No `--area-norm`, so each curve is peak-normalized to 1; the temperatures are 1/10/50/100 K.)
+
+**Why 100 K "produces probability of the island":** The Boltzmann weight is
+`exp(−β(E−E_ref))` with `β = 1/(k_B T)`. At low temperature `β` is large, so this factor
+falls off extremely steeply with energy. Multiplying it into the (higher-peaked) NS state density
+`g(E)` strongly suppresses every configuration more than a fraction of an eV/atom above the
+ground state, pushing the probability mass down to the **lowest-energy (island / ground-state)
+region** of the landscape.
+
+Quantitatively (verified from this run, `E_min = −436.89 eV`, 75 atoms):
+- **1 K:** peak at `0.000 eV/atom` (the island ground state), `max P = 1.0` — the ensemble is
+  frozen entirely at the minimum.
+- **10 K:** peak still at `0.000 eV/atom`, but now `max P ≈ 0.65` with a small tail — a tiny
+  fraction of thermal energy begins to populate the next states.
+- **50 K:** peak still at `0.000 eV/atom`, `max P ≈ 0.074` — the peak is broadened.
+- **100 K:** the peak has moved up to ≈ `0.157 eV/atom`; the probability is spread over a band
+  and the island ground-state contribution is now small (`P(island≈0.074) ≈ 3e−4`).
+
+So the "island probability at 100 K" is the direct, physical consequence of **thermal narrowing
+toward the ground state**: at 100 K the Boltzmann factor still strongly favours the low-energy
+island configurations, whereas the *unweighted* NS `g(E)` (which peaks at ~+0.31 eV/atom) is
+dominated by the large prior-volume shells higher up. The discrepancy between the two is exactly
+what the temperature factor `exp(−βE)` does — it re-weights the density from "configuration-space
+volume" (g(E)) toward "canonical probability" (P(E) ∝ g(E)·exp(−βE)), which at low T is
+concentrated on the island.
+
+---
+
 ## 6. Cumulative weighted evidence (sanity check)
 
 `sum(w_i) = 1.000000` over the 20000 discarded samples (`samples_cumulative_Z.png`).

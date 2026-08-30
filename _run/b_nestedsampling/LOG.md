@@ -4910,3 +4910,35 @@ iter10000 result, mirroring the b10 iter20000 analysis — all graphs + a full D
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — b10 iter20000: 100-K island discussion + peak-normalized low-T graph
+
+**Goal (user-confirmed via clarify):** Add a discussion in the b10 iter20000 DISCUSSION.md on
+'Why does 100 K produce probability of island?', and make an additional peak-normalized-to-1 graph
+at 1/10/50/100 K.
+
+**Clarify decisions (all user-confirmed):**
+1. Discussion framing: low-T Boltzmann factor exp(-beta*E) suppresses higher-energy configs, so
+   P(E) concentrates near the island/ground state even though unweighted NS g(E) peaks higher;
+   grounded in actual numbers (100 K peak ~0.16 eV/atom, P collapses to ~0 away from low energy).
+2. New graph: binding_probability_vs_temperature_peaknorm.png at 1/10/50/100 K, in the b10
+   iter20000 analysis dir.
+3. Reuse existing plot_ns_boltzmann_prob.py with peak normalization (default, no --area-norm),
+   temperatures 1 10 50 100, new outname.
+4. Embed the new PNG + discussion in the b10 iter20000 DISCUSSION.md.
+
+**Actions taken:**
+- Ran plot_ns_boltzmann_prob.py (--outname ..._peaknorm.png --temperatures 1 10 50 100, no
+  --area-norm, --linewidth 3 --figsize 4 --legend-loc "upper left") -> PNG (1200x1200).
+- Added DISCUSSION.md section 5d 'Why does 100 K concentrate probability on the island?' with the
+  embedded peak-normalized PNG, the reproduction command, and the grounded explanation.
+
+**Results:** At 1/10/50/100 K (peak-normalized), the peak sits at/near the island ground state at
+very low T (1 K max P=1.0 at 0.000 eV/atom; 10 K 0.65; 50 K 0.074) and only moves up to ~0.157
+eV/atom at 100 K — confirming the low-T Boltzmann narrowing toward the island.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
