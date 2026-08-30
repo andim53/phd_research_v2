@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 """
 Plot the Boltzmann probability P(E) vs per-atom relative energy for a
-temperature-free nested-sampling (NS) run, using the NS result directly.
+temperature-free nested-sampling (NS) run, using the NS result.
 
-For each temperature T (100, 200, 300, 500, 1000 K) the NS Boltzmann
-probability of each discarded sample is
+For each temperature T (100, 200, 300, 500, 1000 K) the probability on a smooth
+energy grid E is
 
-    P_i(T) = w_i * exp(-beta*(E_i - E_ref)) / Z(T)
+    P(E, T) = g(E) * exp(-beta*(E - E_ref)) / Z(T)
 
 where:
-  - w_i   = prior_weight (the NS prior-volume shell weight, from samples.csv),
-  - beta  = 1/(k_B T),
-  - E_ref = min sample energy (per-atom relative energy = (E - E_ref)/n_atoms),
-  - Z(T)  = sum_i w_i * exp(-beta*(E_i - E_ref))  (partition function).
+  - g(E)   = the KDE-smoothed NS state density (prior-weight-weighted gaussian
+             KDE of the samples.csv energies), same as the NS g(E) smoothed with
+             KDE in compare_state_density_gE.py,
+  - beta   = 1/(k_B T),
+  - E_ref  = min sample energy (per-atom relative energy = (E - E_ref)/n_atoms),
+  - Z(T)   = sum_E g(E) * exp(-beta*(E - E_ref))  (partition function from g(E)).
 
-This is the physically correct NS Boltzmann probability (it uses the NS prior
-weights directly, rather than a KDE of the energies). Energies are plotted as
-per-atom relative energy (E - E_ref)/n_atoms, matching the other analyses.
+This multiplies by g(E) and divides by the total Z from g(E), matching the
+reference `analysis_indices/binding_probability_vs_temperature.png` (which uses
+rho(E) = gaussian KDE) but with the NS KDE-smoothed g(E) as rho. Energies are
+plotted as per-atom relative energy (E - E_ref)/n_atoms.
 
 Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
   /home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
@@ -28,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 import argparse
 import os
@@ -37,6 +40,7 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from scipy.stats import gaussian_kde
 
 import analyze_tfree_outputs as ato  # reuse load_samples
 
@@ -88,33 +92,35 @@ def main():
     E_ref = Es.min()
     rel = (Es - E_ref) / args.n_atoms           # per-atom relative energy (eV/atom)
 
+    # --- KDE-smoothed NS state density g(E) (prior-weight-weighted) ---
+    ns_kde = gaussian_kde(rel, weights=Ws)       # same as the NS g(E) KDE in compare_state_density_gE.py
+    grid = np.linspace(0, rel.max() + 0.02, 400)
+    gE = ns_kde.evaluate(grid)                   # config./eV
+
     fig, ax = plt.subplots(figsize=(5, 4))
     # colors: a perceptually ordered set for the temperatures
     colors = ["#0d0887", "#47039f", "#7301a8", "#9c176d", "#bd3752",
               "#d8546a", "#ed7953", "#fb9f4a", "#fdca42", "#f0f928"]
 
     print("=" * 60)
-    print("NS Boltzmann probability (prior-weight weighted)")
+    print("NS Boltzmann probability (g(E) * exp(-beta*E) / Z from g(E)))")
     print("=" * 60)
     for i, T in enumerate(args.temperatures):
         beta = 1.0 / (K_B * T)
-        log_w = np.log(np.maximum(Ws, 1e-300))
-        log_num = log_w - beta * (Es - E_ref)          # log of numerator
-        log_Z = np.log(np.sum(np.exp(log_num)))        # log partition function
-        probs = np.exp(log_num - log_Z)                # P_i(T), normalized
-        # Peak-normalize each curve to its own max (=1) so it is visible on a 0-1 axis
-        # (raw NS Boltzmann probabilities are tiny ~1e-2; this matches the reference
-        # Stage 3 which divides by probs.max()).
+        # P(E,T) = g(E)*exp(-beta*(E-E_ref))/Z, Z = sum_E g(E)*exp(-beta*(E-E_ref))
+        log_num = np.log(np.maximum(gE, 1e-300)) - beta * (grid - grid.min())
+        log_Z = np.log(np.sum(np.exp(log_num)))
+        probs = np.exp(log_num - log_Z)          # P(E,T), normalized over the grid
+        # Peak-normalize each curve to its own max (=1) for visibility (like the reference)
         probs_plot = probs / probs.max()
-        order = np.argsort(rel)
-        ax.plot(rel[order], probs_plot[order], color=colors[i % len(colors)],
+        ax.plot(grid, probs_plot, color=colors[i % len(colors)],
                 lw=1.6, label=f"{T} K")
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
 
     ax.set_xlabel(E_LABEL)
     ax.set_ylabel("Probability P(E) (peak-normalized)")
     ax.set_ylim(0, 1.05)
-    ax.set_xlim(0, rel.max() + 0.02)
+    ax.set_xlim(0, grid.max())
     ax.legend(frameon=False, loc="upper right", fontsize=9)
 
     os.makedirs(args.outdir, exist_ok=True)

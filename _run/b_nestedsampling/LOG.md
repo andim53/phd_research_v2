@@ -4177,3 +4177,32 @@ before plotting (like the reference Stage 3 which divides by probs.max()).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: use KDE-smoothed NS g(E) in Boltzmann probability
+
+**Goal (user-confirmed via clarify):** Change `plot_ns_boltzmann_prob.py` so the Boltzmann
+probability uses the KDE-smoothed NS g(E) as rho: P(E,T) = g(E)·exp(-beta*E)/Z where
+Z = sum_E g(E)·exp(-beta*E), matching the reference analysis_indices
+binding_probability_vs_temperature.png (which uses rho = gaussian KDE).
+
+**Clarify decisions (all user-confirmed):**
+1. Use the prior-weight-weighted KDE of the NS sample energies (the ns_kde from
+   compare_state_density_gE.py) as g(E); P = g(E)·exp(-beta*E)/Z with Z from g(E).
+2. Evaluate on a smooth energy grid and plot P(E) as curves vs per-atom relative energy.
+3. One curve per temperature (100,200,300,500,1000 K), peak-normalized to 1.
+4. Save to the same binding_probability_vs_temperature.png in the b10 iter20000 analysis dir.
+
+**Actions taken:**
+- Imported `gaussian_kde`; built the prior-weight-weighted KDE of rel energies on a smooth grid.
+- Computed P(E,T) = g(E)*exp(-beta*(E-E_ref))/Z per temperature; plotted peak-normalized curves.
+- Bumped `__version__` 1.0.1 -> 1.1.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (1500x1200).
+
+**Results:** Z(T) from g(E): 100K=2.25e-9, 200K=1.33e-4, 300K=1.47e-2, 500K=9.64e-1, 1000K=27.8.
+Curves peak-normalized and visible.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
