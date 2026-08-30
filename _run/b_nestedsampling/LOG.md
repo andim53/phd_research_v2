@@ -5178,3 +5178,39 @@ its regeneration), while b10 used `--figsize 6`.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (6) — plot_ns_boltzmann_prob.py: --pure flag (raw probability, no normalization)
+
+**Goal (user-confirmed via clarify):** Make a new graph like the b10
+`binding_probability_vs_temperature.png`, but with NO normalization — the raw pure probability
+P(E,T) = g(E)·exp(-β(E−E_ref))/Z as computed (integral ~1), with neither peak- nor
+area-normalization applied.
+
+**Clarify decisions (all user-confirmed):**
+1. `--pure` (raw P(E,T) as computed, no peak/area norm; proper probability density, integral ~1).
+2. Write to a NEW file `binding_probability_vs_temperature_pure.png` in the b10 analysis dir
+   (does NOT overwrite the existing area-norm figure).
+3. Parameters same as the current b10 figure: `--temperatures 100 298 573 623 673 773
+   --linewidth 3 --figsize 4 --annotate-critical` (but no --area-norm, no peak-norm).
+
+**Actions taken:**
+- `plot_ns_boltzmann_prob.py` 1.6.1 → 1.7.0: added `--pure` flag (raw probs, no peak/area
+  normalization); y-label "Probability P(E)" and auto-scaled y-limit in pure mode; added a
+  mutual-exclusion guard (`--pure` vs `--area-norm`).
+- Updated the usage docstring.
+- py_compile OK; ran for b10 iter20000 with `--n-atoms 75 --linewidth 3 --figsize 4
+  --temperatures 100 298 573 623 673 773 --pure --annotate-critical
+  --outname binding_probability_vs_temperature_pure.png`.
+
+**Results (real output):**
+- Pure graph written to
+  `b10.../analysis_.../binding_probability_vs_temperature_pure.png` (1200x1200, new file).
+- Raw probs: T=100 K max P 1.386e-2, T=298 K 1.018e-2, T=573 K 1.176e-2, T=623 K 1.205e-2,
+  T=673 K 1.228e-2, T=773 K 1.263e-2.
+- Existing `binding_probability_vs_temperature.png` (area-norm, 23:11) untouched.
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).

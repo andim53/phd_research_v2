@@ -27,11 +27,15 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
       --outdir  b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
       --outname binding_probability_vs_temperature.png \
       --n-atoms 75
+  # raw pure probability (no peak/area normalization) -> new file
+  .../plot_ns_boltzmann_prob.py --ns-output <ns_output> --outdir <analysis> \
+      --outname binding_probability_vs_temperature_pure.png \
+      --n-atoms 75 --pure --temperatures 100 298 573 623 673 773 --annotate-critical
 """
 
 from __future__ import annotations
 
-__version__ = "1.6.1"
+__version__ = "1.7.0"
 
 import argparse
 import glob
@@ -190,6 +194,11 @@ def main():
                    help="normalize each temperature curve so its area (integral over energy) "
                         "= 1 via the trapezoidal rule (like Making_Prob_area_norm.py), "
                         "instead of peak-normalizing. y-label 'Probability Density (Area = 1)'.")
+    p.add_argument("--pure", action="store_true",
+                   help="plot the RAW probability P(E,T) = g(E)*exp(-beta*(E-E_ref))/Z as "
+                        "computed, with NO peak-normalization and NO area-normalization "
+                        "(proper probability density, integral ~1). Mutually exclusive with "
+                        "--area-norm.")
     p.add_argument("--linewidth", type=float, default=1.6,
                    help="line thickness of the P(E) temperature curves. Default 1.6.")
     p.add_argument("--figsize", type=float, default=5,
@@ -206,6 +215,9 @@ def main():
                    help="annotate each temperature curve with its [N] reference marker "
                         "(critical fabrication temperatures).")
     args = p.parse_args()
+    if args.pure and args.area_norm:
+        raise SystemExit("--pure and --area-norm are mutually exclusive (both "
+                         "set display normalization). Choose one.")
 
     # --- [N] reference map for the critical fabrication temperatures (from the
     # b10 iter20000 DISCUSSION.md section 9 temperature discussion) ---
@@ -271,8 +283,10 @@ def main():
         log_num = np.log(np.maximum(gE, 1e-300)) - beta * (grid - grid.min())
         log_Z = np.log(np.sum(np.exp(log_num)))
         probs = np.exp(log_num - log_Z)          # P(E,T), normalized over the grid
-        # Normalize for display: peak-normalize (default) OR area-normalize (--area-norm)
-        if args.area_norm:
+        # Display normalization: --pure (none) OR --area-norm (integral=1) OR default (peak=1)
+        if args.pure:
+            probs_plot = probs                    # raw probability (no peak/area norm)
+        elif args.area_norm:
             area = trapezoid(probs, grid)
             probs_plot = probs / area if area > 0 else probs   # area (integral) = 1
         else:
@@ -295,11 +309,16 @@ def main():
             t.set_path_effects([patheffects.withStroke(linewidth=2, foreground="white")])
 
     ax.set_xlabel(E_LABEL)
-    ax.set_ylabel("Probability Density (Area = 1)" if args.area_norm
-                  else "Probability P(E) (peak-normalized)")
-    # Auto-scale the y-axis to the tallest curve in area-norm mode (peaks can be >>1);
-    # keep the 0-1.05 headroom for the default peak-normalized mode.
-    if args.area_norm:
+    if args.pure:
+        ax.set_ylabel("Probability P(E)")
+    elif args.area_norm:
+        ax.set_ylabel("Probability Density (Area = 1)")
+    else:
+        ax.set_ylabel("Probability P(E) (peak-normalized)")
+    # Auto-scale the y-axis to the tallest curve in --pure and --area-norm modes (raw
+    # probs and area-normalized peaks can be small or >>1); keep the 0-1.05 headroom for
+    # the default peak-normalized mode.
+    if args.pure or args.area_norm:
         ax.set_ylim(0, 1.05 * max_display)
     else:
         ax.set_ylim(0, 1.05)
