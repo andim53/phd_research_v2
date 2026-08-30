@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.5.4"
+__version__ = "1.6.0"
 
 import argparse
 import glob
@@ -87,6 +87,75 @@ def load_dataset_energies(dataset_dir: str):
     return np.asarray(energies, dtype=float)
 
 
+def load_dataset_structures(dataset_dir: str, start_iter: int = 10):
+    """Load dataset structures + energies with AGOX iteration >= start_iter (mirrors
+    compare_state_density_gE.py), needed for the PCA delta-Z island/flat detection."""
+    from agox.databases import Database
+    db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
+    if not db_paths:
+        raise FileNotFoundError(f"No DBs matched in {dataset_dir}")
+    structures, energies = [], []
+    for p in db_paths:
+        db = Database(filename=p)
+        db.restore_to_memory()
+        raw = db.get_all_structures_data()
+        kept = [d for d in raw if d.get("iteration", 0) >= start_iter]
+        atoms_list = [db.db_to_atoms(d) for d in kept]
+        structures.extend(atoms_list)
+        energies.extend(a.get_potential_energy() for a in atoms_list)
+    return structures, np.asarray(energies, dtype=float)
+
+
+def delta_z_fe(atoms) -> float:
+    """Fe island height delta Z = max(Fe z) - min(Fe z), in Angstrom (mirrors
+    compare_state_density_gE.py). Uses only Fe atoms."""
+    pos = atoms.get_positions()
+    sym = atoms.get_chemical_symbols()
+    fe = [i for i, s in enumerate(sym) if s == "Fe"]
+    if not fe:
+        return np.nan
+    z = pos[fe, 2]
+    return float(z.max() - z.min())
+
+
+def delta_z_island_flat(structures, energies, n_atoms, e_max=0.8):
+    """Locate island/flat energies from the actual PCA delta-Z data:
+    bin the dataset structures by per-atom relative energy and compute the mean relative
+    delta-Z in each bin; island = low-energy bin (< 0.1 eV/atom) with HIGHEST mean delta-Z;
+    flat = ~0.2 eV/atom region (0.15-0.30) bin with LOWEST mean delta-Z. Mirrors
+    compare_state_density_gE.py --delta-z-lines."""
+    e_rel = (np.asarray(energies, dtype=float) - np.asarray(energies).min()) / n_atoms
+    z_data = np.array([delta_z_fe(s) for s in structures])
+    z_data = z_data - np.nanmin(z_data)          # relative delta Z (Angstrom)
+    nz_bins = 60
+    dz_bins = np.linspace(0, e_max, nz_bins)
+    dz_centers = 0.5 * (dz_bins[:-1] + dz_bins[1:])
+    ok = ~np.isnan(z_data)
+    E_bin, Z_bin = e_rel[ok], z_data[ok]
+    mean_dz = np.full(len(dz_centers), np.nan)
+    for k in range(len(dz_centers)):
+        sel = (E_bin >= dz_bins[k]) & (E_bin < dz_bins[k + 1])
+        if sel.sum() > 0:
+            mean_dz[k] = Z_bin[sel].mean()
+    # island: within E < 0.1 eV/atom, highest mean delta-Z
+    low_mask = dz_centers < 0.1
+    if low_mask.sum() and np.isfinite(np.where(low_mask, mean_dz, np.nan)).any():
+        k_island = int(np.nanargmax(np.where(low_mask, mean_dz, -np.inf)))
+        island_e = float(dz_centers[k_island])
+        island_dz = float(mean_dz[k_island])
+    else:
+        island_e, island_dz = 0.074, np.nan
+    # flat: near ~0.2 eV/atom (0.15-0.30), lowest mean delta-Z
+    flat_mask = (dz_centers >= 0.15) & (dz_centers <= 0.30)
+    if flat_mask.sum() and np.isfinite(np.where(flat_mask, mean_dz, np.nan)).any():
+        k_flat = int(np.nanargmin(np.where(flat_mask, mean_dz, np.inf)))
+        flat_e = float(dz_centers[k_flat])
+        flat_dz = float(mean_dz[k_flat])
+    else:
+        flat_e, flat_dz = 0.255, np.nan
+    return island_e, island_dz, flat_e, flat_dz
+
+
 def main():
     p = argparse.ArgumentParser(
         description="Plot NS Boltzmann probability P(E) vs relative energy at several T")
@@ -96,6 +165,12 @@ def main():
                    help="dataset dir (contains seed_*/1_db/db_*.db) to compute the "
                         "KDE state density and find the flat/island peaks. If omitted, "
                         "the flat/island dashed lines are not drawn.")
+    p.add_argument("--delta-z-lines", action="store_true",
+                   help="locate the island/flat dashed lines from the dataset PCA delta-Z "
+                        "data (bin dataset structures by per-atom energy; island = low-energy "
+                        "bin < 0.1 eV/atom with highest mean delta-Z; flat = 0.15-0.30 eV/atom "
+                        "bin with lowest mean delta-Z), like compare_state_density_gE.py "
+                        "--delta-z-lines. Default off: use the dataset KDE peaks.")
     p.add_argument("--outdir", required=True,
                    help="output dir for the PNG")
     p.add_argument("--outname", default="binding_probability_vs_temperature.png",
@@ -149,9 +224,18 @@ def main():
     grid = np.linspace(0, rel.max() + 0.02, 400)
     gE = ns_kde.evaluate(grid)                   # config./eV
 
-    # --- flat/island from the DATASET KDE state density (like compare_state_density_gE.py) ---
+    # --- flat/island energies (dataset KDE peaks by default, or PCA delta-Z with flag) ---
     flat_e, island_e = None, None
-    if args.dataset is not None:
+    if args.dataset is not None and args.delta_z_lines:
+        # PCA delta-Z-derived (like compare_state_density_gE.py --delta-z-lines)
+        structs, ds_energies = load_dataset_structures(args.dataset, start_iter=10)
+        island_e, island_dz, flat_e, flat_dz = delta_z_island_flat(
+            structs, ds_energies, args.n_atoms, e_max=0.8)
+        print(f"  [--delta-z-lines] dataset: {len(structs)} structures (iteration >= 10)")
+        print(f"  delta-Z-derived island = {island_e:.3f} eV/atom (mean dZ {island_dz:.3f} A) | "
+              f"flat = {flat_e:.3f} eV/atom (mean dZ {flat_dz:.3f} A)")
+    elif args.dataset is not None:
+        # dataset KDE peaks (default)
         ds_energies = load_dataset_energies(args.dataset)
         ds_rel = (ds_energies - ds_energies.min()) / args.n_atoms
         ds_kde = gaussian_kde(ds_rel)

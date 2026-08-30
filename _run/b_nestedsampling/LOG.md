@@ -4979,3 +4979,37 @@ and add a flag for this new treatment.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-31 — plot_ns_boltzmann_prob.py: add --delta-z-lines flag (b12 boron3)
+
+**Goal (user-confirmed via clarify):** Update the b12 boron3 iter10000
+binding_probability_vs_temperature.png to include a flag that uses the SAME delta-Z dashline
+treatment as compare_state_density_gE.py --delta-z-lines.
+
+**Clarify decisions (all user-confirmed):**
+1. Add a --delta-z-lines flag to plot_ns_boltzmann_prob.py that computes island/flat from the
+   dataset PCA delta-Z (bin by per-atom energy; island = low-E bin<0.1 with highest mean dZ;
+   flat = 0.15-0.30 bin with lowest mean dZ), like compare_state_density_gE.py.
+2. When set, the delta-Z-derived lines REPLACE the current dataset-KDE-peak-derived flat/island
+   lines.
+3. Re-run for b12 boron3 iter10000 keeping the current temperatures/refs/lw/figsize.
+
+**Actions taken:**
+- Added `--delta-z-lines` flag (default off = dataset KDE peaks).
+- Added `load_dataset_structures()` + `delta_z_fe()` (Fe-only) + `delta_z_island_flat()`,
+  mirroring compare_state_density_gE.py.
+- When --delta-z-lines, compute island/flat from PCA delta-Z and draw those dashed lines.
+- Fixed delta_z_fe to filter to Fe atoms only (matching compare_state_density_gE.py) so the two
+  scripts agree.
+- Bumped `__version__` 1.5.4 -> 1.6.0.
+- py_compile OK; re-ran for b12 boron3 iter10000 with --delta-z-lines; PNG regenerated (1200x1200).
+
+**Results (b12 boron3 iter10000, --delta-z-lines):**
+- island = 0.034 eV/atom (mean dZ 3.847 A); flat = 0.251 eV/atom (mean dZ 0.654 A) —
+  identical to compare_state_density_gE.py --delta-z-lines.
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
