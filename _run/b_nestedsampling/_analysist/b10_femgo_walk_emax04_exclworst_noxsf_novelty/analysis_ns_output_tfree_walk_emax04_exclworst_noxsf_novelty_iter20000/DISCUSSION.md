@@ -136,6 +136,37 @@ From `thermodynamics.csv`:
 
 ---
 
+## 5b. NS Boltzmann probability vs energy
+
+The figure below plots the **NS Boltzmann probability P(E)** vs per-atom relative energy
+`(E − E_ref)/n_atoms` for the five temperatures (100, 200, 300, 500, 1000 K), computed
+**directly from the NS result** (the prior weights in `samples.csv`):
+
+![binding_probability_vs_temperature.png](binding_probability_vs_temperature.png)
+
+For each temperature `P_i(T) = w_i·exp(−β(E_i − E_ref))/Z(T)` with `β = 1/k_B T` and
+`Z(T) = Σ_i w_i·exp(−β(E_i − E_ref))`.
+
+**Command + parameters that produced it** (run from `_analysist/`):
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
+    --ns-output b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --outdir b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000 \
+    --outname binding_probability_vs_temperature.png \
+    --n-atoms 75
+```
+
+Parameters: `--ns-output` = the run's temperature-free output dir (samples.csv);
+`--outdir` = this analysis dir; `--outname` = the output PNG filename;
+`--n-atoms 75` = atoms per structure (Fe/MgO); default temperatures 100–1000 K.
+
+**Result:** `Z(T)` grows with T (`7.9e−20 → 9.7e−18`), so at higher T the probability
+distribution broadens and shifts toward higher energy — the expected thermal excitation
+behaviour of the NS weighted ensemble.
+
+---
+
 ## 6. Cumulative weighted evidence (sanity check)
 
 `sum(w_i) = 1.000000` over the 20000 discarded samples (`samples_cumulative_Z.png`).

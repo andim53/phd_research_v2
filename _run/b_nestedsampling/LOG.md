@@ -4120,3 +4120,36 @@ from the PCA scatter points inside the Configurational Space panel.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — New plot_ns_boltzmann_prob.py + NS Boltzmann P(E) figure + DISCUSSION.md
+
+**Goal (user-confirmed via clarify):** New analysis code in `_analysist/` that plots the
+Boltzmann Probability vs energy at different temperatures, using the b10 iter20000 NS result.
+Save the PNG in the b10 iter20000 analysis dir, save the code in `_analysist/`, update the
+DISCUSSION.md with the code + parameters.
+
+**Clarify decisions (all user-confirmed):**
+1. Method: use NS prior weights directly — P_i(T) = w_i·exp(−β(E_i−E_ref))/Z(T), vs per-atom
+   relative energy (E−E_ref)/n_atoms (the physically correct NS Boltzmann probability).
+2. Energy x-axis: per-atom relative energy (eV/atom).
+3. One curve per temperature (100, 200, 300, 500, 1000 K) on a single plot (like Stage 3).
+4. Code name `plot_ns_boltzmann_prob.py`; PNG name `binding_probability_vs_temperature.png` in
+   the b10 iter20000 analysis dir; update DISCUSSION.md with code+params.
+
+**Actions taken:**
+- Created `_analysist/plot_ns_boltzmann_prob.py` (v1.0.0): loads samples.csv via
+  analyze_tfree_outputs.load_samples, computes prior-weight-weighted Boltzmann P_i(T) for each
+  temperature, plots P(E) vs per-atom relative energy (serif/ticks-in style, E_LABEL), saves PNG.
+- Ran it for b10 iter20000: PNG saved (1500x1200) to the analysis dir.
+- Updated the b10 iter20000 DISCUSSION.md with a new "5b. NS Boltzmann probability vs energy"
+  section (embeds the figure + the exact command + parameters + result).
+- py_compile OK.
+
+**Results:** Z(T) grows with T (7.9e-20 -> 9.7e-18); at higher T the NS Boltzmann probability
+broadens/shifts to higher energy. PNG regenerated; DISCUSSION.md documents it.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
