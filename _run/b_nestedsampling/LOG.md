@@ -3924,3 +3924,33 @@ two-line State Density x-label with the unit on the bottom. Data unchanged.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: NS State Density as prior-weight-weighted histogram
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`, make the NS State
+Density panel a **histogram** computed from the ns_output data (samples.csv), not a KDE and not
+from xsf.
+
+**Clarify decisions (all user-confirmed):**
+1. Weighted histogram using samples.csv prior_weight column (w_i) — the NS state-density recipe
+   from state_density_gE.png (config./eV).
+2. Histogram in per-atom relative energy (E - E_min)/n_atoms (eV/atom), same as the KDE x-axis.
+3. Only the NS panel becomes a histogram; the dataset (GPR+LCB) panel stays a KDE.
+
+**Actions taken:**
+- Replaced the NS gaussian KDE with a prior-weight-weighted histogram (50 bins) of E_rel_ns
+  weighted by Ws, divided by bin width (config./eV).
+- Plotted it as `barh` (x = density, y = energy) with label "NS".
+- Updated the summary print to "NS hist peak at".
+- Bumped `__version__` 2.2.0 -> 2.3.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2052x887).
+
+**Results:** The NS State Density panel is now a weighted histogram from the ns_output
+samples.csv (per-atom relative energy), peak ~ +0.306 eV/atom (abs g 18.13). Dataset panel stays a
+KDE (peak ~ +0.076 eV/atom). Data source: ns_output samples.csv (no xsf — b10 has none).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 
 import argparse
 import glob
@@ -157,11 +157,16 @@ def main():
     eticks = np.round(np.linspace(min_e, max_e, nticks), 1)
     energy_grid = np.linspace(min_e, max_e, 200)
 
-    # --- dataset KDE and NS KDE (smooth, matching the reference density style) ---
+    # --- dataset KDE (GPR+LCB panel; smooth) and NS weighted histogram ---
     ds_kde = gaussian_kde(E_rel_ds)
     ds_density = ds_kde.evaluate(energy_grid)
-    ns_kde = gaussian_kde(E_rel_ns)
-    ns_density = ns_kde.evaluate(energy_grid)
+    # NS state density = prior-weight-weighted histogram of the ns_output samples.csv
+    # energies (per-atom relative), config./eV — the NS state-density recipe.
+    n_bins_ns = 50
+    ns_hist, ns_edges = np.histogram(E_rel_ns, bins=n_bins_ns, weights=Ws)
+    ns_centers = 0.5 * (ns_edges[:-1] + ns_edges[1:])
+    ns_binw = ns_edges[1] - ns_edges[0]
+    ns_density = ns_hist / ns_binw  # config./eV
 
     # --- 3-panel figure, shared energy y-axis, formatted like reference conf_space.png ---
     # widths: PCA (Configurational Space) LARGE, both State Density panels THINNER
@@ -186,10 +191,11 @@ def main():
     ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
     ax_ds.set_xlabel(DENSITY_LABEL)
 
-    # Panel 3 (far right): NS State Density (KDE, NS only)
+    # Panel 3 (far right): NS State Density — prior-weight-weighted histogram (barh,
+    # x = density, y = energy), NS only.
     ax_ns = axes[2]
-    ax_ns.plot(ns_density, energy_grid, color="tab:red", lw=0.9, zorder=4, label="NS")
-    ax_ns.fill_betweenx(energy_grid, 0, ns_density, color="tab:red", alpha=0.12, zorder=3)
+    ax_ns.barh(ns_centers, ns_density, height=ns_binw * 0.9, color="tab:red",
+               alpha=0.6, label="NS")
     ax_ns.set_xlabel(DENSITY_LABEL)
     # no titles (all panels titleless); single shared legend (GPR+LCB = left/middle, NS = right)
     fig.legend(loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False, fontsize=9)
@@ -211,7 +217,7 @@ def main():
     print("3-panel state-density comparison")
     print("=" * 60)
     print(f"NS samples       : {Es.size}")
-    print(f"  NS KDE peak at : {energy_grid[np.argmax(ns_density)]:.4f} eV/atom (abs g={ns_density.max():.3f})")
+    print(f"  NS hist peak at: {ns_centers[np.argmax(ns_density)]:.4f} eV/atom (abs g={ns_density.max():.3f})")
     print(f"Dataset (DFT)    : {len(structs)} structures")
     print(f"  DS KDE peak at : {energy_grid[np.argmax(ds_density)]:.4f} eV/atom (abs g={ds_density.max():.3f})")
     print(f"n_atoms          : {args.n_atoms}")
