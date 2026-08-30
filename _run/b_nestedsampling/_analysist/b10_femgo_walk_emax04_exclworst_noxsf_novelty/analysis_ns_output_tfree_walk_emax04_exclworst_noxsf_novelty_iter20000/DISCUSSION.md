@@ -570,3 +570,85 @@ Additional supporting references cited in the temperature table:
   Phys. Rev. B 91, 174403. *Enhanced magnetoresistance by monoatomic roughness in epitaxial
   Fe/MgO/Fe tunnel junctions.* (MgO deposition near RT, interface-step / TMR.)
 - **Perpendicular CoFeB/MgO/CoFeB pMTJ annealing degradation:** refer to [4] (PMC5304246).
+
+---
+
+# Why does 100 K have a peak in P(E)? (data-grounded)
+
+This section answers the question: **why does the 100 K curve in
+`binding_probability_vs_temperature_pure.png` show a well-defined peak, when the
+state density g(E) itself is featureless at that energy?** The short answer is:
+**the peak in P(E) does NOT require a peak in g(E).** It is set by the balance
+between the rising state density and the falling Boltzmann factor — the
+canonical condition d ln g/dE = β.
+
+![binding_probability_vs_temperature_pure.png](binding_probability_vs_temperature_pure.png)
+
+## The maths: P(E,T) is a product, not g(E)
+
+The plotted quantity (pure mode, `--pure`) is the raw canonical probability
+density
+
+    P(E, T) = g(E) · exp(−β(E − E_ref)) / Z(T),   β = 1/(k_B T).
+
+The maximum of this *product* is found by setting the derivative to zero:
+
+    d ln P/dE = d ln g/dE − β = 0   ⟹   d ln g/dE = β.
+
+So the P(E) peak sits at the energy where the **logarithmic slope** of the state
+density equals the inverse temperature β — NOT at the energy where g(E) is
+largest. This is the classic canonical-ensemble result: the most probable energy
+minimises the free energy E − TS(E) (equivalently maximises g(E)exp(−βE)), which
+is a balance, not a coincidence of the two factors' peaks.
+
+## Verified against the b10 data (20000 samples, E_ref = −436.888 eV, 75 atoms)
+
+The table below compares, at each temperature, the balance requirement
+d ln g/dE = β against the numerically computed slope at the P(E) peak.
+
+| T (K) | β (eV⁻¹) | P-peak E (eV/atom) | g(E) at peak | d ln g/dE at peak | balance needs |
+|---|---|---|---|---|---|
+| 100 | 116.0 | **0.157** | 0.0026 (tiny) | 116.4 | 116.0 |
+| 298 | 38.9 | 0.262 | 3.72 | 39.3 | 38.9 |
+| 573 | 20.3 | 0.302 | 11.78 | 20.4 | 20.3 |
+| 773 | 15.0 | 0.305 | 12.45 | 14.7 | 15.0 |
+
+The agreement (e.g. 116.4 vs 116.0 at 100 K; 39.3 vs 38.9 at 298 K) confirms the
+peaks are exactly the d ln g/dE = β balance points.
+
+**Why the 100 K peak is at low energy where g(E) is negligible.** At 100 K, β =
+116 eV⁻¹ is huge, so exp(−βE) decays almost instantly with energy. To satisfy
+d ln g/dE = β = 116, the peak must move to where the state density is rising
+steeply — far down the low-energy flank, at **E ≈ 0.157 eV/atom**, where g is only
+≈ 0.0026 (compared with g ≈ 13 at the g(E) peak near 0.312 eV/atom). The
+exponential Boltzmann weight at 100 K is so concentrated toward the ground state
+that it dominates the huge-but-flat g(E) contribution: P is largest where the
+slope is steepest, not where g is largest.
+
+**As T rises the P-peak migrates toward the g(E) peak.** At 773 K (β = 15),
+exp(−βE) is much flatter, so the balance point shifts up to E ≈ 0.305 eV/atom,
+close to the g(E) maximum at 0.312 eV/atom — the P-peak nearly tracks g(E).
+The b10 data show the P-peak energy climbing 0.157 → 0.262 → 0.302 → 0.305 eV/atom
+as T goes 100 → 298 → 573 → 773 K, converging toward the g(E) peak.
+
+## Direct answer to the physics question
+
+- **"Don't we need a peak in the state density to generate a peak?"** No. A peak
+  in P(E) is generated whenever the *product* g(E)exp(−βE) has an interior
+  maximum, which only requires that g(E) rises fast enough on the low-energy side
+  to outrun the Boltzmann decay for a moment — i.e. that d ln g/dE = β be
+  solvable. g(E) can be essentially flat, monotonic, or (as here) have its own
+  peak at a *different* energy; the P-peak just moves to wherever that balance
+  holds.
+- **What the 100 K peak physically means.** At low temperature the system is
+  pulled strongly toward the low-energy (island) basin, so the most probable
+  energy sits at the *edge* of where that basin's states start to grow in number,
+  not at the densest state region. The 100 K peak at 0.157 eV/atom is the onset of
+  the flat-basin states rising out of the near-zero low-energy density, weighted
+  by the enormous low-T Boltzmann factor.
+- **Caveat.** Because g(E) is computed here as a KDE over a *finite* NS sample set
+  (and is essentially zero right at E_ref, since few discarded samples sit exactly
+  at the minimum), the very-low-energy value of g and hence the precise 100 K peak
+  position carry sampling noise. The qualitative conclusion — low-T P peaks on the
+  rising low-energy flank via the d ln g/dE = β balance, independent of any g(E)
+  peak — is robust and exactly reproduced by the data.

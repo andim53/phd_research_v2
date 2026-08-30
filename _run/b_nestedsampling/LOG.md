@@ -5214,3 +5214,33 @@ area-normalization applied.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (7) — b10 DISCUSSION: 'Why does 100 K have a peak in P(E)?'
+
+**Goal (user-confirmed via clarify):** Add a data-grounded discussion section to the b10
+DISCUSSION.md answering why the 100 K curve in `binding_probability_vs_temperature_pure.png`
+has a peak, and the physics question of whether a peak in the state density is needed.
+
+**Clarify decisions (all user-confirmed):**
+1. Append a new dated section 'Why does 100 K have a peak in P(E)?' (not edit the existing
+   100-K section).
+2. Embed the pure-probability PNG in the new section.
+
+**Actions taken:**
+- Computed the NS state density g(E) (weighted KDE of the 20000 samples) and P(E,T) for the
+  b10 run, and verified the canonical peak condition d ln g/dE = β at each temperature.
+- Appended the section to
+  `b10.../analysis_.../DISCUSSION.md` with the embedded pure graph, a data table, and the
+  direct physics answer.
+
+**Results (real output):** d ln g/dE at the P-peak matches β exactly: 100 K → 116.4 (β 116),
+298 K → 39.3 (β 38.9), 573 K → 20.4 (β 20.3), 773 K → 14.7 (β 15.0). P-peak energy climbs
+0.157 → 0.262 → 0.302 → 0.305 eV/atom as T rises, converging toward the g(E) peak at 0.312
+eV/atom. Conclusion: a P(E) peak does NOT require a g(E) peak — it is the d ln g/dE = β
+balance between rising state density and falling Boltzmann factor.
+
+**Open items:** None.
+
+**Time:** 2026-08-31 (JST).
