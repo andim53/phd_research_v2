@@ -3362,3 +3362,24 @@ square figure. Wrap it onto two lines with an explicit line break.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: add --figsize flag, re-run at 4x4
+
+**Goal (user-confirmed? — simple, low-stakes flag addition):** Add a `--figsize` flag to control
+the (square) figure size in `_analysist/compare_state_density_gE.py`, then re-run for figsize 4.
+
+**Actions taken:**
+- Added `--figsize` (float, default 6, in inches; square width=height) arg.
+- Used it in `plt.subplots(figsize=(args.figsize, args.figsize))`.
+- Updated the docstring usage example to include `--figsize 6`.
+- Bumped `__version__` 1.4.0 -> 1.5.0 (API/behavior change -> minor).
+- Ran for b11 iter20000 with `--figsize 4`.
+
+**Results:** PNG now 1200x1200 px (4x4 in at 300 dpi). Data unchanged (NS g(E) peak 12.326 at
+0.341 eV/atom; KDE peak 1.277 at 0.373 eV/atom).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

@@ -18,13 +18,13 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
   /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
       --run b11_boron_walk_emax04_exclworst_noxsf_novelty \
       --ns-output analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter20000 \
-      --n-atoms 82 \
+      --n-atoms 82 --figsize 6 \
       --outname compare_state_density_gE.png
 """
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import argparse
 import os
@@ -64,6 +64,9 @@ def main():
                         "under the run's ns_output dir and state_density_gE.png)")
     p.add_argument("--n-atoms", type=int, default=82,
                    help="atoms per structure (boron Fe25Mg25O25B7 = 82). Default 82.")
+    p.add_argument("--figsize", type=float, default=6,
+                   help="figure size in inches (square: width=height=this value). "
+                        "Default 6.")
     p.add_argument("--outname", default="compare_state_density_gE.png",
                    help="output filename (written next to the NS analysis dir)")
     args = p.parse_args()
@@ -110,7 +113,7 @@ def main():
     g_ds = g_ds_abs / peak_ds           # peak-normalized (=1) for shape comparison
 
     # --- overlay plot (both peak-normalized to 1 so shapes are comparable) ---
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(args.figsize, args.figsize))
     ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5,
            label=f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)")
     ax.plot(grid, g_ds, "r-", lw=2,
