@@ -46,7 +46,8 @@ a_lcbnovel/
 │   ├── 3_mgofe_Seed3_Iter700/  #   bare per-seed run
 │   └── 73_novel_benchEMT/      #   full benchmark project (doc trio + main_benchmark*.py + j_benchmark*.sh)
 ├── _analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
-│   ├── run_analysis_indices.py #   self-contained analysis runner (3-stage pipeline, idx 71/72)
+│   ├── run_analysis_indices.py #   multi-seed analysis runner (3-stage pipeline, 71/72)
+│   ├── run_analysis_a_runs.py  #   single-seed analysis runner (per-seed a-runs)
 │   ├── scripts/                #   copied deps: process_database.py, plot_structure_landscape.py,
 │   │                           #     calculate_relative_energy.py
 │   ├── 0_analy/                #   analysis outputs (gitignored, regenerable)
@@ -69,15 +70,25 @@ a_lcbnovel/
   Expected layout (matching the repo-root `.gitignore`): `0_analy/` (staging),
   `1_result/` (final), `main_analyst.ipynb`, `main_test.ipynb`. Outputs are
   regenerable/gitignored.
-- **`_analysist/run_analysis_indices.py`** — self-contained analysis runner (mirrors
-  the sibling `/home/think/Desktop/research/_analysist/run_analysis_indices.py`,
-  adapted to this project). Imports only the local `_analysist/scripts/` deps
-  (`process_database.py`, `plot_structure_landscape.py`, `calculate_relative_energy.py`).
-  Scoped to the Fe/MgO heavy-run indices **71** and **72** via `FOLDER_MAP`
-  (`71_novel_runEWindow/output`, `72_novel_AutoGlob_1eVperAtomAboveGlob/output`; each
-  holds `seed_3/1_db/db_3.db`). The flat benchmark dirs 73/74 are intentionally
-  excluded (no `seed_*` layout). Stages: ① `process_database` (DB→traj/xsf/csv),
-  ② PCA landscape, ③ Boltzmann probability. Outputs → `0_analy/idx_<N>/`.
+- **`_analysist/run_analysis_indices.py`** — self-contained **multi-seed** analysis
+  runner (mirrors the sibling b_nestedsampling
+  `/home/think/Desktop/research/_run/b_nestedsampling/_analysist/run_analysis_indices.py`,
+  adapted to this project). Loads all `seed_*/1_db/db_*.db` directly from a
+  `--dataset` dir. Imports only the local `_analysist/scripts/` deps
+  (`plot_structure_landscape.py`, `process_database.py`, `calculate_relative_energy.py`).
+  Scoped to the multi-seed heavy runs **71** and **72** (the flat benchmark dirs 73/74
+  are excluded — no `seed_*` layout). Stages: ① best-so-far progression (per-seed),
+  ② PCA landscape, ③ Boltzmann probability. CLI: `--dataset --outdir --e-max
+  --normalize-density --start-iter`. Outputs → per-run `<run>/analysis_indices/`.
+- **`_analysist/run_analysis_a_runs.py`** — self-contained **single-seed** analysis
+  runner for the per-seed a-runs (e.g. `a1_mgofe_Seed3_Iter300/output`). Same 3-stage
+  pipeline but labels the progression by the actual seed number and writes
+  `progression_seed_split_Seed3.png`. Same CLI (`--dataset --outdir --e-max
+  --normalize-density --start-iter`). Outputs → per-run `<run>/analysis_a_runs/`.
+- **Per-analysis `DISCUSSION.md`** — each analysis dir carries a `DISCUSSION.md`
+  stating the **exact running command + params** (a `## Running script` section) and
+  discussing the results, mirroring the b_nestedsampling convention. Analysis outputs
+  are gitignored (regenerable); the runners + `scripts/` are tracked.
 
 ### 2b. Source-code versioning
 
@@ -122,10 +133,13 @@ pjsub j_benchmark.sh           # on HPC
 $PY main_benchmark_sweep.py      # local
 pjsub j_benchmark_sweep.sh       # on HPC
 
-# Analyse Fe/MgO heavy-run results (idx 71, 72) — self-contained in _analysist
+# Analyse Fe/MgO heavy-run results (71, 72) — self-contained in _analysist
 cd _analysist
-$PY run_analysis_indices.py --idx 71          # single index
-$PY run_analysis_indices.py                    # all (71, 72)
+$PY run_analysis_indices.py --dataset 71_novel_runEWindow/dataset --outdir 71_novel_runEWindow/analysis_indices
+$PY run_analysis_indices.py --dataset 72_novel_AutoGlob_1eVperAtomAboveGlob/dataset --outdir 72_novel_AutoGlob_1eVperAtomAboveGlob/analysis_indices
+
+# Analyse a per-seed a-run (single seed) — run_analysis_a_runs.py
+$PY run_analysis_a_runs.py --dataset a1_mgofe_Seed3_Iter300/output --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
 ```
 
 ### `main.py` CLI

@@ -1497,3 +1497,64 @@ B6Fe25 instead of the requested B7Fe25.
 
 ### Time
 ~40 min.
+
+
+## 2026-08-31 — Session: Add a1 single-seed analysis DISCUSSION.md + update analysis notes + AGENTS.md
+
+### Goal (user request, confirmed via clarify)
+Edit the a1 single-seed analysis (`_analysist/a1_mgofe_Seed3_Iter300/analysis_a_runs`):
+when running the analysis, include a DISCUSSION.md note covering the discussion of the
+result and the full python command with its parameters. Update all notes that reference
+analysis, and update AGENTS.md.
+
+### Clarify (confirmed)
+- **DISCUSSION.md location:** inside the analysis dir
+  `_analysist/a1_mgofe_Seed3_Iter300/analysis_a_runs/DISCUSSION.md`.
+- **Re-run:** yes — re-run `run_analysis_a_runs.py` for a1 so the DISCUSSION.md exactly
+  matches this invocation.
+- **Notes to update (multi-select):** project `README.md`, project `README.AI.md`,
+  a1 run `TUTORIAL.md`, a1 run `README.md`. (Also mirrored into the tracked
+  `_runs/a1_mgofe_Seed3_Iter300/` README+TUTORIAL copies to keep them current per
+  AGENTS.md.)
+- **AGENTS.md:** add a short per-run analysis convention to section 3a — every
+  analysis dir must ship a DISCUSSION.md with the exact running command + params
+  (mirroring b_nestedsampling).
+
+### Actions taken
+1. Re-ran the a1 single-seed analysis under `agox_v2`:
+   `run_analysis_a_runs.py --dataset a1_mgofe_Seed3_Iter300/output --outdir
+   a1_mgofe_Seed3_Iter300/analysis_a_runs` (defaults: --start-iter 10, no --e-max).
+2. Wrote `analysis_a_runs/DISCUSSION.md` — includes a `## Running script` section with
+   the full command + params, per-stage discussion grounded in real numbers (291/300
+   structs, 75 atoms, E_min=-435.4113 eV at iteration 280, rel-E range 0-0.505 eV/atom,
+   single KDE peak 0.058 eV/atom, Boltzmann peak 0.007 eV/atom at 298 K -> 0.032 at
+   646 K).
+3. Updated project `README.md` analysis section (two runners: multi-seed
+   `run_analysis_indices.py` + single-seed `run_analysis_a_runs.py`, new per-run
+   output dirs, DISCUSSION.md convention).
+4. Updated project `README.AI.md` (layout tree, section 2a, command block) to reference
+   `run_analysis_a_runs.py`, `analysis_a_runs/`, and the DISCUSSION.md requirement.
+5. Updated a1 run `README.md` + `TUTORIAL.md` (Step 5 analysis reproduce) in both the
+   `_analysist/` and tracked `_runs/` copies.
+6. Updated `AGENTS.md` section 3a with the per-run analysis + DISCUSSION.md convention.
+
+### Results
+- a1 analysis re-ran cleanly; DISCUSSION.md written with exact command + grounded
+  numbers.
+- All notes referencing analysis updated consistently across README.md / README.AI.md /
+  a1 README+TUTORIAL (both _analysist and _runs copies) and AGENTS.md.
+
+### Decisions & reasoning
+- Grounded every number in the DISCUSSION in the actual DB/analysis output (not
+  eyeballed).
+- Kept the b_nestedsampling convention (DISCUSSION.md with `## Running script`) as the
+  project standard per the reference doc.
+- Mirrored docs into the tracked `_runs/a1_mgofe_Seed3_Iter300/` copies since the
+  `_analysist/a1...` dir is untracked user data.
+
+### Open items / next steps
+- (Optional) replicate the same DISCUSSION.md pattern for the other analysed runs
+  (71/72 `analysis_indices/`, a10) as they get analysed.
+
+### Time
+~35 min.

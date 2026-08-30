@@ -56,6 +56,15 @@ To change the run, edit `SEED=` and/or `N_ITERATIONS=` at the top of `j_novEperA
 - `output/seed_3/0_result/0_xsf/` — structure files
 - `output_seed_3.txt` — GPAW log (in cwd)
 
+## Analysis
+
+This run is analysed with the project's single-seed runner
+`_analysist/run_analysis_a_runs.py`. The analysis outputs live in
+`analysis_a_runs/` (progression plot + window `.xsf`, `conf_space.png`,
+`binding_probability_vs_temperature.png`), with a `DISCUSSION.md` that records the
+**exact running command + parameters** and discusses the results. See `TUTORIAL.md`
+Step 5 for the reproduce command.
+
 ## Files
 
 ```

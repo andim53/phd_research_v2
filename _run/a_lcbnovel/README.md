@@ -325,24 +325,40 @@ kept separate from `_runs/` so raw runs are never mixed with their analysis. The
 repo-root `.gitignore` anticipates the layout `0_analy/` (staging), `1_result/`
 (final), and `main_analyst.ipynb` / `main_test.ipynb` (notebooks).
 
-A self-contained analysis runner lives at `_analysist/run_analysis_indices.py`
-(mirrors the sibling `_analysist/run_analysis_indices.py`, adapted to this project).
-It runs the 3-stage pipeline (database → PCA landscape → Boltzmann probability) for
-the Fe/MgO heavy-run indices **71** and **72** (the flat benchmark dirs 73/74 are
-excluded — their layout doesn't fit the `seed_*/1_db` structure). It imports only
-the `_analysist/scripts/` deps copied next to it
-(`process_database.py`, `plot_structure_landscape.py`, `calculate_relative_energy.py`),
-so it is callable in place:
+Two self-contained analysis runners live at `_analysist/`:
+
+- `run_analysis_indices.py` — the **multi-seed** runner (mirrors the sibling
+  b_nestedsampling architecture). Loads all `seed_*/1_db/db_*.db` directly from a
+  `--dataset` dir and runs the 3-stage pipeline (best-so-far progression → PCA
+  landscape → Boltzmann probability). Used for the multi-seed heavy runs **71/72**
+  (the flat benchmark dirs 73/74 are excluded — their layout doesn't fit the
+  `seed_*/1_db` structure). CLI: `--dataset --outdir --e-max --normalize-density
+  --start-iter`.
+- `run_analysis_a_runs.py` — the **single-seed** runner for the per-seed a-runs
+  (e.g. `a1_mgofe_Seed3_Iter300/output`). Same 3-stage pipeline but labels the
+  progression by the actual seed number and writes `progression_seed_split_Seed3.png`.
+  Same CLI (`--dataset --outdir --e-max --normalize-density --start-iter`).
+
+Both import only the `_analysist/scripts/` deps copied next to them
+(`plot_structure_landscape.py`, plus `process_database.py` / `calculate_relative_energy.py`
+where used), so they are callable in place:
 
 ```bash
 cd /home/think/Desktop/research/_run/a_lcbnovel/_analysist
-/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71
-/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py   # all indices (71, 72)
+# multi-seed heavy runs 71/72
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
+    --dataset 71_novel_runEWindow/dataset --outdir 71_novel_runEWindow/analysis_indices
+# single-seed a-run
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_a_runs.py \
+    --dataset a1_mgofe_Seed3_Iter300/output --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
 ```
 
-Outputs go to `_analysist/0_analy/idx_<N>/` (trajectories, xsf, csv, landscape +
-probability figures). `0_analy/` and `1_result/` are gitignored (regenerable); the
-runner + `scripts/` are tracked.
+Outputs go to a per-run `<run>/analysis_indices/` or `<run>/analysis_a_runs/` dir
+(progression plot + window `.xsf`, `conf_space.png`,
+`binding_probability_vs_temperature.png`), and each analysis dir should carry a
+`DISCUSSION.md` that states the **exact running command + params** and discusses the
+results (mirroring the b_nestedsampling convention). Analysis outputs are gitignored
+(regenerable); the runners + `scripts/` are tracked.
 
 **Source-code versioning.** Every in-scope source file (root `main*.py`,
 `novelty_lcb/`, `scripts/`, test/smoke/energy_stats, `_analysist/` runner+scripts)

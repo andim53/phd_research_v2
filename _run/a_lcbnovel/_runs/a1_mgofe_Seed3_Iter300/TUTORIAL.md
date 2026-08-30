@@ -77,3 +77,33 @@ acquisition calculator is dragging a non-picklable object into the Ray pool. The
    are tracked. Re-running regenerates them.
 4. **This run is the short one (300)** — if you need more sampling, use a2 (500) or a3
    (700) instead of silently bumping this one's budget; keep the runs comparable.
+
+## Step 5 — Run the single-seed analysis
+
+This run's results are analysed with the project's single-seed runner
+`_analysist/run_analysis_a_runs.py` (same 3-stage pipeline as the multi-seed runner:
+best-so-far progression → PCA landscape → Boltzmann probability). Run it from the
+`_analysist/` directory with the `agox_v2` env:
+
+```bash
+cd /home/think/Desktop/research/_run/a_lcbnovel/_analysist
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_a_runs.py \
+    --dataset a1_mgofe_Seed3_Iter300/output \
+    --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
+```
+
+Expected outputs under `analysis_a_runs/`:
+
+```text
+analysis_a_runs/
+├── progression_plots/progression_seed_split_Seed3.png   # best-so-far + bullets
+├── progression_plots/seed0_min_w0-20.xsf  ... (window minima)
+├── progression_plots/global_gs.xsf                       # global ground state
+├── conf_space.png                                        # PCA landscape + density
+├── binding_probability_vs_temperature.png                # Boltzmann P(T)
+└── DISCUSSION.md                                         # results + exact command
+```
+
+The generated `DISCUSSION.md` records the **exact running command + parameters** and
+discusses the results. Analysis outputs (PNG/xsf) are gitignored; the runner and
+`DISCUSSION.md`-style notes you choose to track are tracked.

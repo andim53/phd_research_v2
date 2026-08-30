@@ -153,6 +153,27 @@ _analysist/
 
 Analysis outputs are regenerable artifacts and are gitignored; only the
 analysis code/notebooks the owner chooses to track are tracked.
+
+### Per-run analysis convention
+
+Each concrete run's analysis is produced by a self-contained runner in
+`_analysist/` — the **multi-seed** runner `run_analysis_indices.py` (71/72, loads all
+`seed_*/1_db/db_*.db` from a `--dataset` dir) and the **single-seed** runner
+`run_analysis_a_runs.py` (per-seed a-runs, e.g. `a1_mgofe_Seed3_Iter300/output`).
+Analysis outputs go to a per-run dir `<run>/analysis_indices/` or
+`<run>/analysis_a_runs/` (progression plot + window `.xsf`, `conf_space.png`,
+`binding_probability_vs_temperature.png`).
+
+**Every analysis dir must ship a `DISCUSSION.md`** (mirroring the b_nestedsampling
+convention) that:
+- states the **exact running command + parameters** in a `## Running script` section
+  (the full `python <runner>.py --dataset ... --outdir ... [flags]` line), so the
+  analysis is reproducible and traceable to its generating invocation; and
+- discusses the results grounded in the actual numbers.
+
+CLI for both runners: `--dataset --outdir --e-max --normalize-density --start-iter`.
+Analysis outputs (PNG/xsf) are gitignored (regenerable); the runners + `scripts/` and
+any DISCUSSION.md the owner chooses to track are tracked.
 8. **Do not modify another profile's skills/plugins/cron/memories** unless the owner
    explicitly directs it.
 
