@@ -4452,3 +4452,28 @@ ns_output. Save PNG in the analysis_indices dir; code in _analysist/.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — run_analysis_indices.py for b12 (boron3) dataset
+
+**Goal (user-confirmed via clarify):** Run `run_analysis_indices.py` on the b12 (B3Fe25Mg25O25,
+boron3) dataset, outputting to a new b12 analysis_indices dir.
+
+**Clarify decisions (all user-confirmed):**
+1. Output to b12_boron3_walk_emax04_exclworst_noxsf_novelty/analysis_indices (mirroring b10/b11).
+2. --e-max 0.8.
+3. --start-iter 10 (default).
+
+**Actions taken:**
+- Ran `run_analysis_indices.py --dataset b12_.../dataset --outdir b12_.../analysis_indices
+  --e-max 0.8 --start-iter 10`.
+- Verified both outputs generated.
+
+**Results:**
+- b12 dataset (6 seeds): 543 structures after iteration>=10 filter, 78 atoms each.
+- analysis_indices/conf_space.png (852x852) + analysis_indices/binding_probability_vs_temperature.png (1200x900).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
