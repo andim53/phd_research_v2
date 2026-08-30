@@ -1334,3 +1334,61 @@ structures. Write a test code.
 
 ### Time
 ~20 min.
+
+## 2026-08-31 — Session: Port _analysist analysis runner to the b_nestedsampling architecture
+
+### Goal (user request, confirmed via clarify)
+Update `_analysist/run_analysis_indices.py` (was v1.0.0, the old index/folder-map
+pipeline) to follow the same architecture as the sibling project's runner at
+`/home/think/Desktop/research/_run/b_nestedsampling/_analysist/run_analysis_indices.py`
+(v1.3.1): a `--dataset`/`--outdir`-based runner that loads ALL seed DBs directly
+instead of the `FOLDER_MAP` + `process_database` Stage-1 flow.
+
+### Clarify (confirmed)
+- **Scope = full port (v1.0.0 -> 2.0.0):** drop `--indices`/`--idx`/`FOLDER_MAP`/
+  `process_database` import; adopt `--dataset`/`--outdir`/`--start-iter`. Stage 1
+  becomes the per-seed best-so-far progression plot + bullet scatter + xsf export
+  (load_all_seeds / load_all_seeds_by_seed), Stage 2 PCA landscape, Stage 3
+  Boltzmann P(T).
+- **Targets:** keep it a generic single-dataset runner; validated on 71 and 72
+  (each has `dataset/seed_*/1_db/db_*.db`, 13 seeds). 66 also works by pointing
+  `--dataset` at `66_MgOFe_20B` (its `seed_0..4` sit at the top level). 73/74 flat
+  benchmarks remain excluded.
+- **Old version preserved:** copied to
+  `_analysist/_archive/run_analysis_indices_index_based.py`.
+- **Deliverables:** full version/doc/verify/commit pass on this change.
+
+### Actions taken
+1. Copied old v1.0.0 to `_analysist/_archive/run_analysis_indices_index_based.py`.
+2. Rewrote `_analysist/run_analysis_indices.py` as a faithful port of the
+   b_nestedsampling architecture: `load_all_seeds`/`load_all_seeds_by_seed`,
+   `step1_progression` (per-seed best-so-far + bullet scatter + xsf export),
+   `step2_landscape`, `step3_probability`; CLI `--dataset --outdir --e-max
+   --normalize-density --start-iter`; bumped `__version__` to `2.0.0`. Only
+   `scripts/plot_structure_landscape.py` is imported (no `process_database`).
+3. Updated `VERSIONS.md` (`_analysist/run_analysis_indices.py` 1.0.0 -> 2.0.0).
+
+### Results
+- `py_compile` clean under the `agox_v2` env python.
+- Ran on **71** (`--dataset 71_novel_runEWindow/dataset`): 1180 structures /
+  75 atoms (iteration >= 10) across 13 seeds; wrote
+  `progression_plots/progression_seed_split_0.png` + 5 xsf, `conf_space.png`,
+  `binding_probability_vs_temperature.png` under `71_novel_runEWindow/analysis_indices/`.
+- Ran on **72** (`--e-max 0.8`): same three outputs + 5 xsf under
+  `72_novel_AutoGlob_1eVperAtomAboveGlob/analysis_indices/`.
+
+### Decisions & reasoning
+- Full port rather than a hybrid keeps the two projects' analysis toolchains
+  identical, so figure styling and Stage-1 semantics (best-so-far + bullets) match
+  the established reference. Direct seed-DB loading removes the intermediate
+  `process_database` traj step that the old index flow depended on.
+- Output layout changed from `0_analy/idx_<N>/` to a per-run `<run>/analysis_indices/`
+  dir (matching the reference runner's `--outdir` convention).
+
+### Open items / next steps
+- (Optional) run 66 the same way (`--dataset 66_MgOFe_20B`) if its analysis is wanted.
+- (Optional) add a `README.md`/`DISCUSSION.md` per run under `_analysist/` for the
+  new `analysis_indices` outputs, mirroring the b_nestedsampling runs.
+
+### Time
+~30 min.
