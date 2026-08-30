@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 import argparse
 import glob
@@ -150,6 +150,7 @@ def main():
     print("=" * 60)
     print("NS Boltzmann probability (g(E) * exp(-beta*E) / Z from g(E))")
     print("=" * 60)
+    max_display = 0.0
     for i, T in enumerate(args.temperatures):
         beta = 1.0 / (K_B * T)
         # P(E,T) = g(E)*exp(-beta*(E-E_ref))/Z, Z = sum_E g(E)*exp(-beta*(E-E_ref))
@@ -162,6 +163,7 @@ def main():
             probs_plot = probs / area if area > 0 else probs   # area (integral) = 1
         else:
             probs_plot = probs / probs.max()     # peak = 1
+        max_display = max(max_display, probs_plot.max())
         ax.plot(grid, probs_plot, color=colors[i % len(colors)],
                 lw=1.6, label=f"{T} K")
         print(f"  T={T:6.1f} K  Z={np.exp(log_Z):.4e}  max P={probs.max():.3e}")
@@ -178,7 +180,12 @@ def main():
     ax.set_xlabel(E_LABEL)
     ax.set_ylabel("Probability Density (Area = 1)" if args.area_norm
                   else "Probability P(E) (peak-normalized)")
-    ax.set_ylim(0, 1.05)
+    # Auto-scale the y-axis to the tallest curve in area-norm mode (peaks can be >>1);
+    # keep the 0-1.05 headroom for the default peak-normalized mode.
+    if args.area_norm:
+        ax.set_ylim(0, 1.05 * max_display)
+    else:
+        ax.set_ylim(0, 1.05)
     ax.set_xlim(0, grid.max())
     ax.legend(frameon=False, loc="upper right", fontsize=9)
 

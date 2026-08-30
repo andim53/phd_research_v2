@@ -4263,3 +4263,27 @@ area = 1). flat/island dashed lines retained.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: auto-scale y-axis in --area-norm mode
+
+**Problem:** In --area-norm mode, the probability density peaks reach ~10-13 (integral = 1 over a
+narrow energy range), but the y-axis was hard-coded to 1.05, so the peaks were cut off above the
+y-axis.
+
+**Fix (user-confirmed):** Auto-scale the y-axis to the tallest curve (1.05 * max_display) in
+--area-norm mode; keep the 0-1.05 headroom for the default peak-normalized mode.
+
+**Actions taken:**
+- Track `max_display` = max peak height across temperatures.
+- In --area-norm mode set `ax.set_ylim(0, 1.05 * max_display)`; else `0, 1.05`.
+- Bumped `__version__` 1.3.0 -> 1.3.1 (patch).
+- py_compile OK; re-ran b10 iter20000 --area-norm; PNG regenerated (1500x1200).
+
+**Results:** The area-normalized probability density peaks are now fully visible (y-axis
+auto-scales to ~13.9). flat/island lines retained.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
