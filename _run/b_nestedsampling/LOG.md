@@ -3191,3 +3191,43 @@ Code + docs tracked; DBs/xsf/png/outputs gitignored.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — NS-vs-dataset state-density comparison plot (b11 iter20000)
+
+**Goal (user-confirmed via clarify):** Make a new analysis comparing the NS state density
+`state_density_gE.png` (from
+`b11_.../analysis_..._boron_iter20000/`) against a gaussian-KDE state density computed directly
+from the b11 dataset, write the python code in `_analysist/`, and save the new PNG in the same
+`analysis_..._boron_iter20000` dir, using the same params as the ns_output.
+
+**Clarify decisions (all user-confirmed):**
+1. Overlay BOTH on one plot: the NS weighted-histogram g(E) (recomputed exactly as in
+   `state_density_gE.png`) and a gaussian-KDE of the dataset g(E).
+2. Energy axis: per-atom relative `(E - min)/n_atoms`, each relative to ITS OWN minimum (shape
+   comparison on the same eV/atom axis).
+3. Dataset KDE: unweighted (each structure equal).
+4. Energy source: stored DFT energies from the seed DBs (`get_potential_energy`).
+5. Same params as ns_output: `--e-max-per-atom 0.4`, `n_atoms 82`.
+
+**Actions taken:**
+- Wrote `_analysist/compare_state_density_gE.py` (v1.0.0) — reuses the analyzer's `load_samples`
+  and NS g(E) weighted-histogram recipe; loads + filters dataset DFT energies mirroring `main.py`;
+  builds a gaussian KDE; overlays both; writes the PNG into the analysis dir.
+- Ran it for b11 iter20000 (`--run b11_... --ns-output analysis_..._iter20000 --n-atoms 82
+  --e-max-per-atom 0.4 --outname compare_state_density_gE.png`).
+- Verified: py_compile OK; PNG produced (2100x1200) in the analysis dir.
+
+**Results (b11 iter20000):**
+- NS g(E) peak at ~ +0.341 eV/atom (g~12.3), from 20000 prior-weight-weighted samples.
+- Dataset DFT KDE peak at ~ +0.129 eV/atom (g~3.7), from 266 structures (after --e-max-per-atom
+  0.4 filter of 496).
+- The two peaks differ: the NS weighted ensemble (prior-volume weighted) is dominated by the
+  higher-energy band (~0.34 eV/atom), whereas the raw dataset KDE peaks much lower (~0.13
+  eV/atom) — the dataset is densest near the lower-energy region, but NS weights the
+  configuration-space volume which sits higher.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
