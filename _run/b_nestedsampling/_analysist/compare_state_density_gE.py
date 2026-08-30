@@ -24,7 +24,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import os
@@ -89,7 +89,9 @@ def main():
     hist_g, edges_g = np.histogram(E_rel_ns, bins=n_bins, weights=Ws)
     centers_ns = 0.5 * (edges_g[:-1] + edges_g[1:])
     binw = edges_g[1] - edges_g[0]
-    g_ns = hist_g / binw
+    g_ns_abs = hist_g / binw            # absolute config./eV
+    peak_ns = g_ns_abs.max()
+    g_ns = g_ns_abs / peak_ns           # peak-normalized (=1) for shape comparison
 
     # --- dataset DFT energies (ALL structures, no energy filter) ---
     energies = load_dataset_energies(dataset_dir)
@@ -99,19 +101,24 @@ def main():
     E_rel_ds = (energies - energies.min()) / args.n_atoms
     kde = gaussian_kde(E_rel_ds)
     # KDE integrates to 1 (a normalized density); NS histogram integrates to
-    # sum(Ws) ~= 1 (the consumed prior volume). Scale KDE so both integrate to 1.
+    # sum(Ws) ~= 1 (the consumed prior volume).
     # Plot x-range is capped at the NS g(E) E-E_min max so both curves share the
     # same max; the full-dataset KDE (which may extend further) is only drawn up to it.
     grid = np.linspace(0, E_rel_ns.max(), 400)
-    g_ds = kde(grid)
+    g_ds_abs = kde(grid)
+    peak_ds = g_ds_abs.max()
+    g_ds = g_ds_abs / peak_ds           # peak-normalized (=1) for shape comparison
 
-    # --- overlay plot ---
+    # --- overlay plot (both peak-normalized to 1 so shapes are comparable) ---
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5,
-           label="NS g(E) (weighted histogram)")
-    ax.plot(grid, g_ds, "r-", lw=2, label="GPR+LCB g(E) (Gaussian KDE)")
-    ax.set_xlabel("E - E_min (eV/atom)"); ax.set_ylabel(r"$g(E)$ (config./eV)")
-    ax.set_title("State density: NS samples vs dataset (KDE)")
+           label=f"NS g(E) (weighted hist; peak {peak_ns:.1f} config./eV)")
+    ax.plot(grid, g_ds, "r-", lw=2,
+            label=f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)")
+    ax.set_xlabel("E - E_min (eV/atom)")
+    ax.set_ylabel(r"$g(E)$ / $g(E)_{max}$  (peak-normalized)")
+    ax.set_title("State density shape: NS samples vs dataset (KDE) — peak-normalized")
+    ax.set_ylim(0, 1.05)
     ax.grid(alpha=0.3); ax.legend(fontsize=8)
     fig.tight_layout()
 
@@ -122,12 +129,12 @@ def main():
 
     # --- printed summary ---
     print("=" * 60)
-    print("State-density comparison")
+    print("State-density comparison (peak-normalized)")
     print("=" * 60)
     print(f"NS samples       : {Es.size} (prior-volume weighted)")
-    print(f"  g(E) peak at   : {centers_ns[np.argmax(g_ns)]:.4f} eV/atom (g={g_ns.max():.3f})")
+    print(f"  g(E) peak at   : {centers_ns[np.argmax(g_ns_abs)]:.4f} eV/atom (abs g={peak_ns:.3f})")
     print(f"Dataset (DFT)    : {energies.size} structures")
-    print(f"  KDE peak at    : {grid[np.argmax(g_ds)]:.4f} eV/atom (g={g_ds.max():.3f})")
+    print(f"  KDE peak at    : {grid[np.argmax(g_ds_abs)]:.4f} eV/atom (abs g={peak_ds:.3f})")
     print(f"n_atoms          : {args.n_atoms}")
     print(f"NS E range       : [{E_rel_ns.min():.4f}, {E_rel_ns.max():.4f}] eV/atom (rel. own min)")
     print(f"DS E range       : [{E_rel_ds.min():.4f}, {E_rel_ds.max():.4f}] eV/atom (rel. own min)")

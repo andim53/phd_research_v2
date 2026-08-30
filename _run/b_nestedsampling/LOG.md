@@ -3285,3 +3285,33 @@ clipped to the NS g(E) E-E_min max so both curves share the same eV/atom range.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: peak-normalize both g(E) for shape comparison
+
+**Goal (user-confirmed via clarify):** The NS g(E) (peak ~12.3 config./eV) and the dataset
+GPR+LCB KDE g(E) (peak ~1.3) are on very different vertical scales, making shape comparison
+misleading. Normalize each to its own peak (=1) so both curves peak at 1.0 and shapes are
+directly comparable.
+
+**Clarify decision (user-confirmed):** Peak-normalize each g(E) to its own max (=1) and overlay.
+
+**Actions taken:**
+- Kept the absolute g(E) (`g_ns_abs`, `g_ds_abs`); added peak normalization `g = abs/peak`.
+- Plot y-axis now `g(E)/g(E)_max` (peak-normalized), y-limit 0..1.05; title/labels updated to
+  note peak-normalized and include the absolute peak values in the legend.
+- Printed summary reports absolute peak values (config./eV) + their locations.
+- Bumped `__version__` 1.1.0 -> 1.2.0 (behavior change).
+- Ran for b11 iter20000; PNG regenerated (2100x1200).
+
+**Results (b11 iter20000):**
+- NS g(E): absolute peak 12.326 config./eV at 0.341 eV/atom.
+- Dataset KDE g(E): absolute peak 1.277 config./eV at 0.373 eV/atom (full unfiltered 496).
+- Both now peak-normalized to 1, so the two SHAPES (peak location, width, symmetry) are compared
+  directly on the same vertical scale; absolute magnitudes are shown in the legend.
+- Plot x-range still capped at the NS max 0.401 eV/atom.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
