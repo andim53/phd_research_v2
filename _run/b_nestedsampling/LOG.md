@@ -4845,3 +4845,30 @@ twice.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — remove no-paper refs [2]/[3], renumber 4-7 -> 2-5
+
+**Goal (user-confirmed via clarify):** Remove the reference numbers [2] and [3] that have no paper
+(the 373/473 K FeCo screening temps), and rewrite the previous [4]-[7] to start at [2].
+
+**Clarify decisions (all user-confirmed):**
+1. Remove the 373 K and 473 K curves from the plot entirely, leaving 298[1], 573[2], 623[3],
+   673[4], 773[5] (+ 100 K without ref).
+2. Renumber: 573->[2], 623->[3], 673->[4], 773->[5] (298 stays [1]).
+
+**Actions taken:**
+- plot_ns_boltzmann_prob.py v1.5.4: removed 373.0/473.0 from CRITICAL_REF; renumbered 573->[2],
+  623->[3], 673->[4], 773->[5].
+- Re-ran with --temperatures 100 298 573 623 673 773 --annotate-critical --area-norm
+  --linewidth 3 --figsize 4 --legend-loc "upper left"; PNG regenerated (1200x1200).
+- DISCUSSION.md: removed the no-paper screening refs [2]/[3]; renumbered refs 4-7 -> 2-5;
+  updated the command block (6 temperatures) and the relevance paragraph (5 critical temps).
+
+**Results:** The plot now shows 100 K + 5 critical temps (298[1],573[2],623[3],673[4],773[5]);
+the DISCUSSION.md references and command are updated.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

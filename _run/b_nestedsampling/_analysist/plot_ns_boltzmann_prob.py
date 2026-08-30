@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.5.3"
+__version__ = "1.5.4"
 
 import argparse
 import glob
@@ -131,12 +131,10 @@ def main():
     # b10 iter20000 DISCUSSION.md section 9 temperature discussion) ---
     CRITICAL_REF = {
         298.0: "[1]",    # Fe/FeCo deposition, no heating (Scheike 2022)
-        373.0: "[2]",    # Mildly heated Fe/FeCo deposition (recommended screening)
-        473.0: "[3]",    # Moderately heated Fe/FeCo deposition (recommended screening)
-        573.0: "[4]",    # CoFeB/MgO annealing 473-573 K (Marnitz 2015)
-        623.0: "[5]",    # CoFeB/MgO optimization point (Kim 2023)
-        673.0: "[6]",    # CoFeB/MgO annealing limit (Lv 2019)
-        773.0: "[7]",    # In situ barrier crystallization / oxidation (Narayananellore 2017)
+        573.0: "[2]",    # CoFeB/MgO annealing 473-573 K (Marnitz 2015)
+        623.0: "[3]",    # CoFeB/MgO optimization point (Kim 2023)
+        673.0: "[4]",    # CoFeB/MgO annealing limit (Lv 2019)
+        773.0: "[5]",    # In situ barrier crystallization / oxidation (Narayananellore 2017)
     }
 
     # --- load NS samples (energy_eV + prior_weight) ---
