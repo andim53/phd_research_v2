@@ -4567,3 +4567,25 @@ Seed 0, and saves 5 xsf structures.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — run_analysis_indices.py: bullet scatter colors (black w/ white outline, red GS)
+
+**Goal (user-confirmed via clarify):** Update the progression-plot bullet scatter colors.
+
+**Clarify decisions (all user-confirmed):**
+1. Window-minimum bullets: black fill with white outline (circle 'o').
+2. Ground state: red fill with white outline, keep the star shape ('*').
+
+**Actions taken:**
+- Window bullets: mfc="black", mec="white", mew=1.2.
+- Ground state: mfc="red", mec="white", mew=1.2 (star).
+- Bumped `__version__` 1.3.0 -> 1.3.1.
+- py_compile OK; re-ran for b12; progression plot regenerated (1800x1050).
+
+**Results:** Bullets now use black-fill/white-outline (windows) and red-fill/white-outline (GS).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

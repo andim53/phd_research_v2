@@ -27,7 +27,7 @@ Usage (needs agox_v2 conda env for AGOX Fingerprint + ASE + scipy):
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 import argparse
 import glob
@@ -227,9 +227,9 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
             if not idxs:
                 continue
             jmin = idxs[int(np.argmin(seed0_rel_e[idxs]))]  # lowest-energy candidate in window
-            # bullet at (candidate_index, rel_energy_per_atom) on Seed 0
-            ax.plot(jmin, seed0_rel_e[jmin], "o", color="black", ms=7,
-                    zorder=60, mfc="gold", mec="black")
+            # bullet at (candidate_index, rel_energy_per_atom) on Seed 0: black fill, white outline
+            ax.plot(jmin, seed0_rel_e[jmin], "o", ms=7, zorder=60,
+                    mfc="black", mec="white", mew=1.2)
             # save the structure
             fname = os.path.join(plot_dir, f"seed0_min_w{wlo}-{whi}.xsf")
             ase_write(fname, seed0_structs[jmin])
@@ -246,8 +246,8 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
             gs_x = seed0_n - 1
             if len(seed0_rel_e) > 0:
                 gs_x = int(np.argmin(np.abs(seed0_rel_e - gs_rel)))
-            ax.plot(gs_x, gs_rel, "*", color="black", ms=14, zorder=61,
-                    mfc="lime", mec="black")
+            ax.plot(gs_x, gs_rel, "*", ms=14, zorder=61,
+                    mfc="red", mec="white", mew=1.2)
             fname = os.path.join(plot_dir, "global_gs.xsf")
             ase_write(fname, gs_struct)
             saved.append(fname)
