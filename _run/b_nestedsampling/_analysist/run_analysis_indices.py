@@ -27,7 +27,7 @@ Usage (needs agox_v2 conda env for AGOX Fingerprint + ASE + scipy):
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 import argparse
 import glob
@@ -136,10 +136,14 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
 # ---------------------------------------------------------------------------
 # Stage 1 — Best-so-far progression plot (per-seed)
 # ---------------------------------------------------------------------------
-def step1_progression(dataset_dir, outdir, start_iter=10):
+def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
     """Per-seed best-so-far relative-energy-per-atom progression plot, mirroring
     _archive/_analysist/scripts/process_database.py's plot_best_so_far (the source
-    of progression_seed_split_<idx>.png). Seed 0 is highlighted in bold black on top."""
+    of progression_seed_split_<idx>.png). Seed 0 is highlighted in bold black on top.
+
+    If e_max is given (eV/atom), each seed's structures are filtered to those with
+    relative-energy-per-atom <= e_max (i.e. (E - seed_min)/n_atoms <= e_max), matching
+    the --e-max energy cap used in Stage 2/3."""
     print("\n[STAGE 1] Best-so-far progression plot")
     from matplotlib.ticker import AutoMinorLocator
 
@@ -156,6 +160,13 @@ def step1_progression(dataset_dir, outdir, start_iter=10):
         # relative energy per atom within this seed (mirrors calculate_relative_energy)
         e_min = s_energies.min()
         s_rel_e_atom = np.asarray([(e - e_min) / len(a) for e, a in zip(s_energies, s_structs)])
+        # apply the 0.8 eV/atom energy filter (relative to the seed min, per atom)
+        if e_max is not None:
+            mask = s_rel_e_atom <= e_max
+            s_rel_e_atom = s_rel_e_atom[mask]
+            s_structs = [a for a, m in zip(s_structs, mask) if m]
+        if len(s_rel_e_atom) == 0:
+            continue
         s_best_so_far = np.minimum.accumulate(s_rel_e_atom)  # progressive minimum
         # highlight Seed 0 in bold black on top (reference styling)
         if i == 0:
@@ -322,7 +333,7 @@ def main():
           f"(iteration >= {args.start_iter})")
 
     os.makedirs(args.outdir, exist_ok=True)
-    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter)
+    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter, e_max=args.e_max)
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density)
     step3_probability(structures, energies, args.outdir, e_max=args.e_max)

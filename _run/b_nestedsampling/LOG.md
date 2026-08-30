@@ -4508,3 +4508,31 @@ plot_best_so_far).
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — run_analysis_indices.py: 0.8 eV/atom filter on Stage 1 progression plot
+
+**Goal (user-confirmed via clarify):** Add a 0.8 eV/atom energy filter to the Stage 1
+best-so-far progression plot in `run_analysis_indices.py` (for the b12 progression_seed_split_0.png).
+
+**Clarify decisions (all user-confirmed):**
+1. Filter each seed's structures to relative-energy-per-atom <= 0.8 (i.e. (E - seed_min)/n_atoms
+   <= 0.8), then plot the best-so-far of the filtered set (like --e-max caps Stage 2/3).
+2. Use the existing --e-max arg (default None -> no filter; 0.8 when passed).
+3. Re-run for b12 to regenerate the plot with the filter.
+
+**Actions taken:**
+- `step1_progression` now takes `e_max=None`; when set, filters each seed's s_rel_e_atom to
+  <= e_max before computing best-so-far.
+- Wired `args.e_max` into the step1_progression call.
+- Bumped `__version__` 1.2.0 -> 1.2.1.
+- py_compile OK; re-ran for b12 with --e-max 0.8; progression_seed_split_0.png regenerated
+  (1800x1050).
+
+**Results:** The b12 progression plot now uses the 0.8 eV/atom energy filter (per-seed,
+relative-per-atom), matching the Stage 2/3 energy cap.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
