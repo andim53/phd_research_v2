@@ -4046,3 +4046,31 @@ square.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: revert square PCA + white outlines on notes/lines
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`: (1) turn the PCA graph
+back to 'like before' (remove the square set_aspect); (2) add a small white outline to the dashed
+lines in both State Density panels and their notes.
+
+**Clarify decisions (all user-confirmed):**
+1. Remove set_aspect('equal') so the PCA panel returns to the prior non-square aspect.
+2. Add a white outline (patheffects.withStroke) to the flat/island note TEXT in both panels.
+3. Add a white outline to the GPR+LCB peak dashed lines AND the NS flat/island dashed lines.
+
+**Actions taken:**
+- Removed `ax_scat.set_aspect("equal")` (PCA no longer square).
+- Imported `matplotlib.patheffects`.
+- Added `withStroke` white outlines to the GPR+LCB peak hlines, the GPR+LCB flat/island text, and
+  the NS flat/island axhline dashed lines.
+- Bumped `__version__` 2.6.0 -> 2.7.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2064x852).
+
+**Results:** PCA panel is back to its prior (non-square) aspect; the dashed lines and flat/island
+notes in both State Density panels now have a small white outline.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
