@@ -4613,3 +4613,33 @@ binding_probability_vs_temperature.png with thickness 2.0.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — plot_ns_boltzmann_prob.py: --figsize flag + new temperatures + lw 3
+
+**Goal (user-confirmed via clarify):** Edit the b10 iter20000 binding_probability_vs_temperature.png:
+use temperatures 0, 289.15, 348.6, 447.875, 574.15, 646.452 K, line thickness 3, add a --figsize
+flag and use 4x4.
+
+**Clarify decisions (all user-confirmed):**
+1. Add a --figsize flag (float, square figsize=(figsize, figsize)).
+2. Use the 6 temperatures (0, 289.15, 348.6, 447.875, 574.15, 646.452 K).
+3. Line thickness 3 (--linewidth 3).
+4. Re-run the graph with these settings.
+5. (Follow-up) 0 K makes beta infinite -> ZeroDivisionError; user chose to DROP 0 K and plot the
+   remaining 5 temperatures.
+
+**Actions taken:**
+- Added `--figsize` (default 5) -> figsize=(args.figsize, args.figsize).
+- Re-ran with --linewidth 3 --figsize 4 --temperatures 289.15 348.6 447.875 574.15 646.452
+  (0 K dropped due to infinite beta).
+- Bumped `__version__` 1.3.2 -> 1.4.0.
+- py_compile OK; PNG regenerated square (1200x1200).
+
+**Results:** binding_probability_vs_temperature.png is now 4x4 (1200x1200), 5 temperature curves
+(289.15-646.452 K), line thickness 3.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

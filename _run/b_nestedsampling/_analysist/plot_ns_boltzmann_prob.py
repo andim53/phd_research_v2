@@ -31,7 +31,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for load_samples):
 
 from __future__ import annotations
 
-__version__ = "1.3.2"
+__version__ = "1.4.0"
 
 import argparse
 import glob
@@ -112,6 +112,9 @@ def main():
                         "instead of peak-normalizing. y-label 'Probability Density (Area = 1)'.")
     p.add_argument("--linewidth", type=float, default=1.6,
                    help="line thickness of the P(E) temperature curves. Default 1.6.")
+    p.add_argument("--figsize", type=float, default=5,
+                   help="figure size in inches (square: width=height=this value). "
+                        "Default 5.")
     args = p.parse_args()
 
     # --- load NS samples (energy_eV + prior_weight) ---
@@ -144,7 +147,7 @@ def main():
         print(f"  island={island_e:.4f}, flat={flat_e:.4f}" if flat_e is not None
               else f"  island={island_e:.4f} (no flat peak)")
 
-    fig, ax = plt.subplots(figsize=(5, 4))
+    fig, ax = plt.subplots(figsize=(args.figsize, args.figsize))
     # colors: a perceptually ordered set for the temperatures
     colors = ["#0d0887", "#47039f", "#7301a8", "#9c176d", "#bd3752",
               "#d8546a", "#ed7953", "#fb9f4a", "#fdca42", "#f0f928"]
