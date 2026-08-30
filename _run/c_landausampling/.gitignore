@@ -1,0 +1,23 @@
+# === _analysist: analysed results (per-run dirs tracked; regenerable outputs excluded) ===
+_analysist/_archive/
+
+# === Regenerable artifact types (defensive; parent repo also ignores these) ===
+*.db
+*.png
+*.traj
+*.xsf
+*.csv
+*.out
+*.log
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# === Wang-Landau run outputs (regenerable) ===
+wl_output_*/
+wl_output/
+
+# === Scratch/test output ===
+_tmp/
+_archives/
+generated_structures/
