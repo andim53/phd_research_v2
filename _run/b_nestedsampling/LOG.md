@@ -3754,3 +3754,28 @@ produced it.
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: use run_analysis_indices rcParams + axis labels
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py`, use the same rcParams as
+`run_analysis_indices.py`, use its x/y labels, and ensure X = energy, Y = state density.
+
+**Clarify decisions (all user-confirmed):**
+1. Apply run_analysis_indices.py's rcParams (serif font 12, ticks-in on top/right, no grid,
+   dpi 300), x-label `$E_{i}-E_{glob}$ (eV/atom)`, y-label `State Density (config./eV)`.
+2. "Shift the axis" = ensure X=energy (E-E_min) and Y=state density g(E), with the reference labels.
+
+**Actions taken:**
+- Added the rcParams block (copied from run_analysis_indices.py) + `E_LABEL` and `DENSITY_LABEL`.
+- Updated the plot to use `E_LABEL` for x and `DENSITY_LABEL` for y.
+- Bumped `__version__` 1.7.0 -> 1.8.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000 (--n-atoms 75, --figsize 6); PNG regenerated (1800x1800).
+
+**Results:** The comparison plot now uses the run_analysis_indices rcParams/style and reference
+x/y labels. Data unchanged (NS peak 0.306, dataset KDE peak 0.076 eV/atom).
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

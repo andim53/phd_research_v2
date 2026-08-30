@@ -24,7 +24,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.7.0"
+__version__ = "1.8.0"
 
 import argparse
 import os
@@ -36,6 +36,29 @@ import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
 
 import analyze_tfree_outputs as ato  # reuse load_samples + the NS g(E) recipe
+
+# --- Plotting style: same rcParams as run_analysis_indices.py (reference pipeline) ---
+plt.rcParams.update({
+    "font.size": 12,
+    "font.family": "serif",
+    "axes.linewidth": 1.0,
+    "axes.edgecolor": "black",
+    "axes.facecolor": "white",
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "xtick.top": True,
+    "ytick.right": True,
+    "xtick.major.size": 5,
+    "ytick.major.size": 5,
+    "xtick.major.width": 1.0,
+    "ytick.major.width": 1.0,
+    "axes.grid": False,
+    "figure.autolayout": True,
+    "figure.dpi": 300,
+})
+
+E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"   # matches run_analysis_indices.py
+DENSITY_LABEL = "State Density (config./eV)"  # matches run_analysis_indices.py density axis
 
 
 def load_dataset_energies(dataset_dir: str):
@@ -128,8 +151,8 @@ def main():
         ds_label = f"GPR+LCB g(E) (Gaussian KDE; peak {peak_ds:.3f} config./eV)"
     ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5, label=ns_label)
     ax.plot(grid, g_ds, "r-", lw=2, label=ds_label)
-    ax.set_xlabel("E - E_min (eV/atom)")
-    ax.set_ylabel(r"$g(E)$ / $g(E)_{max}$  (peak-normalized)")
+    ax.set_xlabel(E_LABEL)                       # energy on X (matches run_analysis_indices.py)
+    ax.set_ylabel(DENSITY_LABEL)                 # state density on Y
     if not args.simple:
         ax.set_title("State density shape: NS samples vs dataset (KDE)\npeak-normalized")
     ax.set_ylim(0, 1.05)
