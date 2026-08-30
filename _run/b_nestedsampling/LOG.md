@@ -3623,3 +3623,35 @@ style (serif, ticks-in on all sides, no grid, dpi 300). Data unchanged (same num
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — analyze_tfree_outputs.py: no grid + --relative-energy flag
+
+**Goal (user-confirmed via clarify):** (1) Remove grid lines from all plots in
+`analyze_tfree_outputs.py`. (2) Add a flag controlling the energy type to be relative energy like
+`run_analysis_indices.py`, using the same axis title.
+
+**Clarify decisions (all user-confirmed):**
+1. Grid removed from ALL figures unconditionally (drop every ax.grid call).
+2. Add a `--relative-energy` flag that, when set, makes the energy axes relative
+   (E - E_ref)/n_atoms like run_analysis_indices.py, using its axis title
+   `$E_{i}-E_{glob}$ (eV/atom)` for the energy-x figures.
+3. Grid removal unconditional; relative-energy behind its own flag (default off = current behavior).
+
+**Actions taken:**
+- Removed all `ax.grid(...)` calls (and the now-empty grid-only for-loops).
+- Added `E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"` (matches run_analysis_indices.py).
+- Added `--relative-energy` flag; `make_analysis` now takes `relative_energy`, computes
+  `Es_plot=(Es-E_ref)/n_atoms` and `live_plot=(live-E_ref)/n_atoms`, and uses E_LABEL for the
+  energy-x figures (1a, 1b, 2, summary panels, and the state-density gE x-label).
+- Bumped `__version__` 1.1.0 -> 1.2.0 (behavior/API change -> minor).
+- py_compile OK; confirmed 0 `.grid(` calls remain.
+- Re-ran b10 iter20000 with `--style-pipeline --relative-energy`; all 9 PNGs regenerated.
+
+**Results:** b10 iter20000 figures now have no grid and use relative-energy axes
+(`$E_{i}-E_{glob}$ (eV/atom)`), in the run_analysis_indices pipeline style. Data unchanged.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).

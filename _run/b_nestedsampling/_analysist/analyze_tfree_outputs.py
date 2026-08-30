@@ -32,7 +32,7 @@ Usage (only needs numpy + matplotlib, no AGOX):
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import os
@@ -122,7 +122,10 @@ def heat_capacity(T, beta, logZ):
     return K_B * beta**2 * d2logZ
 
 
-def make_analysis(data_dir, outdir, n_atoms=75):
+E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"  # matches run_analysis_indices.py
+
+
+def make_analysis(data_dir, outdir, n_atoms=75, relative_energy=False):
     os.makedirs(outdir, exist_ok=True)
 
     # --- load ---
@@ -130,28 +133,39 @@ def make_analysis(data_dir, outdir, n_atoms=75):
     live = load_live(os.path.join(data_dir, FILE_LIVE))
     T, beta, logZ, Z, F = load_thermo(os.path.join(data_dir, FILE_THERMO))
 
+    # If relative-energy mode, convert energies to (E - E_ref)/n_atoms (eV/atom),
+    # matching run_analysis_indices.py's relative-energy convention and axis label.
+    E_ref = Es.min()
+    if relative_energy:
+        Es_plot = (Es - E_ref) / n_atoms
+        live_plot = (live - E_ref) / n_atoms
+        energy_xlabel = E_LABEL
+    else:
+        Es_plot, live_plot = Es, live
+        energy_xlabel = "energy (eV)"
+
     # --- 1a. energy vs iteration (convergence) ---
     fig, ax = plt.subplots(figsize=(7, 4))
-    ax.plot(iters, Es, ".", ms=3, alpha=0.4, label="discarded samples")
-    ax.plot(iters, np.cumsum(Ws * Es) / np.cumsum(Ws), "r-", lw=1.5,
+    ax.plot(iters, Es_plot, ".", ms=3, alpha=0.4, label="discarded samples")
+    ax.plot(iters, np.cumsum(Ws * Es_plot) / np.cumsum(Ws), "r-", lw=1.5,
             label="weighted running mean")
-    ax.set_xlabel("iteration"); ax.set_ylabel("energy (eV)")
+    ax.set_xlabel("iteration"); ax.set_ylabel(energy_xlabel)
     ax.set_title("Discarded-sample energy vs iteration")
-    ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "samples_energy_vs_iter.png"), dpi=300)
     plt.close(fig)
 
     # --- 1b. prior_weight-weighted energy histogram (state-density proxy g(E)) ---
     n_bins = 50
-    hist, edges = np.histogram(Es, bins=n_bins, weights=Ws)
+    hist, edges = np.histogram(Es_plot, bins=n_bins, weights=Ws)
     centers = 0.5 * (edges[:-1] + edges[1:])
     binw = edges[1] - edges[0]
     g = hist / binw  # per-unit-energy density
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.bar(centers, g, width=binw * 0.9, alpha=0.6, label="weighted g(E) proxy")
-    ax.set_xlabel("energy (eV)"); ax.set_ylabel("g(E) (config./eV)")
+    ax.set_xlabel(energy_xlabel); ax.set_ylabel("g(E) (config./eV)")
     ax.set_title("Prior-weight-weighted energy histogram (state-density proxy)")
-    ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "samples_weighted_histogram.png"), dpi=300)
     plt.close(fig)
 
@@ -164,18 +178,18 @@ def make_analysis(data_dir, outdir, n_atoms=75):
                    label=f"logZ from thermo.csv @T={T[-1]:.0f}K")
     ax.set_xlabel("iteration"); ax.set_ylabel(r"$\log(\Sigma w_i)$")
     ax.set_title("Cumulative weighted evidence (sanity vs thermo logZ)")
-    ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "samples_cumulative_Z.png"), dpi=300)
     plt.close(fig)
 
     # --- 2. final live-energy distribution ---
     fig, ax = plt.subplots(figsize=(7, 4))
-    ax.hist(live, bins=30, color="green", alpha=0.6)
-    ax.axvline(live.min(), color="k", ls="--", lw=1.2, label=f"min={live.min():.3f}")
-    ax.axvline(live.max(), color="orange", ls="--", lw=1.2, label=f"max={live.max():.3f}")
-    ax.set_xlabel("energy (eV)"); ax.set_ylabel("count")
+    ax.hist(live_plot, bins=30, color="green", alpha=0.6)
+    ax.axvline(live_plot.min(), color="k", ls="--", lw=1.2, label=f"min={live_plot.min():.3f}")
+    ax.axvline(live_plot.max(), color="orange", ls="--", lw=1.2, label=f"max={live_plot.max():.3f}")
+    ax.set_xlabel(energy_xlabel); ax.set_ylabel("count")
     ax.set_title("Final live-point energy distribution")
-    ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "live_energy_hist.png"), dpi=300)
     plt.close(fig)
 
@@ -187,8 +201,6 @@ def make_analysis(data_dir, outdir, n_atoms=75):
     axes[1].set_title("Log evidence log Z")
     axes[2].plot(T, F, "s-"); axes[2].set(xlabel="T (K)", ylabel=r"$F=-k_B T\ln Z$ (eV)")
     axes[2].set_title("Free energy F")
-    for ax in axes:
-        ax.grid(alpha=0.3)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "thermodynamics_Z_F.png"), dpi=300)
     plt.close(fig)
 
@@ -198,7 +210,6 @@ def make_analysis(data_dir, outdir, n_atoms=75):
         ax.plot(T, Cv, "^-")
         ax.set(xlabel="T (K)", ylabel=r"$C_V$ (eV/K)")
         ax.set_title("Heat capacity (numeric 2nd deriv of logZ vs beta)")
-        ax.grid(alpha=0.3)
         fig.tight_layout(); fig.savefig(os.path.join(outdir, "thermodynamics_Cv.png"), dpi=300)
         plt.close(fig)
     else:
@@ -218,9 +229,10 @@ def make_analysis(data_dir, outdir, n_atoms=75):
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.bar(centers_g, g_of_E, width=binw_g * 0.9, alpha=0.6,
            label=r"$g(E)$ (weighted histogram)")
-    ax.set_xlabel("E - E_ref (eV/atom)"); ax.set_ylabel(r"$g(E)$ (config./eV)")
+    ax.set_xlabel(E_LABEL if relative_energy else "E - E_ref (eV/atom)")
+    ax.set_ylabel(r"$g(E)$ (config./eV)")
     ax.set_title("Configurational state density $g(E)$ from samples.csv")
-    ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "state_density_gE.png"), dpi=300)
     plt.close(fig)
 
@@ -252,7 +264,7 @@ def make_analysis(data_dir, outdir, n_atoms=75):
                 label=r"$\log Z_{from g(E)}$ (shifted by const. offset)")
         ax.set_xlabel("T (K)"); ax.set_ylabel("log Z")
         ax.set_title("Consistency check: log Z(T) trend from g(E) vs thermodynamics.csv")
-        ax.grid(alpha=0.3); ax.legend(fontsize=8)
+        ax.legend(fontsize=8)
         fig.tight_layout(); fig.savefig(os.path.join(outdir, "state_density_Z_consistency.png"), dpi=300)
         plt.close(fig)
     else:
@@ -264,16 +276,14 @@ def make_analysis(data_dir, outdir, n_atoms=75):
 
     # --- combined summary ---
     fig, axes = plt.subplots(2, 2, figsize=(11, 8))
-    axes[0, 0].plot(iters, Es, ".", ms=2, alpha=0.3)
-    axes[0, 0].set(xlabel="iter", ylabel="E (eV)"); axes[0, 0].set_title("samples energy")
+    axes[0, 0].plot(iters, Es_plot, ".", ms=2, alpha=0.3)
+    axes[0, 0].set(xlabel="iter", ylabel=energy_xlabel); axes[0, 0].set_title("samples energy")
     axes[0, 1].bar(centers, g, width=binw * 0.9, alpha=0.6)
-    axes[0, 1].set(xlabel="E (eV)", ylabel="g(E)"); axes[0, 1].set_title("weighted g(E) proxy")
-    axes[1, 0].hist(live, bins=30, color="green", alpha=0.6)
-    axes[1, 0].set(xlabel="E (eV)", ylabel="count"); axes[1, 0].set_title("final live")
+    axes[0, 1].set(xlabel=energy_xlabel, ylabel="g(E)"); axes[0, 1].set_title("weighted g(E) proxy")
+    axes[1, 0].hist(live_plot, bins=30, color="green", alpha=0.6)
+    axes[1, 0].set(xlabel=energy_xlabel, ylabel="count"); axes[1, 0].set_title("final live")
     axes[1, 1].plot(T, logZ, "o-")
     axes[1, 1].set(xlabel="T (K)", ylabel="log Z"); axes[1, 1].set_title("log Z vs T")
-    for ax in axes.ravel():
-        ax.grid(alpha=0.3)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "tfree_analysis_summary.png"), dpi=300)
     plt.close(fig)
 
@@ -319,13 +329,18 @@ def main():
     p.add_argument("--style-pipeline", action="store_true",
                    help="apply run_analysis_indices.py's rcParams (serif font, ticks-in "
                         "on top/right, no grid, dpi 300) to all resulting plots.")
+    p.add_argument("--relative-energy", action="store_true",
+                   help="plot energy axes as RELATIVE energy (E - E_ref)/n_atoms (eV/atom), "
+                        "using run_analysis_indices.py's axis title "
+                        r"'$E_{i}-E_{glob}$ (eV/atom)'. Default off = absolute eV.")
     args = p.parse_args()
 
     if args.style_pipeline:
         apply_pipeline_style()
 
     outdir = args.outdir or os.path.join(args.data, "analysis", "analyze_tfree")
-    make_analysis(args.data, outdir, n_atoms=args.n_atoms)
+    make_analysis(args.data, outdir, n_atoms=args.n_atoms,
+                  relative_energy=args.relative_energy)
 
 
 if __name__ == "__main__":
