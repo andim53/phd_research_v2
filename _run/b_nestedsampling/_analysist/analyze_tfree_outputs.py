@@ -32,7 +32,7 @@ Usage (only needs numpy + matplotlib, no AGOX):
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 import argparse
 import os
@@ -41,6 +41,7 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 
 K_B = 8.617333262e-5  # eV/K
 
@@ -151,6 +152,9 @@ def make_analysis(data_dir, outdir, n_atoms=75, relative_energy=False):
             label="weighted running mean")
     ax.set_xlabel("iteration"); ax.set_ylabel(energy_xlabel)
     ax.set_title("Discarded-sample energy vs iteration")
+    # x-axis: evenly spaced ticks with thousands separators (e.g. 5,000 / 10,000 / 20,000)
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=6, integer=True))
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(v):,}"))
     ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(os.path.join(outdir, "samples_energy_vs_iter.png"), dpi=300)
     plt.close(fig)

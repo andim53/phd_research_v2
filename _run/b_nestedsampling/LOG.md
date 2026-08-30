@@ -3655,3 +3655,28 @@ style (serif, ticks-in on all sides, no grid, dpi 300). Data unchanged (same num
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — analyze_tfree_outputs.py: thousands-separator x-axis ticks on samples_energy_vs_iter
+
+**Goal (user-confirmed via clarify):** Fix the `samples_energy_vs_iter` plot's x-axis, which
+shows large iteration numbers too close together.
+
+**Clarify decision (user-confirmed):** Format the x-axis tick labels with thousands separators
+(e.g. 5,000 / 10,000 / 20,000) using MaxNLocator + FuncFormatter, on the samples_energy_vs_iter
+plot only.
+
+**Actions taken:**
+- Added top-level imports `FuncFormatter, MaxNLocator` from matplotlib.ticker.
+- On the samples_energy_vs_iter axis: `MaxNLocator(nbins=6, integer=True)` + FuncFormatter
+  `lambda v, _: f"{int(v):,}"` (thousands separators).
+- Bumped `__version__` 1.2.0 -> 1.2.1 (patch).
+- py_compile OK; re-ran b10 iter20000 (--style-pipeline --relative-energy); samples_energy_vs_iter.png regenerated.
+
+**Results:** The x-axis of the energy-vs-iteration plot now uses evenly spaced ticks with
+thousands separators, so large iteration numbers are readable and not crowded.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
