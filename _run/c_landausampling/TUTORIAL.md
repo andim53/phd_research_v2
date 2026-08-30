@@ -68,6 +68,21 @@ $PY main.py --dataset dataset_boron  --n-bins 40 --e-max 0.40 \
     --mc-steps 20000000 --output ./wl_output_boron  --rng 42
 ```
 
+## Step 4b — Enable the swap (permutation) move
+The boron-doped datasets have two mobile species (B + Fe), so permutation moves
+can exchange their positions. Enable with `--swap-prob`; each swap move performs
+a random `1..--max-swaps` position exchanges between two different mobile species
+and rattles them by `--swap-rattle` (mirrors the reference
+`GlobalPermutationGenerator`):
+```bash
+$PY main.py --dataset dataset_boron3 --n-bins 40 --e-max 0.40 \
+    --mc-steps 20000000 --perturb-symbols Fe,B \
+    --swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05 \
+    --output ./wl_output_boron3_swap --rng 42
+```
+The plain Fe/MgO `dataset` has a single mobile species (Fe); there
+`--swap-prob` is ignored with a WARNING and the walk falls back to rattling only.
+
 ## Step 5 — HPC job
 `j_wanglandau.sh` runs Wang–Landau on the HPC cluster (PJM, 24 cores,
 `gpaw_env`), reading the existing `dataset/seed_*/1_db/db_*.db`:

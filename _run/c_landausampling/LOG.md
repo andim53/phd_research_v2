@@ -90,3 +90,70 @@ using a Python + AGOX GPR surrogate (like b), with the Fortran toy
 `argparse.BooleanOptionalAction` so both forms work. Updated `VERSIONS.md`.
 
 **Time:** ~2026-08-30 20:20–20:40 (JST).
+
+---
+
+## Session 2026-08-30 (2) — Add swap (permutation) move for multi-species systems
+
+**Goal (user-confirmed via clarify):** Edit the Wang–Landau sampler so that
+systems with ≥2 atom species can perform a permutation (swap) move, controlled by
+a flag for swapping times per iteration, modeled on the reference
+`_archive/_analysist/1_result/66_MgOFe_20B/scripts/global_permutation_generator.py`.
+
+**Clarify decisions (all user-confirmed):**
+1. **Scope:** swap positions of two atoms of DIFFERENT species within the mobile
+   (perturb) set only — substrate stays fixed (matches the reference's
+   'active atoms' scope).
+2. **Integration:** swap is an ALTERNATIVE move — each MC step chooses swap vs
+   rattle by a probability flag (`--swap-prob`, default 0 = off); a swap move
+   performs a random `1..N` position swaps.
+3. **Single swap action:** exchange positions AND rattle the two swapped atoms a
+   little (mirrors the reference's swap + rattle_strength).
+4. **Single-species behaviour:** disable swap automatically with a warning when
+   only one mobile species is present (so the plain Fe/MgO `dataset` still runs).
+
+**Actions taken:**
+- `wang_landau_sampler.py` (1.0.0 → 1.1.0): added `swap_prob`/`max_swaps`/
+  `swap_rattle` params; `_swap_species` detection + `swap_available` guard;
+  `_propose_swap()` (random `1..max_swaps` swaps, picks two distinct mobile
+  species, swaps their positions, rattles them by `swap_rattle`);
+  `_propose_move()` (chooses swap vs rattle by `swap_prob`); move counters
+  (`n_swap_moves`/`n_rattle_moves`); `run()` now uses `_propose_move()` and
+  prints move counts.
+- `main.py` (1.0.0 → 1.1.0): added `--swap-prob`, `--max-swaps`, `--swap-rattle`
+  CLI flags and wired them into `WangLandauSampler(...)`.
+- `smoke_test_wang_landau.py` (1.0.0 → 1.1.0): refactored `main()` to call
+  `test_single_species()` + new `test_two_species_swap()` (2-species toy with
+  swap_prob=0.5 must produce swap moves; single-species with swap_prob>0 must
+  fall back to all-rattle).
+- Docs: updated `VERSIONS.md`, `README.md` (CLI table, usage example, decisions
+  table, Concepts note), `README.AI.md` (CLI table, error-handling #7),
+  `TUTORIAL.md` (Step 4b).
+
+**Results (real output):**
+- Compile: `$PY -m py_compile main.py wang_landau/*.py smoke_test_wang_landau.py`
+  → OK.
+- 2-species toy: `swap_prob=0.5` → 1000 swap / 1000 rattle moves (50/50 as
+  expected); full 3000-step run → 1495 swap / 1505 rattle.
+- Single-species toy with `swap_prob=0.5` → 0 swap / 1000 rattle (graceful
+  no-op, no crash).
+- `smoke_test_wang_landau.py` → `[SMOKE] RESULT: PASS` (both single-species and
+  swap tests).
+
+**Decisions & reasoning:**
+- Kept the swap purely positional (exchange two atoms' positions, then rattle
+  them) rather than pulling in the AGOX Candidate/Environment confinement +
+  steric machinery — our sampler works on plain `ase.Atoms` + GPR and has no
+  Environment. The reference's confinement/steric checks have no analogue here,
+  so the swap is geometric + the WL acceptance handles physicality.
+- `max_swaps` semantics = random `1..max` per swap move, exactly the reference's
+  `num_swaps = randint(max_number_of_swaps) + 1`.
+- Debugged a numpy list-indexing bug: `trial.get_chemical_symbols()` returns a
+  list, which can't be fancy-indexed by an int array — fixed with
+  `np.array(...)`.
+
+**Open items:**
+- Run the swap move on the real boron dataset (HPC) once a boron run is launched
+  (`--perturb-symbols Fe,B --swap-prob ...`).
+
+**Time:** ~2026-08-30 20:50–21:10 (JST).

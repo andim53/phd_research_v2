@@ -15,13 +15,13 @@ Versioning rules:
 
 | File | Version | Description |
 |---|---|---|
-| `main.py` | 1.0.1 | Root runner: load dataset → train GPR → WangLandauSampler → thermodynamics; `--start-from-top` now a proper `BooleanOptionalAction` (`--no-start-from-top` works) |
+| `main.py` | 1.1.0 | Root runner: load dataset → train GPR → WangLandauSampler → thermodynamics; added `--swap-prob`/`--max-swaps`/`--swap-rattle` CLI flags |
 | `wang_landau/__init__.py` | 1.0.0 | Package re-exports |
-| `wang_landau/wang_landau_sampler.py` | 1.0.0 | WangLandauSampler (flat-histogram density of states, standard→1/t) |
+| `wang_landau/wang_landau_sampler.py` | 1.1.0 | WangLandauSampler (flat-histogram density of states, standard→1/t); added swap (permutation) move with `swap_prob`/`max_swaps`/`swap_rattle` |
 | `wang_landau/gpr_training.py` | 1.0.0 | load_all_seeds, build_gpr, validate_gpr |
 | `wang_landau/thermodynamics.py` | 1.0.0 | g_of_E_to_thermodynamics, heat_capacity_from_thermo |
 | `wang_landau/utils.py` | 1.0.0 | K_B constant, shift_energies, _logsumexp |
-| `smoke_test_wang_landau.py` | 1.0.0 | Cheap local validation (fake 1-atom double-well GPR) |
+| `smoke_test_wang_landau.py` | 1.1.0 | Cheap local validation (fake 1-atom double-well GPR) + 2-species swap-move test |
 
 ## Not individually versioned (duplicated snapshots / data)
 

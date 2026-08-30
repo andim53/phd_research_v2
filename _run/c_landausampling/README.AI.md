@@ -93,6 +93,9 @@ pjsub j_wanglandau.sh
 | `--flatness-criterion` | `0.80` | Flatness threshold. |
 | `--check-interval` | `5000` | Flatness check interval. |
 | `--n-stages-standard` | `14` | Halvings before 1/t switch. |
+| `--swap-prob` | `0.0` | Probability of choosing a swap (permutation) move instead of a rattle per MC step; requires ≥2 mobile species, else no-op. |
+| `--max-swaps` | `1` | Max swaps per swap move (random 1..max). |
+| `--swap-rattle` | `0.05` | Gaussian displacement (Å) applied to the two swapped atoms. |
 | `--mc-steps` | `2000000` | WL MC steps. |
 | `--temperatures` | `100,200,300,500,1000` | Thermodynamics temperatures. |
 | `--start-from-top` | on | Init at top of bin range. |
@@ -132,6 +135,9 @@ inputs.
 6. **1/t switch not reached** — if `--mc-steps` is too small or
    `--n-stages-standard` too large, the run ends in the standard scheme (the
    sampler prints a NOTE). Increase `--mc-steps` or lower `--n-stages-standard`.
+7. **Swap move with a single mobile species** — `--swap-prob` is ignored (with a
+   WARNING) and the walk falls back to rattling only. Swap requires ≥2 distinct
+   species among `--perturb-symbols` (e.g. `Fe,B` in the boron datasets).
 
 ## 7. Provenance / references
 - Algorithm reference: `_tmp/main_wanglandau_1d.f` (Fortran 1D toy, kept as the

@@ -15,7 +15,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import sys
@@ -65,6 +65,14 @@ def make_db():
 
 
 def main():
+    ok = test_single_species()
+    ok = test_two_species_swap() and ok
+    print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
+def test_single_species():
+    """Run the full WL path on the 1-atom double-well toy (Fe only)."""
     gpr, structures, energies = make_db()
     print(f"E_ref (min) = {energies.min():.4f} eV")
     print(f"E flat(x=1) = {gpr.predict_energy(structures[-1]):.4f} eV")
@@ -120,8 +128,63 @@ def main():
     cv = heat_capacity_from_thermo(rows)
     print(f"[SMOKE] heat capacity points: {len(cv)}")
 
-    print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))
-    return 0 if ok else 1
+    return ok
+
+
+def test_two_species_swap():
+    """Verify the swap (permutation) move on a 2-species toy.
+
+    Checks that (a) swap moves actually occur in proportion to swap_prob, and
+    (b) a single-species system with swap_prob>0 falls back to all-rattle.
+    """
+    print("\n--- swap move test (2-species toy) ---")
+
+    class FakeGPR:
+        def predict_energy(self, atoms):
+            return float(atoms.positions[:, 0].sum())
+
+    positions = np.array([[x, 0, 0] for x in range(10)], float)
+    atoms = Atoms(["B"] * 5 + ["Fe"] * 5, positions=positions)
+    structs = [atoms.copy() for _ in range(5)]
+    for k, a in enumerate(structs):
+        a.positions += np.random.default_rng(k).normal(0, 0.01, a.positions.shape)
+    energies = np.array([FakeGPR().predict_energy(a) for a in structs])
+
+    ok = True
+
+    # (a) 2-species: swap_prob=0.5 should yield ~half swap moves
+    s = WangLandauSampler(FakeGPR(), structs, energies, n_bins=20,
+                          e_min=0.0, e_max=2.0, swap_prob=0.5, max_swaps=3,
+                          swap_rattle=0.05, perturb_symbols="B,Fe",
+                          rng=np.random.default_rng(1))
+    s.initialize(start_from_top=True)
+    for _ in range(2000):
+        s._propose_move()
+    print(f"[SMOKE] 2-species swap_prob=0.5: rattle={s.n_rattle_moves} "
+          f"swap={s.n_swap_moves}")
+    if not (s.swap_available and s.n_swap_moves > 0):
+        print("[SMOKE] FAIL: no swap moves in a 2-species system")
+        ok = False
+
+    # (b) single-species: swap_prob>0 falls back to all-rattle (no crash)
+    atoms1 = Atoms(["Fe"] * 5, positions=np.array([[x, 0, 0] for x in range(5)], float))
+    structs1 = [atoms1.copy() for _ in range(5)]
+    for k, a in enumerate(structs1):
+        a.positions += np.random.default_rng(k).normal(0, 0.01, a.positions.shape)
+    energies1 = np.array([FakeGPR().predict_energy(a) for a in structs1])
+    s1 = WangLandauSampler(FakeGPR(), structs1, energies1, n_bins=10,
+                           e_min=0.0, e_max=2.0, swap_prob=0.5, max_swaps=3,
+                           perturb_symbols="Fe", rng=np.random.default_rng(3))
+    s1.initialize(start_from_top=True)
+    for _ in range(1000):
+        s1._propose_move()
+    print(f"[SMOKE] single-species swap_prob=0.5: rattle={s1.n_rattle_moves} "
+          f"swap={s1.n_swap_moves} (expect swap=0)")
+    if s1.n_swap_moves != 0:
+        print("[SMOKE] FAIL: swap moves occurred in a single-species system")
+        ok = False
+
+    return ok
 
 
 if __name__ == "__main__":

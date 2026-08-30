@@ -22,7 +22,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import os
@@ -83,6 +83,20 @@ def main():
     p.add_argument("--n-stages-standard", type=int, default=14,
                    help="Standard-scheme halvings before switching to 1/t, "
                         "default 14")
+    p.add_argument("--swap-prob", type=float, default=0.0,
+                   help="Probability of choosing a swap (permutation) move "
+                        "instead of a rattle on each MC step. Swap exchanges "
+                        "positions of two atoms of DIFFERENT species within "
+                        "the mobile set, then rattles them. Requires >=2 "
+                        "mobile species; disabled (no-op) otherwise. "
+                        "Default 0.0 (off).")
+    p.add_argument("--max-swaps", type=int, default=1,
+                   help="Max number of swaps per swap move; each swap move "
+                        "performs a random 1..max swaps (mirrors the reference "
+                        "GlobalPermutationGenerator). Default 1.")
+    p.add_argument("--swap-rattle", type=float, default=0.05,
+                   help="Gaussian displacement (A) applied to the two swapped "
+                        "atoms after a swap. Default 0.05.")
     p.add_argument("--mc-steps", type=int, default=2000000,
                    help="Number of Wang-Landau MC steps, default 2000000")
     p.add_argument("--temperatures", default="100,200,300,500,1000",
@@ -133,6 +147,9 @@ def main():
         flatness_criterion=args.flatness_criterion,
         check_interval=args.check_interval,
         n_stages_standard=args.n_stages_standard,
+        swap_prob=args.swap_prob,
+        max_swaps=args.max_swaps,
+        swap_rattle=args.swap_rattle,
         rng=np.random.default_rng(args.rng),
     )
     sampler.initialize(start_from_top=args.start_from_top)

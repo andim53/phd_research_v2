@@ -14,7 +14,7 @@ evaluated by the GPR surrogate; and bins are over relative energy per atom
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from typing import List, Optional
 
@@ -47,6 +47,9 @@ class WangLandauSampler:
         flatness_criterion: float = 0.80,
         check_interval: int = 5000,
         n_stages_standard: int = 14,
+        swap_prob: float = 0.0,
+        max_swaps: int = 1,
+        swap_rattle: float = 0.05,
         rng: np.random.Generator = None,
     ):
         self.gpr = gpr
@@ -76,6 +79,28 @@ class WangLandauSampler:
             raise ValueError(
                 f"No atoms with symbol(s) {perturb_list} found in the dataset.")
 
+        # Permutation (swap) move: exchange positions of two atoms of DIFFERENT
+        # species within the mobile set, then rattle the two swapped atoms a
+        # little (mirrors the reference GlobalPermutationGenerator). Disabled
+        # unless >=2 distinct species are present in the mobile set.
+        self.swap_prob = float(swap_prob)
+        self.max_swaps = int(max_swaps)
+        self.swap_rattle = float(swap_rattle)
+        mobile_symbols = symbols[self.perturb_indices]
+        self._swap_species = np.unique(mobile_symbols)
+        self.swap_available = len(self._swap_species) >= 2
+        if self.swap_prob > 0:
+            if self.swap_available:
+                print(f"[WangLandau] Swap move ENABLED: prob={self.swap_prob:.3f}, "
+                      f"1..{self.max_swaps} swaps/move, swap_rattle="
+                      f"{self.swap_rattle:.3f} A; swapping among "
+                      f"{list(self._swap_species)}")
+            else:
+                print(f"[WangLandau] WARNING: swap_prob>0 but only "
+                      f"{len(self._swap_species)} mobile species "
+                      f"({list(self._swap_species)}) present; swap moves "
+                      f"DISABLED (need >=2 species in the perturb set).")
+
         # Wang-Landau state
         self.flatness_criterion = float(flatness_criterion)
         self.check_interval = int(check_interval)
@@ -88,6 +113,10 @@ class WangLandauSampler:
         self.switched_to_1_over_t = False
         self.step_at_switch = 0
         self.step = 0
+
+        # Move counters
+        self.n_swap_moves = 0
+        self.n_rattle_moves = 0
 
         # Current walker
         self.x_current: Optional[Atoms] = None
@@ -126,6 +155,67 @@ class WangLandauSampler:
         noise = self.rng.normal(0.0, scale, (len(self.perturb_indices), 3))
         trial.positions[self.perturb_indices] += noise
         return trial
+
+    def _propose_swap(self) -> Atoms:
+        """Permutation move: exchange positions of two atoms of DIFFERENT
+        species within the mobile set, then rattle the two swapped atoms a
+        little.
+
+        Mirrors the reference ``GlobalPermutationGenerator``: ``num_swaps`` is a
+        random integer in [1, max_swaps]; each swap picks two distinct species
+        from the mobile set, then a random atom of each, swaps their positions
+        and rattles them by ``swap_rattle``.
+
+        Returns
+        -------
+        trial : Atoms
+            A copy of the current walker with the swap(s) applied. If swaps are
+            unavailable (single mobile species) or fail, returns None so the
+            caller can fall back to a rattle.
+        """
+        if not self.swap_available:
+            return None
+        trial = self.x_current.copy()
+        mobile_syms = np.array(trial.get_chemical_symbols())
+        num_swaps = self.rng.integers(1, self.max_swaps + 1)
+        for _ in range(num_swaps):
+            # pick two distinct species among the mobile set
+            if len(self._swap_species) < 2:
+                return None
+            sp_i = self._swap_species[self.rng.integers(len(self._swap_species))]
+            others = self._swap_species[self._swap_species != sp_i]
+            sp_j = others[self.rng.integers(len(others))]
+            # absolute indices of the two atoms to swap
+            idx_i = self.perturb_indices[
+                np.where(mobile_syms[self.perturb_indices] == sp_i)[0]]
+            idx_j = self.perturb_indices[
+                np.where(mobile_syms[self.perturb_indices] == sp_j)[0]]
+            i = idx_i[self.rng.integers(len(idx_i))]
+            j = idx_j[self.rng.integers(len(idx_j))]
+            # exchange positions
+            pos = trial.positions.copy()
+            pos[i], pos[j] = pos[j].copy(), pos[i].copy()
+            trial.positions = pos
+            # rattle the two swapped atoms a little
+            for a in (i, j):
+                trial.positions[a] += self.rng.normal(
+                    0.0, self.swap_rattle, 3)
+        return trial
+
+    def _propose_move(self) -> Atoms:
+        """Choose swap vs rattle by swap_prob and produce the trial structure.
+
+        Falls back to a rattle when a swap is unavailable or returns None.
+        """
+        use_swap = (self.swap_prob > 0 and self.swap_available
+                    and self.rng.random() < self.swap_prob)
+        if use_swap:
+            trial = self._propose_swap()
+            if trial is not None:
+                self.n_swap_moves += 1
+                return trial
+        self.n_rattle_moves += 1
+        return self._propose()
 
     def _energy_of(self, atoms: Atoms) -> float:
         E = self.gpr.predict_energy(atoms)
@@ -200,7 +290,7 @@ class WangLandauSampler:
         print("=" * 60)
         for _ in range(n_steps):
             self.step += 1
-            trial = self._propose()
+            trial = self._propose_move()
             E_trial = self._energy_of(trial)
             rel_trial = (E_trial - self.E_ref) / self.n_atoms \
                 if np.isfinite(E_trial) else float("nan")
@@ -227,6 +317,7 @@ class WangLandauSampler:
                       f"ln_f {self.ln_f:.3e}  visited {visited}/{self.n_bins}")
 
         print(f"\nTotal MC steps = {self.step}, stages reached = {self.stage}")
+        print(f"  moves: {self.n_rattle_moves} rattle, {self.n_swap_moves} swap")
         if self.switched_to_1_over_t:
             print("Used the 1/t algorithm for the final stage.")
         else:

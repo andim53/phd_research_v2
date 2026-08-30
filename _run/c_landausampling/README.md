@@ -79,6 +79,20 @@ $PY main.py --dataset dataset_boron   --n-bins 40 --e-max 0.40 \
     --mc-steps 20000000 --output ./wl_output_boron  --rng 42
 ```
 
+### Enable the swap (permutation) move (≥2 mobile species)
+The boron-doped datasets have two mobile species (B + Fe), so permutation moves
+can exchange their positions. Enable swaps with `--swap-prob`; each swap move
+performs a random `1..--max-swaps` position exchanges between two different
+mobile species and rattles them by `--swap-rattle`:
+```bash
+$PY main.py --dataset dataset_boron3 --n-bins 40 --e-max 0.40 \
+    --mc-steps 20000000 --perturb-symbols Fe,B \
+    --swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05 \
+    --output ./wl_output_boron3_swap --rng 42
+```
+For the plain Fe/MgO `dataset` (single mobile species Fe), `--swap-prob` is
+ignored with a warning and the walk falls back to rattling only.
+
 ### Cheap local smoke test (no DFT / no real GPR)
 Validates the whole `WangLandauSampler` code path on a **fake 1-atom GPR**
 reproducing the Fortran double-well potential — no heavy training needed:
@@ -105,6 +119,9 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | `--flatness-criterion` | `0.80` | Flatness threshold (`min H > criterion·mean H`). |
 | `--check-interval` | `5000` | Flatness check interval (MC steps). |
 | `--n-stages-standard` | `14` | Standard-scheme halvings before switching to the 1/t algorithm. |
+| `--swap-prob` | `0.0` | Probability of choosing a swap (permutation) move instead of a rattle on each MC step. Requires ≥2 mobile species; disabled (no-op) otherwise. |
+| `--max-swaps` | `1` | Max swaps per swap move; each swap move performs a random `1..max` swaps (mirrors the reference GlobalPermutationGenerator). |
+| `--swap-rattle` | `0.05` | Gaussian displacement (Å) applied to the two swapped atoms after a swap. |
 | `--mc-steps` | `2000000` | Number of Wang–Landau MC steps. |
 | `--temperatures` | `100,200,300,500,1000` | Temperatures (K) for thermodynamics post-processing. |
 | `--start-from-top` | on | Initialize the walker at the top of the bin range (flat-structure analogue, Fortran default). |
@@ -124,7 +141,7 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | Decision | Choice | Tradeoff |
 |---|---|---|
 | Energy model | AGOX GPR surrogate (not DFT-in-loop) | Fast enough for a long WL walk; energy errors from the surrogate (validated ~0.004 eV/atom MAE). |
-| Sampling move | Rattle mobile atoms (small/large) | Local refinement + barrier crossing; extrapolating far can give unphysical GPR energies (guarded `\|E\|<1e4`). |
+| Sampling move | Rattle mobile atoms (small/large); optional swap (permutation) move via `--swap-prob` | Local refinement + barrier crossing; swaps let ≥2 mobile species exchange positions; extrapolating far can give unphysical GPR energies (guarded `\|E\|<1e4`). |
 | Binning | Relative energy per atom `(E−E_min)/N` | Dataset/composition comparable; the `g(E)` is per-atom, so absolute Z is normalised to unit integral (only the additive constant is arbitrary). |
 | Refinement | standard `f→√f` then 1/t | 1/t avoids error saturation of the plain scheme (Belardinelli & Pereyra 2007). |
 | Data | self-contained copy of all 3 datasets | Fully reproducible in isolation (~300M regenerable data, gitignored). |
@@ -153,6 +170,16 @@ are unaffected by the constant. `F = −k_B T ln Z`.
 differences. A peak in `C_V(T)` is the standard signature of a phase transition
 (here the flat↔island transition), computed from the second derivative of
 `ln Z`.
+
+**Swap (permutation) move.** For systems with ≥2 mobile species (e.g. the
+B-doped datasets, B + Fe), a swap move exchanges the positions of two atoms of
+*different* species within the mobile set, then rattles them a little. It is
+chosen on each MC step with probability `--swap-prob` instead of the usual
+rattle, letting the walk explore the chemical (species-arrangement) degrees of
+freedom as well as the geometric ones. The number of swaps per swap move is a
+random integer in `1..--max-swaps`, mirroring the reference
+`GlobalPermutationGenerator`. For a single mobile species the swap is a no-op
+(the walk keeps rattling).
 
 ## Layout
 
