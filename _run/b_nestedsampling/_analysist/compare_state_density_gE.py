@@ -23,7 +23,7 @@ Usage (needs numpy + scipy + matplotlib + agox_v2 for the DB loader):
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import argparse
 import os
@@ -115,7 +115,7 @@ def main():
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.bar(centers_ns, g_ns, width=binw * 0.9, alpha=0.5,
            label="NS g(E) (weighted histogram)")
-    ax.plot(grid, g_ds, "r-", lw=2, label="Dataset g(E) (gaussian KDE)")
+    ax.plot(grid, g_ds, "r-", lw=2, label="GPR+LCB g(E) (Gaussian KDE)")
     ax.set_xlabel("E - E_min (eV/atom)"); ax.set_ylabel(r"$g(E)$ (config./eV)")
     ax.set_title("State density: NS samples vs dataset (KDE)")
     ax.grid(alpha=0.3); ax.legend(fontsize=8)

@@ -3231,3 +3231,22 @@ from the b11 dataset, write the python code in `_analysist/`, and save the new P
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: rename red-line legend to "GPR+LCB g(E)"
+
+**Goal (user-confirmed? — simple label edit, no clarify needed):** Change the red dataset-KDE
+line's legend label in `_analysist/compare_state_density_gE.py` from "Dataset g(E) (gaussian KDE)"
+to "GPR+LCB g(E) (Gaussian KDE)".
+
+**Actions taken:**
+- Bumped `compare_state_density_gE.py` __version__ 1.0.0 -> 1.0.1 (patch; every edit bumps).
+- Changed the red-line `label=` to `"GPR+LCB g(E) (Gaussian KDE)"`.
+
+**Results:** Legend label updated. (Note: the saved PNG is regenerable/gitignored; re-run the
+script to refresh the existing compare_state_density_gE.png if desired.)
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
