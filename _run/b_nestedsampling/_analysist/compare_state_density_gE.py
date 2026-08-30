@@ -29,7 +29,7 @@ Usage (needs agox_v2 for Fingerprint + Database + scipy + matplotlib):
 
 from __future__ import annotations
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 import argparse
 import glob
@@ -68,7 +68,7 @@ plt.rcParams.update({
 })
 
 E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"       # matches run_analysis_indices.py
-DENSITY_LABEL = "State Density (config./eV)"  # matches run_analysis_indices.py density axis
+DENSITY_LABEL = "State Density\n(config./eV)"  # matches run_analysis_indices.py density axis; unit on bottom line
 SCATTER_LABEL = r"$\psi_{1d}(a.u.)$"           # matches run_analysis_indices.py scatter axis
 E_LIMIT = (0.0 - 0.1, 0.8, 5)                 # energy axis 0 -> 0.8 eV/atom, 5 ticks
 
@@ -180,19 +180,19 @@ def main():
     ax_scat.xaxis.set_minor_locator(AutoMinorLocator())
     ax_scat.set_xlim(np.min(X_eigen) - 0.1, np.max(X_eigen) + 0.1)
 
-    # Panel 2 (middle): dataset State Density (KDE)
+    # Panel 2 (middle): dataset State Density (KDE) -> GPR+LCB
     ax_ds = axes[1]
-    ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4)
+    ax_ds.plot(ds_density, energy_grid, color="black", lw=0.9, zorder=4, label="GPR+LCB")
     ax_ds.fill_betweenx(energy_grid, 0, ds_density, color="black", alpha=0.12, zorder=3)
     ax_ds.set_xlabel(DENSITY_LABEL)
 
     # Panel 3 (far right): NS State Density (KDE, NS only)
     ax_ns = axes[2]
-    ax_ns.plot(ns_density, energy_grid, color="tab:red", lw=0.9, zorder=4)
+    ax_ns.plot(ns_density, energy_grid, color="tab:red", lw=0.9, zorder=4, label="NS")
     ax_ns.fill_betweenx(energy_grid, 0, ns_density, color="tab:red", alpha=0.12, zorder=3)
     ax_ns.set_xlabel(DENSITY_LABEL)
-    if not args.simple:
-        ax_ns.set_title("NS State Density", fontsize=10)
+    # no titles (all panels titleless); single shared legend (GPR+LCB = left/middle, NS = right)
+    fig.legend(loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False, fontsize=9)
 
     # shared energy y-axis styling on the left panel
     axes[0].set_ylabel(E_LABEL)

@@ -3896,3 +3896,31 @@ State Density panels. NS KDE peak ~ +0.018 eV/atom, dataset KDE peak ~ +0.076 eV
 **Open items:** None.
 
 **Time:** 2026-08-30 (JST).
+
+---
+
+## Session 2026-08-30 — compare_state_density_gE.py: no title, shared legend, two-line State Density label
+
+**Goal (user-confirmed via clarify):** In `compare_state_density_gE.py` (the 3-panel figure):
+(1) no title; (2) a single shared legend telling the left State Density is GPR+LCB and the right
+is NS; (3) the State Density x-label is two lines with the unit (config./eV) on the bottom.
+
+**Clarify decisions (all user-confirmed):**
+1. Remove the 'NS State Density' title (all panels titleless).
+2. Single shared legend (e.g. top of figure) labeled GPR+LCB (middle) and NS (right).
+3. State Density x-label -> "State Density\n(config./eV)" (unit on bottom line).
+
+**Actions taken:**
+- Changed DENSITY_LABEL to two lines: "State Density\n(config./eV)".
+- Added `label="GPR+LCB"` to the dataset density plot and `label="NS"` to the NS density plot.
+- Added a single shared `fig.legend(loc="upper center", ncol=2, frameon=False)`.
+- Removed the `ax_ns.set_title("NS State Density")` (all panels titleless).
+- Bumped `__version__` 2.1.0 -> 2.2.0 (behavior change -> minor).
+- py_compile OK; re-ran b10 iter20000; PNG regenerated (2052x887).
+
+**Results:** The 3-panel figure now has no titles, a single shared legend (GPR+LCB / NS), and a
+two-line State Density x-label with the unit on the bottom. Data unchanged.
+
+**Open items:** None.
+
+**Time:** 2026-08-30 (JST).
