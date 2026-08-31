@@ -22,6 +22,7 @@ Versioning rules:
 | `wang_landau/thermodynamics.py` | 1.0.0 | g_of_E_to_thermodynamics, heat_capacity_from_thermo |
 | `wang_landau/utils.py` | 1.0.0 | K_B constant, shift_energies, _logsumexp |
 | `smoke_test_wang_landau.py` | 1.1.0 | Cheap local validation (fake 1-atom double-well GPR) + 2-species swap-move test |
+| `_analysist/analyze_wl_outputs.py` | 1.0.0 | Extract per-output g(E)/thermo/convergence metrics from c1/c2 wl_output_* dirs + .out logs; plot state density per system |
 
 ## Not individually versioned (duplicated snapshots / data)
 

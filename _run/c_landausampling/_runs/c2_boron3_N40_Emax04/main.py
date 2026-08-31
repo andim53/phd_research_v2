@@ -190,7 +190,7 @@ def _plot_g_of_E(bin_centers_rel, ln_g, output_dir):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.plot(bin_centers_rel, ln_g, "o-", ms=3)
-    ax.set_xlabel(r"$(E - E_{\\mathrm{min}})/N$  (eV/atom)")
+    ax.set_xlabel(r"$(E - E_{\mathrm{min}})/N$  (eV/atom)")
     ax.set_ylabel(r"$\ln g(E)$")
     ax.set_title("Wang-Landau density of states $g(E)$")
     ax.grid(True, alpha=0.3)

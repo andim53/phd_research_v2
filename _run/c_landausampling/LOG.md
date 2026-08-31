@@ -266,3 +266,52 @@ sweep, including the swap flags).
   when ready.
 
 **Time:** ~2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (3) — Analyze Wang-Landau HPC outputs (c1, c2) + fix g(E) PNG bug
+
+**Goal (user-confirmed via clarify):** Write a tool to extract the necessary data
+for each `wl_output_*` (per-iteration state density + process/convergence
+metrics) for both c1 and c2, and plot the state density from each iteration.
+
+**Clarify decisions (all user-confirmed):**
+1. Fix the matplotlib math-text bug (the HPC PNGs failed) AND build the analysis
+   tool.
+2. Single analysis script in `_analysist/` auto-discovering all `wl_output_*`
+   dirs for c1 and c2, extracting per-output data + convergence metrics, plotting
+   the state density per system.
+3. One state-density figure per system (c1: mc1000 + 3 sweeps = 4 curves; c2: 3
+   sweeps).
+
+**Actions taken:**
+- **Bug fix:** `main.py` g(E) x-label `r"$(E - E_{\\mathrm{min}})/N$"` had a
+  double backslash (`\\mathrm`) → matplotlib mathtext `ParseSyntaxException`,
+  crashing the HPC `g_of_E.png` write. Fixed to single `\mathrm` in all 5 copies
+  (root, `_runs/c1`, `_runs/c2`, `_analysist/c1`, `_analysist/c2`). Verified the
+  label renders.
+- **New tool:** `_analysist/analyze_wl_outputs.py` (v1.0.0) auto-discovers
+  `wl_output_*`, reads `g_of_E.csv`/`thermodynamics.csv`/`heat_capacity.csv` and
+  parses per-run segments from the job `.out` logs (init rel E, stages, final
+  ln_f, rattle/swap moves, 1/t status, visited-bin trajectory). Writes
+  `wl_analysis_summary.csv` + `state_density_c1.png` + `state_density_c2.png`.
+- **DISCUSSION.md** in `_analysist/` documenting the findings.
+
+**Results (real output):** tool runs; figures `state_density_c1.png` (2100x1350)
+and `state_density_c2.png` (2100x1350) + summary CSV produced. Key findings
+(recorded in DISCUSSION.md):
+- The HPC g_of_E.png failed due to the `\\mathrm` math-text bug (CSVs survived).
+- Physics: the WL walker is **stuck at the top bin** — c1 init rel E = 0.675
+  eV/atom (> e_max 0.40 → top bin), c2 init rel E = 159.9996 eV/atom (unphysical
+  GPR extrapolation). c1 reaches 20/40 bins only at 30k+ steps; c2 stays 1/40.
+  Stages advance trivially (walker keeps visiting the top bin), so **visited-bin
+  count** is the honest convergence metric.
+- Thermodynamics Z/F from these runs are not meaningful (delta/partial g(E)).
+
+**Open items:**
+- Fix `initialize()` to start inside the tracked window / reject unphysical init
+  rel E, and re-run the sweeps.
+- Note: user edited `_runs/c1`/`_runs/c2` job scripts to 64 cores and reverted
+  the sweep README/TUTORIAL sections; those edits left untouched.
+
+**Time:** ~2026-08-31 (JST).
