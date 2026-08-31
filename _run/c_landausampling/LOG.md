@@ -436,3 +436,47 @@ rather than editing it this turn (scope = README QnA only).
   that is a NEW sampler (not a flag) — awaiting user decision in a follow-up.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — Analysis: c1/c2 Wang–Landau sweeps are degenerate (DISCUSSION.md)
+
+**Goal (user-confirmed via clarify):** Write a `DISCUSSION.md` in the c1 analysis dir
+documenting the c1 (Fe/MgO) Wang–Landau sweep result as a **failed / non-converged** run,
+covering BOTH c1 and c2 (B3) so the pattern is compared across systems. No code change.
+
+**Key finding (grounded in CSVs + job `.out` logs):** Both sweeps collapsed to a
+**single-bin delta g(E) at the top bin**; all thermodynamics degenerate (Z=inf, F constant
+across T, C_V≈0); no run reached flatness or the 1/t switch. Two distinct mechanisms:
+- **c1 (Fe/MgO):** init CORRECT (rel 0.0011, bin 0 — v1.2.0 bottom-up works), but the
+  `--large-step 0.40 A` rattle lets the walk escape the ground-state basin into GPR
+  extrapolation near e_max, where it is geometrically trapped (stages=0, ln_f stuck at 1.0,
+  visited 3/100 — two H=1 ground-state visits then gone).
+- **c2 (B3):** init BROKEN — `init: rel E = 159.9996 eV/atom (bin 39)`, an unphysical GPR
+  extrapolation above e_max = the pre-v1.2.0 "stuck at top bin" bug; stages climb 2/6/10
+  trivially, visited 1/40. Also flagged: c2's g_of_E.csv saves H all-zero while ln_g
+  accumulates (save-format anomaly).
+
+**Actions taken:**
+- Read c1 sweep outputs (30k/60k/100k) + `jc1_sweep.sh.6654357.out`; c2 sweep outputs
+  (10k/30k/50k) + `j_c2_*_sweep.sh.6649512.out`; programmatically verified bin visitation,
+  H share, and constant F per output.
+- Wrote `_analysist/c1_mgofe_N40_Emax04/DISCUSSION.md`: verdict, shared-failure table
+  (corrected c2's H claim — c2 H is all-zero, so table uses "bins with g>0"), two root-cause
+  mechanisms, meaning for the bottom-up goal, and 4 recommended next steps (reduce
+  --large-step, reject/re-seed near e_max, ground-state anchoring, re-sync c2 to v1.2.0 init).
+
+**Results:** `DISCUSSION.md` written (analysis-only; no code/sampler changed).
+
+**Decisions & reasoning:** Kept to the user's chosen deliverable (analysis note, no code).
+Corrected an initial table error where c2's "top-bin H share" was quoted from a zeroed H
+column — the honest metric for c2 is "bins with ln_g>0" = 1/40.
+
+**Open items:**
+- Implement one or more of the 4 recommended fixes (likely --large-step reduction +
+  unphysical-trial rejection / ground-state re-seed) + a cheap local smoke test, in a
+  follow-up.
+- Check c2's `H`-all-zero save in `wang_landau/wang_landau_sampler.py save()`.
+- Re-sync c2 run's `wang_landau/` copy to the v1.2.0 init fix.
+
+**Time:** 2026-08-31 (JST).
