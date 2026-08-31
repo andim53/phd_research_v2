@@ -281,3 +281,35 @@ the ground state upward. If you want the mapped energy *window itself* to grow f
 bottom over the course of a run (a genuinely different, one-directional estimator rather than
 the symmetric flat-histogram walk), that would be a **new** sampler — not a flag on this one —
 and is out of scope for this documentation pass.
+
+New Question:
+
+In Landau Sampling, we only care that during our sampling, we reach the minimum energy (Monte Carlo is just a means of randomizing), but essentially, using the regular rattling makes it difficult and we only end up in the high energy state. With that in mind, what about using Monte Carlo Step + GPR relax? After we rattle, we perform GPR relaxation which can be embedded from the agox library (like in /home/think/Desktop/research/_run/c_landausampling/_analysist/c1_mgofe_N40_Emax04/dataset/main.py for reference. With 100 Step GPR relax.) This way, we will never have to worry regarding reaching the minimum energy, and we can even incoorporate higher rattling. What do you think?
+
+### What your proposal is
+
+Relaxing each trial to a local minimum *before* binning it is a real, established approach known as **basin-hopping / inherent-structure Wang–Landau sampling** (Wales & Doye; Stillinger–Weber inherent structure). Instead of binning the raw GPR energy at the rattled position, you bin the energy of the nearest basin minimum that relaxation reaches. The rattle then becomes only the proposal step, and relaxation does the descent. In this codebase, "the GPR relax" maps to `ParallelRelaxPostprocess(model=..., optimizer_run_kwargs={"steps": 100})` in the reference `dataset/main.py` (lines 149-154): ~100 ASE optimizer steps using the GPR as the calculator (energy + forces from the Fingerprint GPR). The same machinery already exists in AGOX, so no new library is required.
+
+Below is a neutral assessment — it is a legitimate idea, and it also has real downsides. Neither the pros nor the cons are decisive on their own; the right choice depends on what you want `g(E)` to mean and what compute you can afford.
+
+### Pros
+
+1. **Attacks the trapping failure directly.** A relaxed trial descends to a low-energy structure, so it cannot remain stuck in the high-energy extrapolation region that produced the c1/c2 top-bin delta. This is a more fundamental cure than the v1.3.0 `--e-reject` guard, which only rejects pathological trials after the fact.
+2. **Decouples move scale from acceptance.** Because relaxation removes the "large rattle ⇒ high extrapolated energy ⇒ trap" link, you can use genuinely large rattles to hop across the flat↔island barrier without the walk dying at the top. This can improve ergodicity.
+3. **Gives a physically meaningful, lower-noise quantity.** Minimized energies are the basin (inherent-structure) energies; relaxation also averages away some of the surrogate's per-position noise (~0.004 eV/atom MAE), giving more stable bins.
+4. **Reduces the number of MC steps needed.** Relaxation does the heavy basin-finding, so a basin-hopping walk typically converges with ~10⁵–10⁶ steps rather than 10⁷. Fewer, costlier steps can sometimes be net-cheaper in wall time than many cheap ones.
+
+### Cons
+
+1. **It changes what `g(E)` means.** You compute the density of *minimized* (basin) energies, not the density of *configurations*. That is a different object from the current sampler's `g(E)`. To recover the true canonical partition function you must re-add the **vibrational (within-basin) contribution**; a minima-only `g(E)` is the configurational (inherent-structure) approximation. Low-T thermodynamics will miss intra-minimum entropy unless you add that correction.
+2. **~100× more GPR evaluations per MC step.** Every trial now does ~100 relaxation calls instead of 1. From this project's timing, a real-GPR prediction is ~0.04 s on the 720-dim descriptor (≈190 s per 5000 steps); ×100 makes a 20M-step run effectively infeasible. You must cut `--mc-steps` by orders of magnitude, and you should *measure* the actual wall-time cost first — the step-count saving is not guaranteed to outweigh the per-step cost.
+3. **Relax-on-surrogate inherits surrogate bias.** The "minimum" you reach is a minimum of the GPR potential, not of the true DFT surface. Wherever the surrogate misplaces a basin (worst where training data is sparse, i.e. higher-energy bins), relaxation anchors you to the wrong basin energy and the WL weights inherit that systematic bias — worse than the per-position noise of no-relax sampling.
+4. **Partial-relaxation bias.** If ~100 steps does not converge on a rough surrogate surface, the energy depends on the step count: under-relaxed structures are shifted, systematically biasing the basin energies. You would need a relaxation-convergence check.
+5. **Basin binning can be sparse / ambiguous.** Different rattles relax into the same minimum (intended), but the histogram is now over a *discrete* set of minima, which can be sparse at low energy. Flatness (the WL convergence criterion) is harder to satisfy over few discrete minima, and `n_bins_visited` becomes a measure of minima, not configurations.
+6. **It may be unnecessary if the plain walk is fixed.** The trapping that motivates this is also addressable by the v1.3.0 changes (smaller `--large-step` + `--e-reject` guard). Plain WL on a correctly-bounded walker can reach the minimum; the relax mode is one possible cure, not the only one, and adds complexity and cost on top.
+
+### Neutral bottom line
+
+Your reasoning ("MC is just randomization; reaching the minimum is what matters") is coherent, and MC + GPR-relax is a well-precedented basin-hopping approach that would almost certainly fix the observed trapping. However, it is a **different estimator** (basin/inherent-structure `g(E)`, not configurational `g(E)`), it is ~100× more expensive per step, and it moves surrogate error from "noisy per position" to "systematic per basin." Whether it is the right move depends on (a) whether you want configurational or canonical thermodynamics, (b) whether you can afford/cut the MC budget enough, and (c) whether the v1.3.0 plain-walk fixes already suffice on re-testing.
+
+If you want me to, I can scope it as an **optional** `--relax-steps N` mode (default off) with a short real-GPR cost measurement and a local smoke test, so you can compare the two estimators empirically before committing — without removing the existing no-relax path. But that is a follow-up task, not something done here.

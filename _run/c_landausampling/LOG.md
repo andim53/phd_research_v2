@@ -527,3 +527,41 @@ old-run artifact (current `save()` writes H correctly) — no code change.
 - Also update the `agox-wang-landau` skill with the new e-reject guard pitfall/fix.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — README QnA: MC step + GPR relax proposal (unbiased pros/cons)
+
+**Goal (from user):** Answer the new README QnA ("MC step + GPR relax" — rattle then
+relax to a local minimum via the GPR before binning). User then asked for an **unbiased**
+answer with clear pros/cons.
+
+**Actions taken:**
+- Read the reference `dataset/main.py` (the user-cited `_analysist/c1_mgofe_N40_Emax04/dataset/main.py`)
+  to ground "the GPR relax": `ParallelRelaxPostprocess(model=..., optimizer_run_kwargs={"steps": 100})`
+  (lines 149-154), i.e. ~100 ASE steps using the GPR as the energy/force calculator.
+- Wrote the QnA answer into `README.md` (after the question). Rewrote once after the
+  out-of-band "provide an unbiased answer" instruction to remove the earlier pro-relax lean
+  and present a strictly neutral pros/cons treatment.
+
+**Key content delivered (neutral):**
+- The proposal is the established **basin-hopping / inherent-structure Wang–Landau** method
+  (Wales & Doye; Stillinger–Weber); the relax machinery already exists in AGOX.
+- **Pros:** attacks the c1/c2 trapping directly (relaxed trial cannot sit in extrapolation);
+  decouples rattle scale from acceptance (large hops OK); gives lower-noise basin energies;
+  reduces the number of MC steps needed.
+- **Cons:** changes what g(E) means (basin vs configurational — needs vibrational correction
+  for canonical Z); ~100× more GPR evaluations/step (20M-step infeasible; must cut steps);
+  relax-on-surrogate inherits systematic per-basin bias; partial-relaxation bias; sparse/discrete
+  minima make flatness harder; may be unnecessary if the v1.3.0 plain-walk fixes suffice.
+- **Bottom line:** coherent and well-precedented, but a different estimator with real costs;
+  choice depends on configurational-vs-canonical goal, MC budget, and whether the v1.3.0 fixes
+  already work. Offered to scope an optional `--relax-steps N` mode (default off) + cost
+  measurement + smoke test as a follow-up.
+
+**Results:** README.md QnA answered (unbiased). No code changed.
+
+**Open items:** None forced. Possible follow-up: scope `--relax-steps N` optional mode +
+cost estimate + local smoke test, if the user wants to compare estimators empirically.
+
+**Time:** 2026-08-31 (JST).
