@@ -613,3 +613,40 @@ safety net after relaxation.
 - Consider a vibrational (within-basin) correction if canonical Z is wanted from a relax run.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (6) — GPR-relax sweep job scripts for c1 and c2
+
+**Goal (user-confirmed via clarify):** Add sh files for both runs (`_runs/c1`,
+`_runs/c2`) to perform a GPR-relax sweep using `--relax-steps` 10/30/50/100, at
+`--mc-steps 30000`, each to its own output dir.
+
+**Clarify decisions (all user-confirmed):**
+1. One sweep job script per run (c1, c2) running all 4 relax-steps values
+   (10/30/50/100) sequentially in ONE PJM job, each with `--mc-steps 30000`.
+2. Output dirs per relax-steps: `wl_output_c1_relax{10,30,50,100}` and
+   `wl_output_c2_relax{10,30,50,100}`.
+3. Keep ALL other params identical to the current sweep scripts (n_bins 100,
+   e_max 0.40, small-step 0.05, large-step 0.20, start-from-min, perturb-symbols
+   Fe for c1 / Fe,B + swap for c2, temperatures 100..1000, rng 42); only
+   `--relax-steps`, `--output` differ, and `--mc-steps` fixed to 30000.
+4. Names: `jc1_sweepGPR.sh` (c1), `jc2_sweepGPR.sh` (c2).
+
+**Actions taken:**
+- Created `_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh` (4 runs: relax-steps
+  10/30/50/100, mc-steps 30000, outputs wl_output_c1_relax10/30/50/100).
+- Created `_runs/c2_boron3_N40_Emax04/jc2_sweepGPR.sh` (same + swap flags,
+  outputs wl_output_c2_relax10/30/50/100).
+- Both use 64-core PJM headers (matching the current sweep scripts).
+
+**Results (real output):**
+- Both run-dir `main.py` accept `--relax-steps` (v1.4.0); the `_relax()` BFGS
+  path is present in the run-dir samplers.
+- Relax smoke check: `_relax()` runs without crashing and falls back gracefully
+  when the calculator has no forces (real AGOX GPR provides forces).
+
+**Open items:**
+- Launch `pjsub` the relax sweeps on HPC when ready.
+
+**Time:** ~2026-08-31 (JST).
