@@ -5333,3 +5333,44 @@ parameters as the previous session but WITHOUT the 100 K temperature curve.
 **Open items:** None.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — README QnA: answer Q4 (down-up / ground-state sampling proposal)
+
+**Goal (from user):** Answer the open QnA item #4 in `README.md` — a neutral
+assessment (pros/cons) of a proposed "down-up" nested-sampling variant that seeds at
+the ground state and discards the *lowest*-energy live point each iteration, plus a
+clarification of the user's intent.
+
+**Actions taken:**
+- Re-read `nested_sampling/nested_sampler.py` (`step` line 500, `X_i` line 506-508,
+  `sample_constrained` 457, `evaluate`/`posterior_at` 620/654) to ground the answer in
+  the actual up-down algorithm rather than a textbook idealisation.
+- Appended the Q4 answer to `README.md` (after line 535): restated current algorithm,
+  clarified the user's intent (ground-state-outward mapping to skip the ~4k-iter
+  compression phase), and a neutral pros/cons list.
+
+**Results / key points delivered:**
+- **Central caveat:** the proposal as literally described reuses `X_i = exp(-i/K)`,
+  which is only valid for *shrinking* sub-level sets `{E<E_boundary}`; inverting to a
+  *growing* set `{E>E_floor}` breaks the volume identity, so `dX_i` is not the correct
+  quadrature weight bottom-up → biased `Z`/`g(E)` unless a new measure is derived.
+- Pros: skips wasted compression phase, targets low-E tail of g(E), uses known GS,
+  maps to thermal-excitation-from-0 K.
+- Cons: broken volume identity; `Z`/`F` no longer full-range; no natural termination;
+  DB prior biased upward + heavier GPR-extrapolation reliance; it's a different
+  algorithm (closer to Wang-Landau / basin sampling) not "NS sign-flipped".
+- Recommended two paths for the user to choose: (A) Wang-Landau/DOS via sibling
+  `c_landausampling`, or (B) an NS-family estimator with a correctly-derived growing
+  measure — pending user's confirmation of intent before any code.
+
+**Decisions & reasoning:** Kept the answer neutral and code-grounded per AGENTS.md;
+did NOT write any new sampling code — Q4 explicitly asked for evaluation + intent
+clarification, and the clarify-first rule requires user confirmation of (A) vs (B)
+before implementing a new flag.
+
+**Open items:** Await user's choice of (A) Wang-Landau/DOS vs (B) corrected NS-family
+estimator, and confirmation of the read-back intent, before scaffolding any new flag.
+
+**Time:** 2026-08-31 (JST).

@@ -528,3 +528,57 @@ iterations; the last ~16,000 steps add only tiny-shell-weight samples and neglig
 live-evidence / prior-volume-termination criterion (stop when `Z_live ≪ Z_acc`) would have stopped
 this run around 4,000–5,000 iterations with essentially the same answer — but the extra iterations
 are not harmful; they only refine the (already-resolved) low-energy tail of `g(E)`.
+
+4. Understand this project /home/think/Desktop/research/_run/b_nestedsampling. Makde a new nested sampling operation, under a differen
+t a new flag. This nested sampling operation will be different from the usual nested sampling. Instead of up-down approach, it will p
+erform down-up approach, where we will sample from the ground state, and throwing the lowest E instead of the highest E for each Iter
+ations. The weight will be calculated from the bottom rather than the top. Considering this is Ground State Sampling (we already have
+ the data of the Ground state; and we want to map it from the ground state). What do you think of this appraoch? Be neutral, write down the pros and cons, also clarify my intent.
+
+### First, what the *current* (up-down) algorithm actually does
+
+Grounding this in `nested_sampling/nested_sampler.py` so the proposal is contrasted against the real code, not a textbook idealisation:
+
+- **Which point is removed:** `step()` (line 500) removes the **worst** live point, `worst_idx = argmin(live_log_L)`. Since `log L = -(E - E_ref)` in temperature-free mode, `argmin(log L)` = **highest energy**. So each iteration discards the top of the live set and the boundary `E_boundary = log_L_boundary` (line 539) creeps **downward** toward `E_ref`.
+- **The prior volume it tracks:** `X_i = exp(-i/K)` (line 506-507). This is the fraction of the **prior mass whose likelihood exceeds the current boundary** — i.e. the volume of the sub-level set `{x : E(x) < E_boundary}`. It starts at `X_0 = 1` (all of prior space) and shrinks geometrically as the boundary descends. The shell weight `dX_i = X_{i-1} - X_i` (line 508) is the prior volume of the thin shell peeled off at iteration `i`.
+- **What makes the weights valid:** the quadrature `Z = Σ_i L_i · dX_i` is exact *only because* `X_i` is the analytically-known expected volume of a nested sequence of shrinking sub-level sets. The nesting `X_0 ⊃ X_1 ⊃ ...` and the statistics `E[X_i] = exp(-i/K)` are the mathematical heart of NS (Skilling 2006). Everything the method computes — `Z`, `F = -k_B T ln Z`, `g(E)`, `C_V(T)` — rides on this one identity.
+
+### Clarifying your intent (as I read it)
+
+You are describing a **down-up / ground-state-outward** variant: seed the live set at the known global minimum (the island ground state, `E_ref = -436.888 eV`), and at each iteration **discard the *lowest*-energy live point** (`argmax(log L)`), pushing an **energy floor upward** instead of an energy ceiling downward. Weights would be accumulated "from the bottom," so the mapping grows outward from the ground state rather than draining inward from the top.
+
+I read your underlying goal as: **"We already know the ground state; we don't want to spend ~4,000 iterations re-discovering it (see the b10 diagnosis above). We want to spend the compute *characterising the neighbourhood of the ground state* — the low-energy shoulder of `g(E)`, the local excitation spectrum — starting from where we already are."** That is a legitimate and interesting objective. The question is whether inverting NS is the right vehicle for it. Please confirm or correct this reading before any code is written (AGENTS.md rule 1: clarify before every step).
+
+### Neutral assessment
+
+**Pros (what the down-up idea buys you)**
+
+1. **No wasted compression phase.** The b10 diagnosis above shows ~4,000 iterations (and in the 20k run, ~16,000 more) spent draining prior volume from +0.4 eV/atom down to the island before anything interesting happens. Starting *at* the ground state skips that entirely — every iteration is spent in the region you care about.
+2. **Directly targets the low-energy tail.** The current method resolves the low-E shoulder of `g(E)` only as a by-product of the plateau phase (small `dX_i` samples). A ground-state-outward sweep would concentrate samples exactly there, giving finer resolution of the excitation ladder near the minimum.
+3. **Uses the data you already have.** You have a well-sampled ground state; seeding from it is cheap and grounded, and `sample_constrained` already supports a clone-and-walk move (`--walk`) that could be flipped to walk *upward* under an `E > E_floor` constraint with modest code change.
+4. **Conceptually maps to "thermal excitation from 0 K."** Growing outward from the minimum is a natural framing for low-temperature thermodynamics, where only the near-ground-state region carries Boltzmann weight.
+
+**Cons (why this is not just "NS with a sign flipped")**
+
+1. **It breaks the volume identity that makes NS exact.** NS's `X_i = exp(-i/K)` is the volume of `{E < E_boundary}` — a *bounded, shrinking-to-zero* set. Inverting to `{E > E_floor}` tracks the volume of an **unbounded, growing** set: as the floor rises, the enclosed volume → the whole (or an ill-defined) prior mass, and `X_i = exp(-i/K)` no longer describes it. So `dX_i` as written is **not** the correct quadrature weight for the up-going sweep. You cannot simply "calculate the weight from the bottom" with the same formula; you would need a different, correct measure for the growing region, or the resulting `Z`/`g(E)` will be biased. **This is the central risk** and it should be settled analytically before any implementation.
+2. **`Z` and `F` may no longer be what you want.** The partition function integrates `L·π` over *all* configuration space; low-T thermodynamics is dominated by the ground-state basin, which a bottom-up sweep captures well, but high-T behaviour needs the *high-energy* tail that this method deliberately under-samples. So a down-up run gives good low-T `F(T)`/`C_V(T)` but is **not** a drop-in replacement for the full-range `Z(T)` the current pipeline reports. The flat↔island transition peak in `C_V(T)` in particular lives in the mid-energy region both methods must span.
+3. **"Where do you stop?" is ill-posed.** Up-down NS has a natural terminus (prior volume → 0, `X_final` negligible). Growing outward has no analogous convergence signal — you'd stop at an arbitrary energy ceiling, reintroducing exactly the windowing ambiguity (`--e-window`, `--e-max-per-atom`) that up-down NS was partly designed to avoid.
+4. **The prior pool is DB-biased upward, not around the minimum.** `sample_from_prior` draws uniformly from the 1297 DB structures; the DB is denser where the search spent time, not necessarily in a clean shell structure above the minimum. An outward sweep leans harder on the `--walk` move (which extrapolates the Fingerprint GPR, `|E|<1e4` guard) to manufacture the higher-energy structures it needs — more reliance on GPR extrapolation into regions with fewer training points and larger predictive error (see the GPR-accuracy result: MAE/R² degrade toward higher-energy bins).
+5. **It's a genuinely different algorithm, not a flag on NS.** The name "nested sampling" refers specifically to the nested *shrinking* sub-level sets. A bottom-up sweep is closer to **thermodynamic integration / basin-sampling / a Wang-Landau-style density-of-states walk started at the minimum** than to NS. Framing it as "NS but down-up" invites reusing NS's estimators, which is exactly where the bias in con #1 enters.
+
+### Established methods that already do "map outward from the ground state"
+
+To be neutral: the goal is sound and well-precedented, but the field usually reaches for tools built for it rather than an inverted NS:
+
+- **Wang-Landau / multicanonical** density-of-states sampling — directly estimates `g(E)` and can be anchored at/near the minimum (this repo's sibling project `c_landausampling` is exactly this). This is probably the closest match to your intent and already has a home in the wider codebase.
+- **Harmonic / quasi-harmonic approximation + anharmonic corrections** around the known minimum — the standard low-T excitation spectrum from the ground state.
+- **Parallel tempering / basin sampling seeded at the minimum** — explores the ground-state basin outward with correct canonical weights.
+
+### My recommendation (neutral, for you to decide)
+
+The **intent is good**; the **mechanism as literally described ("NS, throw lowest E, weight from the bottom") is mathematically unsafe** because it reuses `X_i = exp(-i/K)`, which is only valid for shrinking sub-level sets. Two clean paths forward:
+
+- **(A) If the real goal is `g(E)` / low-T thermodynamics mapped outward from the known minimum** → use a Wang-Landau / DOS approach (leverage `c_landausampling`), not an inverted NS. Correct estimator by construction.
+- **(B) If you specifically want an *NS-family* estimator that starts at the minimum** → this is possible but requires deriving the correct volume measure for the growing region *first* (and likely a hard energy ceiling to keep it bounded); only then implement it under a new flag. Do not ship it reusing `dX_i` unchanged.
+
+Tell me which of (A)/(B) matches your intent (and confirm my reading of the goal above), and I'll scope the implementation under a new flag with the correct estimator — grounded in `agox_v2` with a cheap local smoke test before any HPC run, per AGENTS.md.
