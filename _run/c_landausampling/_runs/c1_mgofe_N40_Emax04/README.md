@@ -30,3 +30,18 @@ Treatment:
 
 Written to `./wl_output_c1/`: `g_of_E.csv`, `g_of_E.png`,
 `thermodynamics.csv`, `heat_capacity.csv`.
+
+## MC-steps sweep job (`j_c1_mgofe_N40_Emax04_sweep.sh`)
+
+A companion PJM job runs the **same** parameters at three smaller MC-step budgets
+in ONE job, writing each to its own output dir (all params identical to the
+baseline except `--mc-steps` and `--output`):
+
+| Run | `--mc-steps` | `--output` |
+|---|---|---|
+| sweep 10k | `10000` | `./wl_output_c1_sweep_10000` |
+| sweep 30k | `30000` | `./wl_output_c1_sweep_30000` |
+| sweep 50k | `50000` | `./wl_output_c1_sweep_50000` |
+
+Launch: `pjsub j_c1_mgofe_N40_Emax04_sweep.sh` (three sequential `main.py` calls,
+each to its own output dir). Useful for a convergence-over-mc-steps study.

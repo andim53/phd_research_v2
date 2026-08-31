@@ -28,6 +28,17 @@ cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_mgofe_N40_Emax04
 pjsub j_c1_mgofe_N40_Emax04.sh
 ```
 
+## MC-steps sweep (HPC, PJM)
+
+```bash
+pjsub j_c1_mgofe_N40_Emax04_sweep.sh
+```
+
+Runs the SAME parameters at `--mc-steps 10000 / 30000 / 50000` sequentially in one
+job, each to its own output dir: `./wl_output_c1_sweep_10000`,
+`./wl_output_c1_sweep_30000`, `./wl_output_c1_sweep_50000`. For a
+convergence-over-mc-steps comparison of g(E) and thermodynamics.
+
 ## What each flag does
 
 - `--dataset dataset` — plain Fe/MgO (13 seeds, 1297 structures).

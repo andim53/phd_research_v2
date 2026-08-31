@@ -201,3 +201,37 @@ a flag for swapping times per iteration, modeled on the reference
   _runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04.sh`.
 
 **Time:** ~2026-08-30 21:15–21:30 (JST).
+
+---
+
+## Session 2026-08-31 — c1 sweep job (mc-steps 10k/30k/50k)
+
+**Goal (user-confirmed via clarify):** Make a new job script in
+`_runs/c1_mgofe_N40_Emax04/` that runs the SAME parameters as
+`j_c1_mgofe_N40_Emax04.sh` but as an MC-steps sweep (10000 / 30000 / 50000),
+each saved to its own separate output dir.
+
+**Clarify decisions (all user-confirmed):**
+1. One job script running all three `--mc-steps` values sequentially in ONE PJM job.
+2. All params identical to the c1 baseline (--n-bins 40 --e-max 0.40 --small-step
+   0.05 --large-step 0.40 --perturb-symbols Fe --temperatures 100,200,300,500,1000
+   --rng 42); only --mc-steps and --output differ.
+3. Output dirs: `wl_output_c1_sweep_10000`, `wl_output_c1_sweep_30000`,
+   `wl_output_c1_sweep_50000`.
+4. Job script name: `j_c1_mgofe_N40_Emax04_sweep.sh`.
+
+**Actions taken:**
+- Created `_runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04_sweep.sh` (bare PJM,
+  gpaw_env, 24 cores; three sequential `python ./main.py` calls).
+- Updated the run-dir `README.md` and `TUTORIAL.md` to document the sweep job.
+
+**Results (real output):**
+- `main.py --help` confirms all sweep args (--mc-steps, --output, --dataset,
+  --n-bins, --e-max, --small-step, --large-step, --perturb-symbols,
+  --temperatures, --rng) are valid in this run's main.py (v1.1.0).
+
+**Open items:**
+- Launch `pjsub _runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04_sweep.sh` on HPC
+  when ready.
+
+**Time:** ~2026-08-31 (JST).
