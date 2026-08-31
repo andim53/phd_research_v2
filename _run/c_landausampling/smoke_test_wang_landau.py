@@ -15,7 +15,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -67,6 +67,7 @@ def make_db():
 def main():
     ok = test_single_species()
     ok = test_two_species_swap() and ok
+    ok = test_extrapolation_guard() and ok
     print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 
@@ -184,6 +185,53 @@ def test_two_species_swap():
         print("[SMOKE] FAIL: swap moves occurred in a single-species system")
         ok = False
 
+    return ok
+
+
+def test_extrapolation_guard():
+    """Verify the extrapolation guard rejects trials far above e_reject.
+
+    A fake GPR whose energy is linear in x, walked with a large rattle, is the
+    scenario that previously collapsed to a delta at the top bin. With the
+    guard on (default e_reject = 5*e_max), trials far above e_max are rejected
+    (the walker revisits its current bin) instead of being capped into the top
+    bin and trapped. We check that no ln_g accumulates in a bin centered above
+    e_reject and that the top-bin histogram does not swallow all the weight.
+    """
+    print("\n--- extrapolation guard test ---")
+
+    class FakeLinearGPR:
+        def predict_energy(self, atoms):
+            return float(atoms.positions[0][0])  # E = x
+
+    # x in [0, 3] -> rel energy in [0, 3]; e_max = 0.40, guard at 2.0
+    structs = [Atoms("Fe", positions=[[x, 0.0, 0.0]]) for x in np.linspace(0, 3, 61)]
+    gpr = FakeLinearGPR()
+    energies = np.array([gpr.predict_energy(a) for a in structs])
+
+    s = WangLandauSampler(gpr, structs, energies, n_bins=40,
+                          e_min=0.0, e_max=0.40,  # e_reject defaults to 5*0.40=2.0
+                          small_step=0.05, large_step=0.40,
+                          perturb_symbols="Fe", check_interval=500,
+                          n_stages_standard=4, rng=np.random.default_rng(11))
+    s.initialize(start_from_top=False)  # bottom-up from the min
+    s.run(n_steps=20000, progress_every=20000)
+
+    # Bins centered above e_reject must never accumulate g
+    over = s.bin_centers_rel > s.e_reject
+    ok = True
+    if over.any() and (s.ln_g[over] != 0).any():
+        print("[SMOKE] FAIL: g(E) accumulated in a bin above e_reject "
+              f"(>{s.e_reject:.3f})")
+        ok = False
+    # The walker must not be trapped at a single top bin
+    if int((s.H > 0).sum()) <= 1:
+        print("[SMOKE] FAIL: extrapolation guard did not stop single-bin trapping")
+        ok = False
+    print(f"[SMOKE] e_reject = {s.e_reject:.3f} eV/atom; visited "
+          f"{int((s.H > 0).sum())}/{s.n_bins} bins; "
+          f"stages = {s.stage}")
+    print(f"[SMOKE] guard test: " + ("PASS" if ok else "FAIL"))
     return ok
 
 

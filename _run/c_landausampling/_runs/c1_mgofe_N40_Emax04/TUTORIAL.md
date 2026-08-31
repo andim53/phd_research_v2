@@ -15,7 +15,7 @@ This reproduces the Wang–Landau run in
 cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_mgofe_N40_Emax04
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --dataset dataset --n-bins 100 --e-max 0.40 \
-    --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
+    --mc-steps 20000000 --small-step 0.05 --large-step 0.20 \
     --perturb-symbols Fe \
     --temperatures 100,200,300,500,1000 \
     --output ./wl_output_c1 --rng 42
@@ -34,7 +34,7 @@ pjsub j_c1_mgofe_N40_Emax04.sh
 - `--n-bins 100` — 100 energy bins for g(E) (fine resolution).
 - `--e-max 0.40` — upper bin edge (eV/atom rel), spans island(0)→barrier/flat.
 - `--mc-steps 20000000` — WL MC steps.
-- `--small-step 0.05` / `--large-step 0.40` — small/large Gaussian rattle scales.
+- `--small-step 0.05` / `--large-step 0.20` — small/large Gaussian rattle scales.
 - `--perturb-symbols Fe` — rattle the mobile Fe atoms only (single species, so
   no swap move is possible/needed).
 - `--temperatures 100,200,300,500,1000` — thermodynamics post-processing.

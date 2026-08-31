@@ -14,7 +14,7 @@ evaluated by the GPR surrogate; and bins are over relative energy per atom
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 from typing import List, Optional
 
@@ -41,8 +41,9 @@ class WangLandauSampler:
         n_bins: int = 40,
         e_min: float = 0.0,
         e_max: float = 0.40,
+        e_reject: Optional[float] = None,
         small_step: float = 0.05,
-        large_step: float = 0.40,
+        large_step: float = 0.20,
         perturb_symbols: str = "Fe",
         flatness_criterion: float = 0.80,
         check_interval: int = 5000,
@@ -69,6 +70,23 @@ class WangLandauSampler:
         # Walk scales (Angstrom) — small = local refinement, large = barrier crossing
         self.small_step = float(small_step)
         self.large_step = float(large_step)
+
+        # Extrapolation-rejection threshold: a trial whose rel energy exceeds
+        # ``e_reject`` is treated as an UNPHYSICAL GPR extrapolation and REJECTED
+        # (revisits the current bin) instead of being capped into the top bin.
+        # Default = 5 * e_max (a "clearly unphysical" margin far above the window),
+        # so MODERATE over-window energies (e_max .. e_reject) are still capped
+        # into the top bin (Fortran behaviour), but pathological extrapolations
+        # (e.g. the c2 159.9996 eV/atom init) are rejected. Set an explicit
+        # ``e_reject`` (eV/atom) to override; a value <= e_max disables the guard
+        # (revert to capping everything >= e_max into the top bin).
+        if e_reject is not None and float(e_reject) > self.e_max:
+            self.e_reject = float(e_reject)
+        else:
+            self.e_reject = 5.0 * self.e_max
+        print(f"[WangLandau] extrapolation guard: reject rel E > {self.e_reject:.4f} "
+              f"eV/atom (moderate over-window up to e_max {self.e_max:.3f} is capped "
+              f"into the top bin)")
 
         # Atoms to rattle (deposition species); all others stay fixed
         perturb_list = [s.strip() for s in str(perturb_symbols).split(",")
@@ -308,6 +326,13 @@ class WangLandauSampler:
             E_trial = self._energy_of(trial)
             rel_trial = (E_trial - self.E_ref) / self.n_atoms \
                 if np.isfinite(E_trial) else float("nan")
+            # Extrapolation guard: a trial far above e_reject is an unphysical GPR
+            # extrapolation — reject it (revisit the current bin) instead of
+            # capping it into the top bin, where it would trap the walk.
+            if np.isfinite(rel_trial) and rel_trial > self.e_reject:
+                self._visit(self.bin_current)
+                self._maybe_refine()
+                continue
             bin_trial = self.get_bin(rel_trial) if np.isfinite(rel_trial) else -1
             if bin_trial < 0:
                 # out-of-range trial (below floor or unphysical) -> reject

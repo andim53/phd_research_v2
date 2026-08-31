@@ -114,7 +114,8 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | `--e-min` | `0.0` | Lower bin edge (eV/atom relative to the minimum). |
 | `--e-max` | `0.40` | Upper bin edge (eV/atom rel; island at 0, set past the barrier/flat region). |
 | `--small-step` | `0.05` | Small Gaussian displacement scale (Å), local refinement. |
-| `--large-step` | `0.40` | Large Gaussian displacement scale (Å), barrier crossing. |
+| `--large-step` | `0.20` | Large Gaussian displacement scale (Å), barrier crossing. Default reduced from 0.40 (v1.3.0) so a single rattle cannot escape the ground-state basin into GPR-extrapolation territory. |
+| `--e-reject` | `5×e_max` | Relative energy (eV/atom) above which a trial is treated as an unphysical GPR extrapolation and REJECTED (revisits the current bin) instead of being capped into the top bin. Set ≤ e_max to disable. |
 | `--perturb-symbols` | `Fe` | Atom symbol(s) to rattle; all others stay fixed. |
 | `--flatness-criterion` | `0.80` | Flatness threshold (`min H > criterion·mean H`). |
 | `--check-interval` | `5000` | Flatness check interval (MC steps). |
@@ -124,7 +125,7 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | `--swap-rattle` | `0.05` | Gaussian displacement (Å) applied to the two swapped atoms after a swap. |
 | `--mc-steps` | `2000000` | Number of Wang–Landau MC steps. |
 | `--temperatures` | `100,200,300,500,1000` | Temperatures (K) for thermodynamics post-processing. |
-| `--start-from-top` | on | Initialize the walker at the top of the bin range (flat-structure analogue, Fortran default). |
+| `--start-from-top` | off | Initialize the walker at the top of the bin range (flat-structure analogue); default off = start from the global minimum (bottom-up). |
 | `--output` | `./wl_output` | Output directory. |
 | `--rng` | `42` | RNG seed (reproducibility). |
 | `--use-ray` | off | Enable Ray in GPR training (default single-process). |
@@ -141,7 +142,7 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | Decision | Choice | Tradeoff |
 |---|---|---|
 | Energy model | AGOX GPR surrogate (not DFT-in-loop) | Fast enough for a long WL walk; energy errors from the surrogate (validated ~0.004 eV/atom MAE). |
-| Sampling move | Rattle mobile atoms (small/large); optional swap (permutation) move via `--swap-prob` | Local refinement + barrier crossing; swaps let ≥2 mobile species exchange positions; extrapolating far can give unphysical GPR energies (guarded `\|E\|<1e4`). |
+| Sampling move | Rattle mobile atoms (small/large); optional swap (permutation) move via `--swap-prob`; extrapolation guard rejects trials > `--e-reject` (default 5×e_max) | Local refinement + barrier crossing; swaps let ≥2 mobile species exchange positions; extrapolating far can give unphysical GPR energies — guarded by `\|E\|<1e4` AND the rel-energy `--e-reject` rejection (prevents the delta-at-top-bin trap). |
 | Binning | Relative energy per atom `(E−E_min)/N` | Dataset/composition comparable; the `g(E)` is per-atom, so absolute Z is normalised to unit integral (only the additive constant is arbitrary). |
 | Refinement | standard `f→√f` then 1/t | 1/t avoids error saturation of the plain scheme (Belardinelli & Pereyra 2007). |
 | Data | self-contained copy of all 3 datasets | Fully reproducible in isolation (~300M regenerable data, gitignored). |
@@ -269,9 +270,9 @@ safely the walk enters the tracked window:
   (`main.py:163`) — so `--start-from-min` always wins, and with **no flags at all you already
   get bottom-up** from the global minimum.
 
-Note: the "CLI reference" table above lists `--start-from-top` default as "on", which is
-stale — the actual `main.py` default is **off** (bottom-up). (Doc-only discrepancy, flagged
-here; code is the source of truth. To be fixed in the table when code is next touched.)
+The "CLI reference" table above lists `--start-from-top` default as **off** — matching the
+actual `main.py` default (bottom-up). (Fixed in v1.3.0; earlier this note flagged a stale
+"on".)
 
 ### So do you need to change anything to be "bottom-up"?
 

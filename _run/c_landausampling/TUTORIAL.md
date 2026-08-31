@@ -51,7 +51,7 @@ genuinely spread `g(E)`.
 cd /home/think/Desktop/research/_run/c_landausampling
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
 $PY main.py --dataset dataset --n-bins 40 --e-max 0.40 \
-    --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
+    --mc-steps 20000000 --small-step 0.05 --large-step 0.20 \
     --perturb-symbols Fe --temperatures 100,200,300,500,1000 \
     --output ./wl_output_dataset --rng 42
 ```
@@ -107,6 +107,22 @@ error-saturation of the plain `f→√f` scheme. The sampler prints
 `Switching to 1/t algorithm at step N` when this happens. If it instead prints
 `NOTE: standard f->sqrt(f) scheme; did not reach the 1/t switch`, increase
 `--mc-steps` (or lower `--n-stages-standard`, currently 14).
+
+## Pitfall: delta g(E) at the top bin (the c1/c2 collapse)
+If `g_of_E.png` shows a single spike at the top bin (rel ≈ e_max) and `F` is
+**constant** across all temperatures (`C_V ≈ 0`), the walk escaped the
+ground-state basin into GPR-extrapolation territory and got trapped in the
+capped top bin. This was the observed failure of the c1 (Fe/MgO) and c2 (B3)
+sweeps. Two fixes are now in v1.3.0:
+- **Default `--large-step` reduced 0.40 → 0.20 Å**, so a single rattle is less
+  likely to catapult the walker into extrapolation territory.
+- **`--e-reject` extrapolation guard** (default `5×e_max` eV/atom): any trial
+  with rel E > e_reject is rejected (revisits the current bin) instead of being
+  capped into the top bin. Moderate over-window energies (`e_max..e_reject`)
+  are still capped (Fortran behaviour); only clearly-unphysical extrapolations
+  are rejected. Set `--e-reject` ≤ e_max to disable.
+Re-run the smoke test to confirm the guard: `smoke_test_wang_landau.py` now
+includes a `test_extrapolation_guard` case.
 
 ## Verification checklist
 - [ ] `smoke_test_wang_landau.py` prints `[SMOKE] RESULT: PASS` and a

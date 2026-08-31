@@ -70,7 +70,7 @@ $PY smoke_test_wang_landau.py
 
 # Full production run (default dataset Fe/MgO)
 $PY main.py --dataset dataset --n-bins 40 --e-max 0.40 \
-    --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
+    --mc-steps 20000000 --small-step 0.05 --large-step 0.20 \
     --perturb-symbols Fe --temperatures 100,200,300,500,1000 \
     --output ./wl_output_dataset --rng 42
 
@@ -128,8 +128,13 @@ inputs.
 3. **No DB structure inside the bin range** → `RuntimeError` from
    `initialize()`; lower `--e-max` or widen the range.
 4. **GPR extrapolation to unphysical energies** — with `--large-step`/`--perturb`
-   too large the Fingerprint GPR predicts `|E|>1e4 eV`; such trials are treated
-   as out-of-range (rejected) in `_energy_of`/`run`.
+   too large the Fingerprint GPR predicts `|E|>1e4 eV` (treated as out-of-range in
+   `_energy_of`) OR a high but finite relative energy far above the window. The
+   rel-energy **extrapolation guard** (`--e-reject`, default `5×e_max`) rejects any
+   trial with rel E > e_reject as unphysical — it is NOT capped into the top bin
+   (which would trap the walk in a delta g(E)). Moderate over-window energies
+   (e_max .. e_reject) are still capped into the top bin (Fortran behaviour). This
+   fixes the c1/c2 delta-at-top-bin collapses.
 5. **Ray `ActorUnavailableError`** — environmental (RAM exhaustion); avoided with
    `use_ray=False` (default).
 6. **1/t switch not reached** — if `--mc-steps` is too small or

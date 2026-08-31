@@ -12,7 +12,7 @@ This run exercises the **swap (permutation) move** for a multi-species system
 
 ```bash
 main.py --dataset dataset_boron3 --n-bins 100 --e-max 0.40 \
-    --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
+    --mc-steps 20000000 --small-step 0.05 --large-step 0.20 \
     --perturb-symbols Fe,B \
     --swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05 \
     --temperatures 100,200,300,500,1000 \
@@ -24,7 +24,7 @@ Treatment:
 - **`--n-bins 100` / `--e-max 0.40`** — g(E) over `[0, 0.40]` eV/atom relative at
   fine (100-bin) resolution.
 - **`--mc-steps 20000000`** — HPC-scale WL walk budget.
-- **`--small-step 0.05` / `--large-step 0.40`** — dual-scale rattle.
+- **`--small-step 0.05` / `--large-step 0.20`** — dual-scale rattle.
 - **`--perturb-symbols Fe,B`** — both mobile species are rattled.
 - **`--swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05`** — **swap move ENABLED**:
   on 20% of MC steps a swap move exchanges the positions of a B and an Fe atom

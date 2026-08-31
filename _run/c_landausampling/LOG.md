@@ -480,3 +480,50 @@ column — the honest metric for c2 is "bins with ln_g>0" = 1/40.
 - Re-sync c2 run's `wang_landau/` copy to the v1.2.0 init fix.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — Root fix v1.3.0: e-reject extrapolation guard + large-step default
+
+**Goal (user-confirmed via clarify):** Fix the root code per the DISCUSSION.md
+recommendations and re-copy to `_runs/`. User chose: BOTH core fixes (e-reject guard +
+default `--large-step` 0.40→0.20); guard strictness = reject only clearly-unphysical (far
+beyond e_max), keep capping for moderate over-window; re-copy fixed code to BOTH c1 and c2
+`_runs/`.
+
+**Actions taken (root code):**
+- `wang_landau/wang_landau_sampler.py` v1.2.0→1.3.0: added `e_reject` constructor param
+  (default `5*e_max`); in `run()` reject any trial with rel E > e_reject (revisit current
+  bin) instead of capping it into the top bin; reduced default `large_step` 0.40→0.20.
+- `main.py` v1.2.0→1.3.0: `--large-step` default 0.20, added `--e-reject` flag, wired into
+  sampler.
+- `smoke_test_wang_landau.py` v1.1.0→1.2.0: added `test_extrapolation_guard` (fake linear
+  GPR, verifies no g above e_reject and no single-bin trap).
+
+**Verification (real output):** `py_compile` OK on sampler/main/smoke; full smoke run →
+`RESULT: PASS`; guard test visits 39/40 bins, stages=4, no g accumulated above e_reject
+(2.000 eV/atom), no single-bin trap.
+
+**Docs updated:** VERSIONS.md (main/sampler/smoke rows), README.md (CLI `--large-step`
+0.20 + `--e-reject` row, tradeoff row, fixed stale `--start-from-top` "on"→"off"), README.AI.md
+(edge case #4 rewritten + example command), TUTORIAL.md (pitfall section + example command).
+
+**`_runs/` re-copy (per clarify):** copied fixed `main.py` + `wang_landau/*.py` (v1.3.0) to
+BOTH `_runs/c1_mgofe_N40_Emax04/` and `_runs/c2_boron3_N40_Emax04/` (brings c2 up to the
+v1.2.0 init fix + new guard). Updated per-run README/TUTORIAL `--large-step 0.40`→0.20 and
+c1 README version ref v1.2.0→v1.3.0; updated both `j_*_sweep.sh` (large-step 0.20, echo
+v1.3.0). Compiled OK in run dirs.
+
+**Decisions & reasoning:** Guard default = `5*e_max` (matches "reject only clearly
+unphysical"), so moderate over-window (e_max..e_reject) is still capped into the top bin
+(Fortran behaviour) — only pathological extrapolation is rejected. Ground-state
+anchoring/re-seed NOT implemented (larger change; deferred). c2 `H`-all-zero confirmed as an
+old-run artifact (current `save()` writes H correctly) — no code change.
+
+**Open items:**
+- (deferred) Ground-state anchoring / periodic re-seed if the reduced step + guard still trap.
+- Re-run the sweeps on HPC with the updated `j_*_sweep.sh`, then re-analyse for convergence
+  (`n_bins_visited`, T-dependent F, C_V≠0).
+- Also update the `agox-wang-landau` skill with the new e-reject guard pitfall/fix.
+
+**Time:** 2026-08-31 (JST).

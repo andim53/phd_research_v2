@@ -108,24 +108,31 @@ project QnA:
   physical basin, or (b) a **rejection/re-seed rule** that returns to the
   ground state when the walk strays, or (c) **smaller step scales**.
 
-## Recommended next steps (for a follow-up, not done here)
+## Recommended next steps (implemented in v1.3.0)
 
-None of this was changed (this is an analysis-only pass, per the task scope). For
-a future fix, candidates to test with a cheap local smoke run before any HPC
-submission:
+The core fixes were implemented in project-root v1.3.0 and re-copied to both
+`_runs/` dirs:
 
-1. **Reduce `--large-step`** (e.g. 0.40 → 0.10–0.15 Å) so a single rattle cannot
-   catapult the walker into extrapolation territory.
-2. **Reject / re-seed when a trial is unphysical or near `e_max`**, rather than
-   counting it into the top bin — e.g. treat a trial whose rel energy would land
-   in the top *half* of the window as an unphysical extrapolation and reject it
-   (revisit current bin) instead of accepting the climb.
-3. **Anchor the walk to the ground state** (bottom-up enforcement): periodically
-   re-seed from the global minimum, or add a small downward bias / acceptance
-   toward `E_ref`, so the walk cannot permanently lose the minimum basin.
-4. For **c2**, first **re-sync the run's `wang_landau/` copy to the v1.2.0
-   init fix** (the observed init rel 159.9996 proves it is running old code), then
-   apply the c1 fixes above.
+1. **Reduce `--large-step` 0.40 → 0.20 Å (default)** — a single rattle is less
+   likely to catapult the walker into GPR-extrapolation territory. (Implemented.)
+2. **`--e-reject` extrapolation guard (default `5×e_max`)** — a trial with rel E
+   > e_reject is treated as an unphysical GPR extrapolation and **rejected**
+   (revisits the current bin) instead of being capped into the top bin. Moderate
+   over-window energies (`e_max..e_reject`) are still capped (Fortran behaviour);
+   set `--e-reject` ≤ e_max to disable. (Implemented.)
+3. **Ground-state anchoring / re-seed** — not yet implemented (a larger change);
+   if the reduced large-step + guard still trap the walk, add a periodic re-seed
+   from the global minimum or a downward acceptance bias.
+4. **c2 re-sync to the fixed code** — done: `_runs/c2_boron3_N40_Emax04/`
+   `main.py` + `wang_landau/` re-copied to v1.3.0 (which includes the v1.2.0 init
+   fix + the new guard). (Implemented.)
+
+The `H`-all-zero anomaly in c2's saved `g_of_E.csv` is an artifact of c2's *old*
+run (current `save()` writes `H` correctly) — no code change needed.
+
+**To re-run:** submit the updated `j_*_sweep.sh` scripts (large-step 0.20, new
+guard) on HPC, then re-analyse. Verify convergence with `n_bins_visited` (NOT
+`stages`), a T-dependent `F`, and `C_V` that is not ≈ 0.
 
 ## Files analysed
 
@@ -135,3 +142,9 @@ submission:
 - `wl_output_c2_sweep_{10000,30000,50000}/g_of_E.csv`,
   `thermodynamics.csv`, `heat_capacity.csv`
 - `j_c2_boron3_N40_Emax04_sweep.sh.6649512.out`
+
+## QnA
+
+What is min H = 1? What is H? How do we calculate it? 
+
+How do you initialize a structure? Do you extract from the db then perform random rattle?

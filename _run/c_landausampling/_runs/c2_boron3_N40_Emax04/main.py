@@ -22,7 +22,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import argparse
 import os
@@ -71,8 +71,14 @@ def main():
                         "default 0.40")
     p.add_argument("--small-step", type=float, default=0.05,
                    help="Small Gaussian displacement scale (A), default 0.05")
-    p.add_argument("--large-step", type=float, default=0.40,
-                   help="Large Gaussian displacement scale (A), default 0.40")
+    p.add_argument("--large-step", type=float, default=0.20,
+                   help="Large Gaussian displacement scale (A), default 0.20 "
+                        "(reduced from 0.40 to avoid GPR-extrapolation escapes)")
+    p.add_argument("--e-reject", type=float, default=None,
+                   help="Relative energy (eV/atom) above which a trial is treated "
+                        "as an unphysical GPR extrapolation and REJECTED (revisits "
+                        "current bin) instead of being capped into the top bin. "
+                        "Default = 5*e_max; set <= e_max to disable.")
     p.add_argument("--perturb-symbols", default="Fe",
                    help="Symbol(s) of atoms to rattle, comma-separated; "
                         "default 'Fe'")
@@ -147,6 +153,7 @@ def main():
         n_bins=args.n_bins,
         e_min=args.e_min,
         e_max=args.e_max,
+        e_reject=args.e_reject,
         small_step=args.small_step,
         large_step=args.large_step,
         perturb_symbols=args.perturb_symbols,

@@ -14,13 +14,13 @@ module load intel
 module load impi
 
 echo "Wang-Landau density of states, plain Fe/MgO (dataset) — MC-steps sweep."
-echo "Params (same for all three runs): --n-bins 100 --e-max 0.40 --small-step 0.05 --large-step 0.40 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --rng 42; start-from-min (v1.2.0 init fix)."
+echo "Params (same for all three runs): --n-bins 100 --e-max 0.40 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --rng 42; start-from-min (v1.3.0: init fix + e-reject extrapolation guard)."
 echo "Sweep: --mc-steps 30000 / 60000 / 100000 -> separate output dirs."
 
-OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 30000 --small-step 0.05 --large-step 0.40 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --start-from-min --output ./wl_output_c1_sweep_30000 --rng 42
+OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 30000 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --start-from-min --output ./wl_output_c1_sweep_30000 --rng 42
 
-OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 60000 --small-step 0.05 --large-step 0.40 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --start-from-min --output ./wl_output_c1_sweep_60000 --rng 42
+OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 60000 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --start-from-min --output ./wl_output_c1_sweep_60000 --rng 42
 
-OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 100000 --small-step 0.05 --large-step 0.40 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --start-from-min --output ./wl_output_c1_sweep_100000 --rng 42
+OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 100000 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --temperatures 100,200,300,500,1000 --start-from-min --output ./wl_output_c1_sweep_100000 --rng 42
 
 echo "Done."
