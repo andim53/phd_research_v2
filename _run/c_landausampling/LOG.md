@@ -394,3 +394,45 @@ more visits.
   g(E).
 
 **Time:** ~2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — README QnA: clarify "bottom-up / ground-state sampling" (doc-only)
+
+**Goal (user-confirmed via clarify):** Answer the open README QnA ("When you bottom-up or
+sampling from the ground state, what exactly do you mean?"). User picked **document/clarify
+only, NO code change** (scope: README-only this turn; code deferred to a follow-up).
+
+**Key finding (grounded in code):** The project is **already bottom-up by default**. Unlike
+nested sampling, Wang–Landau has **no top-down/bottom-up estimator** to flip:
+- Acceptance `ln(r) < ln_g[cur] − ln_g[trial]` (`wang_landau_sampler.py:320`) is symmetric —
+  biases toward low-DENSITY bins, not low/high energy; walk moves up and down freely.
+- `_visit` (`:228`) accumulates `g(E)` bin-by-bin from visitation; no `X_i`, no shell weight,
+  no sample ordering → nothing directional to reverse. Converged run returns whole `g(E)` at once.
+- The ONLY directional choice is the initial walker: `initialize(start_from_top=False)` DEFAULT
+  starts at the global minimum (`argmin(db_energies)`, `:289`) and ascends = bottom-up/ground
+  state. `start_from_top=True` starts at the highest in-window structure and descends.
+- `main.py:163` `start_from_top = args.start_from_top and not args.start_from_min` → `--start-from-min`
+  always wins; no flags at all = bottom-up.
+
+**Actions taken:**
+- Read `wang_landau/wang_landau_sampler.py`, `main.py`, current `README.md` before writing.
+- Appended the QnA answer to `README.md` (after line 208): why WL has no up-down/down-up
+  estimator (contrast with `b_nestedsampling` QnA #4), the init-only role of "bottom-up",
+  flag mapping, and "no change needed to be bottom-up".
+- Flagged (in the answer, NOT yet fixed in code/table) a **stale doc discrepancy**: CLI-reference
+  table lists `--start-from-top` default as "on"; actual `main.py` default is **off**.
+
+**Results:** README.md updated; markdown lint skipped (no linter). No code touched (per scope).
+
+**Decisions & reasoning:** Kept strictly to documentation per the user's clarify answer; did
+NOT flip flags or add an estimator. Noted the stale CLI-table default as a follow-up code fix
+rather than editing it this turn (scope = README QnA only).
+
+**Open items:**
+- Fix the stale `--start-from-top` default ("on" → "off") in the README CLI-reference table
+  next time code is touched (deferred; user asked for QnA-only this turn).
+- If the user wants a genuinely one-directional "grow the window from the bottom" estimator,
+  that is a NEW sampler (not a flag) — awaiting user decision in a follow-up.
+
+**Time:** 2026-08-31 (JST).

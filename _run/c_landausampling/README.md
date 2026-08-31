@@ -206,3 +206,77 @@ step-by-step reproduction.
 # QnA
 
 When you bottom-up or sampling from the ground state, what exactly do you mean?
+
+**Short answer: this project is *already* bottom-up (ground-state) sampling by default —
+and, unlike nested sampling, Wang–Landau has no top-down/bottom-up *estimator* to flip.
+"Bottom-up" here refers only to where the walker *starts*, not to how `g(E)` is built.**
+
+### Why there is no "up-down vs down-up" in Wang–Landau (the key difference from `b_nestedsampling`)
+
+In the sibling nested-sampling project, "up-down vs down-up" is a real, deep choice about
+the **estimator**: NS discards the worst (highest-E) live point each iteration and
+accumulates the evidence with the shrinking prior-volume weight `X_i = exp(−i/K)`. That
+quadrature is directional — it is only valid for a sequence of *shrinking* sub-level sets
+descending from the top, which is exactly why inverting it to "throw the lowest E and weight
+from the bottom" breaks the volume identity (see `b_nestedsampling` QnA #4).
+
+Wang–Landau has **no such directional estimator**. It is a flat-histogram random walk whose
+whole purpose is to visit *every* energy bin equally often, regardless of where it started:
+
+- **Symmetric acceptance.** A trial is accepted when `ln(r) < ln_g[cur] − ln_g[trial]`
+  (`wang_landau_sampler.py:320`). This depends only on the current running estimate of
+  `ln g` in the two bins — never on whether the trial is above or below the current energy.
+  The walk moves *up and down* freely; the bias is toward *low-density* bins, not toward
+  low (or high) energy.
+- **Direction-free accumulation.** Every accepted move does `ln_g[b] += ln_f; H[b] += 1`
+  (`_visit`, `:228`). `g(E)` is assembled bin-by-bin from visitation, not by peeling shells
+  off the top or growing them from the bottom. There is no `X_i`, no shell weight, no
+  ordering of samples — so there is nothing to "reverse."
+- **Result is the whole `g(E)` at once.** Because the histogram is driven flat across the
+  full `[e_min, e_max]` window, a converged WL run returns the density of states over the
+  *entire* window in one shot. It does not "drain from the top" or "grow from the bottom";
+  it fills the whole range simultaneously.
+
+This is precisely why Wang–Landau was chosen as the algorithm-sibling: it *is* the
+"map `g(E)` outward from the known ground state" method that the bottom-up nested-sampling
+idea was reaching for — but done with a correct, direction-agnostic estimator instead of an
+inverted-NS quadrature.
+
+### The one place "bottom-up" does enter: the initial walker (`initialize`)
+
+The only directional choice in this project is **where the walk begins**, set by
+`WangLandauSampler.initialize(start_from_top=...)` (`:262`). It has no effect on the final
+`g(E)` for a well-converged run (WL forgets its start), but it controls how quickly and
+safely the walk enters the tracked window:
+
+- **`start_from_top=False` (the DEFAULT) = bottom-up / ground-state start.** It picks the
+  lowest-energy DB structure — the island global minimum, `idx = argmin(db_energies)`,
+  rel E ≈ 0 (`:289`) — and lets the walk *ascend* from there. This is the robust default,
+  and it is exactly "sampling from the ground state": we already have the ground-state
+  structure in the DB, so we seed the walk there and let it climb.
+- **`start_from_top=True` = top-down start.** It picks the highest-rel-energy DB structure
+  that is *strictly inside* `[e_min, e_max)` (`:276–287`), the "flat structure" analogue of
+  the Fortran toy, and lets the walk descend. Out-of-window structures are rejected so the
+  walker never starts above `e_max` (where it would be capped into the top bin and could get
+  trapped — the bug this default was chosen to avoid).
+
+### How the flags map to this (as wired in `main.py`)
+
+- `--start-from-min` (`main.py:111`) — **explicitly** request the ground-state (bottom-up)
+  start. This is already the default; the flag exists only to state the intent loudly.
+- `--start-from-top` (`main.py:105`, default off) — request the top-of-window start instead.
+- Resolution: `start_from_top = args.start_from_top and not args.start_from_min`
+  (`main.py:163`) — so `--start-from-min` always wins, and with **no flags at all you already
+  get bottom-up** from the global minimum.
+
+Note: the "CLI reference" table above lists `--start-from-top` default as "on", which is
+stale — the actual `main.py` default is **off** (bottom-up). (Doc-only discrepancy, flagged
+here; code is the source of truth. To be fixed in the table when code is next touched.)
+
+### So do you need to change anything to be "bottom-up"?
+
+No. Running `main.py` with no start flag (or with `--start-from-min`) already samples from
+the ground state upward. If you want the mapped energy *window itself* to grow from the
+bottom over the course of a run (a genuinely different, one-directional estimator rather than
+the symmetric flat-histogram walk), that would be a **new** sampler — not a flag on this one —
+and is out of scope for this documentation pass.
