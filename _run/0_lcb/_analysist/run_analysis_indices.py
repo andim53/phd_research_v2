@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
 """
-Unified AGOX analysis for the GPR+LCB-only datasets (e.g. 71/72 Novelty-LCB seed DBs).
+Unified AGOX analysis runner for the _run/0_lcb project's GPR+LCB datasets.
 
-Full port of the b_nestedsampling project's analysis runner architecture
+Adapted from the b_nestedsampling analysis runner architecture
 (/home/think/Desktop/research/_run/b_nestedsampling/_analysist/run_analysis_indices.py),
-adapted to project a_lcbnovel. Instead of the old index/folder-map + Stage-1
-`process_database` pipeline, this loads ALL seed databases directly from a
-dataset dir (`--dataset`) and runs the same analyses:
+originally re-hosted under _run/a_lcbnovel (Fe/MgO). This copy is **project-agnostic**
+in its data loading (it globs `seed_*/1_db/db_*.db` and uses the per-structure atom
+count dynamically), so it runs on any of the interstitial-alloy families that live
+under `_analysist/`:
 
+  Family            Host   Interstitial   Leaf dataset dirs (each holds seed_*/1_db)
+  ----------------  -----  -------------  ----------------------------------------------
+  11_bTa            Ta     B              7_fxg_0b, 8_fxg_1b, 9_fxg_3b, 10_fxg_5b, 11_p_Ta10b
+  15_bPt            Pt     B              1_pt0b, 2_pt1b, 3_pt3b, 4_p_pt10b
+  16_bW             W      B              1_w0b, 2_w1b, 3_w3b, 4_p_w10b
+  17_PPt            Pt     P              0_plus5cell/{0_PPt_4x4_20P,1_3x3_20P,...},
+                                          1_plus0cell/{0_0P,...,3_30P}, 2_plus3cell/..., 3_plus10cell/...
+
+The 3-stage pipeline:
   Stage 1 — Best-so-far progression plot (per-seed), plus bullet scatter on Seed 0
             and .xsf export of the low-energy window minima + global ground state.
   Stage 2 — Landscape analysis & evaluation (scripts/plot_structure_landscape.py):
@@ -19,34 +29,27 @@ Produces, under <outdir>:
   conf_space.png                          (Stage 2 landscape + state density)
   binding_probability_vs_temperature.png  (Stage 3 Boltzmann P(T))
 
-Scoped to the Fe/MgO Novelty-LCB heavy runs in this project. Each run's seeds live
-in a dir that holds `seed_*/1_db/db_*.db`; point `--dataset` at that dir:
+Point `--dataset` at ONE leaf dataset dir (a dir that directly contains
+`seed_*/1_db/db_*.db`), and `--outdir` at the analysis output location. A per-family
+README lives in each result dir explaining the exact invocation for its leaves.
 
-  idx 71 -> _analysist/71_novel_runEWindow/dataset       (seed_3..15, 13 seeds)
-  idx 72 -> _analysist/72_novel_AutoGlob_1eVperAtomAboveGlob/dataset (13 seeds)
-  idx 66 -> _analysist/66_MgOFe_20B                      (seed_0..4 at top level)
-
-The EMT benchmark dirs 73/74 have a flat benchmark_results/ layout that does NOT
-fit the seed_*/1_db structure, so they are intentionally excluded here.
-
-All arguments mirror the reference runner:
+All arguments:
   --dataset        : path to the dir containing seed_*/1_db/db_*.db (required)
   --outdir         : output dir for the analysis figures (required)
   --e-max          : custom energy upper limit (eV/atom) for Stage 2 & Stage 3
   --normalize-density : normalize state-density panel to [0,1] (Stage 2 only)
   --start-iter     : keep only structures with AGOX iteration >= this (default 10)
 
-Run from /home/think/Desktop/research/_run/a_lcbnovel/_analysist with the
-agox_v2 conda env:
+Run from /home/think/Desktop/research/_run/0_lcb/_analysist with the agox_v2 conda env:
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
-      --dataset 71_novel_runEWindow/dataset \
-      --outdir 71_novel_runEWindow/analysis_indices
-  ... --dataset 72_novel_AutoGlob_1eVperAtomAboveGlob/dataset --outdir ... --e-max 0.8
+      --dataset 15_bPt/1_pt0b \
+      --outdir 15_bPt/1_pt0b/analysis_indices
+  ... (repeat --dataset/--outdir per leaf; add --e-max as needed per system)
 """
 
 from __future__ import annotations
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import argparse
 import glob

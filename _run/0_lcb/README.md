@@ -32,7 +32,11 @@ that was started outside the workflow and is now being brought under it.
 ├── AGENTS.md            # governing rules for AI agents
 ├── PROMPTS.md           # future-work prompt log (+ shared grammar notes)
 ├── _analysist/          # analysed results (kept separate)
-│   ├── run_analysis_indices.py   # analysis runner (annotated copy — see below)
+│   ├── run_analysis_indices.py   # analysis runner (v2.1.0, project-agnostic)
+│   ├── scripts/                  # runner dep (plot_structure_landscape.py)
+│   ├── 11_bTa/                   # Ta–B results (README tracked; run data gitignored)
+│   ├── 15_bPt/                   # Pt–B results
+│   ├── 16_bW/                    # W–B results
 │   └── 17_PPt/                  # pre-existing Pt–P analysis/run tree (incorporated)
 └── _runs/               # (empty) future self-contained run dirs
 ```
@@ -43,10 +47,12 @@ that was started outside the workflow and is now being brought under it.
   grouped by supercell family and P concentration. Each leaf dir carries
   `seed_*/1_db/db_*.db` AGOX databases plus `scripts/` and `main.py`. It predates
   this project scaffold and is kept in place, not reorganized.
-- **`run_analysis_indices.py` is an annotated copy** of the sibling
-  `a_lcbnovel` Fe/MgO analysis runner (identical bytes, `__version__ = "2.0.0"`).
-  It is **Fe/MgO-scoped and does NOT match the Pt–P `17_PPt` layout** — it must be
-  retargeted to Pt–P before use. See README.AI.md §5.
+- **`run_analysis_indices.py` is the project-agnostic analysis runner** (v2.1.0),
+  adapted from the sibling `a_lcbnovel` Fe/MgO runner. It analyses **any** of the
+  interstitial-alloy families under `_analysist/` (`11_bTa`, `15_bPt`, `16_bW`,
+  `17_PPt`). Point `--dataset` at one leaf dir (holding `seed_*/1_db/db_*.db`) and
+  `--outdir` at its analysis output; run **per leaf**. Each family dir carries a
+  `README.md` with the exact run command for its leaves. See README.AI.md §2b/§3.
 
 ## Environment
 
@@ -60,6 +66,6 @@ that was started outside the workflow and is now being brought under it.
 
 - [x] Project scaffold (doc trio + AGENTS + VERSIONS + PROMPTS) created
 - [x] Existing `_analysist/17_PPt/` tree incorporated and documented
-- [ ] `run_analysis_indices.py` retargeted from Fe/MgO → Pt–P (`17_PPt`)
-- [ ] Analysis results discussed (per-analysis `DISCUSSION.md`)
+- [x] `run_analysis_indices.py` made project-agnostic (analyses 11_bTa/15_bPt/16_bW/17_PPt) + per-family READMEs
+- [ ] Analysis results generated (per-leaf run) and discussed (per-analysis `DISCUSSION.md`)
 - [ ] Any new heavy runs added under `_runs/<NN>_<descriptor>/`

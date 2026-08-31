@@ -30,7 +30,11 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 ├── PROMPTS.md           # future-work prompt log (+ shared grammar notes)
 ├── .gitignore           # project-level ignores (regenerable outputs)
 ├── _analysist/          # analysed/intermediate results (separate from runs)
-│   ├── run_analysis_indices.py   # analysis runner (v2.0.0, annotated copy)
+│   ├── run_analysis_indices.py   # analysis runner (v2.1.0, project-agnostic)
+│   ├── scripts/                  # runner deps (plot_structure_landscape.py)
+│   ├── 11_bTa/                   # Ta–B results (run data gitignored; README tracked)
+│   ├── 15_bPt/                   # Pt–B results
+│   ├── 16_bW/                    # W–B results
 │   └── 17_PPt/                  # incorporated Pt–P analysis/run tree
 │       ├── 0_plus5cell/         #   supercell-family AGOX runs (0_PPt_4x4_20P,
 │       ├── 1_plus0cell/         #     1_3x3_20P, 2_3x3_30P, 3_3x3_0P, 4_3x3_10p)
@@ -60,19 +64,19 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
   per-run generated outputs out of git; the canonical source lives in
   `17_PPt/scripts/` and each family's `main.py`.
 
-### 2b. `run_analysis_indices.py` — analysis runner (annotated copy)
+### 2b. `run_analysis_indices.py` — analysis runner (project-agnostic)
 
-- `__version__ = "2.0.0"`. It is a **byte-identical copy** of the `a_lcbnovel`
-  Fe/MgO analysis runner
-  (`/home/think/Desktop/research/_run/a_lcbnovel/_analysist/run_analysis_indices.py`).
-- **It is NOT yet usable for this project.** Its docstring/scope targets the
-  Fe/MgO `seed_*/1_db/db_*.db` dataset dirs of `a_lcbnovel` (indices 71/72), and
-  it imports Fe/MgO `_analysist/scripts/` deps. It does **not** match the Pt–P
-  `17_PPt` layout.
-- **Action required (future):** retarget the runner to the Pt–P `17_PPt` structure
-  (correct dataset paths, Pt–P `scripts/` deps, energy windows) before running any
-  analysis. Until then, treat it as reference documentation of the 3-stage
-  pipeline: ① best-so-far progression, ② PCA landscape, ③ Boltzmann probability.
+- `__version__ = "2.1.0"`. Adapted from the `a_lcbnovel` Fe/MgO runner; this copy is
+  **project-agnostic** — it globs `seed_*/1_db/db_*.db` and reads the atom count
+  from each structure, so it runs on any interstitial-alloy family under
+  `_analysist/` (11_bTa, 15_bPt, 16_bW, 17_PPt).
+- **Dependency:** imports `scripts/plot_structure_landscape.py` (copied into
+  `_analysist/scripts/`; self-contained, only stdlib/numpy/scipy/matplotlib).
+- Point `--dataset` at **one leaf** dataset dir (a dir holding `seed_*/1_db/db_*.db`)
+  and `--outdir` at its analysis output. Run per leaf. Each family dir carries a
+  `README.md` with the exact invocation for its leaves.
+- 3-stage pipeline: ① best-so-far progression, ② PCA landscape, ③ Boltzmann
+  probability. CLI: `--dataset --outdir --e-max --normalize-density --start-iter`.
 
 ## 3. Entry points & commands
 

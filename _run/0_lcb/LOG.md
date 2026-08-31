@@ -61,3 +61,66 @@ and adding the standard deliverable set + notes.
 - Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
 
 **Time:** ~2026-08-31 14:34 JST
+
+---
+
+## 2026-08-31 — Session: analysis runner retargeted + per-family READMEs
+
+**Goal**
+Make `_analysist/run_analysis_indices.py` able to analyse the current results under
+`_analysist/` (all 4 interstitial-alloy families) and add a README per result dir
+explaining how to run the runner for that dir. Do not run the analysis code yet.
+
+**Clarify (confirmed via clarify tool)**
+- Scope: all 4 trees — `11_bTa` (Ta–B), `15_bPt` (Pt–B), `16_bW` (W–B),
+  `17_PPt` (Pt–P).
+- README granularity: one README per **family tree** (`15_bPt/README.md`,
+  `16_bW/README.md`, `11_bTa/README.md`, `17_PPt/README.md`) — 4 READMEs.
+- Dependency: copy `plot_structure_landscape.py` (+ deps) into a new
+  `_analysist/scripts/` so the runner works from `_analysist`.
+- Git: track the new READMEs + edited runner (commit).
+
+**Actions**
+1. Surveyed `_analysist/`: confirmed 4 result trees with leaf dataset dirs holding
+   `seed_*/1_db/db_*.db`; verified DBs load and atom counts differ per system
+   (Pt108, W54, Ta54, P27Pt108).
+2. Diagnosed the runner's blocked import: it does
+   `from scripts.plot_structure_landscape import plot_structure_landscape`, which
+   resolved against a nonexistent `_analysist/scripts/`.
+3. Copied `17_PPt/scripts/plot_structure_landscape.py` → `_analysist/scripts/`
+   (verified self-contained: only stdlib/numpy/scipy/matplotlib imports; import
+   resolves under `agox_v2`).
+4. Edited `run_analysis_indices.py`:
+   - Rewrote the Fe/MgO-scoped docstring to document the 4-family scope and
+     per-leaf `--dataset`/`--outdir` invocation.
+   - Bumped `__version__` 2.0.0 → 2.1.0.
+   - Confirmed no functional change needed: the runner already globs
+     `seed_*/1_db/db_*.db` and reads atom count dynamically.
+   - Verified `py_compile` under `agox_v2`.
+5. Wrote 4 per-family READMEs (`15_bPt`, `16_bW`, `11_bTa`, `17_PPt`), each with a
+   leaf table, exact per-leaf run commands, optional flags, and outputs.
+6. Updated `.gitignore` to track `11_bTa/README.md` (and un-ignore its dir) while
+   keeping `11_bTa` run data excluded. Verified ignore/track rules.
+7. Updated `README.AI.md` (layout + §2b runner section) and `VERSIONS.md`.
+
+**Results**
+- Runner `v2.1.0` now compiles and imports cleanly under `agox_v2`; ready to run
+  per leaf.
+- `_analysist/scripts/plot_structure_landscape.py` added.
+- 4 per-family READMEs created with exact run instructions.
+- Gitignore updated so `11_bTa/README.md` is tracked while its run data is not.
+
+**Decisions & reasoning**
+- **Keep the runner project-agnostic** — no per-system code paths; the data loader
+  already handles differing atom counts, so one runner serves all families.
+- **`--e-max` left as a documented optional flag** — energy-per-atom ranges differ
+  per system, so each README suggests setting it (e.g. `0.5`) rather than hardcoding.
+- **11_bTa README tracked, data excluded** — honours the earlier off-scope decision
+  while making the now-usable results discoverable.
+
+**Open items**
+- Run the analysis (per-leaf) once the owner requests it; add per-analysis
+  `DISCUSSION.md` per the workflow.
+- Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
+
+**Time:** ~2026-08-31 15:28 JST

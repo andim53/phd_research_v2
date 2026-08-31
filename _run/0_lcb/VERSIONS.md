@@ -14,7 +14,8 @@ old→new in `LOG.md`.
 
 | File | Version |
 |---|---|
-| `_analysist/run_analysis_indices.py` | 2.0.0 |
+| `_analysist/run_analysis_indices.py` | 2.1.0 |
+| `_analysist/scripts/plot_structure_landscape.py` | (copied from `17_PPt/scripts/`, unversioned) |
 
 > `17_PPt/` scripts and `main.py` files currently carry no module-level `__version__`
 > (pre-dates this project). Adding/bumping versions for them is a pending task.

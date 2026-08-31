@@ -65,9 +65,11 @@ No task is complete until all three are present and consistent with the work don
 - **`_analysist/17_PPt/` is the incorporated Pt–P run tree.** It predates this
   scaffold and is **kept as-is, not reorganized**. The canonical scripts live in
   `17_PPt/scripts/` and each family's `main.py`; per-run copies are snapshots.
-- **`run_analysis_indices.py` is an annotated Fe/MgO copy** from `a_lcbnovel`. It
-  must be **retargeted to Pt–P (`17_PPt`)** before being used for analysis. Do not
-  run it on `17_PPt` as-is.
+- **`run_analysis_indices.py` is the project-agnostic analysis runner** (v2.1.0),
+  adapted from `a_lcbnovel`'s Fe/MgO runner. It analyses any of the interstitial
+  families under `_analysist/` (`11_bTa`, `15_bPt`, `16_bW`, `17_PPt`) by pointing
+  `--dataset` at one leaf dir (holding `seed_*/1_db/db_*.db`) and `--outdir` at its
+  output. Dep: `_analysist/scripts/plot_structure_landscape.py`.
 - **`_runs/`** — future self-contained run dirs (`<NN>_<descriptor>/`: job `j_*.sh`
   + `main*.py` + `scripts/`), each launchable in isolation. Heavy HPC runs go here,
   not in the project root.
