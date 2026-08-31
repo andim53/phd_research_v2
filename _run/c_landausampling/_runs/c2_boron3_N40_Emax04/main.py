@@ -22,7 +22,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import os
@@ -102,11 +102,17 @@ def main():
     p.add_argument("--temperatures", default="100,200,300,500,1000",
                    help="Comma-separated temperatures (K) for thermodynamics "
                         "post-processing")
-    p.add_argument("--start-from-top", action=argparse.BooleanOptionalAction,
-                   default=True,
-                   help="Initialize the walker at the top of the bin range "
-                        "(flat-structure analogue; Fortran default). "
-                        "Pass --no-start-from-top to start from the minimum.")
+    p.add_argument("--start-from-top", action="store_true",
+                   default=False,
+                   help="Initialize the walker at the TOP of the tracked window "
+                        "[e_min, e_max) (pick the highest-rel-energy DB structure "
+                        "strictly inside the window; the 'flat' analogue). Default "
+                        "off: start from the global minimum and walk up.")
+    p.add_argument("--start-from-min", action="store_true",
+                   help="Explicitly initialize the walker from the GLOBAL MINIMUM "
+                        "(lowest-energy DB structure, rel E ~ 0) and let the walk "
+                        "ascend. This is the default behaviour; provided for "
+                        "clarity/explicitness.")
     p.add_argument("--output", default=os.path.join(_HERE, "wl_output"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42,
@@ -152,7 +158,10 @@ def main():
         swap_rattle=args.swap_rattle,
         rng=np.random.default_rng(args.rng),
     )
-    sampler.initialize(start_from_top=args.start_from_top)
+    # Initialize: --start-from-top picks the top of the tracked window; otherwise
+    # (default, or --start-from-min) start from the global minimum and walk up.
+    start_from_top = args.start_from_top and not args.start_from_min
+    sampler.initialize(start_from_top=start_from_top)
     sampler.run(n_steps=args.mc_steps,
                 progress_every=max(args.check_interval, 1))
 

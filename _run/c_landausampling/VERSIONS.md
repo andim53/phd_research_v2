@@ -15,9 +15,9 @@ Versioning rules:
 
 | File | Version | Description |
 |---|---|---|
-| `main.py` | 1.1.0 | Root runner: load dataset → train GPR → WangLandauSampler → thermodynamics; added `--swap-prob`/`--max-swaps`/`--swap-rattle` CLI flags |
+| `main.py` | 1.2.0 | Root runner: load dataset → train GPR → WangLandauSampler → thermodynamics; added `--start-from-min` flag; default init now starts from the global minimum (start_from_top=False) |
 | `wang_landau/__init__.py` | 1.0.0 | Package re-exports |
-| `wang_landau/wang_landau_sampler.py` | 1.1.0 | WangLandauSampler (flat-histogram density of states, standard→1/t); added swap (permutation) move with `swap_prob`/`max_swaps`/`swap_rattle` |
+| `wang_landau/wang_landau_sampler.py` | 1.2.0 | WangLandauSampler (flat-histogram density of states, standard→1/t); added swap move; init fix: default start_from_top=False (start from global minimum); start_from_top=True requires rel E strictly inside [e_min,e_max) |
 | `wang_landau/gpr_training.py` | 1.0.0 | load_all_seeds, build_gpr, validate_gpr |
 | `wang_landau/thermodynamics.py` | 1.0.0 | g_of_E_to_thermodynamics, heat_capacity_from_thermo |
 | `wang_landau/utils.py` | 1.0.0 | K_B constant, shift_energies, _logsumexp |

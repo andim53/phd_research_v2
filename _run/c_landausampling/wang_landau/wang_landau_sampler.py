@@ -14,7 +14,7 @@ evaluated by the GPR surrogate; and bins are over relative energy per atom
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 from typing import List, Optional
 
@@ -259,24 +259,38 @@ class WangLandauSampler:
 
     # -- Initialisation & run ------------------------------------------------
 
-    def initialize(self, start_from_top: bool = True):
-        """Pick the initial walker: a DB structure near the top of the bin
-        range (the 'flat structure' analogue, matching the Fortran which starts
-        at x_flat), or the global minimum if ``start_from_top`` is False."""
+    def initialize(self, start_from_top: bool = False):
+        """Pick the initial walker.
+
+        Default (``start_from_top=False``): start from the global minimum
+        (lowest-energy DB structure, rel E ≈ 0) and let the walk ascend — the
+        robust choice. This avoids the previous behaviour where starting at the
+        'flat' (highest) structure could land ABOVE the tracked window (rel E
+        > e_max, capped into the top bin) and trap the walk there.
+
+        With ``start_from_top=True``: pick the highest-rel-energy DB structure
+        whose rel energy is STRICTLY INSIDE [e_min, e_max) — out-of-window
+        energies (rel >= e_max or rel < e_min) are rejected so the walker never
+        starts outside the tracked range.
+        """
         if start_from_top:
             candidates = []
             for s in self.db_structures:
                 rel = self.rel_energy(s)
-                b = self.get_bin(rel)
-                if 0 <= b < self.n_bins:
+                # strictly inside the tracked window [e_min, e_max)
+                if self.e_min <= rel < self.e_max:
                     candidates.append((rel, s))
             if not candidates:
-                raise RuntimeError("No DB structure falls inside the bin range.")
-            rel, s = max(candidates, key=lambda c: c[0])   # highest in range
+                raise RuntimeError(
+                    "No DB structure falls strictly inside the bin window "
+                    f"[{self.e_min}, {self.e_max}) eV/atom. Widen --e-max.")
+            rel, s = max(candidates, key=lambda c: c[0])   # highest in-window
         else:
             idx = int(np.argmin(self.db_energies))
             s = self.db_structures[idx]
             rel = self.rel_energy(s)
+            # guard: if even the minimum structure is out of window, still allow
+            # (it is at/near rel 0 which is inside [e_min, e_max) for e_min=0)
         self.x_current = s.copy()
         self.E_current = self._energy_of(s)
         self.bin_current = self.get_bin(rel)

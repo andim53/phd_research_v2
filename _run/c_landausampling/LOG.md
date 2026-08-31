@@ -315,3 +315,46 @@ and `state_density_c2.png` (2100x1350) + summary CSV produced. Key findings
   the sweep README/TUTORIAL sections; those edits left untouched.
 
 **Time:** ~2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (4) — Fix initialize() to start inside the tracked window + new _runs
+
+**Goal (user-confirmed via clarify):** Fix the Wang-Landau initialization so the walker
+starts inside the tracked energy window (it previously started ABOVE it — c1 init rel E
+0.675 eV/atom, c2 159.9996 eV/atom — and got stuck at the top bin). Update the HPC sweep
+run dirs for c1 and c2.
+
+**Clarify decisions (all user-confirmed):**
+1. Change the default init to start from the global minimum (`start_from_top=False`) and
+   walk up (the robust choice; user also asked for an explicit `--start-from-min` flag).
+2. Bump `wang_landau_sampler.py` to 1.2.0; re-copy the fixed `wang_landau/` + `main.py`
+   into BOTH `_runs/c1` and `_runs/c2`; update VERSIONS/LOG.
+3. Regenerate the sweep job scripts (keep mc-steps 10k/30k/50k + same params, add
+   `--start-from-min`).
+
+**Actions taken:**
+- `wang_landau_sampler.py` 1.1.0 → 1.2.0: `initialize()` default `start_from_top=False`
+  (start from global minimum). `start_from_top=True` now requires the candidate rel E to be
+  STRICTLY inside `[e_min, e_max)` (out-of-window energies rejected) — previously it only
+  checked the capped bin was in range, so rel E > e_max still landed in the top bin.
+- `main.py` 1.1.0 → 1.2.0: added explicit `--start-from-min` flag; default init = start from
+  min; `--start-from-top` now `store_true` (was BooleanOptionalAction default True).
+- Re-copied fixed `main.py` + `wang_landau/*.py` into `_runs/c1_mgofe_N40_Emax04` and
+  `_runs/c2_boron3_N40_Emax04` (all v1.2.0).
+- Regenerated `j_c1_..._sweep.sh` and `j_c2_..._sweep.sh` with `--start-from-min` added
+  (kept 64-core headers, mc-steps 10k/30k/50k, same other params).
+- Updated VERSIONS.md.
+
+**Results (real output):**
+- Smoke test PASS; default init now starts at the global minimum (rel E 0.010 → bin 0) in
+  both the 1-atom toy and the 2-species swap test.
+- Unit check (fake linear GPR, e_max=0.40): `--start-from-top` → rel E 0.30 bin 30 (highest
+  strictly in-window, excludes the 0.4+ out-of-window); default → rel E 0 bin 0.
+- Both run dirs compile (v1.2.0); init fix present in the copied `wang_landau_sampler.py`.
+
+**Open items:**
+- Re-run the HPC sweeps with the fixed init (`pjsub` the updated `j_*_sweep.sh`) to get
+  converged g(E) spanning the window instead of a top-bin delta.
+
+**Time:** ~2026-08-31 (JST).
