@@ -205,4 +205,4 @@ step-by-step reproduction.
 
 # QnA
 
-What is --n-bins? What do they do?
+When you bottom-up or sampling from the ground state, what exactly do you mean?
