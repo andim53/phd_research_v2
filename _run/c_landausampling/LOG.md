@@ -358,3 +358,39 @@ run dirs for c1 and c2.
   converged g(E) spanning the window instead of a top-bin delta.
 
 **Time:** ~2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (5) — Increase resolution: n_bins 100 + bigger sweep MC steps
+
+**Goal (user-confirmed via clarify):** Update the run scripts in `_runs/` to use a higher
+resolution `--n-bins 100` (was 40), and bump the sweep MC-steps since the finer grid needs
+more visits.
+
+**Clarify decisions (all user-confirmed):**
+1. Change `--n-bins 40` → `100` in ALL job scripts in BOTH run dirs (c1: mc1000 + main +
+   sweep; c2: main + sweep).
+2. Keep the run dir names as-is (`c1_mgofe_N40_Emax04`, `c2_boron3_N40_Emax04`) — N40 is a
+   historical descriptor, not changed.
+3. Bump sweep MC-steps 10k/30k/50k → 30k/60k/100k so the 100-bin grid has enough visits.
+
+**Actions taken:**
+- Replaced `--n-bins 40` → `100` in every `.sh` job script in both run dirs.
+- Updated the sweep scripts: MC-steps now 30000/60000/100000, output dirs renamed to
+  `wl_output_{c1,c2}_sweep_{30000,60000,100000}`.
+- Updated the run-dir README/TUTORIAL n_bins references (40 → 100, "fine resolution"), version
+  refs to v1.2.0.
+- Updated the root `main.py` docstring example (`--n-bins 40` → `100`) and re-copied to both
+  run dirs.
+
+**Results (real output):**
+- Verified all job scripts use `n-bins 100`; sweep mc-steps are 30k/60k/100k.
+- Run-dir main.py accepts `--n-bins` (no fixed limit); all compile OK.
+- The old `.out`/`.d000...` HPC logs still reference n_bins 40 but are historical regenerable
+  artifacts (gitignored), not edited.
+
+**Open items:**
+- Launch the re-run sweeps on HPC (`pjsub` the updated `j_*_sweep.sh`) for converged 100-bin
+  g(E).
+
+**Time:** ~2026-08-31 (JST).

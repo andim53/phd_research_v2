@@ -2,7 +2,7 @@
 
 This reproduces the Wang–Landau run in
 `_runs/c1_mgofe_N40_Emax04/`: **plain Fe/MgO** (`dataset`, 13 seeds),
-`--n-bins 40 --e-max 0.40`, `--mc-steps 20000000`, rattle-only on Fe (no swap).
+`--n-bins 100 --e-max 0.40`, `--mc-steps 20000000`, rattle-only on Fe (no swap).
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This reproduces the Wang–Landau run in
 ```bash
 cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_mgofe_N40_Emax04
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
-    --dataset dataset --n-bins 40 --e-max 0.40 \
+    --dataset dataset --n-bins 100 --e-max 0.40 \
     --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
     --perturb-symbols Fe \
     --temperatures 100,200,300,500,1000 \
@@ -31,7 +31,7 @@ pjsub j_c1_mgofe_N40_Emax04.sh
 ## What each flag does
 
 - `--dataset dataset` — plain Fe/MgO (13 seeds, 1297 structures).
-- `--n-bins 40` — 40 energy bins for g(E).
+- `--n-bins 100` — 100 energy bins for g(E) (fine resolution).
 - `--e-max 0.40` — upper bin edge (eV/atom rel), spans island(0)→barrier/flat.
 - `--mc-steps 20000000` — WL MC steps.
 - `--small-step 0.05` / `--large-step 0.40` — small/large Gaussian rattle scales.

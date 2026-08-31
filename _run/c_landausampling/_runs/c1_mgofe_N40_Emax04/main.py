@@ -12,7 +12,7 @@ Run with the agox_v2 conda env:
     /home/think/miniconda3/envs/agox_v2/bin/python main.py [options]
 
     /home/think/miniconda3/envs/agox_v2/bin/python main.py \
-    --dataset dataset --n-bins 40 --e-max 0.40 --mc-steps 2000000 \
+    --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 2000000 \
     --temperatures 100,200,300,500,1000 --output ./wl_output --rng 42
 
 This script relies on:

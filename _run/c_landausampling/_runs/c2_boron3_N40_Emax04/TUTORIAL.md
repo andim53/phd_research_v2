@@ -2,7 +2,7 @@
 
 This reproduces the Wang–Landau run in
 `_runs/c2_boron3_N40_Emax04/`: **B3-doped** (`dataset_boron3`, 7 seeds),
-`--n-bins 40 --e-max 0.40`, `--mc-steps 20000000`, mobile Fe+B with the
+`--n-bins 100 --e-max 0.40`, `--mc-steps 20000000`, mobile Fe+B with the
 **swap (permutation) move enabled** (`--swap-prob 0.2 --max-swaps 2`).
 
 ## Prerequisites
@@ -15,7 +15,7 @@ This reproduces the Wang–Landau run in
 ```bash
 cd /home/think/Desktop/research/_run/c_landausampling/_runs/c2_boron3_N40_Emax04
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
-    --dataset dataset_boron3 --n-bins 40 --e-max 0.40 \
+    --dataset dataset_boron3 --n-bins 100 --e-max 0.40 \
     --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
     --perturb-symbols Fe,B \
     --swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05 \
@@ -33,7 +33,7 @@ pjsub j_c2_boron3_N40_Emax04.sh
 ## What each flag does
 
 - `--dataset dataset_boron3` — B3-doped (7 seeds, B3Fe25Mg25O25, 78 atoms).
-- `--n-bins 40` / `--e-max 0.40` — 40 bins over `[0, 0.40]` eV/atom rel.
+- `--n-bins 100` / `--e-max 0.40` — 100 bins over `[0, 0.40]` eV/atom rel (fine).
 - `--mc-steps 20000000` — WL MC steps.
 - `--small-step 0.05` / `--large-step 0.40` — small/large Gaussian rattle scales.
 - `--perturb-symbols Fe,B` — rattle both mobile species.
