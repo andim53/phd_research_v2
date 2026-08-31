@@ -1,0 +1,113 @@
+
+--- Starting Seed: 0 ---
+-> Host atoms: 256, Target: 20.0%, Calculated interstitials to add: 64
+--- System Generation Summary (FCC) ---
+Host Formula (Supercell): Pt256
+Supercell Dimensions: 4x4x4
+Total Host Atoms: 256
+Max Interstitial Sites: 256
+Added Interstitials: 64 (Randomly)
+Final Chemical Formula: P64Pt256
+---------------------------------
+╭───────────────────────────── Environment report ─────────────────────────────╮
+│ Atoms in search:                                                             │
+│     P = 64                                                                   │
+│     Pt = 256                                                                 │
+│ Template formula:                                                            │
+│ Full formula: P64Pt256                                                       │
+│ Cell:                                                                        │
+│     16.70 0.00 0.00                                                          │
+│     0.00 16.70 0.00                                                          │
+│     0.00 0.00 16.70                                                          │
+│ Periodicity:                                                                 │
+│     True True True                                                           │
+│ Box constraint: True                                                         │
+│ Confinement corner                                                           │
+│     0.00 0.00 0.00                                                           │
+│ Confinement cell:                                                            │
+│     16.70 0.00 0.00                                                          │
+│     0.00 16.70 0.00                                                          │
+│     0.00 0.00 16.70                                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+2026-07-18 19:16:16,166	INFO worker.py:1927 -- Started a local Ray instance.
+Saved Amorph to: generated_structures/run_20260718_191410
+-> Generated amorphous candidate 0
+-> Generated rattled candidate 0
+-> Generated permuted candidate 0
+Seed generation status: Successes = 1, Failures = 0
+GPR: Attaching to database: <agox.databases.database.Database object at 0x148c53bdfd90>
+Using /home/pj24001864/ku40003144/tmp/ray as Ray temporary folder because the given or generated path is too long.
+Ray Resources
+	node:__internal_head__ = 1.0
+	node:172.16.15.8 = 1.0
+	memory = 48000000000.0
+	object_store_memory = 12000000000.0
+	CPU = 24.0
+Attempt 0: Pool started successfully.
+SamplerKMeans: Attaching to database: <agox.databases.database.Database object at 0x148c53bdfd90>
+Numpy random seed: 0
+Modules in pool
+   0: GPR - Attrs. = 8
+   1: AmorphStructRandomize - Attrs. = 0
+   2: RattleGenerator - Attrs. = 0
+   3: AmorphPermutationGenerator - Attrs. = 0
+   4: AcqusitionCalculator - Attrs. = 0
+Making module interconnections on actors
+   0: Connected AcqusitionCalculator with GPR
+        Attribute name: model
+Interconnecting time: 0.01
+Total updates: 0 in 0.00 s for 0 modules
+fatal: not a git repository: '/home/pj24001864/ku40003144/miniconda3/envs/gpaw_env/lib/python3.11/site-packages/.git'
+
+       _            _  _  _        _  _  _  _    _           _ 
+     _(_)_       _ (_)(_)(_) _   _(_)(_)(_)(_)_ (_)_       _(_)
+   _(_) (_)_    (_)         (_) (_)          (_)  (_)_   _(_)  
+ _(_)     (_)_  (_)    _  _  _  (_)          (_)    (_)_(_)    
+(_) _  _  _ (_) (_)   (_)(_)(_) (_)          (_)     _(_)_     
+(_)(_)(_)(_)(_) (_)         (_) (_)          (_)   _(_) (_)_   
+(_)         (_) (_) _  _  _ (_) (_)_  _  _  _(_) _(_)     (_)_ 
+(_)         (_)    (_)(_)(_)(_)   (_)(_)(_)(_)  (_)         (_)  v3.10.2_unknown 
+
+
+────────────────────────────────── Observers ───────────────────────────────────
+  Order 1 - Name: PoolParallelCollector.generate_candidates
+  Order 2 - Name: PoolRelaxer.postprocess_candidates
+  Order 3 - Name: LCBAcquisitor.prioritize_candidates
+  Order 4 - Name: LocalOptimizationEvaluator.evaluate
+  Order 5 - Name: Database.store_in_database
+  Order 100 - Name: ParallelPool.update_pool_actors
+────────────────────────── Observers set/get reports ───────────────────────────
+  PoolParallelCollector.generate_candidates
+      Sets 'candidates'
+  PoolRelaxer.postprocess_candidates
+      Gets 'candidates'
+      Sets 'candidates'
+  LCBAcquisitor.prioritize_candidates
+      Gets 'candidates'
+      Sets 'prioritized_candidates'
+  LocalOptimizationEvaluator.evaluate
+      Gets 'prioritized_candidates'
+      Sets 'evaluated_candidates'
+  Database.store_in_database
+      Gets 'evaluated_candidates'
+  ParallelPool.update_pool_actors
+      Doesnt set/get anything
+  
+  Overall:
+  Get keys: {'evaluated_candidates', 'candidates', 'prioritized_candidates'}
+  Set keys: {'evaluated_candidates', 'candidates', 'prioritized_candidates'}
+  Key match: True
+─────────────────────────────── AGOX run started ───────────────────────────────
+
+
+───────────────────────────────── Iteration: 1 ─────────────────────────────────
+Time: 19:16:24
+Date: 18/07/2026
+──────────────────────────── PoolParallelCollector ─────────────────────────────
+Number of candidates this iteration: 10
+───────────────────────────────── PoolRelaxer ──────────────────────────────────
+──────────────────────────────── LCBAcquisitor ─────────────────────────────────
+ Candidate ┃ Energy ┃ Uncertainty ┃ Fitness ┃ Generator 
+━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━
+────────────────────────── LocalOptimizationEvaluator ──────────────────────────
+Trying candidate - remaining 10

@@ -1,0 +1,37 @@
+# Project-level ignores for 0_lcb (Pt-P LCB)
+# The parent repo's .gitignore path rules do not reach a nested project dir,
+# so this project keeps its own set. Regenerable outputs stay out of git;
+# code + docs are tracked.
+
+# === Regenerable AGOX/GPAW outputs ===
+*.db
+*.xsf
+*.traj
+*.png
+*.csv
+*.out
+*.log
+
+# === Run-output directories ===
+generated_structures/
+gpaw_logs/
+gpaw_logs.*/
+seed_*/0_result/
+
+# === Analysis staging/final (regenerable) ===
+_analysist/0_analy/
+_analysist/1_result/
+
+# === Compiled / checkpoint artifacts ===
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# === Duplicated per-run script snapshots (edit canonical 17_PPt/scripts/) ===
+# Keep the canonical scripts/ + family main.py + j_*.sh; skip the many per-run copies.
+_analysist/17_PPt/*/scripts/
+_analysist/17_PPt/*/*/scripts/
+
+# === Off-scope analysis tree (Ta-B, not Pt-P LCB) ===
+# 11_bTa/ holds a Ta-B system, outside this project's Pt-P/17_PPt scope.
+_analysist/11_bTa/
