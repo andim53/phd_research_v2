@@ -124,3 +124,54 @@ explaining how to run the runner for that dir. Do not run the analysis code yet.
 - Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
 
 **Time:** ~2026-08-31 15:28 JST
+
+---
+
+## 2026-08-31 — Session: fix Stage-2 crash in analysis runner (stale dep)
+
+**Goal**
+Fix `TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`
+thrown by `run_analysis_indices.py` at Stage 2, when run on the 15_bPt results.
+"Update the scripts of root project."
+
+**Clarify / diagnosis**
+- Error occurred in `step2_landscape` at the `plot_structure_landscape(...)` call,
+  which passes `s=15`, `normalize_density=...`, `density_x_label=...`.
+- Root cause: the `_analysist/scripts/plot_structure_landscape.py` I had copied in
+  the previous session came from the **stale** `17_PPt/scripts/` version, which does
+  **not** accept `s`, `normalize_density`, or `density_x_label`. The runner's call
+  signature matches the **`a_lcbnovel/_analysist/scripts/`** version instead (that
+  version carries `__version__ = "1.0.0"` and all three params).
+- The correct dep was confirmed by diffing the runner's call args against candidate
+  copies (`a_lcbnovel`, `b_nestedsampling` have the params; `17_PPt` does not).
+
+**Actions**
+1. Confirmed `a_lcbnovel/_analysist/scripts/plot_structure_landscape.py` accepts every
+   argument the runner passes (s, normalize_density, density_x_label, black_seed_zero,
+   etc.).
+2. Replaced `0_lcb/_analysist/scripts/plot_structure_landscape.py` with the correct
+   version from `a_lcbnovel/_analysist/scripts/` (now `__version__ = "1.0.0"`).
+3. Verified by real execution: ran the runner on `15_bPt/4_p_pt10b` (1 seed) and then
+   on the **exact failing command** `15_bPt/1_pt0b`. Both completed all 3 stages
+   (Stage 1 progression + 5 xsf, Stage 2 landscape, Stage 3 Boltzmann P(T)).
+4. Updated `VERSIONS.md` (dep version + corrected source).
+
+**Results**
+- The exact reported command now runs to completion (`DONE`, outputs under
+  `15_bPt/1_pt0b/analysis_indices`).
+- Analysis outputs are regenerable and gitignored (only the dep `.py` + VERSIONS.md
+  are tracked).
+
+**Decisions & reasoning**
+- **Correct dep is the `a_lcbnovel` version** (not `17_PPt/scripts/`). The runner was
+  ported from `a_lcbnovel`, whose dep matches its call signature. This mirrors the
+  known pitfall in the b_nestedsampling AGENTS.md ("stale version lacks the `s=`
+  argument → TypeError").
+
+**Open items**
+- Run the full per-leaf analysis set across all 4 families when the owner requests it;
+  add per-analysis `DISCUSSION.md`.
+- Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
+
+**Time:** ~2026-08-31 (later session)
+
