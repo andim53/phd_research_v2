@@ -15,13 +15,13 @@ Versioning rules:
 
 | File | Version | Description |
 |---|---|---|
-| `main.py` | 1.3.0 | Root runner: load dataset → train GPR → WangLandauSampler → thermodynamics; added `--start-from-min` flag; default init starts from the global minimum (start_from_top=False); added `--e-reject` extrapolation guard; reduced `--large-step` default 0.40→0.20 |
+| `main.py` | 1.4.0 | Root runner: load dataset → train GPR → WangLandauSampler → thermodynamics; added `--start-from-min` flag; default init starts from the global minimum (start_from_top=False); added `--e-reject` extrapolation guard; reduced `--large-step` default 0.40→0.20; added `--relax-steps` (basin-hopping GPR relax, default off) |
 | `wang_landau/__init__.py` | 1.0.0 | Package re-exports |
-| `wang_landau/wang_landau_sampler.py` | 1.3.0 | WangLandauSampler (flat-histogram density of states, standard→1/t); added swap move; init fix: default start_from_top=False (start from global minimum); start_from_top=True requires rel E strictly inside [e_min,e_max); added `e_reject` extrapolation guard (reject trials > e_reject, default 5*e_max); reduced default large_step 0.40→0.20 |
+| `wang_landau/wang_landau_sampler.py` | 1.4.0 | WangLandauSampler (flat-histogram density of states, standard→1/t); added swap move; init fix: default start_from_top=False (start from global minimum); start_from_top=True requires rel E strictly inside [e_min,e_max); added `e_reject` extrapolation guard (reject trials > e_reject, default 5*e_max); reduced default large_step 0.40→0.20; added `relax_steps` basin-hopping mode (BFGS on GPR-as-calculator, fixing non-mobile atoms, default off) |
 | `wang_landau/gpr_training.py` | 1.0.0 | load_all_seeds, build_gpr, validate_gpr |
 | `wang_landau/thermodynamics.py` | 1.0.0 | g_of_E_to_thermodynamics, heat_capacity_from_thermo |
 | `wang_landau/utils.py` | 1.0.0 | K_B constant, shift_energies, _logsumexp |
-| `smoke_test_wang_landau.py` | 1.2.0 | Cheap local validation (fake 1-atom double-well GPR) + 2-species swap-move test + extrapolation-guard test |
+| `smoke_test_wang_landau.py` | 1.3.0 | Cheap local validation (fake 1-atom double-well GPR) + 2-species swap-move test + extrapolation-guard test + basin-hopping relax test |
 | `_analysist/analyze_wl_outputs.py` | 1.0.0 | Extract per-output g(E)/thermo/convergence metrics from c1/c2 wl_output_* dirs + .out logs; plot state density per system |
 
 ## Not individually versioned (duplicated snapshots / data)

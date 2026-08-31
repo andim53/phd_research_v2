@@ -116,6 +116,7 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | `--small-step` | `0.05` | Small Gaussian displacement scale (Å), local refinement. |
 | `--large-step` | `0.20` | Large Gaussian displacement scale (Å), barrier crossing. Default reduced from 0.40 (v1.3.0) so a single rattle cannot escape the ground-state basin into GPR-extrapolation territory. |
 | `--e-reject` | `5×e_max` | Relative energy (eV/atom) above which a trial is treated as an unphysical GPR extrapolation and REJECTED (revisits the current bin) instead of being capped into the top bin. Set ≤ e_max to disable. |
+| `--relax-steps` | `0` | Basin-hopping mode: if > 0, each proposed trial is relaxed to a local minimum of the GPR potential with this many BFGS steps (fixing non-mobile atoms) before binning. Default 0 (off). |
 | `--perturb-symbols` | `Fe` | Atom symbol(s) to rattle; all others stay fixed. |
 | `--flatness-criterion` | `0.80` | Flatness threshold (`min H > criterion·mean H`). |
 | `--check-interval` | `5000` | Flatness check interval (MC steps). |
@@ -181,6 +182,16 @@ freedom as well as the geometric ones. The number of swaps per swap move is a
 random integer in `1..--max-swaps`, mirroring the reference
 `GlobalPermutationGenerator`. For a single mobile species the swap is a no-op
 (the walk keeps rattling).
+
+**Basin-hopping / GPR relax (`--relax-steps`).** With `--relax-steps N > 0`, each
+proposed trial is first relaxed to a local minimum of the **GPR potential** (N
+BFGS steps using the surrogate as the energy/force calculator, only the mobile
+atoms free) and *then* binned. The binned energy is the nearest basin
+(inherent-structure) energy rather than the raw rattled energy. The MC rattle
+becomes only the basin-proposal move; relaxation does the descent. This makes
+large rattles (barrier hopping) safe, but the resulting `g(E)` is the density of
+*minimized* energies, not configurations — recover the canonical partition
+function by re-adding the vibrational (within-basin) contribution. Default off.
 
 ## Layout
 

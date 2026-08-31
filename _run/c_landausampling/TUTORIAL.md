@@ -83,6 +83,16 @@ $PY main.py --dataset dataset_boron3 --n-bins 40 --e-max 0.40 \
 The plain Fe/MgO `dataset` has a single mobile species (Fe); there
 `--swap-prob` is ignored with a WARNING and the walk falls back to rattling only.
 
+## Basin-hopping mode (GPR relax, `--relax-steps`)
+To sample the density of *minimized* (basin) energies instead of raw rattled
+energies — the "MC step + GPR relax" idea — add `--relax-steps N` (e.g. 100).
+Each proposed trial is relaxed to a local minimum of the GPR potential (N BFGS
+steps, only the mobile atoms free) before binning. This makes large rattles
+(barrier hopping) safe, but the resulting `g(E)` is over minima, not
+configurations; re-add the vibrational contribution for a canonical `Z`. Default
+`--relax-steps 0` = off (the plain flat-histogram walk). Each step is ~N× more
+expensive, so cut `--mc-steps` accordingly.
+
 ## Step 5 — HPC job
 `j_wanglandau.sh` runs Wang–Landau on the HPC cluster (PJM, 24 cores,
 `gpaw_env`), reading the existing `dataset/seed_*/1_db/db_*.db`:

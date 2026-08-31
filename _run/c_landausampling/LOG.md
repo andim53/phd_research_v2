@@ -565,3 +565,51 @@ answer with clear pros/cons.
 cost estimate + local smoke test, if the user wants to compare estimators empirically.
 
 **Time:** 2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 — Root fix v1.4.0: basin-hopping GPR relax (--relax-steps)
+
+**Goal (user-confirmed via clarify):** Implement the `--relax-steps N` parameter from the
+README QnA discussion (MC-step + GPR relax = basin-hopping mode). User chose: BFGS on the
+GPR-as-calculator, fixing non-mobile atoms (matches reference `ParallelRelaxPostprocess`);
+default off (`--relax-steps 0`); add + run a fake-GPR relax smoke test; re-copy to BOTH c1
+and c2 `_runs/`.
+
+**Key finding (grounded):** The AGOX `GPR` is itself an ASE `Calculator` subclass
+(`implemented_properties = ['energy','forces']`, has `predict_forces`/`get_forces`), so it
+can be attached directly as the trial's calculator and relaxed with `ase.optimize.BFGS` — no
+new machinery.
+
+**Actions taken (root code):**
+- `wang_landau/wang_landau_sampler.py` v1.3.0→1.4.0: added `relax_steps` constructor param
+  (default 0); `_relax()` helper attaches `gpr` as calculator, `FixAtoms` on all non-mobile
+  atoms, runs BFGS (`fmax=0.05, steps=relax_steps`, `logfile=None`), returns relaxed structure
+  (falls back to unrelaxed on error); wired into `run()` so a trial is relaxed before binning
+  when `relax_steps>0`.
+- `main.py` v1.3.0→1.4.0: added `--relax-steps` (default 0), wired into sampler.
+- `smoke_test_wang_landau.py` v1.2.0→1.3.0: added `test_relax()` with a fake ASE-Calculator
+  GPR (energy+forces on a 2-atom double-well). Fixed `predict_energy` to compute directly
+  (`calculate_get_potential_energy` doesn't exist in this ASE version — first run crashed).
+
+**Verification (real output):** py_compile OK (sampler/main/smoke + both run dirs); full
+smoke → `RESULT: PASS`; relax test: E 2.0125→0.2942 eV (x 1.5→0.96), relax run visits 3/40
+bins (toy has 1 mobile DOF, basins collapse) — passes "not trapped at one bin".
+
+**Docs updated:** VERSIONS.md (main/sampler/smoke rows), README.md (CLI `--relax-steps` row +
+basin-hopping concept), README.AI.md (CLI row + fixed stale `--start-from-top` "on"→"off"),
+TUTORIAL.md (basin-hopping section).
+
+**`_runs/` re-copy (per clarify):** copied fixed `main.py` + `wang_landau/*.py` (v1.4.0) to
+BOTH `_runs/c1_mgofe_N40_Emax04/` and `_runs/c2_boron3_N40_Emax04/`. Compiled OK in both.
+
+**Decisions & reasoning:** relax defaults OFF to preserve the exact no-relax path; BFGS
+matches the AGOX relaxer; FixAtoms restricts relaxation to the mobile species (substrate
+fixed), matching the reference environment constraints. `--e-reject` guard still applies as a
+safety net after relaxation.
+
+**Open items:**
+- Measure real-GPR relax wall-time cost (short run) before a full HPC budget.
+- Consider a vibrational (within-basin) correction if canonical Z is wanted from a relax run.
+
+**Time:** 2026-08-31 (JST).

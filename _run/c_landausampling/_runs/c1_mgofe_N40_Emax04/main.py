@@ -22,7 +22,7 @@ This script relies on:
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import argparse
 import os
@@ -79,6 +79,11 @@ def main():
                         "as an unphysical GPR extrapolation and REJECTED (revisits "
                         "current bin) instead of being capped into the top bin. "
                         "Default = 5*e_max; set <= e_max to disable.")
+    p.add_argument("--relax-steps", type=int, default=0,
+                   help="GPR relaxation steps per trial (basin-hopping mode). "
+                        "If > 0, each proposed trial is relaxed to a local minimum "
+                        "of the GPR potential with this many BFGS steps (fixing "
+                        "non-mobile atoms) before binning. Default 0 (off).")
     p.add_argument("--perturb-symbols", default="Fe",
                    help="Symbol(s) of atoms to rattle, comma-separated; "
                         "default 'Fe'")
@@ -156,6 +161,7 @@ def main():
         e_reject=args.e_reject,
         small_step=args.small_step,
         large_step=args.large_step,
+        relax_steps=args.relax_steps,
         perturb_symbols=args.perturb_symbols,
         flatness_criterion=args.flatness_criterion,
         check_interval=args.check_interval,

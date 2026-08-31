@@ -15,7 +15,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -68,6 +68,7 @@ def main():
     ok = test_single_species()
     ok = test_two_species_swap() and ok
     ok = test_extrapolation_guard() and ok
+    ok = test_relax() and ok
     print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 
@@ -232,6 +233,83 @@ def test_extrapolation_guard():
           f"{int((s.H > 0).sum())}/{s.n_bins} bins; "
           f"stages = {s.stage}")
     print(f"[SMOKE] guard test: " + ("PASS" if ok else "FAIL"))
+    return ok
+
+
+def test_relax():
+    """Verify the basin-hopping relax path (relax_steps > 0) works.
+
+    Uses a fake GPR that is a real ASE Calculator (energy + forces) for a
+    1-mobile-atom double-well, so BFGS can descend it. Checks that (a) relaxing
+    a high-energy trial lowers its energy toward the basin, and (b) a short
+    run with relax enabled completes and visits more than one bin (no trap).
+    """
+    print("\n--- GPR relax (basin-hopping) test ---")
+
+    from ase.calculators.calculator import Calculator
+
+    class FakeCalc(Calculator):
+        """ASE Calculator for E(x)=A*(x^2-1)^2+B*x on atom 0's x-coordinate."""
+        implemented_properties = ["energy", "forces"]
+
+        def __init__(self, A=1.0, B=0.3, **kwargs):
+            super().__init__(**kwargs)
+            self.A, self.B = A, B
+
+        def calculate(self, atoms=None, properties=None, system_changes=None):
+            from ase.calculators.calculator import all_changes
+            super().calculate(atoms, properties, system_changes)
+            x = atoms.positions[0][0]
+            E = self.A * (x ** 2 - 1.0) ** 2 + self.B * x
+            dE = 4.0 * self.A * x * (x ** 2 - 1.0) + self.B
+            forces = np.zeros_like(atoms.positions)
+            forces[0, 0] = -dE
+            self.results = {"energy": E, "forces": forces}
+
+        def predict_energy(self, atoms):
+            # compute energy directly (standalone, like the real GPR.predict_energy)
+            x = atoms.positions[0][0]
+            return self.A * (x ** 2 - 1.0) ** 2 + self.B * x
+
+    # 2 atoms: atom 0 is the mobile one (Fe), atom 1 fixed substrate "O".
+    gpr = FakeCalc()
+    structs = [Atoms("FeO", positions=[[x, 0.0, 0.0], [0.0, 0.0, 0.0]])
+               for x in np.linspace(-1.5, 1.5, 61)]
+    energies = np.array([gpr.predict_energy(a) for a in structs])
+
+    # (a) relaxation descends a high-energy trial toward a minimum
+    s = WangLandauSampler(gpr, structs, energies, n_bins=40,
+                          e_min=0.0, e_max=1.0, small_step=0.3, large_step=0.8,
+                          perturb_symbols="Fe", relax_steps=100,
+                          check_interval=500, n_stages_standard=4,
+                          rng=np.random.default_rng(5))
+    trial = structs[-1].copy()          # x=+1.5 (high E)
+    s.initialize(start_from_top=False)
+    E_before = s._energy_of(trial)
+    relaxed = s._relax(trial)
+    E_after = s._energy_of(relaxed)
+    print(f"[SMOKE] relax: E {E_before:.4f} -> {E_after:.4f} eV "
+          f"(x {trial.positions[0][0]:.3f} -> {relaxed.positions[0][0]:.3f})")
+    ok = E_after < E_before
+    if not ok:
+        print("[SMOKE] FAIL: relaxation did not lower the trial energy")
+        return False
+
+    # (b) a short run with relax enabled completes without trapping at one bin
+    s2 = WangLandauSampler(gpr, structs, energies, n_bins=40,
+                           e_min=0.0, e_max=1.0, small_step=0.3, large_step=0.8,
+                           perturb_symbols="Fe", relax_steps=100,
+                           check_interval=500, n_stages_standard=4,
+                           rng=np.random.default_rng(6))
+    s2.initialize(start_from_top=False)
+    s2.run(n_steps=3000, progress_every=3000)
+    visited = int((s2.H > 0).sum())
+    print(f"[SMOKE] relax run: visited {visited}/{s2.n_bins} bins, "
+          f"stages = {s2.stage}")
+    if visited <= 1:
+        print("[SMOKE] FAIL: relax run trapped at a single bin")
+        ok = False
+    print("[SMOKE] relax test: " + ("PASS" if ok else "FAIL"))
     return ok
 
 

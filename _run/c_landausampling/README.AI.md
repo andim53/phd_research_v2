@@ -96,9 +96,10 @@ pjsub j_wanglandau.sh
 | `--swap-prob` | `0.0` | Probability of choosing a swap (permutation) move instead of a rattle per MC step; requires ≥2 mobile species, else no-op. |
 | `--max-swaps` | `1` | Max swaps per swap move (random 1..max). |
 | `--swap-rattle` | `0.05` | Gaussian displacement (Å) applied to the two swapped atoms. |
+| `--relax-steps` | `0` | Basin-hopping GPR relax: if > 0, relax each trial with this many BFGS steps on the GPR (fixing non-mobile atoms) before binning. Default 0 (off). |
 | `--mc-steps` | `2000000` | WL MC steps. |
 | `--temperatures` | `100,200,300,500,1000` | Thermodynamics temperatures. |
-| `--start-from-top` | on | Init at top of bin range. |
+| `--start-from-top` | off | Init at top of bin range (default off = start from the global minimum, bottom-up). |
 | `--output` | `./wl_output` | Output dir. |
 | `--rng` | `42` | Seed. |
 | `--use-ray` | off | Enable Ray in GPR. |

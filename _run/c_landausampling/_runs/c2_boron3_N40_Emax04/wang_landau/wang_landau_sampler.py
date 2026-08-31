@@ -14,7 +14,7 @@ evaluated by the GPR surrogate; and bins are over relative energy per atom
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 from typing import List, Optional
 
@@ -44,6 +44,7 @@ class WangLandauSampler:
         e_reject: Optional[float] = None,
         small_step: float = 0.05,
         large_step: float = 0.20,
+        relax_steps: int = 0,
         perturb_symbols: str = "Fe",
         flatness_criterion: float = 0.80,
         check_interval: int = 5000,
@@ -96,6 +97,18 @@ class WangLandauSampler:
         if len(self.perturb_indices) == 0:
             raise ValueError(
                 f"No atoms with symbol(s) {perturb_list} found in the dataset.")
+
+        # GPR relaxation steps per trial (basin-hopping mode, default off).
+        # When > 0, each proposed trial is relaxed to a local minimum of the GPR
+        # potential with ``relax_steps`` BFGS steps before binning. Only the
+        # mobile (perturb) atoms relax; all others are fixed.
+        self.relax_steps = int(relax_steps)
+        if self.relax_steps > 0:
+            fixed_idx = np.setdiff1d(np.arange(self.n_atoms),
+                                     self.perturb_indices)
+            self._relax_fixed = list(map(int, fixed_idx))
+            print(f"[WangLandau] GPR relax ENABLED: {self.relax_steps} BFGS steps "
+                  f"per trial; fixing {len(self._relax_fixed)} non-mobile atoms")
 
         # Permutation (swap) move: exchange positions of two atoms of DIFFERENT
         # species within the mobile set, then rattle the two swapped atoms a
@@ -241,6 +254,29 @@ class WangLandauSampler:
             return float("nan")
         return E
 
+    def _relax(self, atoms: Atoms) -> Atoms:
+        """Relax a trial structure on the GPR potential (basin-hopping mode).
+
+        Attaches the GPR surrogate as the ASE calculator, fixes all non-mobile
+        atoms (substrate), and runs ``relax_steps`` BFGS steps so the trial
+        descends to a local basin minimum of the surrogate before binning.
+        Returns the relaxed structure (positions updated in place).
+        """
+        import ase.optimize
+        from ase.constraints import FixAtoms
+
+        relaxed = atoms.copy()
+        if self._relax_fixed:
+            relaxed.set_constraint(FixAtoms(indices=self._relax_fixed))
+        relaxed.calc = self.gpr
+        try:
+            opt = ase.optimize.BFGS(relaxed, logfile=None)
+            opt.run(fmax=0.05, steps=self.relax_steps)
+        except Exception as e:  # relaxation failure -> return unrelaxed
+            print(f"[WangLandau] relax failed ({e}); using unrelaxed trial")
+            return atoms
+        return relaxed
+
     # -- Wang-Landau bookkeeping --------------------------------------------
 
     def _visit(self, b: int):
@@ -323,6 +359,9 @@ class WangLandauSampler:
         for _ in range(n_steps):
             self.step += 1
             trial = self._propose_move()
+            # Basin-hopping: relax the trial on the GPR before binning (off by default)
+            if self.relax_steps > 0:
+                trial = self._relax(trial)
             E_trial = self._energy_of(trial)
             rel_trial = (E_trial - self.E_ref) / self.n_atoms \
                 if np.isfinite(E_trial) else float("nan")
