@@ -30,6 +30,18 @@ cd /home/think/Desktop/research/_run/c_landausampling/_runs/c2_boron3_N40_Emax04
 pjsub j_c2_boron3_N40_Emax04.sh
 ```
 
+## MC-steps sweep (HPC, PJM)
+
+```bash
+pjsub j_c2_boron3_N40_Emax04_sweep.sh
+```
+
+Runs the SAME parameters (including the swap move) at `--mc-steps 10000 / 30000 /
+50000` sequentially in one job, each to its own output dir:
+`./wl_output_c2_sweep_10000`, `./wl_output_c2_sweep_30000`,
+`./wl_output_c2_sweep_50000`. For a convergence-over-mc-steps comparison of g(E)
+and thermodynamics.
+
 ## What each flag does
 
 - `--dataset dataset_boron3` — B3-doped (7 seeds, B3Fe25Mg25O25, 78 atoms).

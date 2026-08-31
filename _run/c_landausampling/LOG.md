@@ -235,3 +235,34 @@ each saved to its own separate output dir.
   when ready.
 
 **Time:** ~2026-08-31 (JST).
+
+---
+
+## Session 2026-08-31 (2) — c2 sweep job (mc-steps 10k/30k/50k)
+
+**Goal:** Mirror the c1 sweep for the c2 run (B3-doped) — a new job script in
+`_runs/c2_boron3_N40_Emax04/` running the SAME parameters as
+`j_c2_boron3_N40_Emax04.sh` but as an MC-steps sweep (10000 / 30000 / 50000),
+each to its own output dir.
+
+**Clarify:** Not needed — "do the same for c2" is unambiguous (mirror the c1
+sweep, including the swap flags).
+
+**Actions taken:**
+- Created `_runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04_sweep.sh` (bare PJM,
+  gpaw_env, 24 cores; three sequential `python ./main.py` calls, all params
+  identical to the c2 baseline incl. swap: --dataset dataset_boron3 --n-bins 40
+  --e-max 0.40 --small-step 0.05 --large-step 0.40 --perturb-symbols Fe,B
+  --swap-prob 0.2 --max-swaps 2 --swap-rattle 0.05 --temperatures
+  100,200,300,500,1000 --rng 42).
+- Outputs: `wl_output_c2_sweep_10000`, `wl_output_c2_sweep_30000`,
+  `wl_output_c2_sweep_50000`.
+- Updated the run-dir `README.md` and `TUTORIAL.md` to document the sweep job.
+
+**Results (real output):** job script created; docs updated. (Not launched.)
+
+**Open items:**
+- Launch `pjsub _runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04_sweep.sh` on HPC
+  when ready.
+
+**Time:** ~2026-08-31 (JST).
