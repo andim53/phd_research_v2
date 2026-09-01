@@ -295,20 +295,20 @@ pjsub j_benchmark_sweep.sh
 ```
 
 > **Where heavy runs actually live.** The per-seed HPC runs and benchmarks are kept in
-> **`_runs/`** as self-contained directories (job script + main script + copies of
+> **`1_runs/`** as self-contained directories (job script + main script + copies of
 > `scripts/` and `novelty_lcb/`), named `<NN>_<descriptor>` (e.g.
 > `1_mgofe_Seed3_Iter300`, `73_novel_benchEMT`). The root-level `j_*.sh` / `main*.py`
 > are the parent project's own copies; to launch a concrete run, `cd` into the
-> matching `_runs/<NN>_<descriptor>/` and `pjsub j_*.sh` there (edit `SEED=` /
-> `N_ITERATIONS=` inside that script). Analysed results go in **`_analysist/`** — see
+> matching `1_runs/<NN>_<descriptor>/` and `pjsub j_*.sh` there (edit `SEED=` /
+> `N_ITERATIONS=` inside that script). Analysed results go in **`2_analysist/`** — see
 > the "Run directories" section below.
 
-## Run directories: `_runs/` and `_analysist/`
+## Run directories: `1_runs/` and `2_analysist/`
 
 Two sibling directories keep concrete runs separate from the project root.
 
-**`_runs/` — self-contained run directories.** Each HPC run or benchmark is its own
-directory under `_runs/`, holding everything that run needs (job script, main
+**`1_runs/` — self-contained run directories.** Each HPC run or benchmark is its own
+directory under `1_runs/`, holding everything that run needs (job script, main
 script, copies of `scripts/` and `novelty_lcb/`) so it is launchable in isolation.
 Naming follows **`<NN>_<descriptor>`** — a running index plus a short descriptive
 suffix (e.g. `1_mgofe_Seed3_Iter300`, `2_mgofe_Seed3_Iter500`,
@@ -320,12 +320,12 @@ suffix (e.g. `1_mgofe_Seed3_Iter300`, `2_mgofe_Seed3_Iter500`,
 - **Standalone benchmarks** (e.g. `73_novel_benchEMT`) are full projects with their
   own README/README.AI/LOG/TUTORIAL and `main_benchmark*.py` / `j_benchmark*.sh`.
 
-**`_analysist/` — analysed results.** Analysed and intermediate results go here,
-kept separate from `_runs/` so raw runs are never mixed with their analysis. The
+**`2_analysist/` — analysed results.** Analysed and intermediate results go here,
+kept separate from `1_runs/` so raw runs are never mixed with their analysis. The
 repo-root `.gitignore` anticipates the layout `0_analy/` (staging), `1_result/`
 (final), and `main_analyst.ipynb` / `main_test.ipynb` (notebooks).
 
-Two self-contained analysis runners live at `_analysist/`:
+Two self-contained analysis runners live at `2_analysist/`:
 
 - `run_analysis_indices.py` — the **multi-seed** runner (mirrors the sibling
   b_nestedsampling architecture). Loads all `seed_*/1_db/db_*.db` directly from a
@@ -339,12 +339,12 @@ Two self-contained analysis runners live at `_analysist/`:
   progression by the actual seed number and writes `progression_seed_split_Seed3.png`.
   Same CLI (`--dataset --outdir --e-max --normalize-density --start-iter`).
 
-Both import only the `_analysist/scripts/` deps copied next to them
+Both import only the `2_analysist/scripts/` deps copied next to them
 (`plot_structure_landscape.py`, plus `process_database.py` / `calculate_relative_energy.py`
 where used), so they are callable in place:
 
 ```bash
-cd /home/think/Desktop/research/_run/a_lcbnovel/_analysist
+cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
 # multi-seed heavy runs 71/72
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
     --dataset 71_novel_runEWindow/dataset --outdir 71_novel_runEWindow/analysis_indices
@@ -361,7 +361,7 @@ results (mirroring the b_nestedsampling convention). Analysis outputs are gitign
 (regenerable); the runners + `scripts/` are tracked.
 
 **Source-code versioning.** Every in-scope source file (root `main*.py`,
-`novelty_lcb/`, `scripts/`, test/smoke/energy_stats, `_analysist/` runner+scripts)
+`novelty_lcb/`, `scripts/`, test/smoke/energy_stats, `2_analysist/` runner+scripts)
 carries a module-level `__version__ = "X.Y.Z"` (semver). `VERSIONS.md` is the
 manifest of current versions. Any edit to a file bumps its patch version (minor for
 API/behavior changes), updates `VERSIONS.md`, and is recorded in `LOG.md`. See
@@ -378,7 +378,7 @@ API/behavior changes), updates `VERSIONS.md`, and is recorded in `LOG.md`. See
 | Benchmark | `main_benchmark.py` (Ni8/Au EMT) + `j_benchmark.sh` (HPC) | Compares regular LCB vs Novelty-LCB (auto global-min window) on a fast EMT surface; needs a RAM-rich node / HPC for the AGOX Ray pool |
 | Sweep benchmark | `main_benchmark_sweep.py` + `j_benchmark_sweep.sh` (HPC) | Sweeps kappa x novelty_weight on Novelty-LCB to study their impact (20 combos, 1 seed each) |
 | Compute | HPC PJM batch, 64-core GPAW (`gpaw_env`) | SubprocessGPAW LCAO/dzp needs a cluster node; run `pjsub j_novel.sh`, seed set by editing `SEED=` in the script |
-| Run organization | `_runs/<NN>_<descriptor>/` (self-contained) + `_analysist/` (results) | Keep each HPC run/benchmark isolated from the project root and from its analysis; `_runs` is git-tracked, `_analysist` outputs are gitignored |
+| Run organization | `1_runs/<NN>_<descriptor>/` (self-contained) + `2_analysist/` (results) | Keep each HPC run/benchmark isolated from the project root and from its analysis; `1_runs` is git-tracked, `2_analysist` outputs are gitignored |
 | Logging | curated `LOG.md` + raw `transcript.log` | Human-readable milestones plus a faithful tool-call record |
 
 ## Status
@@ -388,7 +388,7 @@ API/behavior changes), updates `VERSIONS.md`, and is recorded in `LOG.md`. See
 - [x] Serialization smoke test **PASSES** (crash root cause verified fixed)
 - [ ] Heavy Fe/MgO search launched on HPC (see `TUTORIAL.md` step 4)
 - [x] Energy window = auto global-min mode (`energy_above_min=1.0 eV/atom`, per_atom), no manual calibration
-- [x] Run dirs organized under `_runs/` (HPC per-seed runs + `73_novel_benchEMT`) and analysis under `_analysist/`
+- [x] Run dirs organized under `1_runs/` (HPC per-seed runs + `73_novel_benchEMT`) and analysis under `2_analysist/`
 
 See `TUTORIAL.md` for the full reproduction and repair guide, `LOG.md` for what
 has been done, and `README.AI.md` for the agent-facing spec.

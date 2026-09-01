@@ -40,24 +40,24 @@ a_lcbnovel/
 ├── transcript.log              # Raw tool-call / run-output transcript
 ├── TUTORIAL.md                 # Reproduce + repair guide with pitfalls
 ├── VERSIONS.md                 # Version manifest: every source file's __version__
-├── _runs/                      # Self-contained run dirs (HPC per-seed runs + benchmarks)
+├── 1_runs/                      # Self-contained run dirs (HPC per-seed runs + benchmarks)
 │   ├── 1_mgofe_Seed3_Iter300/  #   bare per-seed run (j_*.sh + main.py + scripts/ + novelty_lcb/)
 │   ├── 2_mgofe_Seed3_Iter500/  #   bare per-seed run
 │   ├── 3_mgofe_Seed3_Iter700/  #   bare per-seed run
 │   └── 73_novel_benchEMT/      #   full benchmark project (doc trio + main_benchmark*.py + j_benchmark*.sh)
-├── _analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
+├── 2_analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
 │   ├── run_analysis_indices.py #   multi-seed analysis runner (3-stage pipeline, 71/72)
 │   ├── run_analysis_a_runs.py  #   single-seed analysis runner (per-seed a-runs)
 │   ├── scripts/                #   copied deps: process_database.py, plot_structure_landscape.py,
 │   │                           #     calculate_relative_energy.py
 │   ├── 0_analy/                #   analysis outputs (gitignored, regenerable)
 │   └── 1_result/               #   raw run results 71-74 (gitignored, regenerable)
-└── .gitignore                  # ignores _analysist/0_analy, _analysist/1_result, *.db/*.png/*.traj/...
+└── .gitignore                  # ignores 2_analysist/0_analy, 2_analysist/1_result, *.db/*.png/*.traj/...
 ```
 
-### 2a. `_runs/` and `_analysist/`
+### 2a. `1_runs/` and `2_analysist/`
 
-- **`_runs/`** — self-contained run directories. Each HPC run (or benchmark) is its
+- **`1_runs/`** — self-contained run directories. Each HPC run (or benchmark) is its
   own dir, holding **everything** it needs (job script, main script, and copies of
   `scripts/` and `novelty_lcb/`), independent of the project root. Naming:
   **`<NN>_<descriptor>`** (e.g. `a1_mgofe_Seed3_Iter300`). **HPC per-seed Fe/MgO runs**
@@ -66,21 +66,21 @@ a_lcbnovel/
   the full doc trio inside their own dir. Run copies of `main.py`, `scripts/`, and
   `novelty_lcb/` are kept in sync with the latest versioned project root. Tracked in
   git (code + docs), subject to the regenerable-data exclusions.
-- **`_analysist/`** — analysed/intermediate results, kept separate from `_runs/`.
+- **`2_analysist/`** — analysed/intermediate results, kept separate from `1_runs/`.
   Expected layout (matching the repo-root `.gitignore`): `0_analy/` (staging),
   `1_result/` (final), `main_analyst.ipynb`, `main_test.ipynb`. Outputs are
   regenerable/gitignored.
-- **`_analysist/run_analysis_indices.py`** — self-contained **multi-seed** analysis
+- **`2_analysist/run_analysis_indices.py`** — self-contained **multi-seed** analysis
   runner (mirrors the sibling b_nestedsampling
-  `/home/think/Desktop/research/_run/b_nestedsampling/_analysist/run_analysis_indices.py`,
+  `/home/think/Desktop/research/_run/b_nestedsampling/2_analysist/run_analysis_indices.py`,
   adapted to this project). Loads all `seed_*/1_db/db_*.db` directly from a
-  `--dataset` dir. Imports only the local `_analysist/scripts/` deps
+  `--dataset` dir. Imports only the local `2_analysist/scripts/` deps
   (`plot_structure_landscape.py`, `process_database.py`, `calculate_relative_energy.py`).
   Scoped to the multi-seed heavy runs **71** and **72** (the flat benchmark dirs 73/74
   are excluded — no `seed_*` layout). Stages: ① best-so-far progression (per-seed),
   ② PCA landscape, ③ Boltzmann probability. CLI: `--dataset --outdir --e-max
   --normalize-density --start-iter`. Outputs → per-run `<run>/analysis_indices/`.
-- **`_analysist/run_analysis_a_runs.py`** — self-contained **single-seed** analysis
+- **`2_analysist/run_analysis_a_runs.py`** — self-contained **single-seed** analysis
   runner for the per-seed a-runs (e.g. `a1_mgofe_Seed3_Iter300/output`). Same 3-stage
   pipeline but labels the progression by the actual seed number and writes
   `progression_seed_split_Seed3.png`. Same CLI (`--dataset --outdir --e-max
@@ -99,8 +99,8 @@ Every in-scope source file carries a module-level `__version__ = "X.Y.Z"` (semve
   on API/behavior changes.
 - **When you edit a file, bump its `__version__`, update `VERSIONS.md`, and record
   the old→new version in `LOG.md`.** In-scope files are the root `main*.py`,
-  `novelty_lcb/`, `scripts/`, test/smoke/energy_stats, and `_analysist/`
-  runner+scripts. Duplicated snapshots under `_runs/` and `dataset/` are **not**
+  `novelty_lcb/`, `scripts/`, test/smoke/energy_stats, and `2_analysist/`
+  runner+scripts. Duplicated snapshots under `1_runs/` and `dataset/` are **not**
   individually versioned (see `VERSIONS.md`).
 - `__version__` sits after the shebang/docstring and any `from __future__` import.
 
@@ -133,8 +133,8 @@ pjsub j_benchmark.sh           # on HPC
 $PY main_benchmark_sweep.py      # local
 pjsub j_benchmark_sweep.sh       # on HPC
 
-# Analyse Fe/MgO heavy-run results (71, 72) — self-contained in _analysist
-cd _analysist
+# Analyse Fe/MgO heavy-run results (71, 72) — self-contained in 2_analysist
+cd 2_analysist
 $PY run_analysis_indices.py --dataset 71_novel_runEWindow/dataset --outdir 71_novel_runEWindow/analysis_indices
 $PY run_analysis_indices.py --dataset 72_novel_AutoGlob_1eVperAtomAboveGlob/dataset --outdir 72_novel_AutoGlob_1eVperAtomAboveGlob/analysis_indices
 

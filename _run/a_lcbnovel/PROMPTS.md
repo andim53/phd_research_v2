@@ -3,14 +3,14 @@
 ## Original (before grammar fix)
 
 ```
-Create a new `_runs` directory, implementing the Boron addition on the Fe on MgO system. Use system like in this /home/think/Desktop/research/_archive/_analysist/1_result/66_MgOFe_20B project code. Clarify for every step.
+Create a new `1_runs` directory, implementing the Boron addition on the Fe on MgO system. Use system like in this /home/think/Desktop/research/_archive/2_analysist/1_result/66_MgOFe_20B project code. Clarify for every step.
 ```
 
 ## Fixed grammar (after)
 
 ```
-Create a new `_runs` directory implementing Boron addition onto the Fe/MgO system.
-Use the same system as the `/home/think/Desktop/research/_archive/_analysist/1_result/66_MgOFe_20B`
+Create a new `1_runs` directory implementing Boron addition onto the Fe/MgO system.
+Use the same system as the `/home/think/Desktop/research/_archive/2_analysist/1_result/66_MgOFe_20B`
 project. Clarify each step.
 ```
 
@@ -19,14 +19,14 @@ project. Clarify each step.
 ## Original (before grammar fix)
 
 ```
-Make a new _runs using the same system and setup as the `/home/think/Desktop/research/_run/a_lcbnovel/_runs/a5_mgofe_Seed3_Iter500_k4`, but with a different `NOVELTY_WEIGHT`, starting from 2.0, 3.0, and 4.0. Clarify for every step.
+Make a new 1_runs using the same system and setup as the `/home/think/Desktop/research/_run/a_lcbnovel/1_runs/a5_mgofe_Seed3_Iter500_k4`, but with a different `NOVELTY_WEIGHT`, starting from 2.0, 3.0, and 4.0. Clarify for every step.
 ```
 
 ## Fixed grammar (after)
 
 ```
-Create a new `_runs` directory using the same system and setup as
-`/home/think/Desktop/research/_run/a_lcbnovel/_runs/a5_mgofe_Seed3_Iter500_k4`,
+Create a new `1_runs` directory using the same system and setup as
+`/home/think/Desktop/research/_run/a_lcbnovel/1_runs/a5_mgofe_Seed3_Iter500_k4`,
 but with a different `NOVELTY_WEIGHT` value: 2.0, 3.0, and 4.0. Clarify each step.
 ```
 
@@ -35,15 +35,15 @@ but with a different `NOVELTY_WEIGHT` value: 2.0, 3.0, and 4.0. Clarify each ste
 ## Original (before grammar fix)
 
 ```
-Make a new _runs dir. Same system as /home/think/Desktop/r
-esearch/_run/a_lcbnovel/_runs/a1_mgofe_Seed3_Iter500/ but with different kappa number. Make for kappa 3, 4, and 5. Clarify for every step.
+Make a new 1_runs dir. Same system as /home/think/Desktop/r
+esearch/_run/a_lcbnovel/1_runs/a1_mgofe_Seed3_Iter500/ but with different kappa number. Make for kappa 3, 4, and 5. Clarify for every step.
 ```
 
 ## Fixed grammar (after)
 
 ```
-Create a new `_runs` directory using the same setup as
-`/home/think/Desktop/research/_run/a_lcbnovel/_runs/a1_mgofe_Seed3_Iter500/`,
+Create a new `1_runs` directory using the same setup as
+`/home/think/Desktop/research/_run/a_lcbnovel/1_runs/a1_mgofe_Seed3_Iter500/`,
 but with a different kappa value. Make runs for kappa 3, 4, and 5. Clarify each step.
 ```
 
@@ -57,19 +57,19 @@ generalize them, with the concrete instances from each flagged prompt shown unde
 An instruction must name (a) what to create, (b) what it is, and (c) what to do with
 it. Dropping any of these makes the reader (or agent) guess.
 
-- **20260826_14:** "Make a new _runs dir. Same system as ..." — the second half is a
+- **20260826_14:** "Make a new 1_runs dir. Same system as ..." — the second half is a
   noun phrase with **no verb**, so it is unclear *what* to do with that system. "Make
   for kappa 3, 4, and 5" — **no object**: make *what*? The intended object (runs) is
   omitted.
-- **20260826_1437:** "Make a new _runs ..." — missing the **noun** `directory`
-  (a `_runs` is a directory, so the type must be named). Same verb-object gap as
+- **20260826_1437:** "Make a new 1_runs ..." — missing the **noun** `directory`
+  (a `1_runs` is a directory, so the type must be named). Same verb-object gap as
   above.
 - **20260826_1602:** "Use system like in this <path> project code" — missing the
   article ("Use **the same** system") and the connective that links it to the project;
   the phrase "project code" is vague (the whole *project*, not just its code, is the
   template).
 
-**Fix pattern:** state the object explicitly — "Create a new `_runs` **directory**",
+**Fix pattern:** state the object explicitly — "Create a new `1_runs` **directory**",
 "**Make runs** for kappa 3, 4, and 5", "Use **the same system as** `<project>`".
 
 ### Concept 2 — Redundant or near-duplicate words
@@ -132,7 +132,7 @@ verbatim.
 
 - **Write the instruction as a short list** instead of one long sentence, so each
   action is explicit:
-  - "Create a new `_runs` directory based on `<template>`."
+  - "Create a new `1_runs` directory based on `<template>`."
   - "Use a different value for the parameter: 3, 4, and 5 (three runs)."
   - "Clarify each step before proceeding."
 - **State which parameters are inherited vs changed.** "Same setup as .../Iter500_k4"

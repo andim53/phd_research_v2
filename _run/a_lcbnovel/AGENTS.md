@@ -68,12 +68,22 @@ In this project that file is `TUTORIAL.md`.
 
 1. **Clarify before every step.** Confirm the intended task, approach, and outputs
    with the project owner before writing or running code. Do not assume.
-2. **Ground everything in the repo.** Read the relevant existing code, the
-   `README.AI.md` spec, and `LOG.md` before acting. Never invent files, symbols, or
+2. **Ground everything in the repo.** Read the relevant existing code and the
+   `README.AI.md` spec before acting. Never invent files, symbols, or
    APIs that are not already present or explicitly requested.
-3. **Keep the deliverables current.** Every task that changes code or produces
-   results must update the Log, and, when behaviour changes, the README(s) and
-   Tutorial. Do not leave the docs describing a state the code no longer matches.
+   **When investigating the project, read only from `README.AI.md` first, then
+   the actual (relevant) code. All other notes — `README.md`, `TUTORIAL.md`,
+   `LOG.md`, `VERSIONS.md`, `PROMPTS.md`, `QNA.md`, `DISCUSSION.md`, etc. — must
+   NOT be read unless the project owner gives an explicit command. If the agent
+   thinks reading another note is necessary, it may ask the owner for
+   permission, which the owner may grant if they also think it is necessary
+   (permission covers READING only, not modifying the note).**
+3. **Keep the deliverables current.** After making any change within the code,
+   auto-update the Log (`LOG.md`) and version notes (`VERSIONS.md`), **append-only
+   and without reading them** — never rewrite existing entries. All **other**
+   notes (`README.md`, `README.AI.md`, `TUTORIAL.md`, `PROMPTS.md`,
+   `DISCUSSION.md`, `QNA.md`, etc.) are updated **only on explicit owner command**
+   (e.g. "update the README.AI.md", "update the TUTORIAL.md").
 4. **Log is append-only.** Never rewrite or delete prior Log entries; add new ones.
 5. **Verify before claiming done.** Run the relevant checks (compile, smoke test,
    build) and report what real execution returned. Do not fabricate results.
@@ -85,20 +95,20 @@ In this project that file is `TUTORIAL.md`.
 7. **Code + docs tracked; regenerable data excluded.** Follow the repo's `.gitignore`
    conventions (output dirs, `*.db`, `*.xsf`, `*.png`, logs are regenerable artifacts).
 
-## 3a. Run directories: `_runs/` and `_analysist/`
+## 3a. Run directories: `1_runs/` and `2_analysist/`
 
 Heavy runs and their analysis live in two sibling directories, separate from the
 project-root code/docs.
 
-### `_runs/` — self-contained run directories
+### `1_runs/` — self-contained run directories
 
 Each HPC run (or benchmark) gets its **own self-contained directory** under
-`_runs/`, so a job can be launched and, later, understood in isolation. It carries
+`1_runs/`, so a job can be launched and, later, understood in isolation. It carries
 **everything** that run needs — job script, main script(s), and copies of `scripts/`
 and `novelty_lcb/` — and does **not** depend on files in the project root.
 
 ```
-_runs/
+1_runs/
 ├── <NN>_<descriptor>/            # e.g. a1_mgofe_Seed3_Iter300
 │   ├── j_*.sh                    #   PJM batch script (one seed/job; edit SEED=, N_ITERATIONS=)
 │   ├── main*.py                  #   entry point(s) for that run (latest from project root)
@@ -134,17 +144,17 @@ Documentation policy:
 `novelty_lcb/` should be kept in sync with the latest versioned copies in the project
 root (`cp main.py novelty_lcb/*.py scripts/*.py <run>/` after a root change).
 
-Everything under `_runs/` is **tracked in git** (code + docs), subject to the same
+Everything under `1_runs/` is **tracked in git** (code + docs), subject to the same
 regenerable-data exclusions.
 
-### `_analysist/` — analysed results
+### `2_analysist/` — analysed results
 
-Analysed/intermediate results live in `_analysist/`, kept separate from both the
-project root and `_runs/` so raw runs are never mixed with their analysis.
+Analysed/intermediate results live in `2_analysist/`, kept separate from both the
+project root and `1_runs/` so raw runs are never mixed with their analysis.
 
 Expected layout (matching the repo-root `.gitignore`):
 ```
-_analysist/
+2_analysist/
 ├── 0_analy/               # intermediate analysis / staging
 ├── 1_result/              # final analysed results
 ├── main_analyst.ipynb     # analysis notebook (gitignored if large)
@@ -157,7 +167,7 @@ analysis code/notebooks the owner chooses to track are tracked.
 ### Per-run analysis convention
 
 Each concrete run's analysis is produced by a self-contained runner in
-`_analysist/` — the **multi-seed** runner `run_analysis_indices.py` (71/72, loads all
+`2_analysist/` — the **multi-seed** runner `run_analysis_indices.py` (71/72, loads all
 `seed_*/1_db/db_*.db` from a `--dataset` dir) and the **single-seed** runner
 `run_analysis_a_runs.py` (per-seed a-runs, e.g. `a1_mgofe_Seed3_Iter300/output`).
 Analysis outputs go to a per-run dir `<run>/analysis_indices/` or
@@ -176,6 +186,11 @@ Analysis outputs (PNG/xsf) are gitignored (regenerable); the runners + `scripts/
 any DISCUSSION.md the owner chooses to track are tracked.
 8. **Do not modify another profile's skills/plugins/cron/memories** unless the owner
    explicitly directs it.
+9. **Ask permission before accessing other notes or other projects.** When it is
+   necessary to read, access, or modify any other note (anything beyond
+   `README.AI.md` and the relevant code) or any other project directory (inside
+   or outside this project), ask the owner for explicit permission first. Never
+   proceed on an assumed approval.
 
 ---
 
@@ -205,7 +220,7 @@ the concrete instances from the flagged prompts underneath), so recurring mistak
 named once and recognized across prompts. The current concepts are:
 
 1. **Incomplete clauses** — an instruction missing its verb, object, or noun (e.g.
-   "Make for kappa 3, 4, and 5" → add the object "Make runs ..."; "Make a new _runs"
+   "Make for kappa 3, 4, and 5" → add the object "Make runs ..."; "Make a new 1_runs"
    → add the noun "directory").
 2. **Redundant / near-duplicate words** — stacked words with the same meaning (e.g.
    "kappa number" → "kappa value"; "system and setup" → pick one or define both).

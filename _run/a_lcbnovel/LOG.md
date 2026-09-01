@@ -811,11 +811,11 @@ Confirmed via clarify:
 
 ---
 
-## 2026-08-25 — Session: Introduce `_runs/` and `_analysist/` into the docs
+## 2026-08-25 — Session: Introduce `1_runs/` and `2_analysist/` into the docs
 
 ### Goal (user request)
-User added `_runs/` (self-contained run dirs for HPC runs + benchmarks) and
-`_analysist/` (analysed results) to the project. Asked Calyx to introduce these two
+User added `1_runs/` (self-contained run dirs for HPC runs + benchmarks) and
+`2_analysist/` (analysed results) to the project. Asked Calyx to introduce these two
 dirs into the project note (README.md), the tutorials (TUTORIAL.md), and the AGENTS
 note (AGENTS.md), clarifying each step.
 
@@ -829,27 +829,27 @@ note (AGENTS.md), clarifying each step.
   space), update git tracking.
 - Defaults taken for the two unanswered questions: edit all four docs (README.md,
   README.AI.md, TUTORIAL.md, AGENTS.md) for consistency; document the expected
-  `_analysist/` layout (0_analy/, 1_result/, main_analyst.ipynb, main_test.ipynb).
+  `2_analysist/` layout (0_analy/, 1_result/, main_analyst.ipynb, main_test.ipynb).
 
 ### Actions taken
-1. `git mv` renamed `_runs/3_mgofe_Seed3_Iter700 ` → `_runs/3_mgofe_Seed3_Iter700`
+1. `git mv` renamed `1_runs/3_mgofe_Seed3_Iter700 ` → `1_runs/3_mgofe_Seed3_Iter700`
    (all 13 tracked files; removes the trailing-space path hazard).
-2. AGENTS.md: added §3a "Run directories: `_runs/` and `_analysist/`" — layout
+2. AGENTS.md: added §3a "Run directories: `1_runs/` and `2_analysist/`" — layout
    diagram, `<NN>_<descriptor>` naming, bare-vs-full run-doc policy, git-tracking
-   rule, and expected `_analysist/` layout.
-3. README.AI.md: added `_runs/` (with the 4 existing dirs annotated) and
-   `_analysist/` to the file-layout tree + a §2a "`_runs/` and `_analysist/`" note.
+   rule, and expected `2_analysist/` layout.
+3. README.AI.md: added `1_runs/` (with the 4 existing dirs annotated) and
+   `2_analysist/` to the file-layout tree + a §2a "`1_runs/` and `2_analysist/`" note.
 4. README.md: added a "Where heavy runs actually live" callout under How-to-use, a
-   new "Run directories: `_runs/` and `_analysist/`" section, a decisions-table row
+   new "Run directories: `1_runs/` and `2_analysist/`" section, a decisions-table row
    ("Run organization"), and a Status checkbox.
-5. TUTORIAL.md: rewrote Step 4 (launch) to `cd` into `_runs/<NN>_<descriptor>/` and
-   `pjsub` its own job script; added Step 4b (analysed results → `_analysist/`);
-   added a pointer from Step 6 to `_runs/73_novel_benchEMT`; added pitfalls 7
+5. TUTORIAL.md: rewrote Step 4 (launch) to `cd` into `1_runs/<NN>_<descriptor>/` and
+   `pjsub` its own job script; added Step 4b (analysed results → `2_analysist/`);
+   added a pointer from Step 6 to `1_runs/73_novel_benchEMT`; added pitfalls 7
    (trailing-space run-dir names) and 8 (keep run dirs self-contained); added a
    verification-checklist item.
 
 ### Results
-- All four docs now consistently describe the `_runs/` / `_analysist/` organisation,
+- All four docs now consistently describe the `1_runs/` / `2_analysist/` organisation,
   the naming convention, and the bare-vs-full run-doc policy.
 - Trailing-space run dir renamed cleanly via git mv.
 
@@ -858,11 +858,11 @@ note (AGENTS.md), clarifying each step.
   deliverables to agree with the code layout).
 - Run-dir naming documented as `<NN>_<descriptor>` so new runs are ordered and
   unambiguous; matched the existing `1/2/3_...` and `73_novel_benchEMT` examples.
-- `_analysist/` layout mirrors what the repo-root `.gitignore` already anticipates
+- `2_analysist/` layout mirrors what the repo-root `.gitignore` already anticipates
   (0_analy/, 1_result/, main_analyst.ipynb, main_test.ipynb).
 
 ### Open items / next steps
-- (User) add new run dirs under `_runs/` as new HPC runs are launched.
+- (User) add new run dirs under `1_runs/` as new HPC runs are launched.
 - Submit `pjsub j_benchmark_sweep.sh` on HPC to run the sweep.
 - Launch the heavy Fe/MgO search (j_novel.sh).
 
@@ -871,30 +871,30 @@ note (AGENTS.md), clarifying each step.
 
 ---
 
-## 2026-08-25 — Session: Analysis runner for Fe/MgO heavy runs (idx 71, 72) in _analysist
+## 2026-08-25 — Session: Analysis runner for Fe/MgO heavy runs (idx 71, 72) in 2_analysist
 
 ### Goal (user request)
-User added results (71-74) to `_analysist/1_result/` and asked Calyx to make an
-analysis code like the sibling `/home/think/Desktop/research/_analysist/run_analysis_indices.py`,
-copy the necessary py dependencies into `_analysist/` for easy calling, and clarify
+User added results (71-74) to `2_analysist/1_result/` and asked Calyx to make an
+analysis code like the sibling `/home/think/Desktop/research/2_analysist/run_analysis_indices.py`,
+copy the necessary py dependencies into `2_analysist/` for easy calling, and clarify
 each step.
 
 ### Clarify (confirmed)
 - **Scope:** support indices 71 & 72 only (the Fe/MgO heavy runs), which match the
   reference `seed_*/1_db` layout. Benchmarks 73/74 use a flat `benchmark_results/`
   layout (no `seed_*` dirs) that `process_database` cannot consume; excluded.
-- **Deps:** copy only the 3 needed modules into `_analysist/scripts/` —
+- **Deps:** copy only the 3 needed modules into `2_analysist/scripts/` —
   `process_database.py`, `plot_structure_landscape.py`, `calculate_relative_energy.py`.
 - **Name:** keep `run_analysis_indices.py` (mirror the sibling).
 - **DB root:** map idx 71 -> `71_novel_runEWindow/output`, idx 72 ->
   `72_novel_AutoGlob_1eVperAtomAboveGlob/output` (each holds `seed_3/1_db/db_3.db`).
-- **Git:** add a project `.gitignore` (ignore `_analysist/0_analy/`,
-  `_analysist/1_result/`, `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) and commit only
+- **Git:** add a project `.gitignore` (ignore `2_analysist/0_analy/`,
+  `2_analysist/1_result/`, `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) and commit only
   code+docs. Update README/README.AI/TUTORIAL. Commit now.
 
 ### Actions taken
-1. Copied the 3 dependency modules into `_analysist/scripts/`.
-2. Wrote `_analysist/run_analysis_indices.py` — mirrors the sibling runner (3-stage
+1. Copied the 3 dependency modules into `2_analysist/scripts/`.
+2. Wrote `2_analysist/run_analysis_indices.py` — mirrors the sibling runner (3-stage
    pipeline: ① `process_database`, ② PCA landscape, ③ Boltzmann probability), scoped
    to GROUPS `novel_lcb_femgo: [71, 72]` with `FOLDER_MAP` pointing each index at its
    `output/` DB root. Added a `--idx` single-index shorthand. Corrected the docstring
@@ -904,20 +904,20 @@ each step.
    `progression_*.png`, `2_im/conf_space.png`,
    `2_im/binding_probability_vs_temperature.png`). `py_compile` clean.
 4. Found the project is part of the **parent** repo (`/home/think/Desktop/research`),
-   whose `.gitignore` `_analysist/0_analy/` rules target the parent's `_analysist`,
-   not this nested one — so nested `_analysist/0_analy` + `1_result` (and `.traj`)
+   whose `.gitignore` `2_analysist/0_analy/` rules target the parent's `2_analysist`,
+   not this nested one — so nested `2_analysist/0_analy` + `1_result` (and `.traj`)
    were leaking as untracked. Added project-level `.gitignore` to exclude them +
    regenerable types. Verified only `run_analysis_indices.py` + `scripts/*` remain
-   trackable under `_analysist`.
-5. Updated docs: README.md (`_analysist` section + run instructions), README.AI.md
+   trackable under `2_analysist`.
+5. Updated docs: README.md (`2_analysist` section + run instructions), README.AI.md
    (file-layout tree + §2a note + entry-point command), TUTORIAL.md (new Step 4c with
    the git-note about the nested `.gitignore`).
 
 ### Results
-- `_analysist/run_analysis_indices.py` + `_analysist/scripts/{process_database,
+- `2_analysist/run_analysis_indices.py` + `2_analysist/scripts/{process_database,
   plot_structure_landscape, calculate_relative_energy}.py` created and verified (idx
   71, 72 both ran clean, real outputs produced).
-- Git: analysis code is the only trackable content under `_analysist`; outputs and
+- Git: analysis code is the only trackable content under `2_analysist`; outputs and
   results are gitignored via the new project `.gitignore`.
 
 ### Decisions & reasoning
@@ -925,10 +925,10 @@ each step.
   a `seed_*/1_db` layout; the flat benchmark dirs 73/74 don't fit and already have
   their own analysis. (Earlier clarify also confirmed 71/72 only.)
 - Kept the runner self-contained (local `scripts/` deps only) so it is callable in
-  place without touching the parent `_analysist`.
+  place without touching the parent `2_analysist`.
 - Added `--idx` shorthand for convenience; kept all sibling CLI flags (`--e-max`,
   `--normalize-density`, `--skip-probability`, `--indices`).
-- Project `.gitignore` added because the parent's `_analysist` rules don't reach this
+- Project `.gitignore` added because the parent's `2_analysist` rules don't reach this
   nested dir; only code+docs are tracked per the workflow.
 
 ### Open items / next steps
@@ -952,8 +952,8 @@ track the codes version for every changes. Clarify for every changes."
 
 ### Clarify (confirmed)
 - **Scope:** version the **source code only** — root `main*.py`, `novelty_lcb/`,
-  `scripts/`, test/smoke/energy_stats, and `_analysist/` runner+scripts (20 files).
-  Duplicated snapshots under `_runs/1|2|3|73` and `dataset/` are **not** individually
+  `scripts/`, test/smoke/energy_stats, and `2_analysist/` runner+scripts (20 files).
+  Duplicated snapshots under `1_runs/1|2|3|73` and `dataset/` are **not** individually
   versioned.
 - **Scheme:** per-file module-level `__version__ = "X.Y.Z"` (semver), baseline 1.0.0.
 - **Bump:** patch on every edit, minor for API/behavior changes; `LOG.md` records each
@@ -968,7 +968,7 @@ track the codes version for every changes. Clarify for every changes."
    placed after the shebang/module docstring and **after any `from __future__`
    import** (4 files: `novelty_lcb/{acquisitor,benchmark_helpers,common,utils}.py`).
    Note: `scripts/build_*_stack.py`, `hetero_struct_randomize.py`, `plot_structure.py`
-   and `_analysist/scripts/calculate_relative_energy.py` already had a
+   and `2_analysist/scripts/calculate_relative_energy.py` already had a
    **function-local** `__version__` (0.0.1 / 0.2) in HEAD — left those as-is and added
    a proper module-level `1.0.0`.
 3. Verified: all 20 compile (`py_compile` OK); `smoke_test_serialization.py` and
@@ -986,10 +986,10 @@ The following files now carry `__version__ = "1.0.0"`:
 `novelty_lcb/benchmark_helpers.py`, `novelty_lcb/common.py`, `novelty_lcb/utils.py`,
 `scripts/build_fe_stack.py`, `scripts/build_heteroStruct.py`,
 `scripts/build_mgo_stack.py`, `scripts/hetero_struct_randomize.py`,
-`scripts/plot_structure.py`, `_analysist/run_analysis_indices.py`,
-`_analysist/scripts/calculate_relative_energy.py`,
-`_analysist/scripts/plot_structure_landscape.py`,
-`_analysist/scripts/process_database.py`.
+`scripts/plot_structure.py`, `2_analysist/run_analysis_indices.py`,
+`2_analysist/scripts/calculate_relative_energy.py`,
+`2_analysist/scripts/plot_structure_landscape.py`,
+`2_analysist/scripts/process_database.py`.
 (Initial baseline — no prior module-level version to diff against.)
 
 ### Decisions & reasoning
@@ -998,7 +998,7 @@ The following files now carry `__version__ = "1.0.0"`:
   Python.
 - Kept function-local legacy `__version__` markers untouched (they are internal to a
   function, not the module version).
-- Scope limited to source (not the duplicated `_runs/`/`dataset/` snapshots) per the
+- Scope limited to source (not the duplicated `1_runs/`/`dataset/` snapshots) per the
   confirmed decision, to avoid a huge mechanical churn on self-contained copies.
 - `VERSIONS.md` added as the single-source manifest so future edits update one table.
 
@@ -1016,15 +1016,15 @@ The following files now carry `__version__ = "1.0.0"`:
 
 ### Goal (user request)
 User renamed the project dir on disk: `/home/think/Desktop/research/_run/10_lcbnovel`
--> `_run/a_lcbnovel`, and the per-seed run dirs under `_runs/`:
+-> `_run/a_lcbnovel`, and the per-seed run dirs under `1_runs/`:
 `1_mgofe_Seed3_Iter300` -> `a1_...`, `2_mgofe_Seed3_Iter500` -> `a2_...`,
 `3_mgofe_Seed3_Iter700` -> `a3_...`. Asked Calyx to handle the rename (clarify each step).
 
 ### Clarify (confirmed)
 - **Git rename:** stage the rename so git records it as a rename (add deletions + new dir), commit cleanly.
 - **Content:** update ALL internal `10_lcbnovel` -> `a_lcbnovel` references across the
-  whole project (README/README.AI/TUTORIAL/AGENTS/LOG/VERSIONS + code + `_runs/` +
-  `_analysist/` copies), including the gitignored `1_result/` copies.
+  whole project (README/README.AI/TUTORIAL/AGENTS/LOG/VERSIONS + code + `1_runs/` +
+  `2_analysist/` copies), including the gitignored `1_result/` copies.
 - **Skills:** update the `_skills/` snapshot references too.
 - **Memory:** update my persistent memory note.
 - **Commit:** one commit (rename + content updates + LOG entry).
@@ -1033,8 +1033,8 @@ User renamed the project dir on disk: `/home/think/Desktop/research/_run/10_lcbn
 1. Verified the on-disk rename and git state (old paths deleted, `a_lcbnovel/` untracked).
 2. Ran a scripted `10_lcbnovel` -> `a_lcbnovel` replacement across the project source
    (18 files: main.py, smoke_test, AGENTS/README/README.AI/TUTORIAL/LOG/VERSIONS,
-   _analysist/run_analysis_indices.py, _runs/a{1,2,3}_*/main.py, _runs/73 docs).
-3. Ran the replacement across the gitignored `_analysist/1_result/` copies
+   2_analysist/run_analysis_indices.py, 1_runs/a{1,2,3}_*/main.py, 1_runs/73 docs).
+3. Ran the replacement across the gitignored `2_analysist/1_result/` copies
    (21 files: 71/72/73/74 docs + code), per the confirmed scope.
 4. Ran the replacement across the `_skills/` snapshot (12 files).
 5. Updated persistent memory (project path -> _run/a_lcbnovel).
@@ -1044,10 +1044,10 @@ User renamed the project dir on disk: `/home/think/Desktop/research/_run/10_lcbn
 
 ### Results
 - Rename staged in git as a rename; internal references consistent across project,
-  `_analysist` copies, `_skills` snapshot, and memory.
+  `2_analysist` copies, `_skills` snapshot, and memory.
 
 ### Decisions & reasoning
-- Updated ALL references (not just root docs) so paths in `_runs/` and `_analysist`
+- Updated ALL references (not just root docs) so paths in `1_runs/` and `2_analysist`
   copies don't dangle to a non-existent `10_lcbnovel`.
 - Also updated the gitignored `1_result/` copies and `_skills/` snapshot so the whole
   tree is consistent; the `_skills` copy is a snapshot, refreshed here to match.
@@ -1064,10 +1064,10 @@ User renamed the project dir on disk: `/home/think/Desktop/research/_run/10_lcbn
 
 ---
 
-## 2026-08-26 — Session: Per-run README+TUTORIAL + latest-code sync under _runs/
+## 2026-08-26 — Session: Per-run README+TUTORIAL + latest-code sync under 1_runs/
 
 ### Goal (user request, confirmed via clarify)
-Each `_runs/` dir is self-contained: carries the LATEST versioned package dirs
+Each `1_runs/` dir is self-contained: carries the LATEST versioned package dirs
 (`novelty_lcb/`, `scripts/`) from the project root, plus a per-run `README.md` +
 `TUTORIAL.md` specific to that run's treatment. Update governance docs (AGENTS,
 README.AI, TUTORIAL) and the `agox-novelty-lcb` skill to match.
@@ -1089,13 +1089,13 @@ README.AI, TUTORIAL) and the `agox-novelty-lcb` skill to match.
 
 ### Actions taken
 1. Synced latest versioned `main.py`, `novelty_lcb/`, `scripts/` from project root →
-   `_runs/a1_mgofe_Seed3_Iter300/`, `a2_...Iter500/`, `a3_...Iter700/`; refreshed
-   `_runs/73_novel_benchEMT/{novelty_lcb,scripts}/`. Verified byte-identical to root
+   `1_runs/a1_mgofe_Seed3_Iter300/`, `a2_...Iter500/`, `a3_...Iter700/`; refreshed
+   `1_runs/73_novel_benchEMT/{novelty_lcb,scripts}/`. Verified byte-identical to root
    (all copies now carry `__version__`).
 2. Wrote per-run `README.md` + `TUTORIAL.md` for a1/a2/a3, each specific to its
    treatment (seed=3, N_ITERATIONS=300/500/700) with a sibling-difference table.
 3. Updated `AGENTS.md`: per-run README+TUTORIAL policy + "keep run copies current"
-   sync rule + `_runs/` layout tree.
+   sync rule + `1_runs/` layout tree.
 4. Updated `README.AI.md` §2a layout and root `TUTORIAL.md` pitfall #8.
 5. Fixed stale `10_lcbnovel` → `a_lcbnovel` refs in `agox-novelty-lcb` skill
    (SKILL.md + references/auto-window-and-test.md + kappa-lambda-sweep.md) and synced
@@ -1122,10 +1122,10 @@ README.AI, TUTORIAL) and the `agox-novelty-lcb` skill to match.
 
 ---
 
-## 2026-08-26 — Session: Add kappa-sweep runs (a4/a5/a6) under _runs/ + --kappa CLI flag
+## 2026-08-26 — Session: Add kappa-sweep runs (a4/a5/a6) under 1_runs/ + --kappa CLI flag
 
 ### Goal (user request, confirmed via clarify)
-Create new `_runs/` dirs using the same setup as `a1_mgofe_Seed3_Iter500` (which the
+Create new `1_runs/` dirs using the same setup as `a1_mgofe_Seed3_Iter500` (which the
 user cited; the active base is `a2_mgofe_Seed3_Iter500`, kappa=2.0) but with different
 kappa values: runs for kappa 3, 4, and 5. Clarify each step.
 
@@ -1148,10 +1148,10 @@ kappa values: runs for kappa 3, 4, and 5. Clarify each step.
    `build_stack(..., kappa=KAPPA)` into the acquisitor, updated docstring usage. Bumped
    `__version__` 1.0.0 -> 1.1.0. `py_compile` OK; `--help` shows the new flag.
 2. `VERSIONS.md`: `main.py` 1.0.0 -> 1.1.0.
-3. Synced updated `main.py` into `_runs/a1_mgofe_Seed3_Iter300/`,
+3. Synced updated `main.py` into `1_runs/a1_mgofe_Seed3_Iter300/`,
    `a2_mgofe_Seed3_Iter500/`, `a3_mgofe_Seed3_Iter700/`, `73_novel_benchEMT/`
    (verified all at 1.1.0).
-4. Created `_runs/a4_mgofe_Seed3_Iter500_k3/`, `a5_mgofe_Seed3_Iter500_k4/`,
+4. Created `1_runs/a4_mgofe_Seed3_Iter500_k3/`, `a5_mgofe_Seed3_Iter500_k4/`,
    `a6_mgofe_Seed3_Iter500_k5/` by copying the full a2 structure (main.py 1.1.0 +
    novelty_lcb + scripts + README + TUTORIAL). Corrected the dir index after an initial
    mis-numbering (a3/a4/a5 -> a4/a5/a6).
@@ -1181,10 +1181,10 @@ kappa values: runs for kappa 3, 4, and 5. Clarify each step.
 
 ---
 
-## 2026-08-26 — Session: Add novelty_weight-sweep runs (a7/a8/a9) under _runs/ + --novelty-weight CLI flag
+## 2026-08-26 — Session: Add novelty_weight-sweep runs (a7/a8/a9) under 1_runs/ + --novelty-weight CLI flag
 
 ### Goal (user request, FLAG 20260826_1437, confirmed via clarify)
-Create new `_runs/` dirs using the same system/setup as `a5_mgofe_Seed3_Iter500_k4`
+Create new `1_runs/` dirs using the same system/setup as `a5_mgofe_Seed3_Iter500_k4`
 but with different `NOVELTY_WEIGHT` values: 2.0, 3.0, and 4.0. Clarify each step.
 
 ### Clarify (confirmed)
@@ -1203,9 +1203,9 @@ but with different `NOVELTY_WEIGHT` values: 2.0, 3.0, and 4.0. Clarify each step
    docstring usage. Bumped `__version__` 1.1.0 -> 1.1.1. `py_compile` OK; `--help`
    shows the new flag.
 2. `VERSIONS.md`: `main.py` 1.1.0 -> 1.1.1.
-3. Synced updated `main.py` into `_runs/a1..a6/` and `_runs/73_novel_benchEMT/`
+3. Synced updated `main.py` into `1_runs/a1..a6/` and `1_runs/73_novel_benchEMT/`
    (verified all at 1.1.1).
-4. Created `_runs/a7_mgofe_Seed3_Iter500_k4_nw2/`, `a8_mgofe_Seed3_Iter500_k4_nw3/`,
+4. Created `1_runs/a7_mgofe_Seed3_Iter500_k4_nw2/`, `a8_mgofe_Seed3_Iter500_k4_nw3/`,
    `a9_mgofe_Seed3_Iter500_k4_nw4/` by copying the full a5 structure (main.py 1.1.1 +
    novelty_lcb + scripts + README + TUTORIAL).
 5. Set `NOVELTY_WEIGHT=2/3/4` and `--novelty-weight "${NOVELTY_WEIGHT}"` in each new
@@ -1234,10 +1234,10 @@ but with different `NOVELTY_WEIGHT` values: 2.0, 3.0, and 4.0. Clarify each step
 
 ---
 
-## 2026-08-26 — Session: Add Boron-doping run (a10) under _runs/ + B support in main.py v1.2.0
+## 2026-08-26 — Session: Add Boron-doping run (a10) under 1_runs/ + B support in main.py v1.2.0
 
 ### Goal (user request, FLAG 20260826_1602, confirmed via clarify)
-Create a new `_runs/` directory implementing **Boron addition onto the Fe/MgO system**,
+Create a new `1_runs/` directory implementing **Boron addition onto the Fe/MgO system**,
 using the same system as the `66_MgOFe_20B` project. Clarify each step.
 
 ### Clarify (confirmed)
@@ -1252,7 +1252,7 @@ using the same system as the `66_MgOFe_20B` project. Clarify each step.
 - **Root main.py:** add B support but keep root `NUM_ATOMS_ADD = 0` (root + existing
   runs unchanged); sync updated main.py into all run dirs. Version -> 1.2.0 (feature).
 - **Scripts:** copy `add_adsorbate_to_hollows.py` + `global_permutation_generator.py`
-  into a_lcbnovel/scripts, then into _runs.
+  into a_lcbnovel/scripts, then into 1_runs.
 
 ### Actions taken
 1. Copied `add_adsorbate_to_hollows.py` + `global_permutation_generator.py` from
@@ -1265,7 +1265,7 @@ using the same system as the `66_MgOFe_20B` project. Clarify each step.
 4. Synced updated `main.py` + both B scripts into all run dirs (a1-a9, a10, 73).
    Existing runs keep NUM_ATOMS_ADD=0 -> unchanged behavior. All compile.
 5. `VERSIONS.md`: main.py -> 1.2.0; added the two new script rows (1.0.0).
-6. Created `_runs/a10_mgofeb_Seed3_Iter500/` (copy of a9, then set NUM_ATOMS_ADD=6,
+6. Created `1_runs/a10_mgofeb_Seed3_Iter500/` (copy of a9, then set NUM_ATOMS_ADD=6,
    KAPPA=2, NOVELTY_WEIGHT=1.5 in its j_*.sh). Verified B6Fe25 locally.
 7. Wrote per-run `README.md` + `TUTORIAL.md` for a10 (B doping, 6 B, permutation gen).
 
@@ -1335,12 +1335,12 @@ structures. Write a test code.
 ### Time
 ~20 min.
 
-## 2026-08-31 — Session: Port _analysist analysis runner to the b_nestedsampling architecture
+## 2026-08-31 — Session: Port 2_analysist analysis runner to the b_nestedsampling architecture
 
 ### Goal (user request, confirmed via clarify)
-Update `_analysist/run_analysis_indices.py` (was v1.0.0, the old index/folder-map
+Update `2_analysist/run_analysis_indices.py` (was v1.0.0, the old index/folder-map
 pipeline) to follow the same architecture as the sibling project's runner at
-`/home/think/Desktop/research/_run/b_nestedsampling/_analysist/run_analysis_indices.py`
+`/home/think/Desktop/research/_run/b_nestedsampling/2_analysist/run_analysis_indices.py`
 (v1.3.1): a `--dataset`/`--outdir`-based runner that loads ALL seed DBs directly
 instead of the `FOLDER_MAP` + `process_database` Stage-1 flow.
 
@@ -1355,18 +1355,18 @@ instead of the `FOLDER_MAP` + `process_database` Stage-1 flow.
   `--dataset` at `66_MgOFe_20B` (its `seed_0..4` sit at the top level). 73/74 flat
   benchmarks remain excluded.
 - **Old version preserved:** copied to
-  `_analysist/_archive/run_analysis_indices_index_based.py`.
+  `2_analysist/_archive/run_analysis_indices_index_based.py`.
 - **Deliverables:** full version/doc/verify/commit pass on this change.
 
 ### Actions taken
-1. Copied old v1.0.0 to `_analysist/_archive/run_analysis_indices_index_based.py`.
-2. Rewrote `_analysist/run_analysis_indices.py` as a faithful port of the
+1. Copied old v1.0.0 to `2_analysist/_archive/run_analysis_indices_index_based.py`.
+2. Rewrote `2_analysist/run_analysis_indices.py` as a faithful port of the
    b_nestedsampling architecture: `load_all_seeds`/`load_all_seeds_by_seed`,
    `step1_progression` (per-seed best-so-far + bullet scatter + xsf export),
    `step2_landscape`, `step3_probability`; CLI `--dataset --outdir --e-max
    --normalize-density --start-iter`; bumped `__version__` to `2.0.0`. Only
    `scripts/plot_structure_landscape.py` is imported (no `process_database`).
-3. Updated `VERSIONS.md` (`_analysist/run_analysis_indices.py` 1.0.0 -> 2.0.0).
+3. Updated `VERSIONS.md` (`2_analysist/run_analysis_indices.py` 1.0.0 -> 2.0.0).
 
 ### Results
 - `py_compile` clean under the `agox_v2` env python.
@@ -1387,7 +1387,7 @@ instead of the `FOLDER_MAP` + `process_database` Stage-1 flow.
 
 ### Open items / next steps
 - (Optional) run 66 the same way (`--dataset 66_MgOFe_20B`) if its analysis is wanted.
-- (Optional) add a `README.md`/`DISCUSSION.md` per run under `_analysist/` for the
+- (Optional) add a `README.md`/`DISCUSSION.md` per run under `2_analysist/` for the
   new `analysis_indices` outputs, mirroring the b_nestedsampling runs.
 
 ### Time
@@ -1396,7 +1396,7 @@ instead of the `FOLDER_MAP` + `process_database` Stage-1 flow.
 ## 2026-08-31 — Session: Add single-seed analyzer run_analysis_a_runs.py for the a-runs
 
 ### Goal (user request, confirmed via clarify)
-Make a new analysis code like `_analysist/run_analysis_indices.py` but tailored to
+Make a new analysis code like `2_analysist/run_analysis_indices.py` but tailored to
 analyze the per-seed a-run outputs (e.g. `a1_mgofe_Seed3_Iter300/output`).
 
 ### Clarify (confirmed)
@@ -1404,19 +1404,19 @@ analyze the per-seed a-run outputs (e.g. `a1_mgofe_Seed3_Iter300/output`).
   P(T)) as a dedicated single-seed analyzer for the a-runs, taking `--dataset`
   pointing at the run's `output/` dir.
 - **Scope:** just `a1_mgofe_Seed3_Iter300` for validation (single seed_3).
-- **Location/name:** `_analysist/run_analysis_a_runs.py` (alongside
+- **Location/name:** `2_analysist/run_analysis_a_runs.py` (alongside
   run_analysis_indices.py).
 - **Deliverables:** full version/doc/verify/commit pass.
 
 ### Actions taken
-1. Wrote `_analysist/run_analysis_a_runs.py` (v1.0.0), a sibling of the ported
+1. Wrote `2_analysist/run_analysis_a_runs.py` (v1.0.0), a sibling of the ported
    multi-seed runner. Key difference: Stage 1 labels the curve with the actual seed
    number (`Seed 3`, via `_seed_label_from_path`) and writes
    `progression_seed_split_Seed3.png` (not positional `Seed 0`), while keeping the
    same low-energy-window bullets + global ground-state .xsf export. Stages 2/3 are
    identical to the reference. CLI: `--dataset --outdir --e-max --normalize-density
    --start-iter`. Only `scripts/plot_structure_landscape.py` is imported.
-2. Updated `VERSIONS.md` (`_analysist/run_analysis_a_runs.py` 1.0.0).
+2. Updated `VERSIONS.md` (`2_analysist/run_analysis_a_runs.py` 1.0.0).
 
 ### Results
 - `py_compile` clean under the `agox_v2` env python.
@@ -1444,7 +1444,7 @@ analyze the per-seed a-run outputs (e.g. `a1_mgofe_Seed3_Iter300/output`).
 
 ### Goal (user request, confirmed via clarify)
 The a10 B-doped run
-(`_analysist/a10_mgofeb_Seed3_Iter500/j_a10.sh.6597643.out`) crashed at iteration 1
+(`2_analysist/a10_mgofeb_Seed3_Iter500/j_a10.sh.6597643.out`) crashed at iteration 1
 with `gpaw.utilities.AtomsTooClose: Atoms are too close, e.g. 8.88e-16 A`. Fix the
 root cause in the project-root script.
 
@@ -1453,7 +1453,7 @@ root cause in the project-root script.
   adjacent Fe atoms forming a square in the Fe layer) and place B there, skipping any
   site that would overlap an existing atom.
 - **Scope:** fix the project-root `scripts/add_adsorbate_to_hollows.py`, then sync the
-  fixed copy into the run-dir copies (a10 + other `_runs/` snapshots) so they stay
+  fixed copy into the run-dir copies (a10 + other `1_runs/` snapshots) so they stay
   current with the root (AGENTS.md rule).
 - **Deliverables:** full workflow pass (bump __version__, VERSIONS.md + LOG.md,
   py_compile + re-run seed-3 doping locally to prove no overlap, commit).
@@ -1474,8 +1474,8 @@ B6Fe25 instead of the requested B7Fe25.
      Fe atoms forming a square (side = NN spacing), deduplicated.
    - `add_adsorbate_to_hollows`: shuffles the detected hollows, takes `num_atoms`,
      and rejects any site within 0.5 A of an existing atom (collision safety).
-2. Synced the fixed copy into all run-dir snapshots under `_runs/` (a1-a10, 73) and
-   the `_analysist/` copies.
+2. Synced the fixed copy into all run-dir snapshots under `1_runs/` (a1-a10, 73) and
+   the `2_analysist/` copies.
 3. Updated `VERSIONS.md` (`scripts/add_adsorbate_to_hollows.py` 1.0.0 -> 1.1.0).
 
 ### Results
@@ -1502,19 +1502,19 @@ B6Fe25 instead of the requested B7Fe25.
 ## 2026-08-31 — Session: Add a1 single-seed analysis DISCUSSION.md + update analysis notes + AGENTS.md
 
 ### Goal (user request, confirmed via clarify)
-Edit the a1 single-seed analysis (`_analysist/a1_mgofe_Seed3_Iter300/analysis_a_runs`):
+Edit the a1 single-seed analysis (`2_analysist/a1_mgofe_Seed3_Iter300/analysis_a_runs`):
 when running the analysis, include a DISCUSSION.md note covering the discussion of the
 result and the full python command with its parameters. Update all notes that reference
 analysis, and update AGENTS.md.
 
 ### Clarify (confirmed)
 - **DISCUSSION.md location:** inside the analysis dir
-  `_analysist/a1_mgofe_Seed3_Iter300/analysis_a_runs/DISCUSSION.md`.
+  `2_analysist/a1_mgofe_Seed3_Iter300/analysis_a_runs/DISCUSSION.md`.
 - **Re-run:** yes — re-run `run_analysis_a_runs.py` for a1 so the DISCUSSION.md exactly
   matches this invocation.
 - **Notes to update (multi-select):** project `README.md`, project `README.AI.md`,
   a1 run `TUTORIAL.md`, a1 run `README.md`. (Also mirrored into the tracked
-  `_runs/a1_mgofe_Seed3_Iter300/` README+TUTORIAL copies to keep them current per
+  `1_runs/a1_mgofe_Seed3_Iter300/` README+TUTORIAL copies to keep them current per
   AGENTS.md.)
 - **AGENTS.md:** add a short per-run analysis convention to section 3a — every
   analysis dir must ship a DISCUSSION.md with the exact running command + params
@@ -1535,22 +1535,22 @@ analysis, and update AGENTS.md.
 4. Updated project `README.AI.md` (layout tree, section 2a, command block) to reference
    `run_analysis_a_runs.py`, `analysis_a_runs/`, and the DISCUSSION.md requirement.
 5. Updated a1 run `README.md` + `TUTORIAL.md` (Step 5 analysis reproduce) in both the
-   `_analysist/` and tracked `_runs/` copies.
+   `2_analysist/` and tracked `1_runs/` copies.
 6. Updated `AGENTS.md` section 3a with the per-run analysis + DISCUSSION.md convention.
 
 ### Results
 - a1 analysis re-ran cleanly; DISCUSSION.md written with exact command + grounded
   numbers.
 - All notes referencing analysis updated consistently across README.md / README.AI.md /
-  a1 README+TUTORIAL (both _analysist and _runs copies) and AGENTS.md.
+  a1 README+TUTORIAL (both 2_analysist and 1_runs copies) and AGENTS.md.
 
 ### Decisions & reasoning
 - Grounded every number in the DISCUSSION in the actual DB/analysis output (not
   eyeballed).
 - Kept the b_nestedsampling convention (DISCUSSION.md with `## Running script`) as the
   project standard per the reference doc.
-- Mirrored docs into the tracked `_runs/a1_mgofe_Seed3_Iter300/` copies since the
-  `_analysist/a1...` dir is untracked user data.
+- Mirrored docs into the tracked `1_runs/a1_mgofe_Seed3_Iter300/` copies since the
+  `2_analysist/a1...` dir is untracked user data.
 
 ### Open items / next steps
 - (Optional) replicate the same DISCUSSION.md pattern for the other analysed runs

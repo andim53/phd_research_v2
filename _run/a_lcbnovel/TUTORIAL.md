@@ -58,24 +58,24 @@ passes `functools.partial(...)` over **module-level** functions (not bound metho
 
 ## Step 4 — Launch the heavy search on HPC
 
-Each heavy run lives in its own **self-contained directory** under `_runs/`, named
+Each heavy run lives in its own **self-contained directory** under `1_runs/`, named
 `<NN>_<descriptor>` (e.g. `1_mgofe_Seed3_Iter300`). `cd` into the run dir, then
 `pjsub` its job script. The seed and iteration count are set by editing `SEED=` and
 `N_ITERATIONS=` at the top of that run's `j_*.sh` (the owner prefers this over
 passing `-x SEED=N`). The job activates `gpaw_env` (NOT `agox_v2`).
 
 ```bash
-cd /home/think/Desktop/research/_run/a_lcbnovel/_runs/<NN>_<descriptor>   # e.g. 1_mgofe_Seed3_Iter300
+cd /home/think/Desktop/research/_run/a_lcbnovel/1_runs/<NN>_<descriptor>   # e.g. 1_mgofe_Seed3_Iter300
 # edit SEED= / N_ITERATIONS= in j_*.sh if needed
 pjsub j_*.sh            # e.g. j_novEperAtom.sh — runs the seed set in the script
 # monitor: pjstat   |   cancel: pjdel
 ```
 
-The `_runs/<NN>_<descriptor>/` dir carries everything the job needs (its own
+The `1_runs/<NN>_<descriptor>/` dir carries everything the job needs (its own
 `main.py`, `scripts/`, `novelty_lcb/`), so it is fully isolated from the project
 root. For a new run, copy the latest per-seed dir, bump the `<NN>` index, and adjust
 the `SEED=` / `N_ITERATIONS=` in its job script. Standalone benchmarks
-(e.g. `73_novel_benchEMT`) are full projects under `_runs/` with their own
+(e.g. `73_novel_benchEMT`) are full projects under `1_runs/` with their own
 README/LOG/TUTORIAL.
 
 Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
@@ -83,22 +83,22 @@ Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
 
 ## Step 4b — Where analysed results go
 
-Analysed/intermediate results go in **`_analysist/`** (sibling of `_runs/`), kept
+Analysed/intermediate results go in **`2_analysist/`** (sibling of `1_runs/`), kept
 separate from raw runs. The repo-root `.gitignore` anticipates
 `0_analy/` (staging), `1_result/` (final), and `main_analyst.ipynb` /
 `main_test.ipynb` (notebooks). Analysis outputs are regenerable/gitignored.
 
 ## Step 4c — Analyse the Fe/MgO heavy-run results (idx 71, 72)
 
-A self-contained analysis runner lives at `_analysist/run_analysis_indices.py`
-(mirrors the sibling `/home/think/Desktop/research/_analysist/run_analysis_indices.py`,
-adapted to this project; imports only the `_analysist/scripts/` deps copied next to
+A self-contained analysis runner lives at `2_analysist/run_analysis_indices.py`
+(mirrors the sibling `/home/think/Desktop/research/2_analysist/run_analysis_indices.py`,
+adapted to this project; imports only the `2_analysist/scripts/` deps copied next to
 it). It runs the 3-stage pipeline on the Fe/MgO heavy runs **71** and **72**:
 ① `process_database` (AGOX `.db` → trajectory/xsf/csv, `start_iter=10`),
 ② PCA landscape, ③ Boltzmann probability vs temperature.
 
 ```bash
-cd /home/think/Desktop/research/_run/a_lcbnovel/_analysist
+cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py --idx 71
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py   # all (71, 72)
 # optional: --e-max 0.8 --normalize-density --skip-probability
@@ -113,11 +113,11 @@ so `process_database` would find nothing; those benchmarks have their own analys
 `2_im/binding_probability_vs_temperature.png`.
 
 > **Git note:** this project is part of the parent repo
-> (`/home/think/Desktop/research`), whose `.gitignore`'s `_analysist/0_analy/` rules
-> target the *parent's* `_analysist` — not this nested one. A project-level
-> `.gitignore` was added so `_analysist/0_analy/` and `_analysist/1_result/` (and
+> (`/home/think/Desktop/research`), whose `.gitignore`'s `2_analysist/0_analy/` rules
+> target the *parent's* `2_analysist` — not this nested one. A project-level
+> `.gitignore` was added so `2_analysist/0_analy/` and `2_analysist/1_result/` (and
 > `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) stay untracked; only the runner +
-> `_analysist/scripts/` code is committed.
+> `2_analysist/scripts/` code is committed.
 
 ## Step 5 — Energy-window: auto global-minimum mode (default)
 
@@ -149,7 +149,7 @@ This mode is not needed for the default run.
 ## Step 6 — EMT benchmark (optional)
 
 > The **extended** grid benchmark (10 seeds × iter 100–500 × λ 2–5 = 250 runs) lives
-> as its own full project at **`_runs/73_novel_benchEMT/`** (see its README). The
+> as its own full project at **`1_runs/73_novel_benchEMT/`** (see its README). The
 > steps below describe the parent-project benchmark (`main_benchmark.py` /
 > `main_benchmark_sweep.py`), which run from the project root.
 
@@ -227,11 +227,11 @@ Once real DBs exist, the established downstream pipeline applies:
    actor per CPU); on a small machine this can OOM. On the 64-core HPC node Ray is
    fine and expected.
 7. **Trailing space in run-dir names** — a run dir was accidentally created as
-   `_runs/3_mgofe_Seed3_Iter700 ` (trailing space). This is error-prone with paths
+   `1_runs/3_mgofe_Seed3_Iter700 ` (trailing space). This is error-prone with paths
    and scripts; keep run-dir names free of spaces (`<NN>_<descriptor>`). The space
    was removed via `git mv`.
 8. **Keep each run dir self-contained + documented** — always give a run its own
-   `main*.py`, `scripts/`, and `novelty_lcb/` under `_runs/<NN>_<descriptor>/`; do not
+   `main*.py`, `scripts/`, and `novelty_lcb/` under `1_runs/<NN>_<descriptor>/`; do not
    rely on the project root when launching from HPC. If a run's code diverges, copy the
    needed files into the run dir rather than importing from the parent. Each **per-seed
    run also carries a `README.md` + `TUTORIAL.md` specific to its treatment** (seed,
@@ -252,5 +252,5 @@ Once real DBs exist, the established downstream pipeline applies:
 - [ ] Local structure build produces a 75-atom Mg25O25Fe25 slab
 - [ ] (HPC) one seed completes without a Ray serialization error
 - [ ] Energy window calibrated before interpreting Novelty-LCB results
-- [ ] Run dirs follow `<NN>_<descriptor>` naming with no spaces; `_runs/` is git-tracked, `_analysist/` outputs are gitignored
+- [ ] Run dirs follow `<NN>_<descriptor>` naming with no spaces; `1_runs/` is git-tracked, `2_analysist/` outputs are gitignored
 - [ ] Every in-scope source file has a module-level `__version__`; `VERSIONS.md` is current and matches; `LOG.md` records the old→new version

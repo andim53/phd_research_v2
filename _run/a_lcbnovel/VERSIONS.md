@@ -34,15 +34,15 @@ Versioning rules:
 | `scripts/plot_structure.py` | 1.0.0 |
 | `scripts/add_adsorbate_to_hollows.py` | 1.1.0 |
 | `scripts/global_permutation_generator.py` | 1.0.0 |
-| `_analysist/run_analysis_indices.py` | 2.0.0 |
-| `_analysist/run_analysis_a_runs.py` | 1.0.0 |
-| `_analysist/scripts/calculate_relative_energy.py` | 1.0.0 |
-| `_analysist/scripts/plot_structure_landscape.py` | 1.0.0 |
-| `_analysist/scripts/process_database.py` | 1.0.0 |
+| `2_analysist/run_analysis_indices.py` | 2.0.0 |
+| `2_analysist/run_analysis_a_runs.py` | 1.0.0 |
+| `2_analysist/scripts/calculate_relative_energy.py` | 1.0.0 |
+| `2_analysist/scripts/plot_structure_landscape.py` | 1.0.0 |
+| `2_analysist/scripts/process_database.py` | 1.0.0 |
 
 ## Out of scope (not versioned)
 
-Duplicated snapshot copies under `_runs/1|2|3|73` and `dataset/` (and
+Duplicated snapshot copies under `1_runs/1|2|3|73` and `dataset/` (and
 `dataset/trash/`) are self-contained per-run snapshots of the source above and are
 **not** individually versioned; bump the source file and sync the copy if a run
 needs the updated code.
