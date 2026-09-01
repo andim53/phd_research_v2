@@ -324,3 +324,15 @@ Below is a neutral assessment — it is a legitimate idea, and it also has real 
 Your reasoning ("MC is just randomization; reaching the minimum is what matters") is coherent, and MC + GPR-relax is a well-precedented basin-hopping approach that would almost certainly fix the observed trapping. However, it is a **different estimator** (basin/inherent-structure `g(E)`, not configurational `g(E)`), it is ~100× more expensive per step, and it moves surrogate error from "noisy per position" to "systematic per basin." Whether it is the right move depends on (a) whether you want configurational or canonical thermodynamics, (b) whether you can afford/cut the MC budget enough, and (c) whether the v1.3.0 plain-walk fixes already suffice on re-testing.
 
 If you want me to, I can scope it as an **optional** `--relax-steps N` mode (default off) with a short real-GPR cost measurement and a local smoke test, so you can compare the two estimators empirically before committing — without removing the existing no-relax path. But that is a follow-up task, not something done here.
+
+New Question: 
+
+I still don't understand how Wang–Landau sampling works. Can you provide a simple workflow or flowchart for it? A few specific things are unclear:
+
+1. **How do we sample the data?** Do we take structures from the database (`db_*.db`) as in the `b_nestedsampling` project? If so, do we pick them randomly?
+
+2. **If random, do we face the same duplication problem?** If we can revisit the same structure, does that mean we have the same duplication issue as in `b_nestedsampling`, and should we add a novelty filter there too?
+
+3. **How does the minimization / convergence criterion work?** How does Wang–Landau decide convergence — what is the minimization criterion connected to the flatness check?
+
+4. **How is the `--e-max` bin edge handled?** In the code, are structures whose energy is above the chosen 0.4 eV filter included as 0.4 eV (capped into the top bin), or are they excluded? 
