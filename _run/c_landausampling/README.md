@@ -470,3 +470,54 @@ The GPR-relax sweep jobs (`_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh`, `_runs/c2
 - Current GPR relax: **serial** (single BFGS per MC step, single process).
 - `--use-ray`: **does not** parallelise the relax; it only parallelises GPR training's hyperparameter search.
 - To actually parallelise the relax you would need a different architecture (e.g. multiple independent walkers / replicas, or relaxing a batch of trials in parallel) — that is not what the current sampler or the current `_runs` scripts do. 
+
+New Question:
+
+I want to make a parallelization. Discuss this on the README. What can be parallel, what can be fasten, and using what.
+
+### Answer
+
+Below is a code-grounded map of what can be parallelised in this project, what can only be sped up, and which tool to use for each. The short version: **the single Wang–Landau walk is inherently serial, but the workload around it — GPR training, and especially running many independent walks — parallelises cleanly.** The biggest win is not the relax itself but running many walkers at once.
+
+### What is inherently serial (cannot be parallelised)
+
+1. **A single Wang–Landau Markov chain.** Each MC step's trial is generated from the previous accepted structure (`run()`, `wang_landau_sampler.py:359-390`), so step *n* depends on step *n−1*. You cannot split one walk across cores.
+2. **A single BFGS relaxation.** `_relax()` (`:257`) is a sequential descent on one trial; its force/energy calls are one-at-a-time. You cannot parallelise one descent.
+
+These two are the reason the current code is serial — not a missing flag, but the algorithm's structure.
+
+### What CAN be parallelised, and with what
+
+**1. GPR training — use AGOX's built-in Ray (`--use-ray`).**
+This is the one place AGOX natively parallelises. `use_ray=True` makes `_train_model()` call `hyperparameter_search_parallel()` (`agox/models/GPR/GPR.py:559-572`), which runs the `n_optimize` hyperparameter restarts across Ray actors via `pool_map`. Two caveats from the code:
+- With `use_ray=False` (current default), `n_optimize` defaults to **1** (`GPR.py:108-109`) — a single restart, so there is nothing to parallelise anyway.
+- With `use_ray=True` and `n_optimize=None`, AGOX sets `n_optimize = cpu_count` (`GPR.py:105-106`), i.e. it launches one hyperparameter restart per core. So to actually benefit you must pass `--use-ray` **and** let `n_optimize` scale (or set it explicitly in `build_gpr`).
+- Tool: `python ./main.py --use-ray ...` (flag already wired in `main.py:148`). This speeds up the one-time training step only.
+
+**2. Many independent Wang–Landau walks — the main lever (embarrassingly parallel).**
+Because each walk is an independent Markov chain with its own RNG seed, you can run **N walkers in parallel** and combine their `g(E)` estimates (e.g. average `ln g` per bin, or run each to convergence and merge). This is the classic "parallel / replica Wang–Landau" strategy, and it is the cleanest speedup here:
+- It directly attacks the wall-time bottleneck: the GPR-relax sweep is expensive per step, so running the 4 relax settings (or 4 seeds) **concurrently** instead of sequentially cuts wall time ~4×.
+- Tool options:
+  - **Simplest (no code change):** submit N separate `pjsub` jobs (one per seed / per `--relax-steps`), each on its own node. The project already does this pattern; the current `jc1_sweepGPR.sh` just runs them sequentially in one script — split them into N scripts and submit together.
+  - **In-process:** use Ray actors or Python `multiprocessing` to run N `WangLandauSampler` instances concurrently, then merge `ln_g`. This needs a small driver script (not in the repo yet).
+- Caveat: each walker needs its own RNG seed (`--rng`), and the merged `g(E)` is only meaningful if the walks are comparable (same bins, same `e_max`, same dataset).
+
+**3. Batch force/energy prediction — only helps if you relax/score many trials at once.**
+AGOX's `predict_forces`/`predict_energy` are single-structure serial (`GPR.py:144,188`), but the `candidate_list_comprehension` decorator (`agox/utils/decorators.py:6`) lets you pass a **list** of `Atoms` and get a list of results. If you restructure the sampler to relax/score a *batch* of trials (e.g. one per walker) in one call, you could push that batch through Ray `pool_map` (`agox/utils/ray/pool_user.py:72`) so each actor handles one trial. This is the only way to parallelise the *relax itself* — but it requires a batch-of-walkers architecture, not the current single-walker loop.
+
+### What can be sped up (not parallelised)
+
+- **GPR training wall-time** — via `--use-ray` (above). One-time cost, modest.
+- **The GPR-relax sweep wall-time** — by running the 4 relax settings concurrently (point 2) rather than sequentially in one script. This is the biggest practical speedup and needs no code change.
+- **Per-step cost of the relax** — could be reduced (not parallelised) by lowering `--relax-steps` or using a cheaper optimiser, but that changes the physics (see the earlier basin-hopping QnA).
+
+### Recommended plan (lowest effort → highest impact)
+
+| Goal | Tool | Effort | Impact |
+|---|---|---|---|
+| Speed up GPR training | `--use-ray` (Ray actors) | trivial (flag) | small, one-time |
+| Cut sweep wall-time | N concurrent `pjsub` jobs (one per seed/relax setting) | trivial (split scripts) | **large (~N×)** |
+| Parallelise the relax itself | batch-of-walkers + Ray `pool_map` | new driver + sampler refactor | large but requires new architecture |
+| Parallelise one walk | — | impossible | — |
+
+The pragmatic first step: **keep the sampler as-is, but run the independent walks concurrently** (separate jobs or a Ray/multiprocessing driver), and merge the `ln g` estimates. That gives most of the benefit with no change to the physics or the sampler core.
