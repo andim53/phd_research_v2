@@ -130,6 +130,12 @@ def main():
                    help="Random seed for the sampler RNG")
     p.add_argument("--use-ray", action="store_true",
                    help="Enable Ray in GPR training (default: single-process)")
+    p.add_argument("--n-walkers", type=int, default=1,
+                   help="Number of concurrent Wang-Landau walkers sharing one "
+                        "histogram H / ln_g via Ray actors (Mode A). Default 1 "
+                        "(serial). N>1 runs N walkers with distinct seeds "
+                        "--rng+i and merges their statistics through a shared "
+                        "actor, so the combined walk reaches flatness faster.")
     args = p.parse_args()
 
     # --- 1. Load the chosen dataset -----------------------------------------
@@ -151,10 +157,9 @@ def main():
     # --- 3. Run Wang-Landau --------------------------------------------------
     print("\nRunning Wang-Landau sampling...")
     temps = [float(t) for t in args.temperatures.split(",") if t.strip()]
-    sampler = WangLandauSampler(
-        gpr=gpr,
-        db_structures=structures,
-        db_energies=energies,
+    start_from_top = args.start_from_top and not args.start_from_min
+
+    sampler_kwargs = dict(
         n_bins=args.n_bins,
         e_min=args.e_min,
         e_max=args.e_max,
@@ -169,23 +174,43 @@ def main():
         swap_prob=args.swap_prob,
         max_swaps=args.max_swaps,
         swap_rattle=args.swap_rattle,
-        rng=np.random.default_rng(args.rng),
     )
-    # Initialize: --start-from-top picks the top of the tracked window; otherwise
-    # (default, or --start-from-min) start from the global minimum and walk up.
-    start_from_top = args.start_from_top and not args.start_from_min
-    sampler.initialize(start_from_top=start_from_top)
-    sampler.run(n_steps=args.mc_steps,
-                progress_every=max(args.check_interval, 1))
 
-    # --- 4. Save g(E) + thermodynamics ---------------------------------------
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
-    sampler.save(str(output_dir))
 
-    bin_centers_rel, ln_g = sampler.g_of_E()
+    if args.n_walkers > 1:
+        from wang_landau.parallel_wl import run_parallel_walkers
+        bin_centers_rel, ln_g, H, ln_f, stage, E_ref, n_atoms = \
+            run_parallel_walkers(args, gpr, structures, energies,
+                                 sampler_kwargs, start_from_top)
+        # Save the aggregate g(E) + histogram from the shared actor.
+        rows = np.column_stack([bin_centers_rel, ln_g, H])
+        np.savetxt(output_dir / "g_of_E.csv", rows, delimiter=',',
+                   header='rel_eV_per_atom,ln_g,H', comments='')
+        print(f"  Wrote aggregate g_of_E.csv to {output_dir}")
+    else:
+        sampler = WangLandauSampler(
+            gpr=gpr,
+            db_structures=structures,
+            db_energies=energies,
+            rng=np.random.default_rng(args.rng),
+            **sampler_kwargs,
+        )
+        # Initialize: --start-from-top picks the top of the tracked window;
+        # otherwise (default, or --start-from-min) start from the global
+        # minimum and walk up.
+        sampler.initialize(start_from_top=start_from_top)
+        sampler.run(n_steps=args.mc_steps,
+                    progress_every=max(args.check_interval, 1))
+        sampler.save(str(output_dir))
+        bin_centers_rel, ln_g = sampler.g_of_E()
+        E_ref = sampler.E_ref
+        n_atoms = sampler.n_atoms
+
+    # --- 4. Save g(E) + thermodynamics ---------------------------------------
     therm_rows = g_of_E_to_thermodynamics(
-        bin_centers_rel, ln_g, sampler.E_ref, sampler.n_atoms, temps)
+        bin_centers_rel, ln_g, E_ref, n_atoms, temps)
     np.savetxt(output_dir / "thermodynamics.csv",
                np.asarray(therm_rows, dtype=float), delimiter=',',
                header='T_K,beta_eV-1,logZ,Z,F_eV', comments='')
