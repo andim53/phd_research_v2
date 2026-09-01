@@ -14,7 +14,7 @@ AI-Agent Project Workflow: full deliverable set + AGENTS.md + VERSIONS.md.
 ### Actions taken
 1. Surveyed the existing directory state:
    - `_results/` (10_dos, 32_dos, 37_dos, analyze_dos.py) — completed DOS/PDOS runs.
-   - `_runs/1_pdos_boron3_gs/` — a prepared but uncommitted PDOS run for the
+   - `1_runs/1_pdos_boron3_gs/` — a prepared but uncommitted PDOS run for the
      FeB/MgO global ground state (main.py, job_dos.sh, gs_boron3.traj,
      README.md, TUTORIAL.md).
    - `dataset_boron3/` — AGOX search data (seed_0..6 DBs).
@@ -48,7 +48,7 @@ state (results, runs, dataset_boron3).
   this session only documents it.
 
 ### Open items
-- Launch `_runs/1_pdos_boron3_gs` on HPC (`pjsub job_dos.sh`) — not yet done.
+- Launch `1_runs/1_pdos_boron3_gs` on HPC (`pjsub job_dos.sh`) — not yet done.
 - `dataset_boron3/seed_6` db is empty; confirm whether that is expected.
 
 ### Time

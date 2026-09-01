@@ -27,5 +27,5 @@ pjsub job_dos.sh
 ```
 
 ## Note on naming
-Run dir index 1 under `_run/0_pdos/_runs/`. The 0_pdos project has no AGENTS.md;
-this follows the general `_runs/<NN>_<descriptor>` convention.
+Run dir index 1 under `_run/0_pdos/1_runs/`. The 0_pdos project has no AGENTS.md;
+this follows the general `1_runs/<NN>_<descriptor>` convention.

@@ -14,7 +14,7 @@ _run/0_pdos/
 ├── README.md / README.AI.md / LOG.md / TUTORIAL.md / VERSIONS.md / AGENTS.md
 ├── dataset_boron3/   # FeB/MgO AGOX search data (input)
 ├── _results/         # completed DOS/PDOS runs + analysis
-└── _runs/            # self-contained HPC run dirs
+└── 1_runs/            # self-contained HPC run dirs
 ```
 
 ## Step 2 — Extract a ground-state structure (FeB/MgO)
@@ -40,11 +40,11 @@ write('gs_boron3.traj', gs)
 ## Step 3 — Run a DOS/PDOS calculation
 
 Copy the reference `_results/10_dos/main.py`, adapt the structure input and the
-PDOS projection, place in `_runs/<NN>_<descriptor>/`, and add `job_dos.sh`.
+PDOS projection, place in `1_runs/<NN>_<descriptor>/`, and add `job_dos.sh`.
 
 Launch on HPC:
 ```bash
-cd _runs/<NN>_<descriptor>
+cd 1_runs/<NN>_<descriptor>
 pjsub job_dos.sh      # runs: python ./main.py  (gpaw_env, 24 cores)
 ```
 

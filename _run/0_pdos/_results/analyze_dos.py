@@ -3,7 +3,7 @@
 PDOS analysis for the Fe/MgO (Fe25/Mg25/O25) run in
 _run/0_pdos/_results/37_dos.
 
-Mirrors cell 52 ("# dos") of _archive/_analysist/main_analyst.ipynb exactly:
+Mirrors cell 52 ("# dos") of _archive/2_analysist/main_analyst.ipynb exactly:
 same config block (seed_map / color_map / line_styles / plot_type / fig_dims
 / dpi / labels), same subplot branch (Total DOS black line + filled Fe-3d
 channel, spin-down mirrored below zero) and same overlay branch (Fe-3d up/down

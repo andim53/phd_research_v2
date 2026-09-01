@@ -9,7 +9,7 @@ Source files in this project:
 | File | `__version__` | Notes |
 |---|---|---|
 | `_results/analyze_dos.py` | — | analysis/plot script (not yet versioned) |
-| `_runs/1_pdos_boron3_gs/main.py` | — | DOS/PDOS entry point (not yet versioned) |
+| `1_runs/1_pdos_boron3_gs/main.py` | — | DOS/PDOS entry point (not yet versioned) |
 
 ## Bump rules
 

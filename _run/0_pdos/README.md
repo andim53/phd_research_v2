@@ -28,7 +28,7 @@ _run/0_pdos/
 │   ├── 32_dos/          # earlier total-DOS run (does_results.csv)
 │   ├── 37_dos/          # real per-seed Fe-3d PDOS data (seeds 3,4)
 │   └── analyze_dos.py   # PDOS analysis/plot script
-└── _runs/               # self-contained HPC run dirs
+└── 1_runs/               # self-contained HPC run dirs
     └── 1_pdos_boron3_gs/  # PDOS of the FeB/MgO global ground state
 ```
 
@@ -40,7 +40,7 @@ _run/0_pdos/
 - **FeB/MgO** — same substrate with 3 boron adatoms (Fe25 Mg25 O25 B3, 78
   atoms). Structures from the `dataset_boron3` AGOX search. The global ground
   state (seed 4, db index 86, E = −455.41 eV) is the target of run
-  `_runs/1_pdos_boron3_gs`.
+  `1_runs/1_pdos_boron3_gs`.
 
 ## How to run at a glance
 

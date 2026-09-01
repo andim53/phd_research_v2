@@ -29,7 +29,7 @@ _run/0_pdos/
 │   ├── 32_dos/                # earlier total-DOS run (does_results.csv)
 │   ├── 37_dos/                # real per-seed Fe-3d PDOS (dos_seed_{3,4}.csv)
 │   └── analyze_dos.py         # analysis/plot script
-└── _runs/                     # self-contained HPC run dirs
+└── 1_runs/                     # self-contained HPC run dirs
     └── 1_pdos_boron3_gs/      # PDOS of FeB/MgO global ground state
         ├── main.py            # entry point (GPAW LCAO DOS/PDOS)
         ├── job_dos.sh         # PJM batch script (gpaw_env, 24 cores)
@@ -40,11 +40,11 @@ _run/0_pdos/
 
 ## Entry points
 
-- **New heavy PDOS run:** create `_runs/<NN>_<descriptor>/` with `main.py`
+- **New heavy PDOS run:** create `1_runs/<NN>_<descriptor>/` with `main.py`
   (adapted from `_results/10_dos/main.py`), `job_dos.sh`, and the structure
   file(s). Run on HPC with `pjsub job_dos.sh`.
 - **Analysis/plot:** `_results/analyze_dos.py` (mirrors notebook cell 52 of
-  `_archive/_analysist/main_analyst.ipynb`), reads `dos_seed_{seed}.csv` files
+  `_archive/2_analysist/main_analyst.ipynb`), reads `dos_seed_{seed}.csv` files
   with columns `energy, total_dos_up, total_dos_down, total_Fe_d_up,
   total_Fe_d_down`.
 
