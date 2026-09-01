@@ -364,7 +364,7 @@ Below is a code-grounded walkthrough. The short version: Wang–Landau here does
 5. OUT       g_of_E.csv / thermodynamics.csv / heat_capacity.csv
 ```
 
-The key mental model: **the walker is a single moving structure, and each MC step manufactures a candidate out of the previous one** by a random atomic displacement. It never draws a structure from a pool.
+The key mentalvmodel: **the walker is a single moving structure, and each MC step manufactures a candidate out of the previous one** by a random atomic displacement. It never draws a structure from a pool.
 
 ---
 
@@ -427,3 +427,46 @@ Concretely, with the defaults `e_max = 0.40`, `e_reject = 5 × e_max = 2.0` eV/a
 So, to answer your exact question: a structure whose energy is *moderately* above 0.4 eV/atom (up to the `e_reject` threshold, default 2.0) **is included as the top bin** (i.e. treated as ~0.4 eV). But a structure that is *wildly* above (a GPR extrapolation artefact) is **excluded/rejected**, not capped — this guard was added in v1.3.0 to stop such trials from piling up a spurious delta at the top bin and trapping the walk there.
 
 The `--e-max` "filter" you mention is really the **edge of the bin window**, and the top bin is an absorbing cap for energies inside `[e_max, e_reject)`. If you want *nothing* above `e_max` to be counted, set `--e-reject` ≤ `--e-max` (this disables the guard and reverts to pure capping — not recommended, as it reintroduces the top-bin trap).
+
+New Question:
+
+Does the current landau gpr relax is parallel? I remember agox ray can run a parallel, does it work for gpr relax?
+
+### Answer
+
+**No — the GPR relax in this project is strictly serial, and AGOX's Ray (`--use-ray`) does not parallelise it.** Ray only parallelises GPR *training*; the per-trial relaxation is a single-process BFGS descent. This is true both in the code and in the current `_runs` job scripts.
+
+### Where the relax happens (and why it is serial)
+
+The relax is `WangLandauSampler._relax()` (`wang_landau/wang_landau_sampler.py:257`). It attaches the GPR surrogate as the ASE calculator, fixes the non-mobile atoms, and runs `ase.optimize.BFGS(relaxed, ...).run(fmax=0.05, steps=self.relax_steps)` on **one** trial structure. It is called once per MC step, inside the walk loop:
+
+```python
+# run(), wang_landau_sampler.py:363-364
+if self.relax_steps > 0:
+    trial = self._relax(trial)   # one BFGS descent, one trial, serial
+```
+
+The Wang–Landau walk is a **single Markov chain**: each step's trial is generated from the previous accepted structure, so the relaxes cannot be batched or run in parallel — step *n* depends on step *n−1*. There is no multi-walker / population parallelisation in this sampler.
+
+### What AGOX Ray actually parallelises (and what it does not)
+
+`use_ray` is passed to `build_gpr(..., use_ray=args.use_ray)` (`main.py:148`), i.e. it is a **training-time** option. Inside AGOX's `GPR`:
+
+- `use_ray=True` only changes `_train_model()` (`agox/models/GPR/GPR.py:559-572`): it calls `hyperparameter_search_parallel()` (parallelises the `n_optimize` hyperparameter restarts across Ray actors) and `pool_synchronize()` to broadcast the trained weights.
+- **Prediction is not Ray-parallel.** `predict_energy()` (`GPR.py:144`) and `predict_forces()` (`GPR.py:188`) are single-structure, single-process calls — a plain `k.T @ alpha` / `-dk_dr.sum(0) @ alpha` matrix product. The BFGS relax calls these one structure at a time.
+
+So even if you add `--use-ray`, the relax loop stays serial: Ray helps only the one-time GPR training, not the ~`relax_steps` force/energy evaluations per MC step.
+
+### What the current `_runs` scripts actually do
+
+The GPR-relax sweep jobs (`_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh`, `_runs/c2_boron3_N40_Emax04/jc2_sweepGPR.sh`) confirm this:
+
+- They run `OMP_NUM_THREADS=1 python ./main.py ... --relax-steps 10/30/50/100 ...` — **no `--use-ray` flag** is passed.
+- The four relax runs (`relax10/30/50/100`) are executed **sequentially** in the script, one after another.
+- The job requests 64 cores (`#PJM -L vnode-core=64`, `--mpi proc=64`), but the actual Python process is a single serial process with `OMP_NUM_THREADS=1` — the 64 cores are allocated but **not** used to parallelise the relax.
+
+### Bottom line
+
+- Current GPR relax: **serial** (single BFGS per MC step, single process).
+- `--use-ray`: **does not** parallelise the relax; it only parallelises GPR training's hyperparameter search.
+- To actually parallelise the relax you would need a different architecture (e.g. multiple independent walkers / replicas, or relaxing a batch of trials in parallel) — that is not what the current sampler or the current `_runs` scripts do. 
