@@ -196,6 +196,26 @@ class WangLandauWalkerActor:
     def run(self, n_steps, progress_every):
         self.walker.run(n_steps=n_steps, progress_every=progress_every)
 
+    def flush(self):
+        """Merge any residual local steps into the shared actor.
+
+        A walker only auto-syncs every ``check_interval`` of its own steps, so
+        the last ``mc_steps % check_interval`` visits sit in the local ``H`` /
+        ``_ln_g_delta`` buffers and would otherwise be lost. Calling this after
+        ``run()`` guarantees the shared aggregate contains ALL walker visits,
+        even when ``mc_steps`` is not a multiple of ``check_interval`` (and even
+        when ``mc_steps < check_interval``, the empty-output bug). No-op when
+        nothing is pending. The residual step count (< check_interval) will not
+        spuriously trigger flatness/refinement in ``sync``.
+        """
+        steps = self.walker._steps_since_sync
+        if steps > 0:
+            ray.get(self.walker.shared.sync.remote(
+                self.walker.H, self.walker._ln_g_delta, steps))
+            self.walker._steps_since_sync = 0
+            self.walker.H[:] = 0
+            self.walker._ln_g_delta[:] = 0
+
     def get_result(self):
         centers, ln_g = self.walker.g_of_E()
         return centers, ln_g, self.walker.bin_current
@@ -231,6 +251,11 @@ def run_parallel_walkers(args, gpr, structures, energies, sampler_kwargs,
     ]
     progress_every = max(args.check_interval, 1)
     ray.get([a.run.remote(args.mc_steps, progress_every) for a in actors])
+
+    # final flush: merge each walker's residual local visits (mc_steps %
+    # check_interval, including the mc_steps < check_interval empty-output
+    # case) into the shared actor so the aggregate is never silently incomplete.
+    ray.get([a.flush.remote() for a in actors])
 
     ln_g, H, ln_f, stage, switched = ray.get(shared.get_snapshot.remote())
     bin_centers = args.e_min + (args.e_max - args.e_min) / args.n_bins * (
