@@ -35,12 +35,12 @@ _analysist/17_PPt/*/*/scripts/
 # === Result trees: track README only, exclude run code/data ===
 # 11_bTa (Ta-B), 15_bPt (Pt-B), 16_bW (W-B) hold run results. Their READMEs
 # (now covered by the analysis runner) are tracked; run code/data stay out of git.
-_analysist/11_bTa/**
-!_analysist/11_bTa/
-!_analysist/11_bTa/README.md
-_analysist/15_bPt/**
-!_analysist/15_bPt/
-!_analysist/15_bPt/README.md
-_analysist/16_bW/**
-!_analysist/16_bW/
-!_analysist/16_bW/README.md
+# _analysist/11_bTa/**
+# !_analysist/11_bTa/
+# !_analysist/11_bTa/README.md
+# _analysist/15_bPt/**
+# !_analysist/15_bPt/
+# !_analysist/15_bPt/README.md
+# _analysist/16_bW/**
+# !_analysist/16_bW/
+# !_analysist/16_bW/README.md
