@@ -130,6 +130,7 @@ the existing `dataset/seed_*/1_db/db_*.db`. Submit with `pjsub j_wanglandau.sh`.
 | `--output` | `./wl_output` | Output directory. |
 | `--rng` | `42` | RNG seed (reproducibility). |
 | `--use-ray` | off | Enable Ray in GPR training (default single-process). |
+| `--n-walkers` | `1` | **Mode A parallel WL** (v1.5.0): N concurrent Wang–Landau walkers sharing one histogram `H`/`ln_g` via Ray actors; seeds are `--rng+i` and flatness/refinement act on the combined histogram, so the joint walk reaches flatness faster. `N=1` = current serial behaviour (single walker, no Ray). |
 
 ## Outputs (written to `--output`)
 
