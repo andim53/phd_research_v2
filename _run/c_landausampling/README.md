@@ -521,3 +521,63 @@ AGOX's `predict_forces`/`predict_energy` are single-structure serial (`GPR.py:14
 | Parallelise one walk | — | impossible | — |
 
 The pragmatic first step: **keep the sampler as-is, but run the independent walks concurrently** (separate jobs or a Ray/multiprocessing driver), and merge the `ln g` estimates. That gives most of the benefit with no change to the physics or the sampler core.
+
+New Question:
+
+Write regarding the Thing 2 in details in the readme. Write the how, and the pros and cons.
+
+### Answer — Parallel / replica Wang–Landau (Thing 2) in detail
+
+This is the strategy where **N walkers with the same settings but different RNG seeds are combined so the *combined* walk reaches flatness faster / with better statistics than any single walker.** It is distinct from the sweep-parallelism (Thing 1) above, which just runs N *different* experiments concurrently and never combines them. Here the walkers are *coupled* through shared statistics.
+
+### The core idea, mapped to the code
+
+Every Wang–Landau walker already maintains two shared-able quantities (`WangLandauSampler`):
+
+- `ln_g[b]` — the running log density of states per bin, updated by `_visit()` as `ln_g[b] += ln_f` (`wang_landau_sampler.py:282`).
+- `H[b]` — the visitation histogram, updated as `H[b] += 1` in the same `_visit()`.
+
+Flatness is judged on `H` by `_check_flatness()` (`:286`): `min(H[visited]) > flatness_criterion * mean(H[visited])`. When flat, `_maybe_refine()` (`:294`) halves `ln_f`, resets `H` to zero, and (after `n_stages_standard` halvings) switches to the 1/t algorithm.
+
+The key observation: **`H` and `ln_g` are just accumulators.** Nothing in the sampler requires them to belong to a single process. If N walkers all add their visits into the *same* `H` and `ln_g`, the flatness test sees the *combined* histogram — which fills all bins faster than any one walker could. That is the whole mechanism of parallel Wang–Landau.
+
+### How — two combination modes
+
+**Mode A: shared histogram (true parallel WL, live coupling).**
+All N walkers update the **same** `H` and `ln_g` (e.g. via shared memory, a Ray actor holding the arrays, or a lock-protected global). Each walker runs its own `run()` loop (`:359-390`) with its own RNG seed, but every `_visit()` writes into the shared arrays. The flatness check and `ln_f` refinement are then performed on the *combined* histogram, so the walkers collectively drive the refinement schedule. This is the standard parallel-Wang-Landau scheme and gives the real "reach flatness faster" benefit.
+
+- Implementation sketch: a driver creates N `WangLandauSampler` instances sharing one `ln_g`/`H` (e.g. a Ray actor or `multiprocessing.Manager`), runs them concurrently, and lets `_check_flatness`/`_maybe_refine` act on the shared state. This is **not** in the repo yet — it needs a small driver + a small refactor so the sampler can point at shared arrays.
+
+**Mode B: independent walks + merge at the end (no live coupling).**
+Run N fully independent `WangLandauSampler` instances (each with its own `ln_g`, `H`, seed), let each converge on its own, then **average the final `ln_g` per bin** across walkers. This is simpler (no shared state, no refactor — just N separate jobs + a merge script) but it does *not* accelerate the refinement schedule; it only reduces the variance of the final estimate by averaging.
+
+| | Mode A (shared histogram) | Mode B (independent + average) |
+|---|---|---|
+| Coupling | live, shared `H`/`ln_g` | none until the end |
+| Reaches flatness faster | **yes** (combined histogram) | no (each walker converges alone) |
+| Reduces final variance | yes | yes (by averaging) |
+| Code change | driver + sampler refactor (shared arrays) | driver + merge script only |
+| Parallel speedup | ~N× wall-time for same quality | ~N× wall-time, but same per-walker convergence |
+
+### Pros
+
+1. **Reaches flatness faster (Mode A).** Because flatness is judged on the combined histogram, N walkers collectively visit all bins N× faster, so the refinement schedule (`ln_f` halvings) advances sooner. This is the main reason to use parallel WL.
+2. **Better statistics / lower variance (both modes).** More total visits per bin → a smoother, more converged `ln_g`; averaging (Mode B) further reduces the noise of the final estimate.
+3. **Directly uses idle cores.** The current `_runs` jobs request 64 cores but run one serial process; N walkers would actually use them.
+4. **No change to the physics.** Each walker still does the same WL walk on the same GPR; only the bookkeeping is shared. The `g(E)` meaning is unchanged.
+5. **Fault-tolerant / composable (Mode B).** Independent jobs can be submitted separately and merged later; a failed walker doesn't corrupt the others.
+
+### Cons
+
+1. **Shared-state complexity (Mode A).** `H` and `ln_g` must be updated atomically across processes; a race corrupts the histogram. Requires a lock/actor and a sampler refactor. The current sampler has no such support.
+2. **The 1/t switch is global (Mode A).** `_maybe_refine()` switches all walkers to the 1/t algorithm at the same step (`:304-312`). If walkers are at different stages, forcing a single global schedule can be awkward; the shared refinement must be coordinated.
+3. **Correlated walkers (Mode A).** If walkers share the same starting structure or the same GPR, their proposals are not fully independent, so the effective speedup is less than the ideal N×.
+4. **Merging is only valid for comparable walks (Mode B).** Averaging `ln_g` across walkers is only meaningful if they share the same bins, `e_max`, dataset, and `--relax-steps`. Mixing settings (as in the sweep) would be wrong to average.
+5. **Memory / GPR cost per walker.** Each walker holds its own copy of the GPR and its own current structure; N walkers multiply that memory. With a large surrogate this can be a real cost.
+6. **No help for a single walk.** Neither mode makes one Markov chain faster; the benefit is purely across walkers.
+
+### Bottom line
+
+- **Mode A (shared histogram)** is the "true" parallel Wang–Landau and gives the real "reach flatness faster" benefit, but needs a driver + sampler refactor for shared `H`/`ln_g`.
+- **Mode B (independent + average)** is the cheap, safe first step: run N separate walks (different `--rng`), merge the final `ln_g` per bin. It uses idle cores and reduces variance, but does not accelerate the refinement schedule.
+- Either way, the physics and the `g(E)` meaning are unchanged — only the statistics are combined.
