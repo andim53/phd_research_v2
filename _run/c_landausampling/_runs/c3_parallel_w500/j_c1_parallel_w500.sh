@@ -17,6 +17,6 @@ echo "Wang-Landau density of states, plain Fe/MgO (dataset) — Mode A parallel 
 echo "Params: --n-bins 100 --e-max 0.40 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --relax-steps 100 --temperatures 100,200,300,500,1000 --start-from-min --rng 42."
 echo "Parallel (Mode A): --n-walkers 500, all walkers share one H/ln_g via Ray actors."
 
-OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 30000 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --relax-steps 100 --temperatures 100,200,300,500,1000 --start-from-min --n-walkers 500 --output ./wl_output_c1_parallel_w500 --rng 42
+OMP_NUM_THREADS=1 python ./main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 1000 --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --relax-steps 10 --temperatures 100,200,300,500,1000 --start-from-min --n-walkers 500 --output ./wl_output_c1_parallel_w500 --rng 42
 
 echo "Done."
