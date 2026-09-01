@@ -13,7 +13,7 @@ Step-by-step guide to reproduce this run in isolation. Level: intermediate.
 
 Runs nested sampling on the **B-doped** Fe/MgO dataset (5 seeds, seed_0..4, B doped
 into the Fe layer) in **temperature-free mode**, with the same NS parameters as the
-reference `_analysist/1_no_prior_control`, plus a relative high-energy cut:
+reference `2_analysist/1_no_prior_control`, plus a relative high-energy cut:
 
 ```
 main.py --temperature-free --temperatures 100,200,300,500,1000 \
@@ -34,7 +34,7 @@ main.py --temperature-free --temperatures 100,200,300,500,1000 \
 ## Step 1 — Local run
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_tfree_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b5_boron_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B \

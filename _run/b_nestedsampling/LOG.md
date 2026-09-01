@@ -11,7 +11,7 @@ Decisions & reasoning, Open items, Time.
 **Goal (user-confirmed via clarify):** Create a new nested-sampling project dir at
 `/home/think/Desktop/research/_run/b_nestedsampling`, structured like
 `/home/think/Desktop/research/_run/a_lcbnovel` (README human+AI, LOG, TUTORIAL,
-VERSIONS, AGENTS, PROMPTS, `.gitignore`, plus `_runs/`, `_analysist/`, `_archives/`,
+VERSIONS, AGENTS, PROMPTS, `.gitignore`, plus `1_runs/`, `2_analysist/`, `_archives/`,
 `_tmp/`), and migrate the code/notes from `_run/8_nested_sampling`.
 
 **Clarify decisions (all user-confirmed):**
@@ -22,7 +22,7 @@ VERSIONS, AGENTS, PROMPTS, `.gitignore`, plus `_runs/`, `_analysist/`, `_archive
 3. `NESTED_SAMPLING_RUN.md` (786 lines): split into the README/LOG/TUTORIAL trio,
    drop the raw file.
 4. Governance: add `AGENTS.md` + an empty `PROMPTS.md` scaffold.
-5. Layout: scaffold `_runs/`, `_analysist/`, `_archives/`, `_tmp/`.
+5. Layout: scaffold `1_runs/`, `2_analysist/`, `_archives/`, `_tmp/`.
 6. Scripts: keep only the 5 scripts `dataset/main.py` actually imports
    (`build_mgo_stack`, `build_fe_stack`, `build_heteroStruct`,
    `hetero_struct_randomize`, `plot_structure`).
@@ -32,7 +32,7 @@ VERSIONS, AGENTS, PROMPTS, `.gitignore`, plus `_runs/`, `_analysist/`, `_archive
 **Actions taken:**
 - Loaded `ai-agent-project-workflow` + `agox-nested-sampling` skills; inspected
   both `8_nested_sampling` and the `a_lcbnovel` model layout.
-- Scaffolded `b_nestedsampling/{nested_sampling,scripts,_runs,_analysist/{0_analy,1_result},_archives,_tmp}`.
+- Scaffolded `b_nestedsampling/{nested_sampling,scripts,1_runs,2_analysist/{0_analy,1_result},_archives,_tmp}`.
 - Copied the `nested_sampling/` package (6 modules), `run_nested_sampling.py`, the
   full `dataset/` (13 seed DBs verified), and the 5 clean scripts.
 - Created `j_nestedsampling.sh` (bare PJM script; `gpaw_env`; `use_ray=False`
@@ -57,7 +57,7 @@ VERSIONS, AGENTS, PROMPTS, `.gitignore`, plus `_runs/`, `_analysist/`, `_archive
 - `_archives/` added to `.gitignore` (archived artifacts are regenerable/reference).
 
 **Open items:**
-- No concrete `_runs/` run yet — scaffolded empty, ready for a future run.
+- No concrete `1_runs/` run yet — scaffolded empty, ready for a future run.
 - A full/smoke production run has **not** been re-executed in the new dir (only
   compile-check); the dataset + code are migrated, so a smoke run can confirm
   end-to-end.
@@ -93,7 +93,7 @@ run, but it was non-fatal side-process noise — the Python pipeline exited 0 an
 produced all outputs. (Pre-existing `use_ray=False` in `run_nested_sampling.py`
 means the `ActorUnavailableError` class is structurally avoided.)
 
-**Open items:** none for migration. Future concrete `_runs/` runs (e.g. the
+**Open items:** none for migration. Future concrete `1_runs/` runs (e.g. the
 literature-scale `--n-live 500 --n-iters 5000` and T-scan) still pending on HPC.
 
 **Time:** 2026-08-26 ~20:17–20:20 JST.
@@ -191,7 +191,7 @@ the job; a note documents that it can be added back.
 - `TUTORIAL.md`: mental model + all run commands → `main.py`; "Heavy, supercomputer
   run" section rewritten to NS-only job + added **"Optional: add the AGOX search
   step back"** subsection.
-- `AGENTS.md`: `_runs/` layout + run-copy-sync text → `main.py`.
+- `AGENTS.md`: `1_runs/` layout + run-copy-sync text → `main.py`.
 - **LOG.md: historical entries NOT edited** (append-only rule); this entry records
   the rename as a correction.
 
@@ -825,7 +825,7 @@ also update TUTORIAL.md.
 ## Session 2026-08-27 — Create HPC run dir b1_gpr_accuracy_cv10_bin005
 
 **Goal (user-confirmed via clarify):** Create a self-contained run dir under
-`_runs/` for `gpr_accuracy.py` with bigger parameters (higher CV, lower bin),
+`1_runs/` for `gpr_accuracy.py` with bigger parameters (higher CV, lower bin),
 covering the two reference systems (`gpr_acc_cv_uncert_out` = energy-range CV+uncert,
 `gpr_acc_fez_cv3_out` = fez CV+uncert), with all deps for independent HPC running.
 
@@ -838,7 +838,7 @@ covering the two reference systems (`gpr_acc_cv_uncert_out` = energy-range CV+un
 5. Run dir name: `b1_gpr_accuracy_cv10_bin005`.
 
 **Actions taken:**
-- Created `_runs/b1_gpr_accuracy_cv10_bin005/`; copied latest `gpr_accuracy.py`
+- Created `1_runs/b1_gpr_accuracy_cv10_bin005/`; copied latest `gpr_accuracy.py`
   (v1.4.0) + full `dataset/` (13 DBs).
 - Wrote `j_gpr_accuracy_cv10_bin005.sh` (bare PJM script, 24 cores, `gpaw_env`)
   that runs both invocations:
@@ -888,8 +888,8 @@ Run not executed locally (HPC job). Outputs land in `out_energy_range/` + `out_f
 
 ## Session 2026-08-27 — Create HPC run dir b2_boron_ns (nested sampling, B-doped)
 
-**Goal (user-confirmed via clarify):** Create a new `_runs/` dir running the same NS
-parameters as `_analysist/1_result/1_no_prior_control` but on the B-doped dataset
+**Goal (user-confirmed via clarify):** Create a new `1_runs/` dir running the same NS
+parameters as `2_analysist/1_result/1_no_prior_control` but on the B-doped dataset
 (`dataset_boron`), with B included in the perturb.
 
 **Clarify decisions (all user-confirmed):**
@@ -902,7 +902,7 @@ parameters as `_analysist/1_result/1_no_prior_control` but on the B-doped datase
 5. Copy `dataset_boron/` into the run as `dataset/` (main.py reads ./dataset).
 
 **Actions taken:**
-- Created `_runs/b2_boron_ns/`; copied latest `main.py` (v1.1.2) + `nested_sampling/`
+- Created `1_runs/b2_boron_ns/`; copied latest `main.py` (v1.1.2) + `nested_sampling/`
   package (6 modules) + `dataset_boron/` → `dataset/` (5 B-doped seeds).
 - Wrote `j_b2_boron_ns.sh` (bare PJM, 64 cores, gpaw_env) running the NS pipeline with
   `--perturb-symbols Fe,B`.
@@ -923,8 +923,8 @@ gross outliers. Not executed locally (HPC job).
 
 ## Session 2026-08-27 — Create HPC run dir b3_gpr_accuracy_boron_cv50
 
-**Goal (user-confirmed via clarify):** Create a new `_runs/` dir for `gpr_accuracy.py`
-on the **boron system**, using the same parameters as `_runs/b1_gpr_accuracy_cv10_bin005`.
+**Goal (user-confirmed via clarify):** Create a new `1_runs/` dir for `gpr_accuracy.py`
+on the **boron system**, using the same parameters as `1_runs/b1_gpr_accuracy_cv10_bin005`.
 
 **Clarify decisions (all user-confirmed):**
 1. Same command as b1: `--cv --cv-folds 50 --fez --uncertainty --bin-width 0.1`
@@ -934,7 +934,7 @@ on the **boron system**, using the same parameters as `_runs/b1_gpr_accuracy_cv1
    `j_b3_*.sh` + README/TUTORIAL, self-contained.
 
 **Actions taken:**
-- Created `_runs/b3_gpr_accuracy_boron_cv50/`; copied `gpr_accuracy.py` (v1.4.0) +
+- Created `1_runs/b3_gpr_accuracy_boron_cv50/`; copied `gpr_accuracy.py` (v1.4.0) +
   `dataset_boron/` → `dataset/` (5 B-doped seeds).
 - Wrote `j_b3_gpr_accuracy_boron_cv50.sh` (bare PJM, 24 cores, gpaw_env) running the
   fez CV-50 invocation.
@@ -1146,8 +1146,8 @@ the previous session on the boron dataset: 496 → 452 remain, sampling complete
 
 ## Session 2026-08-27 — Create HPC run dir b3_tfree_emax025 (temp-free NS, plain Fe/MgO)
 
-**Goal (user-confirmed via clarify):** New `_runs/` dir using the same system as
-`_analysist/1_result/1_no_prior_control` (plain Fe/MgO, no B), but in **temperature-free
+**Goal (user-confirmed via clarify):** New `1_runs/` dir using the same system as
+`2_analysist/1_result/1_no_prior_control` (plain Fe/MgO, no B), but in **temperature-free
 mode** with **`--e-max-per-atom 0.25`**.
 
 **Clarify decisions (all user-confirmed):**
@@ -1159,7 +1159,7 @@ mode** with **`--e-max-per-atom 0.25`**.
 4. `--e-max-per-atom 0.25` (relative to dataset min) in the job.
 
 **Actions taken:**
-- Created `_runs/b3_tfree_emax025/`; copied `main.py` (v1.2.0) + `nested_sampling/`
+- Created `1_runs/b3_tfree_emax025/`; copied `main.py` (v1.2.0) + `nested_sampling/`
   package + `dataset/` (13 Fe/MgO seeds) + required
   `nested_sampling/scripts/plot_structure_landscape.py`.
 - Wrote `j_b3_tfree_emax025.sh` (bare PJM, 64 cores, gpaw_env) running the
@@ -1184,7 +1184,7 @@ focusing GPR + sampling on low-energy structures. Not executed on HPC yet.
 
 ## Session 2026-08-27 — Rename run dir b3_tfree_emax025 -> b4_tfree_emax025
 
-**Goal (user request):** Rename the run dir `_runs/b3_tfree_emax025` to
+**Goal (user request):** Rename the run dir `1_runs/b3_tfree_emax025` to
 `b4_tfree_emax025` (change b3 to b4).
 
 **Actions taken:**
@@ -1200,22 +1200,22 @@ renamed job script OK; git detects the rename.
 
 ---
 
-## Session 2026-08-27 — Update current state (new b5 run + _analysist)
+## Session 2026-08-27 — Update current state (new b5 run + 2_analysist)
 
-**Context:** The user added a new `_runs/b5_boron_ns_emax025` and new `_analysist`
+**Context:** The user added a new `1_runs/b5_boron_ns_emax025` and new `2_analysist`
 entries. Asked to "update the current state".
 
 **Clarify decisions (all user-confirmed):**
 1. Fix the b5 run docs (they were stale copies of b2_boron_ns: said 'b2_boron_ns',
    'j_b2_boron_ns.sh', '--e-max-per-atom 0.67') to match b5 / j_b5 / 0.25.
-2. Copy the b5 run into `_analysist/1_result/` (mirroring b1/b3 copies).
+2. Copy the b5 run into `2_analysist/1_result/` (mirroring b1/b3 copies).
 3. Commit the b5 run dir (tracked).
 
 **Actions taken:**
-- Rewrote `_runs/b5_boron_ns_emax025/README.md` + `TUTORIAL.md`: b5_boron_ns_emax025,
+- Rewrote `1_runs/b5_boron_ns_emax025/README.md` + `TUTORIAL.md`: b5_boron_ns_emax025,
   `j_b5_boron_ns.sh`, `--e-max-per-atom 0.25` (relative), noted as a tighter cut than
   b2's 0.67. Job script already used 0.25.
-- Copied b5 into `_analysist/1_result/b5_boron_ns_emax025/` (gitignored).
+- Copied b5 into `2_analysist/1_result/b5_boron_ns_emax025/` (gitignored).
 
 **Results / verification (real output):**
 - Compile OK (main.py + package); `sh -n` OK; required scripts module present; 5 boron
@@ -1223,8 +1223,8 @@ entries. Asked to "update the current state".
 - Filter: 496 -> 181 keep / 315 drop with `--e-max-per-atom 0.25` (tighter than b2's 452).
 - No stale b2/0.67 refs remain (only intentional comparative mentions).
 
-**Note:** `_analysist/1_result/` is gitignored (b1/b3/b5 copies not committed); only
-the b5 run dir under `_runs/` is tracked and committed.
+**Note:** `2_analysist/1_result/` is gitignored (b1/b3/b5 copies not committed); only
+the b5 run dir under `1_runs/` is tracked and committed.
 
 **Time:** 2026-08-27 ~17:29–17:35 JST.
 
@@ -1241,7 +1241,7 @@ same NS params). Also update docs + output dir name.
 - `j_b5_boron_ns.sh`: switched to temperature-free, output `./ns_output_tfree_emax025`.
 - `README.md` + `TUTORIAL.md`: documented temperature-free mode + new output dir +
   per-T outputs (`thermodynamics.csv`, `posterior_T*`).
-- Synced the `_analysist/1_result/b5_boron_ns_emax025/` copy.
+- Synced the `2_analysist/1_result/b5_boron_ns_emax025/` copy.
 
 **Results / verification (real output, local smoke T-free 200/300 K, small params):**
 - `SMOKE_EXIT=0`; `--e-max-per-atom 0.25` dropped 315, 181 remain; GPR trained;
@@ -1253,46 +1253,46 @@ same NS params). Also update docs + output dir name.
 
 ---
 
-## Session 2026-08-27 — Rename _analysist b5 copy to b5_boron_tfree_emax025
+## Session 2026-08-27 — Rename 2_analysist b5 copy to b5_boron_tfree_emax025
 
-**Goal (user request):** Rename `_analysist/1_result/b5_boron_ns_emax025` to
+**Goal (user request):** Rename `2_analysist/1_result/b5_boron_ns_emax025` to
 `b5_boron_tfree_emax025`.
 
-**Context:** The b5 `_analysist` copy had been moved into
-`_analysist/1_result/_archives/b5_boron_ns_emax025` (a new `_archives` subdir, part of
+**Context:** The b5 `2_analysist` copy had been moved into
+`2_analysist/1_result/_archives/b5_boron_ns_emax025` (a new `_archives` subdir, part of
 the user's reorganization). Clarify timed out; defaulted to renaming in place under
 `_archives`.
 
 **Actions taken:**
-- `mv _analysist/1_result/_archives/b5_boron_ns_emax025 b5_boron_tfree_emax025`.
+- `mv 2_analysist/1_result/_archives/b5_boron_ns_emax025 b5_boron_tfree_emax025`.
 - Updated the archive's README.md/TUTORIAL.md titles to `b5_boron_tfree_emax025`.
 
 **Notes:**
-- `_analysist/` is gitignored → no commit needed for this filesystem rename.
-- The `_runs/b5_boron_ns_emax025` source run dir is a separate tracked dir and keeps
+- `2_analysist/` is gitignored → no commit needed for this filesystem rename.
+- The `1_runs/b5_boron_ns_emax025` source run dir is a separate tracked dir and keeps
   its original name (only the archive copy was renamed per the request).
 
 **Time:** 2026-08-27 ~17:46–17:52 JST.
 
 ---
 
-## Session 2026-08-27 — Rename source run _runs/b5_boron_ns_emax025 -> b5_boron_tfree_emax025
+## Session 2026-08-27 — Rename source run 1_runs/b5_boron_ns_emax025 -> b5_boron_tfree_emax025
 
 **Context / correction:** The user clarified their intent: the dir to edit/rename is the
-**source** `_runs/b5_boron_ns_emax025` (already temperature-free from last session), NOT
-the `_analysist` archive. They confirmed renaming the source run to `b5_boron_tfree_emax025`
+**source** `1_runs/b5_boron_ns_emax025` (already temperature-free from last session), NOT
+the `2_analysist` archive. They confirmed renaming the source run to `b5_boron_tfree_emax025`
 to match the tfree mode.
 
 **Actions taken:**
-- `git mv _runs/b5_boron_ns_emax025 b5_boron_tfree_emax025`.
+- `git mv 1_runs/b5_boron_ns_emax025 b5_boron_tfree_emax025`.
 - Updated README.md/TUTORIAL.md internal refs to `b5_boron_tfree_emax025`.
 
 **Verification:** no stale `b5_boron_ns_emax025` refs in README/TUTORIAL; `sh -n` on
 `j_b5_boron_ns.sh` OK (job script filename unchanged, dir renamed); git detects the
 rename.
 
-**Note:** This is tracked in git (unlike the gitignored `_analysist` archive). The
-earlier rename of the `_analysist` archive copy stands.
+**Note:** This is tracked in git (unlike the gitignored `2_analysist` archive). The
+earlier rename of the `2_analysist` archive copy stands.
 
 **Time:** 2026-08-27 ~17:54–17:58 JST.
 
@@ -1316,7 +1316,7 @@ successfully (thermodynamics.csv written); only the optional landscape plotting 
 
 **Actions taken:**
 - Copied the correct `plot_structure_landscape.py` (accepts `s=25`) from the reference
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
+  `2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
   `b4/nested_sampling/scripts/`.
 - Documented the error + fix in `b4/README.md` ("Error explanation & fix").
 - Updated `b4/TUTORIAL.md` pitfall (correct source for plot_structure_landscape).
@@ -1337,7 +1337,7 @@ state-density/landscape analysis with
 
 **Actions taken:**
 - Copied the correct `plot_structure_landscape.py` (accepts `s=25`) from the reference
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
+  `2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
   `b5_boron_tfree_emax025/nested_sampling/scripts/`.
 - Documented the error + fix in `b5/README.md` ("Error explanation & fix") + updated
   `b5/TUTORIAL.md` pitfall (correct source for plot_structure_landscape).
@@ -1364,10 +1364,10 @@ change the stale `dataset_boron` copy).
 **Actions taken:**
 - `AGENTS.md` §3a: rewrote the "NS run dirs: required scripts module" note to
   **"required scripts module + correct version"** — states the reference
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` is the ONLY valid
+  `2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` is the ONLY valid
   source (accepts `s=`), and explicitly warns **DO NOT use** the STALE
   `dataset_boron/scripts/` version (lacks `s=`, causes the `TypeError`).
-- `README.AI.md` §2a: added the same reference-ONLY guidance to the `_runs/` run-dir
+- `README.AI.md` §2a: added the same reference-ONLY guidance to the `1_runs/` run-dir
   bullet.
 
 **Verification:** AGENTS.md now lists `dataset_boron/scripts` only as "DO NOT use";
@@ -1386,7 +1386,7 @@ state-density/landscape analysis with
 
 **Actions taken:**
 - Copied the correct `plot_structure_landscape.py` (accepts `s=25`) from the reference
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
+  `2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/` into
   `b2_boron_ns/nested_sampling/scripts/`.
 - Documented the error + fix in `b2/README.md` ("Error explanation & fix") + updated
   `b2/TUTORIAL.md` pitfall (correct source for plot_structure_landscape).
@@ -1407,7 +1407,7 @@ dirs. The user asked to update it so the trap is removed at the source.
 **Action taken:**
 - Replaced `dataset_boron/scripts/plot_structure_landscape.py` with the correct
   reference version (accepts `s=25`) from
-  `_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`.
+  `2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/`.
 
 **Verification (real output):** updated version accepts `s=` (default 25) and all
 kwargs `state_density.py` passes (none missing); compiles. Any future copy from
@@ -1493,7 +1493,7 @@ Clarified: (1) standalone script at project root `scripts/`; (2) scope = Z, log 
 panels + optional heat-capacity C_V(T); (3) validation = generate a small synthetic
 thermodynamics.csv and run the script against it (no real temperature-free run output exists
 yet — thermodynamics.csv is only produced by a `--temperature-free` NS run, and none of the
-`_runs/*` dirs have run output on disk).
+`1_runs/*` dirs have run output on disk).
 
 **Actions taken:**
 - Created `scripts/plot_thermodynamics.py` (v1.0.0): reads `thermodynamics.csv`
@@ -1531,7 +1531,7 @@ temperature-free run's `thermodynamics.csv` once such a run has completed (or su
 written to the run's `--output` dir by the temperature-free post-processing step (one row per
 `--temperatures` value via `sampler.evaluate(beta)`); fixed-T mode instead writes
 `evidence_history.csv`/`log_evidence.csv`; included the exact command to generate it and a
-note that none currently exists in the repo / `_runs/*`.
+note that none currently exists in the repo / `1_runs/*`.
 
 **Verification:** README updated; no `^Notes:` flags (none added).
 
@@ -2111,9 +2111,9 @@ with the VERSIONS manifest.
 
 ---
 
-## Session 2026-08-28 — Create run dir _runs/b6_tfree_walk_emax04 (Fe/MgO, e-max 0.4, window [0.3,0.35], dual-scale walk)
+## Session 2026-08-28 — Create run dir 1_runs/b6_tfree_walk_emax04 (Fe/MgO, e-max 0.4, window [0.3,0.35], dual-scale walk)
 
-**Goal (user request):** make a new _runs dir. It runs Fe/MgO-only nested sampling with:
+**Goal (user request):** make a new 1_runs dir. It runs Fe/MgO-only nested sampling with:
 --e-max-per-atom 0.4 eV/atom above ground state; --e-window-lo 0.3 --e-window-hi 0.35 eV/atom
 above ground state, --e-window-max-attempts 1000; --walk-steps 50 --walk-small 0.05 --walk-large
 0.40 --walk-mode both.
@@ -2126,10 +2126,10 @@ above ground state, --e-window-max-attempts 1000; --walk-steps 50 --walk-small 0
   j_*.sh + README + TUTORIAL), matching b4/b5.
 
 **Actions taken:**
-- Created _runs/b6_tfree_walk_emax04/ as a full self-contained copy from the project root
+- Created 1_runs/b6_tfree_walk_emax04/ as a full self-contained copy from the project root
   (main.py v1.4.0 + nested_sampling/ + scripts/), dataset (13 seeds seed_3..15 + stop_16).
 - Copied the CORRECT plot_structure_landscape.py (accepts s=) from
-  _analysist/1_result/1_no_prior_control/nested_sampling/scripts/ into
+  2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/ into
   nested_sampling/scripts/ (avoids the 's' TypeError; verified s=25, normalize_density,
   density_x_label, plot_z_vs_e params present).
 - Wrote j_b6_tfree_walk_emax04.sh (PJM, gpaw_env, OMP_NUM_THREADS=1) with the exact command line.
@@ -2146,10 +2146,10 @@ above ground state, --e-window-max-attempts 1000; --walk-steps 50 --walk-small 0
 
 ---
 
-## Session 2026-08-28 — Create run dir _runs/b7_boron_walk_emax04_wind03035 (boron system, b6 params)
+## Session 2026-08-28 — Create run dir 1_runs/b7_boron_walk_emax04_wind03035 (boron system, b6 params)
 
-**Goal (user request):** make a new _runs dir using the parameters of
-_runs/b6_tfree_walk_emax04 but for the boron system in dataset_boron.
+**Goal (user request):** make a new 1_runs dir using the parameters of
+1_runs/b6_tfree_walk_emax04 but for the boron system in dataset_boron.
 
 **Clarified (per standing rule):**
 - Name: b7_boron_walk_emax04_wind03035.
@@ -2161,11 +2161,11 @@ _runs/b6_tfree_walk_emax04 but for the boron system in dataset_boron.
   copied as dataset/, 5 seeds) + j_*.sh + README + TUTORIAL).
 
 **Actions taken:**
-- Created _runs/b7_boron_walk_emax04_wind03035/ as a full self-contained copy: main.py (v1.4.0)
+- Created 1_runs/b7_boron_walk_emax04_wind03035/ as a full self-contained copy: main.py (v1.4.0)
   + nested_sampling/ + scripts/ from project root; dataset copied from dataset_boron/ (5 seeds
   seed_0..4, Fe25Mg25O25B7 / 82 atoms).
 - Copied the CORRECT plot_structure_landscape.py (accepts s=25) from
-  _analysist/1_result/1_no_prior_control/nested_sampling/scripts/ into
+  2_analysist/1_result/1_no_prior_control/nested_sampling/scripts/ into
   nested_sampling/scripts/ (avoids the 's' TypeError; verified s=25 present).
 - Wrote j_b7_boron_walk_emax04_wind03035.sh (PJM, gpaw_env, OMP_NUM_THREADS=1) with
   --perturb-symbols Fe,B and the same command line as b6 otherwise.
@@ -2195,9 +2195,9 @@ and as the fallback when the walk fails. The walk uses its own --walk-small/--wa
 in sample_constrained, independent of --perturb. So --perturb is NOT redundant with --walk.
 
 **Edits:**
-- _runs/b6_tfree_walk_emax04/README.md: added a bullet under the --walk feature explaining
+- 1_runs/b6_tfree_walk_emax04/README.md: added a bullet under the --walk feature explaining
   --perturb vs --walk (not redundant).
-- _runs/b6_tfree_walk_emax04/TUTORIAL.md: added a --perturb 0.01 bullet after the --walk flags.
+- 1_runs/b6_tfree_walk_emax04/TUTORIAL.md: added a --perturb 0.01 bullet after the --walk flags.
 - README.md (root): added a note in the 'Usage (dual-scale constrained MC walk)' Notes list.
 
 **Time:** 2026-08-28 ~04:50 JST.
@@ -2348,32 +2348,32 @@ list in the walk Usage section).
 
 ---
 
-## Session 2026-08-28 — Create b6 analysis script in _analysist/0_analy
+## Session 2026-08-28 — Create b6 analysis script in 2_analysist/0_analy
 
-**Goal (user request):** make a new analysis code in _analysist that analyzes the b6 run's
+**Goal (user request):** make a new analysis code in 2_analysist that analyzes the b6 run's
 samples.csv, final_live_energies.csv, and thermodynamics.csv.
 
 **Clarified (per standing rule):**
 - Scope: a single comprehensive script reading all 3 CSVs.
-- Location: _analysist/0_analy/ (staging dir).
+- Location: 2_analysist/0_analy/ (staging dir).
 - Name: analyze_b6_outputs.py (--data + --outdir, default outdir <data>/analysis/analyze_b6).
 - Run it against the b6 data to verify.
 
-**Script created:** _analysist/0_analy/analyze_b6_outputs.py (v1.0.0). Reads the 3 CSVs and
+**Script created:** 2_analysist/0_analy/analyze_b6_outputs.py (v1.0.0). Reads the 3 CSVs and
 produces: (1) samples.csv -> energy-vs-iteration + prior_weight-weighted energy histogram (g(E)
 proxy) + cumulative weighted evidence vs iteration; (2) final_live_energies.csv -> live-energy
 histogram; (3) thermodynamics.csv -> Z/logZ/F vs T + heat capacity C_V(T); plus a combined summary
 figure and a printed summary.
 
 **Verification (real execution):** ran against
-_analysist/1_result/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04 -> outdir
-_analysist/0_analy/b6_analysis_out. 7 PNGs produced (all valid, file(1) confirmed). Summary:
+2_analysist/1_result/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04 -> outdir
+2_analysist/0_analy/b6_analysis_out. 7 PNGs produced (all valid, file(1) confirmed). Summary:
 1000 discarded samples (E -430.94..-410.73 eV), 100 final live (-436.69..-430.94 eV), 5
 temperatures (logZ -40.09..-17.15), sum(w_i)=0.99995. Note: Cv ~1e-8..1e-19 (logZ vs beta nearly
 linear here -> no strong phase-transition peak in this T range); displayed 0.0000 due to 4-decimal
 rounding.
 
-**Git:** _analysist/0_analy/ and _analysist/1_result/ are gitignored (regenerable analysis
+**Git:** 2_analysist/0_analy/ and 2_analysist/1_result/ are gitignored (regenerable analysis
 artifacts, per AGENTS.md), so neither the script nor its outputs are committed; only this LOG is.
 
 **Time:** 2026-08-28 ~17:40-17:50 JST.
@@ -2384,9 +2384,9 @@ artifacts, per AGENTS.md), so neither the script nor its outputs are committed; 
 ## Session 2026-08-28 — Write DISCUSSION.md for b6 analysis
 
 **Goal (user request):** write a complete DISCUSSION.md in
-_analysist/0_analy/b6_analysis_out discussing all the results.
+2_analysist/0_analy/b6_analysis_out discussing all the results.
 
-**Deliverable:** _analysist/0_analy/b6_analysis_out/DISCUSSION.md (9 KB), grounded in the actual
+**Deliverable:** 2_analysist/0_analy/b6_analysis_out/DISCUSSION.md (9 KB), grounded in the actual
 b6 run data. Sections:
 1. What was run and the 3 CSVs.
 2. Sampling / discarded-sample descent + energy window (samples -430.94..-410.73 eV; rel to
@@ -2404,7 +2404,7 @@ b6 run data. Sections:
 8. Suggested next steps (larger n-live/iter, wider window to see C_V peak, cross-check vs DFT,
    compare g(E) peak vs island 0.074 / flat 0.255 reference peaks).
 
-**Git:** _analysist is gitignored, so DISCUSSION.md is NOT committed (only this LOG).
+**Git:** 2_analysist is gitignored, so DISCUSSION.md is NOT committed (only this LOG).
 
 **Time:** 2026-08-28 ~17:55 JST.
 
@@ -2421,16 +2421,16 @@ analyze any temperature-free (tfree) run.
 - Generalize internal text (remove 'b6' wording) -> generic tfree analyzer.
 
 **Actions taken:**
-- Created _analysist/0_analy/analyze_tfree_outputs.py (v1.0.0): identical logic, generalized
+- Created 2_analysist/0_analy/analyze_tfree_outputs.py (v1.0.0): identical logic, generalized
   title/module docstring/print headers/arg descriptions; summary figure renamed to
   tfree_analysis_summary.png; default outdir <data>/analysis/analyze_tfree.
-- Removed _analysist/0_analy/analyze_b6_outputs.py.
+- Removed 2_analysist/0_analy/analyze_b6_outputs.py.
 
 **Verification (real execution):** py_compile OK; ran against the b6 data -> same output as before
 (1000 samples, 100 live, 5 temps, sum(w_i)=0.99995), confirming the rename/generalization didn't
 change behaviour.
 
-**Git:** _analysist is gitignored, so neither script is committed (only this LOG).
+**Git:** 2_analysist is gitignored, so neither script is committed (only this LOG).
 
 **Time:** 2026-08-28 ~18:00 JST.
 
@@ -2439,7 +2439,7 @@ change behaviour.
 
 ## Session 2026-08-28 — Create plot_conf_space_deltaz.py (conf_space colored by Fe island height)
 
-**Goal (user request):** make a new code in _analysist/0_analy/ for making the same conf_space.png
+**Goal (user request):** make a new code in 2_analysist/0_analy/ for making the same conf_space.png
 as the b6 run's analysis/posterior/conf_space.png but with an additional analysis of island height
 (delta Z) in color for the scatter plot.
 
@@ -2447,7 +2447,7 @@ as the b6 run's analysis/posterior/conf_space.png but with an additional analysi
 - Color = Fe island height delta_Z = max(Fe z) - min(Fe z) (Angstrom), Fe identified by symbol.
 - Method: reuse plot_structure_landscape with z_data=delta_Z (AGOX Fingerprint PCA + landscape
   script), colorbar added.
-- Location: new standalone script _analysist/0_analy/plot_conf_space_deltaz.py.
+- Location: new standalone script 2_analysist/0_analy/plot_conf_space_deltaz.py.
 - Run against b6 posterior structures (temperature-free) to verify.
 
 **Script created:** plot_conf_space_deltaz.py (v1.0.0). Reads posterior_T{KKK}/*.xsf, computes PC1
@@ -2456,11 +2456,11 @@ axis), and delta_Z per structure (color); passes z_data=delta_Z to plot_structur
 colorbar, writes conf_space_deltaz.png.
 
 **Verification (real execution):** ran against
-_analysist/1_result/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04/posterior_T300 (1100
+2_analysist/1_result/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04/posterior_T300 (1100
 structures): energy -436.69..-410.73 eV, delta Z 0.039..5.205 Angstrom; produced
-_analysist/0_analy/b6_analysis_out/conf_space_deltaz.png (893x868 PNG, valid).
+2_analysist/0_analy/b6_analysis_out/conf_space_deltaz.png (893x868 PNG, valid).
 
-**Git:** _analysist is gitignored, so neither the script nor the PNG is committed (only this LOG).
+**Git:** 2_analysist is gitignored, so neither the script nor the PNG is committed (only this LOG).
 
 **Time:** 2026-08-28 ~18:10 JST.
 
@@ -2499,7 +2499,7 @@ g(E) here is a coarse 50-bin histogram of the sampled band in per-atom units, wh
 thermodynamics.csv logZ comes from the exact per-sample weighted sum with absolute energies +
 live-set correction. This is informative (quantifies how well binned g(E) reproduces Z(T)), not a bug.
 
-**Git:** _analysist is gitignored, so the script/PNGs are NOT committed (only this LOG).
+**Git:** 2_analysist is gitignored, so the script/PNGs are NOT committed (only this LOG).
 
 **Time:** 2026-08-28 ~18:30 JST.
 
@@ -2646,7 +2646,7 @@ worst (Fortran-style), default off.
 
 ---
 
-## Session 2026-08-28 — Create run dir _runs/b8_femgo_walk_emax04_exclworst_noxsf (b6 + walk-exclude-worst + no-xsf)
+## Session 2026-08-28 — Create run dir 1_runs/b8_femgo_walk_emax04_exclworst_noxsf (b6 + walk-exclude-worst + no-xsf)
 
 **Goal (user request):** update b7 and make a new b8 dir. After clarify, the user said: they made a
 mistake, they don't use b7; b8 = the b6 system (plain Fe/MgO) with b6's params PLUS
@@ -2658,7 +2658,7 @@ mistake, they don't use b7; b8 = the b6 system (plain Fe/MgO) with b6's params P
 - Latest root code (v1.6.0). b7 left unchanged.
 
 **Actions taken:**
-- Created _runs/b8_femgo_walk_emax04_exclworst_noxsf/ as a full self-contained copy: main.py
+- Created 1_runs/b8_femgo_walk_emax04_exclworst_noxsf/ as a full self-contained copy: main.py
   (v1.6.0) + nested_sampling/ + scripts/ from project root; dataset from root dataset/ (13 seeds,
   plain Fe/MgO).
 - Copied the CORRECT plot_structure_landscape.py (accepts s=25) into nested_sampling/scripts/.
@@ -2737,9 +2737,9 @@ not a bug.
 
 ---
 
-## Session 2026-08-28 — Create run dir _runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty (b8 + novelty-threshold)
+## Session 2026-08-28 — Create run dir 1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty (b8 + novelty-threshold)
 
-**Goal (user request):** make a new _runs dir, same system/params as b8, plus the new novelty
+**Goal (user request):** make a new 1_runs dir, same system/params as b8, plus the new novelty
 threshold. Name starts with b9.
 
 **Clarified (per standing rule):**
@@ -2748,7 +2748,7 @@ threshold. Name starts with b9.
   --novelty-threshold 1.0 --novelty-max-attempts 500. Latest root code (v1.7.0).
 
 **Actions taken:**
-- Created _runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/ as a full self-contained copy:
+- Created 1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/ as a full self-contained copy:
   main.py (v1.7.0) + nested_sampling/ + scripts/ + dataset (plain Fe/MgO, 13 seeds).
 - Copied the CORRECT plot_structure_landscape.py (accepts s=25) into nested_sampling/scripts/.
 - Wrote j_b9_*.sh (PJM, gpaw_env) with the b8 command + --novelty-threshold 1.0
@@ -2825,15 +2825,15 @@ answer directly beneath it in the existing `# QnA` section.
 ## Session 2026-08-29 — Analyze b9 run outputs (temperature-free NS + novelty)
 
 **Goal (user-confirmed via clarify):** Analyze the b9 run outputs at
-`_analysist/1_result/b9_femgo_walk_emax04_exclworst_noxsf_novelty/` "much like" the b6
-analysis output, using `_analysist/0_analy/analyze_tfree_outputs.py`.
+`2_analysist/1_result/b9_femgo_walk_emax04_exclworst_noxsf_novelty/` "much like" the b6
+analysis output, using `2_analysist/0_analy/analyze_tfree_outputs.py`.
 
 **Clarify decisions (all user-confirmed):**
-1. Output dir: `_analysist/1_result/b9_..._novelty/analysis_tfree/`.
+1. Output dir: `2_analysist/1_result/b9_..._novelty/analysis_tfree/`.
 2. Run the analyzer AND write a b9 DISCUSSION.md (mirroring b6's structure); skip the b6-only
    `conf_space_deltaz.png` because b9 was run with `--no-posterior-xsf` (no posterior .xsf to
    build the delta-Z landscape from).
-3. Commit decision revised after inspection: outputs live under gitignored `_analysist/1_result/`
+3. Commit decision revised after inspection: outputs live under gitignored `2_analysist/1_result/`
    (consistent with untracked b6_analysis_out), so leave them uncommitted; log the session only.
 
 **Actions taken:**
@@ -2862,7 +2862,7 @@ analysis output, using `_analysist/0_analy/analyze_tfree_outputs.py`.
 ## Session 2026-08-29 — Rename b9 analysis output dir to match its ns_output
 
 **Goal (user-confirmed via clarify):** Rename
-`_analysist/1_result/b9_..._novelty/analysis_tfree` to
+`2_analysist/1_result/b9_..._novelty/analysis_tfree` to
 `analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty` so the analysis dir name
 reflects the ns_output dir it analyses
 (`ns_output_tfree_walk_emax04_exclworst_noxsf_novelty`).
@@ -2882,45 +2882,45 @@ consistent with prior session.)
 
 ---
 
-## Session 2026-08-29 — Update docs for the new flat `_analysist/` structure
+## Session 2026-08-29 — Update docs for the new flat `2_analysist/` structure
 
-**Goal (user-confirmed via clarify):** The `_analysist/` directory was restructured from the
+**Goal (user-confirmed via clarify):** The `2_analysist/` directory was restructured from the
 old `0_analy/` + `1_result/` two-level layout to a flat per-run layout. Update all md notes that
 describe/reference the old structure (including AGENTS.md) to reflect the current layout.
 
 **Clarify decisions (all user-confirmed):**
 1. Scope: update main docs (AGENTS.md, README.AI.md, README.md) AND all per-run README/TUTORIAL
-   in `_analysist/` and `_runs/` that referenced old `_analysist/1_result/...` paths.
+   in `2_analysist/` and `1_runs/` that referenced old `2_analysist/1_result/...` paths.
 2. LOG.md stays append-only: only append a new entry; do not rewrite historical entries.
-3. .gitignore: replace the obsolete `_analysist/0_analy/` + `_analysist/1_result/` lines with the
-   flat-structure policy (ignore `_analysist/_archive/`; rely on defensive patterns for
+3. .gitignore: replace the obsolete `2_analysist/0_analy/` + `2_analysist/1_result/` lines with the
+   flat-structure policy (ignore `2_analysist/_archive/`; rely on defensive patterns for
    regenerable outputs; keep per-run code/docs and root analysis scripts trackable).
 
 **Actions taken (new flat layout):**
 ```
-_analysist/
+2_analysist/
 ├── 1_no_prior_control/       # shared reference run
 ├── b1_... ... b9_.../        # per-run analysis dirs
-├── analyze_tfree_outputs.py   # analysis scripts at the _analysist root
+├── analyze_tfree_outputs.py   # analysis scripts at the 2_analysist root
 ├── plot_conf_space_deltaz.py
 └── _archive/                  # superseded analysis (gitignored)
 ```
-- AGENTS.md: rewrote the `_analysist/` layout block (section 3a); updated the reference path
-  `_analysist/1_result/1_no_prior_control/...` -> `_analysist/1_no_prior_control/...`.
-- README.AI.md: updated section 2 layout line + section 2a `_analysist/` description + reference path.
-- README.md: updated the Layout tree `_analysist/` line.
-- .gitignore: replaced the two obsolete `_analysist/0_analy/` + `_analysist/1_result/` lines with
-  `_analysist/_archive/` (+ comment).
-- 12 per-run README/TUTORIAL files in `_analysist/` and `_runs/` (b2/b4/b5/b6): rewrote
-  `_analysist/1_result/1_no_prior_control` -> `_analysist/1_no_prior_control`.
-- b9 DISCUSSION.md header: `_analysist/1_result/b9_...` -> `_analysist/b9_...`,
-  `_analysist/0_analy/analyze_tfree_outputs.py` -> `_analysist/analyze_tfree_outputs.py`, and the
+- AGENTS.md: rewrote the `2_analysist/` layout block (section 3a); updated the reference path
+  `2_analysist/1_result/1_no_prior_control/...` -> `2_analysist/1_no_prior_control/...`.
+- README.AI.md: updated section 2 layout line + section 2a `2_analysist/` description + reference path.
+- README.md: updated the Layout tree `2_analysist/` line.
+- .gitignore: replaced the two obsolete `2_analysist/0_analy/` + `2_analysist/1_result/` lines with
+  `2_analysist/_archive/` (+ comment).
+- 12 per-run README/TUTORIAL files in `2_analysist/` and `1_runs/` (b2/b4/b5/b6): rewrote
+  `2_analysist/1_result/1_no_prior_control` -> `2_analysist/1_no_prior_control`.
+- b9 DISCUSSION.md header: `2_analysist/1_result/b9_...` -> `2_analysist/b9_...`,
+  `2_analysist/0_analy/analyze_tfree_outputs.py` -> `2_analysist/analyze_tfree_outputs.py`, and the
   analysis dir reference updated to `analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty`.
-- Left archived content (`_analysist/_archive/0_analy/b6_analysis_out/DISCUSSION.md`,
-  `_runs/_archives/b7_.../README.md`) untouched (superseded/historical records).
+- Left archived content (`2_analysist/_archive/0_analy/b6_analysis_out/DISCUSSION.md`,
+  `1_runs/_archives/b7_.../README.md`) untouched (superseded/historical records).
 
-**Results:** No `_analysist/1_result` or `_analysist/0_analy` references remain in any active
-(non-archive, non-LOG) md file. `.gitignore` now resolves `_analysist/` to its trackable
+**Results:** No `2_analysist/1_result` or `2_analysist/0_analy` references remain in any active
+(non-archive, non-LOG) md file. `.gitignore` now resolves `2_analysist/` to its trackable
 code/docs (382 files) with regenerable outputs and `_archive/` still ignored.
 
 **Open items:** None.
@@ -2932,14 +2932,14 @@ code/docs (382 files) with regenerable outputs and `_archive/` still ignored.
 ## Session 2026-08-29 — Analyze b6 run outputs (temperature-free NS) like b9
 
 **Goal (user-confirmed via clarify):** Reproduce for the b6 run
-(`_analysist/b6_tfree_walk_emax04/`) the same analysis that was done for b9, using the same
+(`2_analysist/b6_tfree_walk_emax04/`) the same analysis that was done for b9, using the same
 naming/placement pattern (`analysis_<ns_output_name>/` inside the run dir).
 
 **Clarify decisions (all user-confirmed):**
 1. Analyze the primary run `ns_output_tfree_walk_emax04` (the one documented in the b6 README).
 2. Match b9 exactly: run `analyze_tfree_outputs.py` (9 standard PNGs) + write a DISCUSSION.md;
    skip `conf_space_deltaz.png` (b9 did not produce it).
-3. Output to `_analysist/b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04/`.
+3. Output to `2_analysist/b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04/`.
 
 **Actions taken:**
 - Ran `analyze_tfree_outputs.py --data b6_tfree_walk_emax04/ns_output_tfree_walk_emax04
@@ -2955,7 +2955,7 @@ naming/placement pattern (`analysis_<ns_output_name>/` inside the run dir).
   C_V ~ 0 (no resolved phase transition in this window).
 - Sanity: sum(w_i) = 0.99995 ~= 1 - exp(-1000/100) (consistent).
 
-**Open items:** Commit decision pending (analysis outputs under `_analysist/`; PNGs gitignored,
+**Open items:** Commit decision pending (analysis outputs under `2_analysist/`; PNGs gitignored,
 DISCUSSION.md now trackable after the flat-structure `.gitignore` change).
 
 **Time:** 2026-08-29 (JST).
@@ -2986,8 +2986,8 @@ in AGENTS.md so that next time the owner says "analyze tfree" the task can be in
   template with a clarify-before-begin section, procedure, DISCUSSION.md outline, delta-Z caveat,
   logging/commit, and a verification checklist.
 - Updated the `agox-nested-sampling` skill's
-  `references/analyzing-tfree-run-and-no-xsf-landscape.md` to the flat `_analysist/` layout
-  (analyzer path `_analysist/analyze_tfree_outputs.py`, `plot_conf_space_deltaz.py`, new gitignore
+  `references/analyzing-tfree-run-and-no-xsf-landscape.md` to the flat `2_analysist/` layout
+  (analyzer path `2_analysist/analyze_tfree_outputs.py`, `plot_conf_space_deltaz.py`, new gitignore
   policy) and cross-linked the new `agox-tfree-analysis` skill.
 
 **Results:** AGENTS.md now documents the tfree-analysis template; `agox-tfree-analysis` skill
@@ -3084,8 +3084,8 @@ limits (duplication, novelty de-dup, cost).
 
 ## Session 2026-08-29 — Create run dirs b10 (Fe/MgO iter sweep) and b11 (B-doped iter sweep)
 
-**Goal (user-confirmed via clarify):** Create two new `_runs` dirs:
-- **b10** = plain Fe/MgO, same params as `_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty`,
+**Goal (user-confirmed via clarify):** Create two new `1_runs` dirs:
+- **b10** = plain Fe/MgO, same params as `1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty`,
   swept over `--n-iters` 5000 / 10000 / 20000.
 - **b11** = B-doped Fe/MgO (boron dataset), same params as b9 (incl. `--novelty-threshold 1.0`),
   `--perturb-symbols Fe,B`, swept over `--n-iters` 5000 / 10000 / 20000.
@@ -3110,7 +3110,7 @@ limits (duplication, novelty de-dup, cost).
 - main.py derives n_atoms/composition from data (no 75-atom/13-seed hardcode), so b11's 82-atom
   boron system loads correctly.
 
-**Results:** `_runs/b10_..._novelty/` and `_runs/b11_boron_..._novelty/` created, each with
+**Results:** `1_runs/b10_..._novelty/` and `1_runs/b11_boron_..._novelty/` created, each with
 3 HPC job scripts + README + TUTORIAL + main.py(v1.7.0) + nested_sampling + scripts + dataset.
 Code + docs tracked; DBs/xsf/png/outputs gitignored.
 
@@ -3123,7 +3123,7 @@ Code + docs tracked; DBs/xsf/png/outputs gitignored.
 ## Session 2026-08-30 — tfree analysis of all 3 b10 ns_outputs (iter5000/10000/20000)
 
 **Goal (user-confirmed via clarify):** Perform the tfree analysis for all ns_outputs of
-`_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/` (the iteration sweep).
+`2_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/` (the iteration sweep).
 
 **Clarify decisions (all user-confirmed):**
 1. Analyze all three ns_outputs (iter5000, iter10000, iter20000), each into
@@ -3158,7 +3158,7 @@ Code + docs tracked; DBs/xsf/png/outputs gitignored.
 ## Session 2026-08-30 — tfree analysis of all 4 b11 (boron) ns_outputs (iter1000/5000/10000/20000)
 
 **Goal (user-confirmed via clarify):** Perform the tfree analysis for all ns_outputs of
-`_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/` (the boron iteration sweep).
+`2_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/` (the boron iteration sweep).
 
 **Clarify decisions (all user-confirmed):**
 1. Analyze all FOUR ns_outputs (iter1000, iter5000, iter10000, iter20000), each into
@@ -3199,7 +3199,7 @@ Code + docs tracked; DBs/xsf/png/outputs gitignored.
 **Goal (user-confirmed via clarify):** Make a new analysis comparing the NS state density
 `state_density_gE.png` (from
 `b11_.../analysis_..._boron_iter20000/`) against a gaussian-KDE state density computed directly
-from the b11 dataset, write the python code in `_analysist/`, and save the new PNG in the same
+from the b11 dataset, write the python code in `2_analysist/`, and save the new PNG in the same
 `analysis_..._boron_iter20000` dir, using the same params as the ns_output.
 
 **Clarify decisions (all user-confirmed):**
@@ -3212,7 +3212,7 @@ from the b11 dataset, write the python code in `_analysist/`, and save the new P
 5. Same params as ns_output: `--e-max-per-atom 0.4`, `n_atoms 82`.
 
 **Actions taken:**
-- Wrote `_analysist/compare_state_density_gE.py` (v1.0.0) — reuses the analyzer's `load_samples`
+- Wrote `2_analysist/compare_state_density_gE.py` (v1.0.0) — reuses the analyzer's `load_samples`
   and NS g(E) weighted-histogram recipe; loads + filters dataset DFT energies mirroring `main.py`;
   builds a gaussian KDE; overlays both; writes the PNG into the analysis dir.
 - Ran it for b11 iter20000 (`--run b11_... --ns-output analysis_..._iter20000 --n-atoms 82
@@ -3237,7 +3237,7 @@ from the b11 dataset, write the python code in `_analysist/`, and save the new P
 ## Session 2026-08-30 — compare_state_density_gE.py: rename red-line legend to "GPR+LCB g(E)"
 
 **Goal (user-confirmed? — simple label edit, no clarify needed):** Change the red dataset-KDE
-line's legend label in `_analysist/compare_state_density_gE.py` from "Dataset g(E) (gaussian KDE)"
+line's legend label in `2_analysist/compare_state_density_gE.py` from "Dataset g(E) (gaussian KDE)"
 to "GPR+LCB g(E) (Gaussian KDE)".
 
 **Actions taken:**
@@ -3255,7 +3255,7 @@ script to refresh the existing compare_state_density_gE.png if desired.)
 
 ## Session 2026-08-30 — compare_state_density_gE.py: KDE on all dataset, plot capped at NS max
 
-**Goal (user-confirmed via clarify):** Change `_analysist/compare_state_density_gE.py` so the
+**Goal (user-confirmed via clarify):** Change `2_analysist/compare_state_density_gE.py` so the
 dataset KDE g(E) is built on ALL dataset structures (no energy filter), and only the PLOT is
 clipped to the NS g(E) E-E_min max so both curves share the same eV/atom range.
 
@@ -3368,7 +3368,7 @@ square figure. Wrap it onto two lines with an explicit line break.
 ## Session 2026-08-30 — compare_state_density_gE.py: add --figsize flag, re-run at 4x4
 
 **Goal (user-confirmed? — simple, low-stakes flag addition):** Add a `--figsize` flag to control
-the (square) figure size in `_analysist/compare_state_density_gE.py`, then re-run for figsize 4.
+the (square) figure size in `2_analysist/compare_state_density_gE.py`, then re-run for figsize 4.
 
 **Actions taken:**
 - Added `--figsize` (float, default 6, in inches; square width=height) arg.
@@ -3436,8 +3436,8 @@ eV/atom (abs g 1.277); NS g(E) peak unchanged at 0.341 eV/atom.
 ## Session 2026-08-30 — Add run_analysis_indices.py (GPR+LCB-only dataset analysis) + run for b11
 
 **Goal (user-confirmed via clarify):** Reproduce the reference
-`_archive/_analysist/run_analysis_indices.py` (AGOX Stage 2 landscape + Stage 3 Boltzmann
-probability) as a new code in `_run/b_nestedsampling/_analysist`, run it on the b11 boron
+`_archive/2_analysist/run_analysis_indices.py` (AGOX Stage 2 landscape + Stage 3 Boltzmann
+probability) as a new code in `_run/b_nestedsampling/2_analysist`, run it on the b11 boron
 dataset, and save outputs under a new dir in the b11 run dir.
 
 **Clarify decisions (all user-confirmed):**
@@ -3452,8 +3452,8 @@ dataset, and save outputs under a new dir in the b11 run dir.
 
 **Actions taken:**
 - Copied `scripts/plot_structure_landscape.py`, `scripts/process_database.py`,
-  `scripts/calculate_relative_energy.py` into `_analysist/scripts/`.
-- Wrote `_analysist/run_analysis_indices.py` (v1.0.0): loads all seed DBs -> PCA (Fingerprint
+  `scripts/calculate_relative_energy.py` into `2_analysist/scripts/`.
+- Wrote `2_analysist/run_analysis_indices.py` (v1.0.0): loads all seed DBs -> PCA (Fingerprint
   PC1) + KDE state density (Stage 2) + Boltzmann P(T) (Stage 3), mirroring the reference logic
   and rcParams.
 - py_compile OK for the code + copied scripts.
@@ -3472,9 +3472,9 @@ dataset, and save outputs under a new dir in the b11 run dir.
 
 ## Session 2026-08-30 — Create run dir b12 (boron3 dataset, b11 params, iter sweep)
 
-**Goal (user-confirmed via clarify):** Create a new `_runs` dir starting with **b12** using the
+**Goal (user-confirmed via clarify):** Create a new `1_runs` dir starting with **b12** using the
 new `dataset_boron3` dataset, with the same parameters as
-`_runs/b11_boron_walk_emax04_exclworst_noxsf_novelty`.
+`1_runs/b11_boron_walk_emax04_exclworst_noxsf_novelty`.
 
 **Clarify decisions (all user-confirmed):**
 1. Iteration config: one b12 run dir with THREE job scripts (5000/10000/20000), same as b11's
@@ -3494,7 +3494,7 @@ new `dataset_boron3` dataset, with the same parameters as
   448/597; py_compile OK (main.py + nested_sampler.py); correct plot_structure_landscape.py
   bundled; no stale b11 refs in run code; no pycache left.
 
-**Results:** `_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/` created (3 job scripts +
+**Results:** `1_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/` created (3 job scripts +
 README + TUTORIAL + main.py v1.7.0 + nested_sampling + scripts + dataset). 28 trackable files;
 DBs/xsf/png/outputs gitignored.
 
@@ -3506,8 +3506,8 @@ DBs/xsf/png/outputs gitignored.
 
 ## Session 2026-08-30 — Create run dir b13 (GPR accuracy on boron3 dataset, b3 params)
 
-**Goal (user-confirmed via clarify):** Create a new `_runs` dir starting with **b13** that runs
-the GPR-accuracy analysis like `_runs/b3_gpr_accuracy_boron_cv50`, but on the new
+**Goal (user-confirmed via clarify):** Create a new `1_runs` dir starting with **b13** that runs
+the GPR-accuracy analysis like `1_runs/b3_gpr_accuracy_boron_cv50`, but on the new
 `dataset_boron3` dataset, using the same parameters as b3.
 
 **Clarify decisions (all user-confirmed):**
@@ -3528,7 +3528,7 @@ the GPR-accuracy analysis like `_runs/b3_gpr_accuracy_boron_cv50`, but on the ne
 - Verified: 6 seeds / 597 structures / 78 atoms (B3Fe25Mg25O25); `--e-max-per-atom 0.67` keeps
   568/597; gpr_accuracy.py v1.5.1; py_compile OK; no stale b3 refs; no pycache.
 
-**Results:** `_runs/b13_gpr_accuracy_boron3_cv50/` created (job script + README + TUTORIAL +
+**Results:** `1_runs/b13_gpr_accuracy_boron3_cv50/` created (job script + README + TUTORIAL +
 DISCUSSION + gpr_accuracy.py v1.5.1 + dataset). Results pending the HPC run.
 
 **Open items:** Run `j_b13_...sh` on HPC (or local at reduced folds) to produce out_fez/ results,
@@ -3566,8 +3566,8 @@ using b10's dataset.
 
 ## Session 2026-08-30 — run_analysis_indices.py: add start_iter filter (iteration >= 10)
 
-**Goal (user-confirmed via clarify):** In `_analysist/run_analysis_indices.py`, filter the loaded
-data to start from AGOX iteration 10, mirroring `_analysist/scripts/process_database.py`'s
+**Goal (user-confirmed via clarify):** In `2_analysist/run_analysis_indices.py`, filter the loaded
+data to start from AGOX iteration 10, mirroring `2_analysist/scripts/process_database.py`'s
 `start_iter` (default 10). Re-run the b10 and b11 analysis_indices so outputs reflect it.
 
 **Clarify decisions (all user-confirmed):**
@@ -3598,7 +3598,7 @@ data to start from AGOX iteration 10, mirroring `_analysist/scripts/process_data
 
 ## Session 2026-08-30 — analyze_tfree_outputs.py: add --style-pipeline flag (run_analysis_indices rcParams)
 
-**Goal (user-confirmed via clarify):** Add a flag to `_analysist/analyze_tfree_outputs.py` that
+**Goal (user-confirmed via clarify):** Add a flag to `2_analysist/analyze_tfree_outputs.py` that
 applies the same rcParams style as `run_analysis_indices.py` to its resulting plots. Re-run for
 the b10 iter20000 analysis dir using the new style.
 
@@ -3988,7 +3988,7 @@ dataset KDE peak ~ +0.076 eV/atom.
 
 ## Session 2026-08-30 — compare_state_density_gE.py: PCA delta-Z cbar (PuBu) + GPR+LCB peak/notes
 
-**Goal (user-confirmed via clarify):** Use `_analysist/codes` as a reference. For the PCA panel,
+**Goal (user-confirmed via clarify):** Use `2_analysist/codes` as a reference. For the PCA panel,
 color the scatter by delta Z (Fe island height) with a PuBu colorbar. For the GPR+LCB State
 Density panel, add dashed lines at the KDE peaks and notes 'flat' and 'island'.
 
@@ -4125,9 +4125,9 @@ from the PCA scatter points inside the Configurational Space panel.
 
 ## Session 2026-08-30 — New plot_ns_boltzmann_prob.py + NS Boltzmann P(E) figure + DISCUSSION.md
 
-**Goal (user-confirmed via clarify):** New analysis code in `_analysist/` that plots the
+**Goal (user-confirmed via clarify):** New analysis code in `2_analysist/` that plots the
 Boltzmann Probability vs energy at different temperatures, using the b10 iter20000 NS result.
-Save the PNG in the b10 iter20000 analysis dir, save the code in `_analysist/`, update the
+Save the PNG in the b10 iter20000 analysis dir, save the code in `2_analysist/`, update the
 DISCUSSION.md with the code + parameters.
 
 **Clarify decisions (all user-confirmed):**
@@ -4139,7 +4139,7 @@ DISCUSSION.md with the code + parameters.
    the b10 iter20000 analysis dir; update DISCUSSION.md with code+params.
 
 **Actions taken:**
-- Created `_analysist/plot_ns_boltzmann_prob.py` (v1.0.0): loads samples.csv via
+- Created `2_analysist/plot_ns_boltzmann_prob.py` (v1.0.0): loads samples.csv via
   analyze_tfree_outputs.load_samples, computes prior-weight-weighted Boltzmann P_i(T) for each
   temperature, plots P(E) vs per-atom relative energy (serif/ticks-in style, E_LABEL), saves PNG.
 - Ran it for b10 iter20000: PNG saved (1500x1200) to the analysis dir.
@@ -4300,10 +4300,10 @@ energy each iteration). In the AGOX output this = samples.csv energy_eV per iter
 **Clarify decisions (all user-confirmed):**
 1. dead_E(Iter) = samples.csv energy_eV per iteration (the discarded worst sample).
 2. Output: a plot of dead_E(Iter) vs iteration (the discarded-sample energy descent curve).
-3. Save code in _analysist/, PNG in the b10 iter20000 analysis dir; commit code + LOG.
+3. Save code in 2_analysist/, PNG in the b10 iter20000 analysis dir; commit code + LOG.
 
 **Actions taken:**
-- Created `_analysist/plot_dead_energy.py` (v1.0.0): loads samples.csv, plots dead_E(Iter)
+- Created `2_analysist/plot_dead_energy.py` (v1.0.0): loads samples.csv, plots dead_E(Iter)
   (energy_eV) vs iteration with a weighted running mean, thousands-separator x-axis.
 - Ran for b10 iter20000: PNG saved (2100x1200) to the analysis dir.
 - py_compile OK.
@@ -4425,10 +4425,10 @@ E_max_local, shell weight dX, island/flat basin) and to express energies as rela
 
 ## Session 2026-08-30 — New plot_ns_histogram_iterations.py: NS state-density g(E) vs iterations
 
-**Goal (user-confirmed via clarify):** New analysis code in `_analysist/` plotting the
+**Goal (user-confirmed via clarify):** New analysis code in `2_analysist/` plotting the
 prior-weight-weighted state-density histogram g(E) (like samples_weighted_histogram.png),
 comparing the impact of multiple iteration counts (1000/5000/10000/20000), from the b10 iter20000
-ns_output. Save PNG in the analysis_indices dir; code in _analysist/.
+ns_output. Save PNG in the analysis_indices dir; code in 2_analysist/.
 
 **Clarify decisions (all user-confirmed):**
 1. Derive the 1000-iteration g(E) from the iter20000 run's samples.csv (first 1000 samples +
@@ -4436,11 +4436,11 @@ ns_output. Save PNG in the analysis_indices dir; code in _analysist/.
 2. Prior-weight-weighted histogram of discarded energies (config./eV), vs per-atom relative energy
    (E-E_min)/n_atoms.
 3. Overlay all four g(E) curves on one plot with a legend.
-4. Output PNG to analysis_indices; code in _analysist/; commit code + LOG (PNG gitignored).
+4. Output PNG to analysis_indices; code in 2_analysist/; commit code + LOG (PNG gitignored).
 5. Use ONE shared global minimum (iter20000 E_min=-436.888 eV) as E_ref for all iterations.
 
 **Actions taken:**
-- Created `_analysist/plot_ns_histogram_iterations.py` (v1.0.0): loads the iter20000 samples.csv,
+- Created `2_analysist/plot_ns_histogram_iterations.py` (v1.0.0): loads the iter20000 samples.csv,
   computes the prior-weight-weighted histogram g(E) for the first-N samples at each requested
   iteration count (shared global E_min), overlays all curves, saves PNG.
 - Ran for b10 iter20000 -> analysis_indices/ns_histogram_state_density_iterations.png (2100x1200).
@@ -4483,8 +4483,8 @@ boron3) dataset, outputting to a new b12 analysis_indices dir.
 ## Session 2026-08-30 — run_analysis_indices.py: add Stage 1 best-so-far progression plot
 
 **Goal (user-confirmed via clarify):** Add a per-seed best-so-far progression plot to
-`run_analysis_indices.py`, like the reference `_archive/_analysist/0_analy/idx_19/progression_plots/
-progression_seed_split_19.png` (source: `_archive/_analysist/scripts/process_database.py`'s
+`run_analysis_indices.py`, like the reference `_archive/2_analysist/0_analy/idx_19/progression_plots/
+progression_seed_split_19.png` (source: `_archive/2_analysist/scripts/process_database.py`'s
 plot_best_so_far).
 
 **Clarify decisions (all user-confirmed):**

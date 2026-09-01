@@ -1,9 +1,9 @@
 # Run b9_femgo_walk_emax04_exclworst_noxsf_novelty — Fe/MgO NS with novelty-threshold
 
-Run directory: `_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/` (self-contained,
+Run directory: `1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/` (self-contained,
 launchable on HPC)
 Copied from the latest project-root code (**v1.7.0**) + the **plain Fe/MgO (no Boron)**
-dataset (13 seeds, same system as `_runs/b8_femgo_walk_emax04_exclworst_noxsf`).
+dataset (13 seeds, same system as `1_runs/b8_femgo_walk_emax04_exclworst_noxsf`).
 
 This run uses **b8's parameters** (plain Fe/MgO; e-max 0.4; window `[0.3, 0.35]`; walk on with
 `--walk-exclude-worst`; `--no-posterior-xsf`) **plus the new novelty threshold**:

@@ -45,8 +45,8 @@ from ase.io import read
 
 # --- paths: make the AGOX landscape script importable -------------------------
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_ANALYSIST = "/home/think/Desktop/research/_analysist"
-_NS_LANDSCAPE_REF = "/home/think/Desktop/research/_analysist/1_result/1_no_prior_control/nested_sampling/scripts"
+_ANALYSIST = "/home/think/Desktop/research/2_analysist"
+_NS_LANDSCAPE_REF = "/home/think/Desktop/research/2_analysist/1_result/1_no_prior_control/nested_sampling/scripts"
 for _p in (_HERE, _ANALYSIST, os.path.join(_ANALYSIST, "scripts"), _NS_LANDSCAPE_REF):
     if _p not in sys.path:
         sys.path.insert(0, _p)

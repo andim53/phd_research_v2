@@ -1,9 +1,9 @@
 # Run b10_femgo_walk_emax04_exclworst_noxsf_novelty — Fe/MgO NS, iteration sweep
 
-Run directory: `_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty/` (self-contained,
+Run directory: `1_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty/` (self-contained,
 launchable on HPC)
 Copied from the latest project-root code (**v1.7.0**) + the **plain Fe/MgO (no Boron)**
-dataset (13 seeds, same system as `_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty`).
+dataset (13 seeds, same system as `1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty`).
 
 This run is **exactly b9's treatment** (plain Fe/MgO; temperature-free; `--e-max-per-atom 0.4`;
 window `[0.3, 0.35]`; `--walk` with `--walk-exclude-worst`; `--no-posterior-xsf`;

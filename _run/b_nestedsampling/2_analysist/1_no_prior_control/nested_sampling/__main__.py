@@ -21,7 +21,7 @@ from nested_sampling.utils import K_B
 
 def main():
     p = argparse.ArgumentParser(description="Nested sampling with AGOX GPR")
-    p.add_argument("--db-dir", default="_analysist/1_result/"
+    p.add_argument("--db-dir", default="2_analysist/1_result/"
                    "19_kappa2_iter100_trajNoSave_repSeedDat0_5x5",
                    help="AGOX result directory")
     p.add_argument("--seed", type=int, default=3, help="Seed number")

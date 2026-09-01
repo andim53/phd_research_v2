@@ -1,13 +1,13 @@
 # DISCUSSION — Run b11_boron_walk_emax04_exclworst_noxsf_novelty (iter10000)
 
-Run: `_runs/b11_boron_walk_emax04_exclworst_noxsf_novelty`
-Data analysed: `_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter10000/`
-Analysis outputs: this directory (`_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter10000/`)
-Script: `_analysist/analyze_tfree_outputs.py`
+Run: `1_runs/b11_boron_walk_emax04_exclworst_noxsf_novelty`
+Data analysed: `2_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter10000/`
+Analysis outputs: this directory (`2_analysist/b11_boron_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron_iter10000/`)
+Script: `2_analysist/analyze_tfree_outputs.py`
 
 ## Analysis reproduction (command used)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python analyze_tfree_outputs.py \

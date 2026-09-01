@@ -122,7 +122,7 @@ def main():
     p = argparse.ArgumentParser(
         description="3-panel figure: Config Space | dataset State Density | NS State Density")
     p.add_argument("--run", required=True,
-                   help="run dir name under _analysist/ (contains dataset/ and the "
+                   help="run dir name under 2_analysist/ (contains dataset/ and the "
                         "analysis_<ns_output> dir)")
     p.add_argument("--ns-output", required=True,
                    help="analysis_<ns_output_name> dir name (holds the ns_output samples.csv "

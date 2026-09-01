@@ -1,6 +1,6 @@
 # Run b1_gpr_accuracy_cv10_bin005 — GPR accuracy, 50-fold CV, bin 0.1 (Fe_z)
 
-Run directory: `_runs/b1_gpr_accuracy_cv10_bin005/` (self-contained, launchable on HPC)
+Run directory: `1_runs/b1_gpr_accuracy_cv10_bin005/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`gpr_accuracy.py` v1.4.0) + full dataset.
 
 > Note: dir name retains the original `cv10_bin005`; the current run spec is
@@ -27,7 +27,7 @@ Reference run being scaled up: `_tmp/gpr_acc_fez_cv3_out` (was `--cv-folds 3`).
 ## Usage (local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b1_gpr_accuracy_cv10_bin005
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b1_gpr_accuracy_cv10_bin005
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 --output ./out_fez
 ```

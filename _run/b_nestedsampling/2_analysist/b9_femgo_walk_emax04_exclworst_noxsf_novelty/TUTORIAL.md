@@ -1,7 +1,7 @@
 # TUTORIAL — Reproduce run b9_femgo_walk_emax04_exclworst_noxsf_novelty
 
 This reproduces the nested-sampling run in
-`_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/`: **plain Fe/MgO** (13 seeds),
+`1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty/`: **plain Fe/MgO** (13 seeds),
 temperature-free, `--e-max-per-atom 0.4`, windowed seeding `[0.3, 0.35]`, dual-scale
 MC walk with `--walk-exclude-worst`, `--no-posterior-xsf`, and the new
 **`--novelty-threshold 1.0`** initial live-set de-duplication (v1.7.0).
@@ -14,7 +14,7 @@ MC walk with `--walk-exclude-worst`, `--no-posterior-xsf`, and the new
 ## Reproduce (one-line, local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe \
@@ -30,7 +30,7 @@ cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b9_femgo_walk_emax04
 ## Reproduce (HPC, PJM)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b9_femgo_walk_emax04_exclworst_noxsf_novelty
 pjsub j_b9_femgo_walk_emax04_exclworst_noxsf_novelty.sh
 ```
 

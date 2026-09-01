@@ -1,6 +1,6 @@
 # TUTORIAL — Reproduce run b6_tfree_walk_emax04
 
-This reproduces the nested-sampling run in `_runs/b6_tfree_walk_emax04/`: plain
+This reproduces the nested-sampling run in `1_runs/b6_tfree_walk_emax04/`: plain
 Fe/MgO (no B), temperature-free, `--e-max-per-atom 0.4`, windowed initial-live
 seeding `[0.3, 0.35]`, and the dual-scale MC walk enabled.
 
@@ -12,7 +12,7 @@ seeding `[0.3, 0.35]`, and the dual-scale MC walk enabled.
 ## Reproduce (one-line, local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b6_tfree_walk_emax04
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b6_tfree_walk_emax04
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe \
@@ -27,7 +27,7 @@ cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b6_tfree_walk_emax04
 Submit the self-contained job script:
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b6_tfree_walk_emax04
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b6_tfree_walk_emax04
 pjsub j_b6_tfree_walk_emax04.sh
 ```
 

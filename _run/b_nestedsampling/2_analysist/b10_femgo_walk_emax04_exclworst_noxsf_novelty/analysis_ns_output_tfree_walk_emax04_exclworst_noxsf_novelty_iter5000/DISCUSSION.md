@@ -1,13 +1,13 @@
 # DISCUSSION — Run b10_femgo_walk_emax04_exclworst_noxsf_novelty (iter5000)
 
-Run: `_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty`
-Data analysed: `_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter5000/`
-Analysis outputs: this directory (`_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter5000/`)
-Script: `_analysist/analyze_tfree_outputs.py`
+Run: `1_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty`
+Data analysed: `2_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter5000/`
+Analysis outputs: this directory (`2_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter5000/`)
+Script: `2_analysist/analyze_tfree_outputs.py`
 
 ## Analysis reproduction (command used)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python analyze_tfree_outputs.py \

@@ -27,7 +27,7 @@ trainings — expect several hours on HPC).
 ## Step 1 — Local run (validate on a small scale first if desired)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b1_gpr_accuracy_cv10_bin005
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b1_gpr_accuracy_cv10_bin005
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 --output ./out_fez
 ```

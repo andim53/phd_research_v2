@@ -2,7 +2,7 @@
 """
 Unified AGOX analysis for the GPR+LCB-only dataset (e.g. b11 boron seed DBs).
 
-Adapted from `_archive/_analysist/run_analysis_indices.py` for the b_nestedsampling
+Adapted from `_archive/2_analysist/run_analysis_indices.py` for the b_nestedsampling
 project's flat dataset layout. Instead of an index/folder map + Stage-1 DB
 processing, this loads ALL seed databases directly (like main.py's load_all_seeds)
 and runs the same analyses:
@@ -139,7 +139,7 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
 # ---------------------------------------------------------------------------
 def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
     """Per-seed best-so-far relative-energy-per-atom progression plot, mirroring
-    _archive/_analysist/scripts/process_database.py's plot_best_so_far (the source
+    _archive/2_analysist/scripts/process_database.py's plot_best_so_far (the source
     of progression_seed_split_<idx>.png). Seed 0 is highlighted in bold black on top.
 
     If e_max is given (eV/atom), each seed's structures are filtered to those with

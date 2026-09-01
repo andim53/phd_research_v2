@@ -43,23 +43,23 @@ b_nestedsampling/
 ├── VERSIONS.md                  # Version manifest: every source file's __version__
 ├── AGENTS.md                    # Governing rules for AI agents
 ├── PROMPTS.md                   # Prompt log + grammar-notes scaffold
-├── _runs/                       # (scaffolded) self-contained run dirs (HPC)
-├── _analysist/                  # per-run analysed results (b1_... b9_...) + reference
+├── 1_runs/                       # (scaffolded) self-contained run dirs (HPC)
+├── 2_analysist/                  # per-run analysed results (b1_... b9_...) + reference
 ├── _archives/                   # (scaffolded) archived artifacts
 └── _tmp/                        # (scaffolded) scratch output
 ```
 
-### 2a. `_runs/` and `_analysist/` (scaffolded, per the run-directory convention)
-- **`_runs/<NN>_<descriptor>/`** — self-contained HPC run dirs, each holding
+### 2a. `1_runs/` and `2_analysist/` (scaffolded, per the run-directory convention)
+- **`1_runs/<NN>_<descriptor>/`** — self-contained HPC run dirs, each holding
   `j_*.sh` + `main*.py` + copies of `scripts/` and `nested_sampling/`, launchable
   in isolation. HPC per-seed runs carry a per-run `README.md` + `TUTORIAL.md`.
   **NS run dirs must copy `plot_structure_landscape.py` into
   `nested_sampling/scripts/` from the reference
-  `_analysist/1_no_prior_control/nested_sampling/scripts/` ONLY** (accepts
+  `2_analysist/1_no_prior_control/nested_sampling/scripts/` ONLY** (accepts
   `s=`); do NOT use the stale `dataset_boron/scripts/` version (lacks `s=` → crashes
   the landscape analysis with `TypeError: ... unexpected keyword argument 's'`).
-- **`_analysist/`** — per-run analysed results, one self-contained dir per run
-  (`b1_...` … `b9_...`) mirroring `_runs/`, plus the shared reference
+- **`2_analysist/`** — per-run analysed results, one self-contained dir per run
+  (`b1_...` … `b9_...`) mirroring `1_runs/`, plus the shared reference
   `1_no_prior_control/`, root-level analysis scripts (`analyze_tfree_outputs.py`,
   `plot_conf_space_deltaz.py`), and an archived `_archive/`. Outputs
   regenerable/gitignored; analysis code and per-run docs tracked.
@@ -74,7 +74,7 @@ Every in-scope source file carries a module-level `__version__ = "X.Y.Z"`
 - **On every edit:** bump `__version__`, update `VERSIONS.md`, record old→new in
   `LOG.md`.
 - In-scope: `main.py`, `nested_sampling/`, `scripts/`.
-  `dataset/` and `_runs/` snapshots are **not** individually versioned.
+  `dataset/` and `1_runs/` snapshots are **not** individually versioned.
 - Pre-existing **function-local** `__version__` values in `scripts/*.py` are left
   untouched (module-level one added).
 

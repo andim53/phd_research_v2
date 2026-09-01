@@ -1,7 +1,7 @@
 # TUTORIAL — Reproduce run b10_femgo_walk_emax04_exclworst_noxsf_novelty
 
 This reproduces the nested-sampling runs in
-`_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty/`: **plain Fe/MgO** (13 seeds),
+`1_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty/`: **plain Fe/MgO** (13 seeds),
 temperature-free, `--e-max-per-atom 0.4`, windowed seeding `[0.3, 0.35]`, dual-scale
 MC walk with `--walk-exclude-worst`, `--no-posterior-xsf`, `--novelty-threshold 1.0`
 (v1.7.0), swept over **`--n-iters` = 5000 / 10000 / 20000**.
@@ -14,7 +14,7 @@ MC walk with `--walk-exclude-worst`, `--no-posterior-xsf`, `--novelty-threshold 
 ## Reproduce (one-line, local) — per iteration value
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty
 # iter 5000
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
@@ -33,7 +33,7 @@ Repeat the same command with `--n-iters 10000` / `20000` and the matching
 ## Reproduce (HPC, PJM)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty
 pjsub j_b10_femgo_walk_emax04_exclworst_noxsf_novelty_iter5000.sh
 pjsub j_b10_femgo_walk_emax04_exclworst_noxsf_novelty_iter10000.sh
 pjsub j_b10_femgo_walk_emax04_exclworst_noxsf_novelty_iter20000.sh

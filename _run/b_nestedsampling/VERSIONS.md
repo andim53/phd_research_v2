@@ -34,5 +34,5 @@ Versioning rules:
 ## Not individually versioned (duplicated snapshots / data)
 
 - `dataset/` — original AGOX search code + seed DBs (data; DBs gitignored).
-- `_runs/`, `_analysist/`, `_archives/`, `_tmp/` — run/analysis outputs and
+- `1_runs/`, `2_analysist/`, `_archives/`, `_tmp/` — run/analysis outputs and
   per-run copies (regenerable or snapshots).

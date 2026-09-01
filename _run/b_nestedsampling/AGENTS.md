@@ -68,12 +68,22 @@ In this project that file is `TUTORIAL.md`.
 
 1. **Clarify before every step.** Confirm the intended task, approach, and outputs
    with the project owner before writing or running code. Do not assume.
-2. **Ground everything in the repo.** Read the relevant existing code, the
-   `README.AI.md` spec, and `LOG.md` before acting. Never invent files, symbols, or
+2. **Ground everything in the repo.** Read the relevant existing code and the
+   `README.AI.md` spec before acting. Never invent files, symbols, or
    APIs that are not already present or explicitly requested.
-3. **Keep the deliverables current.** Every task that changes code or produces
-   results must update the Log, and, when behaviour changes, the README(s) and
-   Tutorial. Do not leave the docs describing a state the code no longer matches.
+   **When investigating the project, read only from `README.AI.md` first, then
+   the actual (relevant) code. All other notes — `README.md`, `TUTORIAL.md`,
+   `LOG.md`, `VERSIONS.md`, `PROMPTS.md`, `QNA.md`, `DISCUSSION.md`, etc. — must
+   NOT be read unless the project owner gives an explicit command. If the agent
+   thinks reading another note is necessary, it may ask the owner for
+   permission, which the owner may grant if they also think it is necessary
+   (permission covers READING only, not modifying the note).**
+3. **Keep the deliverables current.** After making any change within the code,
+   auto-update the Log (`LOG.md`) and version notes (`VERSIONS.md`), **append-only
+   and without reading them** — never rewrite existing entries. All **other**
+   notes (`README.md`, `README.AI.md`, `TUTORIAL.md`, `PROMPTS.md`,
+   `DISCUSSION.md`, `QNA.md`, etc.) are updated **only on explicit owner command**
+   (e.g. "update the README.AI.md", "update the TUTORIAL.md").
 4. **Log is append-only.** Never rewrite or delete prior Log entries; add new ones.
 5. **Verify before claiming done.** Run the relevant checks (compile, smoke test,
    build) and report what real execution returned. Do not fabricate results.
@@ -85,20 +95,20 @@ In this project that file is `TUTORIAL.md`.
 7. **Code + docs tracked; regenerable data excluded.** Follow the repo's `.gitignore`
    conventions (output dirs, `*.db`, `*.xsf`, `*.png`, logs are regenerable artifacts).
 
-## 3a. Run directories: `_runs/` and `_analysist/`
+## 3a. Run directories: `1_runs/` and `2_analysist/`
 
 Heavy runs and their analysis live in two sibling directories, separate from the
 project-root code/docs.
 
-### `_runs/` — self-contained run directories
+### `1_runs/` — self-contained run directories
 
-Each HPC run gets its **own self-contained directory** under `_runs/`, so a job can
+Each HPC run gets its **own self-contained directory** under `1_runs/`, so a job can
 be launched and, later, understood in isolation. It carries **everything** that run
 needs — job script, run script(s), and copies of `scripts/` and `nested_sampling/` —
 and does **not** depend on files in the project root.
 
 ```
-_runs/
+1_runs/
 └── <NN>_<descriptor>/            # e.g. a1_mgofe_Seed3_Iter300
     ├── j_*.sh                    #   PJM batch script (one job; edit the python line)
     ├── main.py                 #   entry point(s) for that run (latest from project root)
@@ -138,30 +148,30 @@ MUST accept an `s` argument or the final landscape analysis crashes with
 `TypeError: plot_structure_landscape() got an unexpected keyword argument 's'`.
 
 - **ONLY valid source:** the reference
-  `_analysist/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py`
+  `2_analysist/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py`
   (accepts `s=25`). Always copy from here:
-  `cp _analysist/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py <run>/nested_sampling/scripts/`
+  `cp 2_analysist/1_no_prior_control/nested_sampling/scripts/plot_structure_landscape.py <run>/nested_sampling/scripts/`
 - **DO NOT use** `dataset_boron/scripts/plot_structure_landscape.py` — it is a STALE
   version that lacks the `s=` argument and will crash the landscape analysis (this was
   the cause of the b4/b5 `TypeError`).
 
-Everything under `_runs/` is **tracked in git** (code + docs), subject to the same
+Everything under `1_runs/` is **tracked in git** (code + docs), subject to the same
 regenerable-data exclusions.
 
-### `_analysist/` — analysed results
+### `2_analysist/` — analysed results
 
-Analysed/intermediate results live in `_analysist/`, kept separate from both the
-project root and `_runs/` so raw runs are never mixed with their analysis. Each
-run's analysis gets its **own self-contained directory** under `_analysist/`,
-mirroring the `_runs/<NN>_<descriptor>` naming, plus a shared reference run and
+Analysed/intermediate results live in `2_analysist/`, kept separate from both the
+project root and `1_runs/` so raw runs are never mixed with their analysis. Each
+run's analysis gets its **own self-contained directory** under `2_analysist/`,
+mirroring the `1_runs/<NN>_<descriptor>` naming, plus a shared reference run and
 an archive for superseded analysis.
 
 Current layout:
 ```
-_analysist/
+2_analysist/
 ├── 1_no_prior_control/       # shared reference run (plain Fe/MgO, no prior/window)
 ├── b1_.../ ... b9_.../        # per-run analysis dirs (<NN>_<descriptor>)
-├── analyze_tfree_outputs.py   # analysis scripts live at the _analysist root
+├── analyze_tfree_outputs.py   # analysis scripts live at the 2_analysist root
 ├── plot_conf_space_deltaz.py
 └── _archive/                  # superseded analysis (e.g. old 0_analy/), gitignored
 ```
@@ -171,6 +181,11 @@ analysis code/scripts and per-run README/DISCUSSION docs the owner chooses to
 track are tracked.
 8. **Do not modify another profile's skills/plugins/cron/memories** unless the owner
    explicitly directs it.
+9. **Ask permission before accessing other notes or other projects.** When it is
+   necessary to read, access, or modify any other note (anything beyond
+   `README.AI.md` and the relevant code) or any other project directory (inside
+   or outside this project), ask the owner for explicit permission first. Never
+   proceed on an assumed approval.
 
 ---
 
@@ -225,19 +240,19 @@ temperature-free NS run), follow this template. Invoke the `agox-tfree-analysis`
    `<run_dir>/analysis_<ns_output_name>/` (the analysis dir name mirrors the ns_output dir name).
 3. **Extras** — replicate the b9 output exactly (9 PNGs + DISCUSSION.md, skip the delta-Z
    landscape) unless the run has posterior `.xsf` and the owner wants `conf_space_deltaz.png` too.
-4. **Commit** — confirm scope (per the flat `_analysist/` `.gitignore`: PNGs gitignored; a
+4. **Commit** — confirm scope (per the flat `2_analysist/` `.gitignore`: PNGs gitignored; a
    `DISCUSSION.md` is now trackable).
 
 **Procedure (once clarified):**
 ```bash
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
-cd /home/think/Desktop/research/_run/b_nestedsampling/_analysist
+cd /home/think/Desktop/research/_run/b_nestedsampling/2_analysist
 $PY analyze_tfree_outputs.py \
     --data <run_dir>/<ns_output_name> \
     --outdir <run_dir>/analysis_<ns_output_name> \
     --n-atoms 75
 ```
-- Uses `_analysist/analyze_tfree_outputs.py` (numpy + matplotlib only, no AGOX).
+- Uses `2_analysist/analyze_tfree_outputs.py` (numpy + matplotlib only, no AGOX).
 - Produces the **9 standard PNGs** + a printed textual summary (samples convergence, weighted
   `g(E)` histogram, cumulative Z sanity check, live histogram, `Z`/`log Z`/`F`, heat capacity,
   configurational state density, `Z`-consistency, combined summary).

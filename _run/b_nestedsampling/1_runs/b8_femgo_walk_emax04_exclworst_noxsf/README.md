@@ -1,8 +1,8 @@
 # Run b8_femgo_walk_emax04_exclworst_noxsf — Fe/MgO NS with walk-exclude-worst + no xsf
 
-Run directory: `_runs/b8_femgo_walk_emax04_exclworst_noxsf/` (self-contained, launchable on HPC)
+Run directory: `1_runs/b8_femgo_walk_emax04_exclworst_noxsf/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (**v1.6.0**) + the **plain Fe/MgO (no Boron)**
-dataset (13 seeds, same system as `_runs/b6_tfree_walk_emax04`).
+dataset (13 seeds, same system as `1_runs/b6_tfree_walk_emax04`).
 
 This run uses **b6's parameters** (plain Fe/MgO) plus two new flags:
 - **`--walk-exclude-worst`** — clone only from live points EXCLUDING the worst (Fortran-style),

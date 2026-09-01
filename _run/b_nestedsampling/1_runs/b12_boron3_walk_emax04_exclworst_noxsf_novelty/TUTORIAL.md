@@ -1,7 +1,7 @@
 # TUTORIAL — Reproduce run b12_boron3_walk_emax04_exclworst_noxsf_novelty
 
 This reproduces the nested-sampling runs in
-`_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/`: **B3-doped Fe/MgO** (boron3, 6 seeds,
+`1_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/`: **B3-doped Fe/MgO** (boron3, 6 seeds,
 B3Fe25Mg25O25, 78 atoms), temperature-free, `--e-max-per-atom 0.4`, windowed seeding
 `[0.3, 0.35]`, dual-scale MC walk with `--walk-exclude-worst`, `--no-posterior-xsf`,
 `--novelty-threshold 1.0`, `--perturb-symbols Fe,B` (v1.7.0), swept over
@@ -15,7 +15,7 @@ B3Fe25Mg25O25, 78 atoms), temperature-free, `--e-max-per-atom 0.4`, windowed see
 ## Reproduce (one-line, local) — per iteration value
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty
 # iter 5000
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
@@ -34,7 +34,7 @@ Repeat the same command with `--n-iters 10000` / `20000` and the matching
 ## Reproduce (HPC, PJM)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty
 pjsub j_b12_boron3_walk_emax04_exclworst_noxsf_novelty_iter5000.sh
 pjsub j_b12_boron3_walk_emax04_exclworst_noxsf_novelty_iter10000.sh
 pjsub j_b12_boron3_walk_emax04_exclworst_noxsf_novelty_iter20000.sh

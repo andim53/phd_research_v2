@@ -1,13 +1,13 @@
 # DISCUSSION — Run b10_femgo_walk_emax04_exclworst_noxsf_novelty (iter20000)
 
-Run: `_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty`
-Data analysed: `_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000/`
-Analysis outputs: this directory (`_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000/`)
-Script: `_analysist/analyze_tfree_outputs.py`
+Run: `1_runs/b10_femgo_walk_emax04_exclworst_noxsf_novelty`
+Data analysed: `2_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000/`
+Analysis outputs: this directory (`2_analysist/b10_femgo_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_iter20000/`)
+Script: `2_analysist/analyze_tfree_outputs.py`
 
 ## Analysis reproduction (command used)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python analyze_tfree_outputs.py \
@@ -30,7 +30,7 @@ both peak-normalized to 1 for a direct shape comparison.
 
 ![compare_state_density_gE.png](compare_state_density_gE.png)
 
-**Command + parameters that produced it** (run from `_analysist/`):
+**Command + parameters that produced it** (run from `2_analysist/`):
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
@@ -230,7 +230,7 @@ The figure below plots the **NS Boltzmann probability P(E)** vs per-atom relativ
 For each temperature `P_i(T) = w_i·exp(−β(E_i − E_ref))/Z(T)` with `β = 1/k_B T` and
 `Z(T) = Σ_i w_i·exp(−β(E_i − E_ref))`.
 
-**Command + parameters that produced it** (run from `_analysist/`):
+**Command + parameters that produced it** (run from `2_analysist/`):
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
@@ -320,7 +320,7 @@ at the very low temperatures 1, 10, 50, and 100 K:
 
 ![binding_probability_vs_temperature_peaknorm.png](binding_probability_vs_temperature_peaknorm.png)
 
-**Command + parameters that produced it** (run from `_analysist/`):
+**Command + parameters that produced it** (run from `2_analysist/`):
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
@@ -520,7 +520,7 @@ curve to guide which structure types dominate at each practical processing tempe
 
 ### Command used to produce the figure (with all flags)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \

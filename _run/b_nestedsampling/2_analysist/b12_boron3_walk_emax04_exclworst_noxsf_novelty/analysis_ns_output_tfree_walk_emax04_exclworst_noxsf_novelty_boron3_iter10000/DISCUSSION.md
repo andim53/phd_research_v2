@@ -1,13 +1,13 @@
 # DISCUSSION — Run b12_boron3_walk_emax04_exclworst_noxsf_novelty (boron3, iter10000)
 
-Run: `_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty`
-Data analysed: `_analysist/b12_boron3_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron3_iter10000/`
-Analysis outputs: this directory (`_analysist/b12_boron3_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron3_iter10000/`)
-Script: `_analysist/analyze_tfree_outputs.py`
+Run: `1_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty`
+Data analysed: `2_analysist/b12_boron3_walk_emax04_exclworst_noxsf_novelty/ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron3_iter10000/`
+Analysis outputs: this directory (`2_analysist/b12_boron3_walk_emax04_exclworst_noxsf_novelty/analysis_ns_output_tfree_walk_emax04_exclworst_noxsf_novelty_boron3_iter10000/`)
+Script: `2_analysist/analyze_tfree_outputs.py`
 
 ## Analysis reproduction (command used)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python analyze_tfree_outputs.py \
@@ -31,7 +31,7 @@ both on the same per-atom relative-energy axis.
 
 ![compare_state_density_gE.png](compare_state_density_gE.png)
 
-**Command + parameters that produced it** (run from `_analysist/`):
+**Command + parameters that produced it** (run from `2_analysist/`):
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python compare_state_density_gE.py \
@@ -229,7 +229,7 @@ For each temperature `P_i(T) = w_i·exp(−β(E_i − E_ref))/Z(T)` with `β = 1
 `Z(T) = Σ_i w_i·exp(−β(E_i − E_ref))`; the displayed curve uses the g(E)-weighted density and is
 area-normalized (see section 5c for what "Area = 1" means).
 
-**Command + parameters that produced it** (run from `_analysist/`):
+**Command + parameters that produced it** (run from `2_analysist/`):
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \
@@ -452,7 +452,7 @@ curve to guide which structure types dominate at each practical processing tempe
 
 ### Command used to produce the figure (with all flags)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python plot_ns_boltzmann_prob.py \

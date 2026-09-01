@@ -1,6 +1,6 @@
 # Run b5_boron_tfree_emax025 — Temperature-free NS on B-doped Fe/MgO
 
-Run directory: `_runs/b5_boron_tfree_emax025/` (self-contained, launchable on HPC)
+Run directory: `1_runs/b5_boron_tfree_emax025/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.2.0 + `nested_sampling/`
 package) + the B-doped dataset (`dataset_boron/`, copied as `dataset/`).
 
@@ -8,7 +8,7 @@ package) + the B-doped dataset (`dataset_boron/`, copied as `dataset/`).
 
 Runs the **nested-sampling pipeline** (`main.py`) on the **B-doped Fe/MgO** dataset in
 **temperature-free mode**, with the **same NS parameters as the reference run**
-`_analysist/1_no_prior_control`, plus a **relative high-energy cut**:
+`2_analysist/1_no_prior_control`, plus a **relative high-energy cut**:
 
 ```
 main.py --temperature-free --temperatures 100,200,300,500,1000 \
@@ -44,7 +44,7 @@ copied from the stale `dataset_boron/scripts/` version, which does **not** accep
 `s` argument, but the current `state_density.py` calls `plot_structure_landscape(..., s=5, ...)`.
 
 **Fix (applied):** copied the correct `plot_structure_landscape.py` (accepts `s=25`)
-from the reference `_analysist/1_no_prior_control/nested_sampling/scripts/`
+from the reference `2_analysist/1_no_prior_control/nested_sampling/scripts/`
 into `nested_sampling/scripts/`. Verified: accepts `s=` and all kwargs `state_density.py`
 passes (none missing); compiles. Resubmit `pjsub j_b5_boron_ns.sh` to complete the
 analysis.
@@ -69,7 +69,7 @@ analysis.
 ## Usage (local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b5_boron_tfree_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b5_boron_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe,B \

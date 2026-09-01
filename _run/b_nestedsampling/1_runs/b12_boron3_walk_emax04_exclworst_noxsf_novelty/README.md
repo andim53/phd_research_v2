@@ -1,6 +1,6 @@
 # Run b12_boron3_walk_emax04_exclworst_noxsf_novelty — B3-doped Fe/MgO NS, iteration sweep
 
-Run directory: `_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/` (self-contained,
+Run directory: `1_runs/b12_boron3_walk_emax04_exclworst_noxsf_novelty/` (self-contained,
 launchable on HPC)
 Copied from the latest project-root code (**v1.7.0**) + the **boron3** dataset
 (`dataset_boron3/`, copied as `dataset/`, **6 non-empty seeds**; seed_6 is empty and excluded).

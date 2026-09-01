@@ -32,7 +32,7 @@ main.py --temperature-free --temperatures 100,200,300,500,1000 \
 ## Step 1 — Local run (validate on a small scale first if desired)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b4_tfree_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b4_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe \
@@ -72,7 +72,7 @@ Sanity checks:
 - **`scripts` module required + correct version:** `nested_sampling/scripts/plot_structure_landscape.py`
   MUST be present (it is, in this run) or `state_density.py` fails to import. It must
   also accept the `s=` argument (the current `state_density.py` passes `s=5`); use the
-  version from `_analysist/1_no_prior_control/nested_sampling/scripts/` — NOT
+  version from `2_analysist/1_no_prior_control/nested_sampling/scripts/` — NOT
   the stale `dataset_boron/scripts/` copy (which lacks `s=` and causes
   `TypeError: ... unexpected keyword argument 's'` in the landscape analysis).
 - **`--e-max-per-atom` is RELATIVE** to the dataset minimum (keep `E/atom − min ≤

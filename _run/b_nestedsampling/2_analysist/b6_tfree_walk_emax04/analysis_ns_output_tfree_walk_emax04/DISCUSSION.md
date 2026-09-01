@@ -1,13 +1,13 @@
 # DISCUSSION — Run b6_tfree_walk_emax04 (plain Fe/MgO, temperature-free NS)
 
-Run: `_runs/b6_tfree_walk_emax04`
-Data analysed: `_analysist/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04/`
-Analysis outputs: this directory (`_analysist/b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04/`)
-Script: `_analysist/analyze_tfree_outputs.py`
+Run: `1_runs/b6_tfree_walk_emax04`
+Data analysed: `2_analysist/b6_tfree_walk_emax04/ns_output_tfree_walk_emax04/`
+Analysis outputs: this directory (`2_analysist/b6_tfree_walk_emax04/analysis_ns_output_tfree_walk_emax04/`)
+Script: `2_analysist/analyze_tfree_outputs.py`
 
 ## Analysis reproduction (command used)
 
-Run from `_analysist/`:
+Run from `2_analysist/`:
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python analyze_tfree_outputs.py \

@@ -40,7 +40,7 @@ from ase.io import read
 
 # --- agox / ase / analysist paths ---------------------------------------------
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_ANALYSIST = "/home/think/Desktop/research/_analysist"
+_ANALYSIST = "/home/think/Desktop/research/2_analysist"
 for _p in (_HERE, _ANALYSIST, os.path.join(_ANALYSIST, "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)

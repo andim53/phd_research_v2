@@ -13,7 +13,7 @@ Step-by-step guide to reproduce this run in isolation. Level: intermediate.
 
 Runs the nested-sampling pipeline (`main.py`) on the **B-doped** Fe/MgO dataset
 (5 seeds, seed_0..4, B doped into the Fe layer), with the same NS parameters as the
-reference `_analysist/1_no_prior_control`:
+reference `2_analysist/1_no_prior_control`:
 
 ```
 main.py --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
@@ -30,7 +30,7 @@ broken.
 ## Step 1 — Local run
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b2_boron_ns
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b2_boron_ns
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temp 300 --n-live 100 --n-iters 1000 --perturb 0.01 \
     --perturb-symbols Fe,B --e-max-per-atom 0.67 \
@@ -70,7 +70,7 @@ Sanity checks:
   `nested_sampling/scripts/plot_structure_landscape.py` (resolved via the package dir
   on sys.path). It must also accept the `s=` argument (the current `state_density.py`
   passes `s=5`); use the version from
-  `_analysist/1_no_prior_control/nested_sampling/scripts/` — NOT the stale
+  `2_analysist/1_no_prior_control/nested_sampling/scripts/` — NOT the stale
   `dataset_boron/scripts/` copy (which lacks `s=` and causes
   `TypeError: ... unexpected keyword argument 's'` in the landscape analysis). This run
   has the corrected version.

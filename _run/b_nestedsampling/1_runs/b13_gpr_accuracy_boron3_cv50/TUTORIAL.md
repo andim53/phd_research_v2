@@ -14,7 +14,7 @@ bin 0.1, Fe_z system, boron3 dataset) in isolation. Level: intermediate.
 
 A single invocation of `gpr_accuracy.py` in **50-fold CV + uncertainty** mode at
 **bin-width 0.1** on the **Fe_z (island-height) system** of the **boron3** Fe/MgO
-dataset — identical parameters to `_runs/b3_gpr_accuracy_boron_cv50`, but on
+dataset — identical parameters to `1_runs/b3_gpr_accuracy_boron_cv50`, but on
 B3Fe25Mg25O25 (597 structures):
 
 ```bash
@@ -32,7 +32,7 @@ outliers that otherwise break the GPR fit). See README.md.
 ## Step 1 — Local run (validate on a small scale first if desired)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b13_gpr_accuracy_boron3_cv50
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b13_gpr_accuracy_boron3_cv50
 /home/think/miniconda3/envs/agox_v2/bin/python gpr_accuracy.py \
     --cv --cv-folds 50 --fez --uncertainty --bin-width 0.1 \
     --e-max-per-atom 0.67 --output ./out_fez

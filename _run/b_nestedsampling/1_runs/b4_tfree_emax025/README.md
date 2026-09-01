@@ -1,9 +1,9 @@
 # Run b4_tfree_emax025 — Temperature-free NS on plain Fe/MgO, e-max-per-atom 0.25
 
-Run directory: `_runs/b4_tfree_emax025/` (self-contained, launchable on HPC)
+Run directory: `1_runs/b4_tfree_emax025/` (self-contained, launchable on HPC)
 Copied from the latest project-root code (`main.py` v1.2.0 + `nested_sampling/`
 package) + the plain **Fe/MgO (no Boron)** dataset (13 seeds, same system as
-`_analysist/1_no_prior_control`).
+`2_analysist/1_no_prior_control`).
 
 ## What this run does
 
@@ -53,7 +53,7 @@ but the `plot_structure_landscape.py` copied from `dataset_boron/scripts/` does 
 accept an `s` argument (stale signature) → `TypeError`.
 
 **Fix (applied):** copied the correct `plot_structure_landscape.py` from the reference
-`_analysist/1_no_prior_control/nested_sampling/scripts/` (which accepts
+`2_analysist/1_no_prior_control/nested_sampling/scripts/` (which accepts
 `s=25`) into `nested_sampling/scripts/`. Verified: the corrected version accepts `s=`
 and all kwargs `state_density.py` passes (no missing arguments); compiles.
 
@@ -80,7 +80,7 @@ analysis will now complete.
 ## Usage (local)
 
 ```bash
-cd /home/think/Desktop/research/_run/b_nestedsampling/_runs/b4_tfree_emax025
+cd /home/think/Desktop/research/_run/b_nestedsampling/1_runs/b4_tfree_emax025
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --temperature-free --temperatures 100,200,300,500,1000 \
     --n-live 100 --n-iters 1000 --perturb 0.01 --perturb-symbols Fe \
