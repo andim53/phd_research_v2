@@ -9,7 +9,7 @@ Each session: Goal / Clarify / Actions / Results / Decisions / Open items / Time
 
 **Goal**
 Initialize the AI-Agent Project Workflow for `_run/0_lcb` (Pt–P interstitial-alloy
-LCB AGOX search), incorporating the pre-existing `_analysist/17_PPt/` analysis tree
+LCB AGOX search), incorporating the pre-existing `2_analysist/17_PPt/` analysis tree
 and adding the standard deliverable set + notes.
 
 **Clarify (confirmed via clarify tool)**
@@ -22,10 +22,10 @@ and adding the standard deliverable set + notes.
 - Notes: README `Notes:` blocks + PROMPTS.md (both).
 
 **Actions**
-1. Surveyed the existing `0_lcb/` tree: found `_analysist/17_PPt/` (Pt fcc host +
+1. Surveyed the existing `0_lcb/` tree: found `2_analysist/17_PPt/` (Pt fcc host +
    P interstitials; 4 supercell families `0_plus5cell/1_plus0cell/2_plus3cell/
    3_plus10cell` × P-conc `0P/10P/20P/30P` + `0_PPt_4x4_20P`), `run_analysis_indices.py`
-   (identical to `a_lcbnovel`), and an empty `_runs/`. Nothing was git-tracked.
+   (identical to `a_lcbnovel`), and an empty `1_runs/`. Nothing was git-tracked.
 2. Confirmed `run_analysis_indices.py` is a byte-identical copy of the Fe/MgO
    `a_lcbnovel` runner (`__version__ = "2.0.0"`), scoped to Fe/MgO indices 71/72 —
    not Pt–P.
@@ -37,7 +37,7 @@ and adding the standard deliverable set + notes.
    - `TUTORIAL.md`, `VERSIONS.md`, `AGENTS.md`, `.gitignore`
 4. Added a project-level `.gitignore` to keep regenerable per-run outputs
    (db/xsf/png/log/generated_structures/gpaw_logs) out of git while tracking the
-   canonical code + docs. On clarify, excluded `_analysist/11_bTa/` (Ta–B system,
+   canonical code + docs. On clarify, excluded `2_analysist/11_bTa/` (Ta–B system,
    off Pt–P scope) from git.
 
 **Results**
@@ -58,7 +58,7 @@ and adding the standard deliverable set + notes.
 - Retarget `run_analysis_indices.py` from Fe/MgO → Pt–P (`17_PPt`) before any
   analysis run.
 - Add per-analysis `DISCUSSION.md` once analysis is run.
-- Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
+- Populate `1_runs/<NN>_<descriptor>/` with future self-contained runs.
 
 **Time:** ~2026-08-31 14:34 JST
 
@@ -67,8 +67,8 @@ and adding the standard deliverable set + notes.
 ## 2026-08-31 — Session: analysis runner retargeted + per-family READMEs
 
 **Goal**
-Make `_analysist/run_analysis_indices.py` able to analyse the current results under
-`_analysist/` (all 4 interstitial-alloy families) and add a README per result dir
+Make `2_analysist/run_analysis_indices.py` able to analyse the current results under
+`2_analysist/` (all 4 interstitial-alloy families) and add a README per result dir
 explaining how to run the runner for that dir. Do not run the analysis code yet.
 
 **Clarify (confirmed via clarify tool)**
@@ -77,17 +77,17 @@ explaining how to run the runner for that dir. Do not run the analysis code yet.
 - README granularity: one README per **family tree** (`15_bPt/README.md`,
   `16_bW/README.md`, `11_bTa/README.md`, `17_PPt/README.md`) — 4 READMEs.
 - Dependency: copy `plot_structure_landscape.py` (+ deps) into a new
-  `_analysist/scripts/` so the runner works from `_analysist`.
+  `2_analysist/scripts/` so the runner works from `2_analysist`.
 - Git: track the new READMEs + edited runner (commit).
 
 **Actions**
-1. Surveyed `_analysist/`: confirmed 4 result trees with leaf dataset dirs holding
+1. Surveyed `2_analysist/`: confirmed 4 result trees with leaf dataset dirs holding
    `seed_*/1_db/db_*.db`; verified DBs load and atom counts differ per system
    (Pt108, W54, Ta54, P27Pt108).
 2. Diagnosed the runner's blocked import: it does
    `from scripts.plot_structure_landscape import plot_structure_landscape`, which
-   resolved against a nonexistent `_analysist/scripts/`.
-3. Copied `17_PPt/scripts/plot_structure_landscape.py` → `_analysist/scripts/`
+   resolved against a nonexistent `2_analysist/scripts/`.
+3. Copied `17_PPt/scripts/plot_structure_landscape.py` → `2_analysist/scripts/`
    (verified self-contained: only stdlib/numpy/scipy/matplotlib imports; import
    resolves under `agox_v2`).
 4. Edited `run_analysis_indices.py`:
@@ -106,7 +106,7 @@ explaining how to run the runner for that dir. Do not run the analysis code yet.
 **Results**
 - Runner `v2.1.0` now compiles and imports cleanly under `agox_v2`; ready to run
   per leaf.
-- `_analysist/scripts/plot_structure_landscape.py` added.
+- `2_analysist/scripts/plot_structure_landscape.py` added.
 - 4 per-family READMEs created with exact run instructions.
 - Gitignore updated so `11_bTa/README.md` is tracked while its run data is not.
 
@@ -121,7 +121,7 @@ explaining how to run the runner for that dir. Do not run the analysis code yet.
 **Open items**
 - Run the analysis (per-leaf) once the owner requests it; add per-analysis
   `DISCUSSION.md` per the workflow.
-- Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
+- Populate `1_runs/<NN>_<descriptor>/` with future self-contained runs.
 
 **Time:** ~2026-08-31 15:28 JST
 
@@ -137,20 +137,20 @@ thrown by `run_analysis_indices.py` at Stage 2, when run on the 15_bPt results.
 **Clarify / diagnosis**
 - Error occurred in `step2_landscape` at the `plot_structure_landscape(...)` call,
   which passes `s=15`, `normalize_density=...`, `density_x_label=...`.
-- Root cause: the `_analysist/scripts/plot_structure_landscape.py` I had copied in
+- Root cause: the `2_analysist/scripts/plot_structure_landscape.py` I had copied in
   the previous session came from the **stale** `17_PPt/scripts/` version, which does
   **not** accept `s`, `normalize_density`, or `density_x_label`. The runner's call
-  signature matches the **`a_lcbnovel/_analysist/scripts/`** version instead (that
+  signature matches the **`a_lcbnovel/2_analysist/scripts/`** version instead (that
   version carries `__version__ = "1.0.0"` and all three params).
 - The correct dep was confirmed by diffing the runner's call args against candidate
   copies (`a_lcbnovel`, `b_nestedsampling` have the params; `17_PPt` does not).
 
 **Actions**
-1. Confirmed `a_lcbnovel/_analysist/scripts/plot_structure_landscape.py` accepts every
+1. Confirmed `a_lcbnovel/2_analysist/scripts/plot_structure_landscape.py` accepts every
    argument the runner passes (s, normalize_density, density_x_label, black_seed_zero,
    etc.).
-2. Replaced `0_lcb/_analysist/scripts/plot_structure_landscape.py` with the correct
-   version from `a_lcbnovel/_analysist/scripts/` (now `__version__ = "1.0.0"`).
+2. Replaced `0_lcb/2_analysist/scripts/plot_structure_landscape.py` with the correct
+   version from `a_lcbnovel/2_analysist/scripts/` (now `__version__ = "1.0.0"`).
 3. Verified by real execution: ran the runner on `15_bPt/4_p_pt10b` (1 seed) and then
    on the **exact failing command** `15_bPt/1_pt0b`. Both completed all 3 stages
    (Stage 1 progression + 5 xsf, Stage 2 landscape, Stage 3 Boltzmann P(T)).
@@ -171,7 +171,7 @@ thrown by `run_analysis_indices.py` at Stage 2, when run on the 15_bPt results.
 **Open items**
 - Run the full per-leaf analysis set across all 4 families when the owner requests it;
   add per-analysis `DISCUSSION.md`.
-- Populate `_runs/<NN>_<descriptor>/` with future self-contained runs.
+- Populate `1_runs/<NN>_<descriptor>/` with future self-contained runs.
 
 **Time:** ~2026-08-31 (later session)
 

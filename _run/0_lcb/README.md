@@ -6,7 +6,7 @@ in a platinum host** (Pt–P interstitial alloy), run with AGOX + GPAW DFT.
 ## What this project is
 
 This directory is the AI-Agent Project Workflow home for the **Pt–P LCB search**.
-It currently houses a large pre-existing AGOX analysis/run tree (`_analysist/17_PPt/`)
+It currently houses a large pre-existing AGOX analysis/run tree (`2_analysist/17_PPt/`)
 that was started outside the workflow and is now being brought under it.
 
 - **Host:** Pt (fcc), lattice constant `a = 3.975534 Å` (optimized), supercell
@@ -31,14 +31,14 @@ that was started outside the workflow and is now being brought under it.
 ├── VERSIONS.md          # source version manifest
 ├── AGENTS.md            # governing rules for AI agents
 ├── PROMPTS.md           # future-work prompt log (+ shared grammar notes)
-├── _analysist/          # analysed results (kept separate)
+├── 2_analysist/          # analysed results (kept separate)
 │   ├── run_analysis_indices.py   # analysis runner (v2.1.0, project-agnostic)
 │   ├── scripts/                  # runner dep (plot_structure_landscape.py)
 │   ├── 11_bTa/                   # Ta–B results (README tracked; run data gitignored)
 │   ├── 15_bPt/                   # Pt–B results
 │   ├── 16_bW/                    # W–B results
 │   └── 17_PPt/                  # pre-existing Pt–P analysis/run tree (incorporated)
-└── _runs/               # (empty) future self-contained run dirs
+└── 1_runs/               # (empty) future self-contained run dirs
 ```
 
 ## Notes
@@ -49,7 +49,7 @@ that was started outside the workflow and is now being brought under it.
   this project scaffold and is kept in place, not reorganized.
 - **`run_analysis_indices.py` is the project-agnostic analysis runner** (v2.1.0),
   adapted from the sibling `a_lcbnovel` Fe/MgO runner. It analyses **any** of the
-  interstitial-alloy families under `_analysist/` (`11_bTa`, `15_bPt`, `16_bW`,
+  interstitial-alloy families under `2_analysist/` (`11_bTa`, `15_bPt`, `16_bW`,
   `17_PPt`). Point `--dataset` at one leaf dir (holding `seed_*/1_db/db_*.db`) and
   `--outdir` at its analysis output; run **per leaf**. Each family dir carries a
   `README.md` with the exact run command for its leaves. See README.AI.md §2b/§3.
@@ -65,7 +65,7 @@ that was started outside the workflow and is now being brought under it.
 ## Status
 
 - [x] Project scaffold (doc trio + AGENTS + VERSIONS + PROMPTS) created
-- [x] Existing `_analysist/17_PPt/` tree incorporated and documented
+- [x] Existing `2_analysist/17_PPt/` tree incorporated and documented
 - [x] `run_analysis_indices.py` made project-agnostic (analyses 11_bTa/15_bPt/16_bW/17_PPt) + per-family READMEs
 - [ ] Analysis results generated (per-leaf run) and discussed (per-analysis `DISCUSSION.md`)
-- [ ] Any new heavy runs added under `_runs/<NN>_<descriptor>/`
+- [ ] Any new heavy runs added under `1_runs/<NN>_<descriptor>/`

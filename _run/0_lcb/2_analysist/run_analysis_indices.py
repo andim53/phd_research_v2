@@ -3,11 +3,11 @@
 Unified AGOX analysis runner for the _run/0_lcb project's GPR+LCB datasets.
 
 Adapted from the b_nestedsampling analysis runner architecture
-(/home/think/Desktop/research/_run/b_nestedsampling/_analysist/run_analysis_indices.py),
+(/home/think/Desktop/research/_run/b_nestedsampling/2_analysist/run_analysis_indices.py),
 originally re-hosted under _run/a_lcbnovel (Fe/MgO). This copy is **project-agnostic**
 in its data loading (it globs `seed_*/1_db/db_*.db` and uses the per-structure atom
 count dynamically), so it runs on any of the interstitial-alloy families that live
-under `_analysist/`:
+under `2_analysist/`:
 
   Family            Host   Interstitial   Leaf dataset dirs (each holds seed_*/1_db)
   ----------------  -----  -------------  ----------------------------------------------
@@ -40,7 +40,7 @@ All arguments:
   --normalize-density : normalize state-density panel to [0,1] (Stage 2 only)
   --start-iter     : keep only structures with AGOX iteration >= this (default 10)
 
-Run from /home/think/Desktop/research/_run/0_lcb/_analysist with the agox_v2 conda env:
+Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 conda env:
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
       --dataset 15_bPt/1_pt0b \
       --outdir 15_bPt/1_pt0b/analysis_indices
@@ -161,7 +161,7 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
 # ---------------------------------------------------------------------------
 def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
     """Per-seed best-so-far relative-energy-per-atom progression plot, mirroring
-    _archive/_analysist/scripts/process_database.py's plot_best_so_far (the source
+    _archive/2_analysist/scripts/process_database.py's plot_best_so_far (the source
     of progression_seed_split_<idx>.png). Seed 0 is highlighted in bold black on top.
 
     If e_max is given (eV/atom), each seed's structures are filtered to those with

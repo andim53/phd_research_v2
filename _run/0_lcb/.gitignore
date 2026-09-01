@@ -19,8 +19,8 @@ gpaw_logs.*/
 seed_*/0_result/
 
 # === Analysis staging/final (regenerable) ===
-_analysist/0_analy/
-_analysist/1_result/
+2_analysist/0_analy/
+2_analysist/1_result/
 
 # === Compiled / checkpoint artifacts ===
 __pycache__/
@@ -29,18 +29,18 @@ __pycache__/
 
 # === Duplicated per-run script snapshots (edit canonical 17_PPt/scripts/) ===
 # Keep the canonical scripts/ + family main.py + j_*.sh; skip the many per-run copies.
-_analysist/17_PPt/*/scripts/
-_analysist/17_PPt/*/*/scripts/
+2_analysist/17_PPt/*/scripts/
+2_analysist/17_PPt/*/*/scripts/
 
 # === Result trees: track README only, exclude run code/data ===
 # 11_bTa (Ta-B), 15_bPt (Pt-B), 16_bW (W-B) hold run results. Their READMEs
 # (now covered by the analysis runner) are tracked; run code/data stay out of git.
-# _analysist/11_bTa/**
-# !_analysist/11_bTa/
-# !_analysist/11_bTa/README.md
-# _analysist/15_bPt/**
-# !_analysist/15_bPt/
-# !_analysist/15_bPt/README.md
-# _analysist/16_bW/**
-# !_analysist/16_bW/
-# !_analysist/16_bW/README.md
+# 2_analysist/11_bTa/**
+# !2_analysist/11_bTa/
+# !2_analysist/11_bTa/README.md
+# 2_analysist/15_bPt/**
+# !2_analysist/15_bPt/
+# !2_analysist/15_bPt/README.md
+# 2_analysist/16_bW/**
+# !2_analysist/16_bW/
+# !2_analysist/16_bW/README.md

@@ -29,7 +29,7 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 ├── AGENTS.md            # governing rules for AI agents
 ├── PROMPTS.md           # future-work prompt log (+ shared grammar notes)
 ├── .gitignore           # project-level ignores (regenerable outputs)
-├── _analysist/          # analysed/intermediate results (separate from runs)
+├── 2_analysist/          # analysed/intermediate results (separate from runs)
 │   ├── run_analysis_indices.py   # analysis runner (v2.1.0, project-agnostic)
 │   ├── scripts/                  # runner deps (plot_structure_landscape.py)
 │   ├── 11_bTa/                   # Ta–B results (run data gitignored; README tracked)
@@ -43,13 +43,13 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 │       ├── scripts/             #   canonical structure/generator/analysis scripts
 │       ├── job.sh, main.py      #   run entry points
 │       └── <cell>/<conc>/seed_*/1_db/db_*.db   # AGOX databases (gitignored)
-└── _runs/               # (empty) future self-contained run dirs
+└── 1_runs/               # (empty) future self-contained run dirs
 ```
 
-> `_analysist/11_bTa/` (a Ta–B system) is present on disk but **gitignored** — it is
+> `2_analysist/11_bTa/` (a Ta–B system) is present on disk but **gitignored** — it is
 > off-scope for this Pt–P project and excluded from commits (see `.gitignore`).
 
-### 2a. `_analysist/17_PPt/` — incorporated analysis tree
+### 2a. `2_analysist/17_PPt/` — incorporated analysis tree
 
 - The bulk of this project's content. It is a **pre-existing Pt–P run tree** that
   was placed here before the workflow scaffold, and is **kept as-is, not
@@ -69,9 +69,9 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 - `__version__ = "2.1.0"`. Adapted from the `a_lcbnovel` Fe/MgO runner; this copy is
   **project-agnostic** — it globs `seed_*/1_db/db_*.db` and reads the atom count
   from each structure, so it runs on any interstitial-alloy family under
-  `_analysist/` (11_bTa, 15_bPt, 16_bW, 17_PPt).
+  `2_analysist/` (11_bTa, 15_bPt, 16_bW, 17_PPt).
 - **Dependency:** imports `scripts/plot_structure_landscape.py` (copied into
-  `_analysist/scripts/`; self-contained, only stdlib/numpy/scipy/matplotlib).
+  `2_analysist/scripts/`; self-contained, only stdlib/numpy/scipy/matplotlib).
 - Point `--dataset` at **one leaf** dataset dir (a dir holding `seed_*/1_db/db_*.db`)
   and `--outdir` at its analysis output. Run per leaf. Each family dir carries a
   `README.md` with the exact invocation for its leaves.
@@ -85,9 +85,9 @@ PY=/home/think/miniconda3/envs/agox_v2/bin/python
 cd /home/think/Desktop/research/_run/0_lcb
 
 # Compile-check tracked source (syntax gate)
-$PY -m py_compile _analysist/run_analysis_indices.py
-$PY -m py_compile _analysist/17_PPt/2_plus3cell/main.py
-$PY -m py_compile _analysist/17_PPt/scripts/*.py   # canonical scripts
+$PY -m py_compile 2_analysist/run_analysis_indices.py
+$PY -m py_compile 2_analysist/17_PPt/2_plus3cell/main.py
+$PY -m py_compile 2_analysist/17_PPt/scripts/*.py   # canonical scripts
 ```
 
 > LSP/Pyright under base `python3` flags AGOX/ASE imports as unresolved even when

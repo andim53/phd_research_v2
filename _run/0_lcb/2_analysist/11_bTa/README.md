@@ -7,7 +7,7 @@ interstitials in a tantalum host, from the GPR+LCB AGOX search.
 > (the project's primary focus was Pt–P / `17_PPt`). It is included here because it
 > holds real, on-disk results and is now covered by the analysis runner. Only this
 > README and the canonical runner are tracked in git; the run data/scripts remain
-> excluded via the project `.gitignore` (`_analysist/11_bTa/`).
+> excluded via the project `.gitignore` (`2_analysist/11_bTa/`).
 
 ## Result leaves
 
@@ -27,7 +27,7 @@ at one leaf and `--outdir` at its analysis output.
 
 ## How to run the analysis
 
-From `/home/think/Desktop/research/_run/0_lcb/_analysist`, using the `agox_v2`
+From `/home/think/Desktop/research/_run/0_lcb/2_analysist`, using the `agox_v2`
 conda env:
 
 ```bash

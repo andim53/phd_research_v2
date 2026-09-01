@@ -38,12 +38,22 @@ No task is complete until all three are present and consistent with the work don
 1. **Clarify before every step.** Confirm the intended task, approach, and outputs
    with the project owner before writing or running code. Do not assume. Batch
    independent clarify questions into one call.
-2. **Ground everything in the repo.** Read the relevant existing code,
-   `README.AI.md`, and `LOG.md` before acting. Never invent files, symbols, or APIs
+2. **Ground everything in the repo.** Read the relevant existing code and the
+   `README.AI.md` spec before acting. Never invent files, symbols, or APIs
    not already present or explicitly requested.
-3. **Keep the deliverables current.** Every task that changes code or produces
-   results must update the Log and, when behaviour changes, the README(s) and
-   Tutorial. Do not leave the docs describing a state the code no longer matches.
+   **When investigating the project, read only from `README.AI.md` first, then
+   the actual (relevant) code. All other notes — `README.md`, `TUTORIAL.md`,
+   `LOG.md`, `VERSIONS.md`, `PROMPTS.md`, `QNA.md`, `DISCUSSION.md`, etc. — must
+   NOT be read unless the project owner gives an explicit command. If the agent
+   thinks reading another note is necessary, it may ask the owner for
+   permission, which the owner may grant if they also think it is necessary
+   (permission covers READING only, not modifying the note).**
+3. **Keep the deliverables current.** After making any change within the code,
+   auto-update the Log (`LOG.md`) and version notes (`VERSIONS.md`), **append-only
+   and without reading them** — never rewrite existing entries. All **other**
+   notes (`README.md`, `README.AI.md`, `TUTORIAL.md`, `PROMPTS.md`,
+   `DISCUSSION.md`, `QNA.md`, etc.) are updated **only on explicit owner command**
+   (e.g. "update the README.AI.md", "update the TUTORIAL.md").
 4. **Log is append-only.** Never rewrite or delete prior Log entries; add new ones.
    When a later decision reverses an earlier one, append a correction entry that
    explicitly says it reverses the earlier record — do not edit the old entry.
@@ -59,18 +69,23 @@ No task is complete until all three are present and consistent with the work don
    module-level `__version__ = "X.Y.Z"`. Any code edit bumps patch (minor on
    API/behavior change), updates `VERSIONS.md`, and records old→new in `LOG.md`.
 9. **Do not modify another profile's skills/plugins/cron/memories.**
+10. **Ask permission before accessing other notes or other projects.** When it is
+    necessary to read, access, or modify any other note (anything beyond
+    `README.AI.md` and the relevant code) or any other project directory (inside
+    or outside this project), ask the owner for explicit permission first. Never
+    proceed on an assumed approval.
 
 ## 3a. Project-specific conventions
 
-- **`_analysist/17_PPt/` is the incorporated Pt–P run tree.** It predates this
+- **`2_analysist/17_PPt/` is the incorporated Pt–P run tree.** It predates this
   scaffold and is **kept as-is, not reorganized**. The canonical scripts live in
   `17_PPt/scripts/` and each family's `main.py`; per-run copies are snapshots.
 - **`run_analysis_indices.py` is the project-agnostic analysis runner** (v2.1.0),
   adapted from `a_lcbnovel`'s Fe/MgO runner. It analyses any of the interstitial
-  families under `_analysist/` (`11_bTa`, `15_bPt`, `16_bW`, `17_PPt`) by pointing
+  families under `2_analysist/` (`11_bTa`, `15_bPt`, `16_bW`, `17_PPt`) by pointing
   `--dataset` at one leaf dir (holding `seed_*/1_db/db_*.db`) and `--outdir` at its
-  output. Dep: `_analysist/scripts/plot_structure_landscape.py`.
-- **`_runs/`** — future self-contained run dirs (`<NN>_<descriptor>/`: job `j_*.sh`
+  output. Dep: `2_analysist/scripts/plot_structure_landscape.py`.
+- **`1_runs/`** — future self-contained run dirs (`<NN>_<descriptor>/`: job `j_*.sh`
   + `main*.py` + `scripts/`), each launchable in isolation. Heavy HPC runs go here,
   not in the project root.
 - **Every analysis dir ships a `DISCUSSION.md`** stating the exact running command +

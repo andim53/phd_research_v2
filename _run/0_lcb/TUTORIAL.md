@@ -13,17 +13,17 @@ How to work with `_run/0_lcb` (Pt–P interstitial-alloy LCB AGOX search).
 Read `README.md` (human) and `README.AI.md` (agent spec), and `AGENTS.md` for the
 operating rules. The project currently holds:
 
-- `_analysist/17_PPt/` — the incorporated Pt–P run/analysis tree.
-- `_runs/` — empty; future self-contained runs go here.
+- `2_analysist/17_PPt/` — the incorporated Pt–P run/analysis tree.
+- `1_runs/` — empty; future self-contained runs go here.
 
 ## Step 2 — Syntax-check the tracked source
 
 ```bash
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
 cd /home/think/Desktop/research/_run/0_lcb
-$PY -m py_compile _analysist/run_analysis_indices.py
-$PY -m py_compile _analysist/17_PPt/2_plus3cell/main.py
-$PY -m py_compile _analysist/17_PPt/scripts/*.py
+$PY -m py_compile 2_analysist/run_analysis_indices.py
+$PY -m py_compile 2_analysist/17_PPt/2_plus3cell/main.py
+$PY -m py_compile 2_analysist/17_PPt/scripts/*.py
 ```
 
 > If the LSP/Pyright flags AGOX/ASE imports as unresolved, ignore it — judge by the
@@ -31,14 +31,14 @@ $PY -m py_compile _analysist/17_PPt/scripts/*.py
 
 ## Step 3 — Run analysis (once the runner is retargeted)
 
-**Important:** `_analysist/run_analysis_indices.py` is currently an **Fe/MgO-scoped
+**Important:** `2_analysist/run_analysis_indices.py` is currently an **Fe/MgO-scoped
 copy** from `a_lcbnovel`. It does **NOT** match the Pt–P `17_PPt` layout. Do not run
 it on `17_PPt` until it has been retargeted (see README.AI.md §5 / §2b).
 
 After retargeting, the intended CLI is the standard 3-stage analysis runner:
 
 ```bash
-$PY _analysist/run_analysis_indices.py \
+$PY 2_analysist/run_analysis_indices.py \
     --dataset <dir-with-seed_*/1_db/db_*.db> \
     --outdir <out> \
     [--e-max <eV/atom>] [--normalize-density] [--start-iter <N>]
@@ -48,7 +48,7 @@ Outputs: `progression_*.png`, `conf_space.png`, `binding_probability_vs_temperat
 
 ## Step 4 — (Future) HPC heavy runs
 
-Heavy runs go in self-contained `_runs/<NN>_<descriptor>/` dirs (job `j_*.sh` +
+Heavy runs go in self-contained `1_runs/<NN>_<descriptor>/` dirs (job `j_*.sh` +
 `main*.py` + `scripts/`). Batch scripts use `gpaw_env` and PJM:
 
 ```bash

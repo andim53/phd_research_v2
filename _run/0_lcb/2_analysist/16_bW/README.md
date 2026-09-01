@@ -20,7 +20,7 @@ at one leaf and `--outdir` at its analysis output.
 
 ## How to run the analysis
 
-From `/home/think/Desktop/research/_run/0_lcb/_analysist`, using the `agox_v2`
+From `/home/think/Desktop/research/_run/0_lcb/2_analysist`, using the `agox_v2`
 conda env:
 
 ```bash
