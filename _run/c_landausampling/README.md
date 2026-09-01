@@ -336,3 +336,94 @@ I still don't understand how Wang–Landau sampling works. Can you provide a sim
 3. **How does the minimization / convergence criterion work?** How does Wang–Landau decide convergence — what is the minimization criterion connected to the flatness check?
 
 4. **How is the `--e-max` bin edge handled?** In the code, are structures whose energy is above the chosen 0.4 eV filter included as 0.4 eV (capped into the top bin), or are they excluded? 
+
+### Answer
+
+Below is a code-grounded walkthrough. The short version: Wang–Landau here does **not** sample from the database the way nested sampling does — the DB is only the *training set* for the GPR and the *starting point* of the walk. All real "sampling" happens as a Markov chain that proposes brand-new structures by rattling the current one. That removes the whole class of duplication problems that motivated the novelty filter in `b_nestedsampling`.
+
+### 0. A simple workflow
+
+```
+1. LOAD      load_all_seeds(): read EVERY structure from EVERY seed DB in the dataset
+             -> structures[], energies[]          (gpr_training.py:20)
+2. TRAIN     build_gpr(): fit ONE GPR surrogate on all of them (energy model)
+3. INIT      initialize(): pick the walker = the global-minimum structure
+             (lowest E in the DB) by default; start_from_top picks the
+             highest in-window structure instead         (wang_landau_sampler.py:316)
+4. LOOP (n MC steps):
+     a. PROPOSE   rattle the mobile atoms by a Gaussian step (small/large, 50/50)
+                  -> a brand-new structure              (_propose, :182)
+                  [optional --relax-steps: BFGS-relax trial on the GPR first]
+     b. SCORE     GPR predicts E_trial; rel = (E_trial - E_ref)/N_atoms
+     c. BIN       get_bin(rel): 0..n_bins-1; rel>e_max capped into top bin,
+                  rel>e_reject REJECTED                (get_bin, :170; guard :371)
+     d. ACCEPT    WL rule: ln(r) < ln_g[cur] - ln_g[trial]     (:384)
+     e. VISIT     ln_g[bin] += ln_f ; H[bin] += 1               (_visit, :282)
+     f. REFINE    every check_interval, if H flat: ln_f /= 2 (stage++);
+                  after n_stages_standard halvings switch to 1/t  (_maybe_refine, :294)
+5. OUT       g_of_E.csv / thermodynamics.csv / heat_capacity.csv
+```
+
+The key mental model: **the walker is a single moving structure, and each MC step manufactures a candidate out of the previous one** by a random atomic displacement. It never draws a structure from a pool.
+
+---
+
+### 1. How do we sample the data? From the DB, randomly, like `b_nestedsampling`?
+
+**No.** This is the biggest difference from `b_nestedsampling`, and it is worth being explicit.
+
+- `b_nestedsampling` **resamples from a discrete pool**: each iteration it has a fixed set of live points and draws new structures from the database / modifies them, which is why duplicate *identities* can creep in and why a novelty filter is meaningful there.
+- This Wang–Landau code uses the DB **only twice, and never during the walk**:
+  1. **Training** — `load_all_seeds()` reads *every* structure from *every* seed DB and feeds them to `build_gpr()` to train the surrogate (`gpr_training.py:20,46`). Nothing is randomly sub-sampled; it is the whole dataset.
+  2. **Initialisation** — `initialize()` (`wang_landau_sampler.py:316`) picks the *single* starting structure: by default the global minimum (`argmin` of the DB energies, `:343`); with `--start-from-top` the highest in-window structure. This choice is deterministic, not random.
+- After that, the walk generates its own structures. Each step, `_propose()` (`:182`) copies the current walker and adds Gaussian noise to the mobile (perturb) atom positions — a continuous displacement, so the trial is essentially always a **new, previously-unseen structure**. The GPR then scores it. There is no `random.choice(db)` anywhere in the sampling loop.
+
+So "do we take it from the DB like `b_nestedsampling`?" — only for training and the seed. The sampling itself is a random walk in structure space, proposed by rattling, evaluated by the surrogate.
+
+---
+
+### 2. Do we have the same duplication problem, and should we add a novelty filter?
+
+**No, and no** — for a structural reason, not a practical one.
+
+- The novelty filter in `b_nestedsampling` exists because that workflow **re-visits a discrete set of stored structures**, so the same *identity* can be counted repeatedly and bias the statistics unless duplicates are rejected.
+- Here the walk lives in a **continuous** configuration space: every proposed trial is the current structure plus Gaussian noise, so no two trials are bit-identical (the displacement is drawn from a continuous distribution). There is no finite pool of discrete identities to collide on.
+- What the sampler *does* revisit is **energy bins**, not structures: `_visit()` adds `+1` to `H[bin]` every accepted move (`:282`). A bin being visited many times is *exactly the intended behaviour* of a flat-histogram walk — Wang–Landau *wants* equal (repeated) visitation across bins to converge. That is histogram statistics, not structural duplication, so a novelty filter would be conceptually wrong here and would fight the algorithm.
+
+There is no `novelty_filter` in this sampler, and there shouldn't be one.
+
+---
+
+### 3. What is the "minimization" / convergence criterion?
+
+Careful: the word "minimization" does not belong to convergence here. **Convergence is decided by histogram *flatness*, not by reaching a minimum energy.** There is no energy-minimisation step in the WL loop (unless you turn on `--relax-steps`, which is a separate, optional move — see below).
+
+The flatness check is the standard Wang–Landau criterion:
+
+- Every accepted visit does `ln_g[bin] += ln_f; H[bin] += 1` (`_visit`, `:282`).
+- Every `--check-interval` MC steps (default 5000), `_check_flatness()` (`:286`) asks: over the bins that have been visited, is `min(H) > flatness_criterion * mean(H)` (default criterion 0.80)? If yes, the histogram is "flat enough."
+- On flatness, `_maybe_refine()` (`:294`) **halves the refinement factor** `ln_f` (`ln_f /= 2`), resets `H` to zero, and increments `stage`. This is the standard `f → √f` scheme: as `ln_f` shrinks, the `ln_g` estimate is refined with finer granularity.
+- After `--n-stages-standard` (default 14) such halvings, it **switches to the 1/t algorithm** (Belardinelli & Pereyra 2007): `ln_f = 1/t′` where `t′` is the number of steps since the switch (`:312`). This keeps refining indefinitely without the error saturation of the plain scheme.
+
+So "how does it decide it's converged" → it never declares a hard "done"; it keeps refining until `ln_f` becomes very small (i.e. the estimate stops changing much). The criterion connected to convergence is **flatness of the visitation histogram `H`**, and the refinement knob is `ln_f`.
+
+The optional `--relax-steps N` mode is *not* part of convergence: it is a move transformation that BFGS-relaxes each proposed trial to a local basin minimum of the GPR before binning (`_relax`, `:257`). It changes what energy gets binned, but convergence is still judged by the flatness of `H`, exactly as above.
+
+---
+
+### 4. Are structures above 0.4 eV included as 0.4 eV (capped) or excluded?
+
+**Both, depending on how far above — this is the v1.3.0 refinement.** The raw binning (Fortran behaviour) *caps* everything at/above `e_max` into the top bin; on top of that, a v1.3.0 extrapolation guard *rejects* truly pathological energies.
+
+Concretely, with the defaults `e_max = 0.40`, `e_reject = 5 × e_max = 2.0` eV/atom:
+
+| rel energy (eV/atom) | fate |
+|---|---|
+| `rel < e_min` (0.0) | **Rejected** — below floor (`get_bin` → -1, `:175–176`, then `bin_trial < 0` reject at `:376`) |
+| `e_min ≤ rel ≤ e_max` (0.0–0.40) | Normal bin |
+| `e_max < rel ≤ e_reject` (0.40–2.0) | **Capped into the top bin** — `get_bin` does `return min(b, n_bins-1)` (`:178`), so a trial at, say, 1.5 eV/atom is binned as the 0.40 eV top bin |
+| `rel > e_reject` (> 2.0) | **Rejected** as an unphysical GPR extrapolation — the trial is not accepted; the walker revisits its current bin (`:371–374`) |
+
+So, to answer your exact question: a structure whose energy is *moderately* above 0.4 eV/atom (up to the `e_reject` threshold, default 2.0) **is included as the top bin** (i.e. treated as ~0.4 eV). But a structure that is *wildly* above (a GPR extrapolation artefact) is **excluded/rejected**, not capped — this guard was added in v1.3.0 to stop such trials from piling up a spurious delta at the top bin and trapping the walk there.
+
+The `--e-max` "filter" you mention is really the **edge of the bin window**, and the top bin is an absorbing cap for energies inside `[e_max, e_reject)`. If you want *nothing* above `e_max` to be counted, set `--e-reject` ≤ `--e-max` (this disables the guard and reverts to pure capping — not recommended, as it reintroduces the top-bin trap).
