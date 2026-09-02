@@ -275,3 +275,36 @@ clear. Did NOT launch the ~1 h regenerate (owner runs it).
 
 **Time:** 2026-09-02
 
+---
+
+## 2026-09-02 — Session (revision): JSONs saved per-leaf in each analysis_indices/, central collect removed
+
+**Goal (user-confirmed via clarify):** The JSONs should NOT be aggregated into one json /
+a central `json_export/` staging; instead they must be **multiple JSONs, saved directly
+inside each data's own `analysis_indices/` dir**. Owner chose: keep the 3 separate stage
+JSONs per leaf saved directly inside that leaf's `analysis_indices/` (no `analysis_json`
+subfolder, no `json_export/` collection); delete `collect_json.sh`.
+
+**Actions taken:**
+- Edited `json_export/regenerate_analysis_json.sh`: every per-leaf command now passes
+  `--json-dir <leaf>/analysis_indices` (== its outdir), so the 3 stage JSONs are written
+  directly into that leaf's own `analysis_indices/` instead of an `analysis_json/` subdir.
+- Deleted `json_export/collect_json.sh` (the central collector).
+- Updated the Obsidian report (`afi/report/2026-09-02.md`): scope note, commands, and the
+  single-structure example now point `--json-dir`/`--from-json` at the leaf's
+  `analysis_indices/` dir, and removed the `analysis_json` + collect descriptions.
+
+**Results (real output):** `bash -n` clean on both remaining regenerate scripts; report
+updated (markdown lint N/A).
+
+**Decisions & reasoning:** Per owner, JSONs remain per-leaf and per-stage (multiple files),
+each stored where its data lives; no single-JSON aggregation and no central staging dir.
+The xrd `regenerate_xrd_json.sh` already wrote `xrd_plots.json` into each leaf's own
+`xrd_out/`, so it needed no change.
+
+**Open items**
+- Owner runs `regenerate_analysis_json.sh` + `regenerate_xrd_json.sh`.
+- Re-commit removes `collect_json.sh` from git (deleted) and updates `regenerate_analysis_json.sh`.
+
+**Time:** 2026-09-02
+
