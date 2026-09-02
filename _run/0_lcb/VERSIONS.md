@@ -14,8 +14,9 @@ old→new in `LOG.md`.
 
 | File | Version |
 |---|---|
-| `2_analysist/run_analysis_indices.py` | 2.1.0 |
-| `2_analysist/scripts/plot_structure_landscape.py` | 1.0.0 (corrected from stale `17_PPt/scripts/` copy → source `a_lcbnovel/2_analysist/scripts/`) |
+| `2_analysist/run_analysis_indices.py` | 2.3.0 |
+| `2_analysist/scripts/plot_structure_landscape.py` | 1.1.0 |
+| `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.1.0 |
 
 > `17_PPt/` scripts and `main.py` files currently carry no module-level `__version__`
 > (pre-dates this project). Adding/bumping versions for them is a pending task.

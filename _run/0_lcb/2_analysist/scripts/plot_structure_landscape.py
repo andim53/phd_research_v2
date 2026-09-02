@@ -1,6 +1,6 @@
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from typing import List, Optional
 import matplotlib.colors as mcolors
@@ -61,6 +61,7 @@ def plot_structure_landscape(
 
     # Evaluation Flags
     plot_z_vs_e=False,
+    return_data=False,
 ):
     """
     Plots a multi-panel atomic structural conformation landscape, mapping 
@@ -127,6 +128,9 @@ def plot_structure_landscape(
     --------
     matplotlib.figure.Figure
         The configured figure element containing the finalized structural landscape layout.
+        When ``return_data=True``, returns a ``dict`` of the computed plot arrays
+        (energy_grid, total_density, density_curves, peaks, scatter_x/e, e_limit,
+        normalize_density) instead of the Figure — for JSON serialisation / replot.
     """
     min_e, max_e = e_limit[0], e_limit[1]
     eticks = np.round(np.linspace(min_e, max_e, e_limit[2]), 1)
@@ -266,6 +270,7 @@ def plot_structure_landscape(
         ax_dens.set_ylabel(r'$E_{i}-E_{glob}$ (eV/atom)', fontsize=fontsize)
 
     # --- Automatic Peak Detection and Visualization Logic ---
+    peaks = []
     if show_limits and len(energy_datasets) > 0:
         peaks, _ = find_peaks(total_density, prominence=np.max(total_density) * 0.05)
         peaks = sorted(peaks, key=lambda idx: energy_grid[idx])
@@ -324,5 +329,38 @@ def plot_structure_landscape(
         print(f"Animation saved successfully to: {save_path}/{gif_name}")
     else:
         plt.savefig(f'{save_path}/conf_space.png', dpi=300, bbox_inches='tight')
-        
+
+    # --- Optionally return the computed arrays for JSON serialisation / replot ---
+    if return_data:
+        scatter_x = None
+        scatter_e = None
+        scatter_color = None
+        if not plot_density_only and ax_scat is not None and X_eigen is not None:
+            try:
+                first_ds = next(iter(energy_datasets.values()))
+                if len(X_eigen) == len(first_ds):
+                    scatter_x = np.asarray(X_eigen).tolist()
+                    scatter_e = np.asarray(first_ds).tolist()
+                    if z_data is not None:
+                        scatter_color = np.asarray(z_data).tolist()
+            except Exception:
+                pass
+        curves = [{
+            "name": n,
+            "density": np.asarray(d).tolist(),
+            "color": c if isinstance(c, str) else str(c),
+        } for (n, d, c) in density_curves]
+        return {
+            "energy_grid": np.asarray(energy_grid).tolist(),
+            "total_density": np.asarray(total_density).tolist(),
+            "density_curves": curves,
+            "peaks_grid_idx": [int(p) for p in peaks],
+            "peaks_energy": [float(energy_grid[p]) for p in peaks],
+            "scatter_x": scatter_x,
+            "scatter_e": scatter_e,
+            "scatter_color": scatter_color,
+            "e_limit": [min_e, max_e],
+            "normalize_density": bool(normalize_density),
+        }
+
     return fig

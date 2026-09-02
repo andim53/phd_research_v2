@@ -36,7 +36,11 @@ README lives in each result dir explaining the exact invocation for its leaves.
 All arguments:
   --dataset        : path to the dir containing seed_*/1_db/db_*.db (required)
   --outdir         : output dir for the analysis figures (required)
-  --e-max          : custom energy upper limit (eV/atom) for Stage 2 & Stage 3
+  --e-max          : custom energy upper limit (eV/atom) for ALL THREE graphs
+                    (Stage 1 progression y-axis, Stage 2 landscape, Stage 3
+                    binding probability). When set, every energy axis uses the
+                    same window [-0.1, e_max] so graphs are directly comparable
+                    across leaves/families.
   --normalize-density : normalize state-density panel to [0,1] (Stage 2 only)
   --start-iter     : keep only structures with AGOX iteration >= this (default 10)
 
@@ -49,10 +53,11 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.1.0"
+__version__ = "2.3.0"
 
 import argparse
 import glob
+import json
 import os
 import sys
 
@@ -103,6 +108,63 @@ E_LIMIT_DEFAULT = (0.0 - 0.1, 1.5 + 0.1, 5)
 TEMPS = [298.15, 348.60, 447.875, 547.15, 646.425]
 COLORS_PLASMA = ['#0d0887', '#47039f', '#7301a8', '#9c176d', '#bd3752',
                  '#d8546a', '#ed7953', '#fb9f4a', '#fdca42', '#f0f928']
+
+
+# ---------------------------------------------------------------------------
+# JSON data emission / re-plot helpers
+# ---------------------------------------------------------------------------
+# The three Stage JSON files (one per analysis PNG), written to --json-dir.
+STAGE_JSON = {
+    1: "stage1_progression.json",
+    2: "stage2_landscape.json",
+    3: "stage3_probability.json",
+}
+
+
+def _to_jsonable(obj):
+    """Recursively convert numpy arrays / scalars to JSON-safe (list/float/int/bool)."""
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, (np.floating,)):
+        return float(obj)
+    if isinstance(obj, (np.integer,)):
+        return int(obj)
+    if isinstance(obj, (np.bool_,)):
+        return bool(obj)
+    if isinstance(obj, dict):
+        return {k: _to_jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_to_jsonable(v) for v in obj]
+    return obj
+
+
+def _color_to_hex(color) -> str:
+    """Convert a matplotlib color (name, tuple, or 'C0') to a '#rrggbb' hex string
+    for JSON-safe storage."""
+    import matplotlib.colors as mcolors
+    return mcolors.to_hex(color)
+
+
+def _write_stage_json(json_dir: str, stage: int, data: dict):
+    """Write one stage's plot data to <json_dir>/<STAGE_JSON[stage]>, making json_dir."""
+    os.makedirs(json_dir, exist_ok=True)
+    path = os.path.join(json_dir, STAGE_JSON[stage])
+    payload = {"stage": stage, "data": _to_jsonable(data)}
+    with open(path, "w") as f:
+        json.dump(payload, f, indent=1)
+    print(f"  -> stage {stage} JSON written to {path}")
+
+
+def _read_stage_json(json_dir: str, stage: int) -> dict:
+    """Load a stage's plot data JSON as a plain dict (its 'data' member)."""
+    path = os.path.join(json_dir, STAGE_JSON[stage])
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Missing stage-{stage} JSON: {path}")
+    with open(path) as f:
+        payload = json.load(f)
+    return payload["data"]
+
+
 
 
 # ---------------------------------------------------------------------------
@@ -159,62 +221,120 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
 # ---------------------------------------------------------------------------
 # Stage 1 — Best-so-far progression plot (per-seed)
 # ---------------------------------------------------------------------------
-def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
-    """Per-seed best-so-far relative-energy-per-atom progression plot, mirroring
-    _archive/2_analysist/scripts/process_database.py's plot_best_so_far (the source
-    of progression_seed_split_<idx>.png). Seed 0 is highlighted in bold black on top.
+def _progression_data(dataset_dir, start_iter=10, e_max=None, outdir=None):
+    """Compute + return the Stage-1 plotting data (per-seed best-so-far curves,
+    Seed-0 bullet coordinates, ground-state info, axis limits) as a JSON-safe dict.
 
-    If e_max is given (eV/atom), each seed's structures are filtered to those with
-    relative-energy-per-atom <= e_max (i.e. (E - seed_min)/n_atoms <= e_max), matching
-    the --e-max energy cap used in Stage 2/3."""
-    print("\n[STAGE 1] Best-so-far progression plot")
-    from matplotlib.ticker import AutoMinorLocator
-
+    When ``outdir`` is given, also writes the Seed-0 window-minimum + global
+    ground-state .xsf structures under <outdir>/progression_plots (side output
+    needing the DB; not reproduced from JSON)."""
     seed_data, _, _ = load_all_seeds_by_seed(dataset_dir, start_iter=start_iter)
-
-    # Capture Seed 0's filtered structures/energies for the bullet scatter + xsf export
+    curves = []          # per-seed: {name, x, best_so_far, color, lw, is_seed0}
+    bullets = []         # Seed-0 window minima: {x, rel_e}
+    gs = None            # {x, rel_e} global ground-state bullet, if any
+    max_y, max_x = 0, 0
+    sorted_seed_names = list(seed_data.keys())
+    cmap = plt.get_cmap("tab10")
     seed0_structs = None
     seed0_rel_e = None
     seed0_n = 0
 
-    fig, ax = plt.subplots(figsize=(6, 3.5))
-    max_y, max_x = 0, 0
-    sorted_seed_names = list(seed_data.keys())
-    cmap = plt.get_cmap("tab10")
     for i, s_name in enumerate(sorted_seed_names):
         s_structs, s_energies = seed_data[s_name]
         if not s_structs:
             continue
-        # relative energy per atom within this seed (mirrors calculate_relative_energy)
         e_min = s_energies.min()
-        s_rel_e_atom = np.asarray([(e - e_min) / len(a) for e, a in zip(s_energies, s_structs)])
-        # apply the 0.8 eV/atom energy filter (relative to the seed min, per atom)
+        s_rel_e_atom = np.asarray([(e - e_min) / len(a)
+                                   for e, a in zip(s_energies, s_structs)])
         if e_max is not None:
             mask = s_rel_e_atom <= e_max
             s_rel_e_atom = s_rel_e_atom[mask]
             s_structs = [a for a, m in zip(s_structs, mask) if m]
         if len(s_rel_e_atom) == 0:
             continue
-        # remember Seed 0's filtered data (index 0 in sorted_seed_names) for bullets/xsf
         if i == 0:
             seed0_structs = s_structs
             seed0_rel_e = s_rel_e_atom
             seed0_n = len(s_rel_e_atom)
-        s_best_so_far = np.minimum.accumulate(s_rel_e_atom)  # progressive minimum
-        # highlight Seed 0 in bold black on top (reference styling)
+        s_best_so_far = np.minimum.accumulate(s_rel_e_atom)
         if i == 0:
-            current_color, linewidth, zorder = "black", 2.0, 50
+            current_color, linewidth, is_seed0 = "black", 2.0, True
         else:
-            current_color, linewidth, zorder = cmap((i - 1) % 10), 1.5, 1
-        ax.plot(range(len(s_best_so_far)), s_best_so_far,
-                label=s_name, lw=linewidth, color=current_color, zorder=zorder)
-        max_y = max(max_y, np.max(s_rel_e_atom))
+            current_color, linewidth, is_seed0 = cmap((i - 1) % 10), 1.5, False
+        curves.append({
+            "name": s_name,
+            "x": list(range(len(s_best_so_far))),
+            "best_so_far": s_best_so_far.tolist(),
+            "color": _color_to_hex(current_color),
+            "lw": linewidth,
+            "is_seed0": is_seed0,
+        })
+        max_y = max(max_y, float(np.max(s_rel_e_atom)))
         max_x = max(max_x, len(s_best_so_far))
 
+    # Seed-0 bullets + ground state (needs structures for .xsf side output)
+    if seed0_structs is not None and seed0_n > 0:
+        global_min_e = min((energies.min() for _, (_, energies) in seed_data.items()
+                            if len(energies) > 0), default=None)
+        gs_struct = None
+        if global_min_e is not None:
+            for _, (s_structs, s_energies) in seed_data.items():
+                if len(s_energies) > 0:
+                    gs_struct = s_structs[int(s_energies.argmin())]
+                    break
+        windows = [(0, 20), (20, 40), (40, 60), (60, 80)]
+        plot_dir = None
+        if outdir is not None:
+            plot_dir = os.path.join(outdir, "progression_plots")
+            os.makedirs(plot_dir, exist_ok=True)
+        for (wlo, whi) in windows:
+            idxs = [j for j in range(seed0_n) if wlo <= j < whi]
+            if not idxs:
+                continue
+            jmin = idxs[int(np.argmin(seed0_rel_e[idxs]))]
+            bullets.append({"x": int(jmin), "rel_e": float(seed0_rel_e[jmin])})
+            if plot_dir is not None and seed0_structs is not None:
+                ase_write(os.path.join(plot_dir, f"seed0_min_w{wlo}-{whi}.xsf"),
+                          seed0_structs[jmin])
+        if global_min_e is not None and gs_struct is not None:
+            seed0_min_abs = min((energies.min() for _, (_, energies) in seed_data.items()
+                                 if len(energies) > 0), default=global_min_e)
+            gs_rel = (global_min_e - seed0_min_abs) / len(gs_struct)
+            gs_x = seed0_n - 1
+            if len(seed0_rel_e) > 0:
+                gs_x = int(np.argmin(np.abs(seed0_rel_e - gs_rel)))
+            gs = {"x": gs_x, "rel_e": float(gs_rel)}
+            if plot_dir is not None and gs_struct is not None:
+                ase_write(os.path.join(plot_dir, "global_gs.xsf"), gs_struct)
+
+    return {
+        "curves": curves,
+        "bullets": bullets,
+        "global_gs": gs,
+        "e_max": e_max,
+        "max_y": max_y,
+        "max_x": max_x,
+    }
+
+
+def _plot_progression_from_data(data, outdir):
+    """Draw the Stage-1 progression PNG from a data dict (from a live run or JSON)."""
+    from matplotlib.ticker import AutoMinorLocator
+    print("\n[STAGE 1] Best-so-far progression plot")
+    fig, ax = plt.subplots(figsize=(6, 3.5))
+    max_y = data.get("max_y", 0)
+    max_x = data.get("max_x", 0)
+    for c in data["curves"]:
+        ax.plot(c["x"], c["best_so_far"], label=c["name"], lw=c["lw"],
+                color=c["color"], zorder=50 if c["is_seed0"] else 1)
     ax.set_xlabel("Evaluated Candidates")
-    ax.set_ylabel(r"$E_{i}-E_{glob}$ (eV/atom)")
+    ax.set_ylabel(E_LABEL)
     ax.set_xlim(0, max_x)
-    ax.set_ylim(0, max_y * 1.1)
+    e_max = data.get("e_max")
+    if e_max is not None:
+        ax.set_ylim(-0.1, e_max)
+    else:
+        ax.set_ylim(0, max_y * 1.1)
     ax.xaxis.set_minor_locator(AutoMinorLocator())
     ax.yaxis.set_minor_locator(AutoMinorLocator())
     ax.spines["top"].set_visible(False)
@@ -223,77 +343,42 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
                    labeltop=False, labelright=False)
     ax.legend(loc="upper left", fontsize=9, ncol=1, frameon=True,
               bbox_to_anchor=(1.02, 1), borderaxespad=0.)
+    # Seed-0 window-minimum bullets (black fill / white ring)
+    for b in data["bullets"]:
+        ax.plot(b["x"], b["rel_e"], "o", ms=7, zorder=60,
+                mfc="black", mec="white", mew=1.2)
+    # global ground-state star
+    if data.get("global_gs"):
+        ax.plot(data["global_gs"]["x"], data["global_gs"]["rel_e"], "*", ms=14,
+                zorder=61, mfc="red", mec="white", mew=1.2)
     plt.tight_layout()
-
-    # --- Bullet scatter on Seed 0: lowest-energy candidate in each evaluated-candidate
-    # window (0-20, 20-40, 40-60, 60-80), plus the global ground state. Save each as xsf. ---
     plot_dir = os.path.join(outdir, "progression_plots")
     os.makedirs(plot_dir, exist_ok=True)
-    if seed0_structs is not None:
-        # global minimum across ALL data (for the ground-state bullet)
-        global_min_e = min(
-            (energies.min() for _, (_, energies) in seed_data.items() if len(energies) > 0),
-            default=None)
-        gs_struct = None
-        if global_min_e is not None:
-            for s_name, (s_structs, s_energies) in seed_data.items():
-                if len(s_energies) > 0:
-                    gi = int(s_energies.argmin())
-                    gs_struct = s_structs[gi]
-                    break
-
-        windows = [(0, 20), (20, 40), (40, 60), (60, 80)]
-        saved = []
-        for (wlo, whi) in windows:
-            idxs = [j for j in range(seed0_n) if wlo <= j < whi]
-            if not idxs:
-                continue
-            jmin = idxs[int(np.argmin(seed0_rel_e[idxs]))]  # lowest-energy candidate in window
-            # bullet at (candidate_index, rel_energy_per_atom) on Seed 0: black fill, white outline
-            ax.plot(jmin, seed0_rel_e[jmin], "o", ms=7, zorder=60,
-                    mfc="black", mec="white", mew=1.2)
-            # save the structure
-            fname = os.path.join(plot_dir, f"seed0_min_w{wlo}-{whi}.xsf")
-            ase_write(fname, seed0_structs[jmin])
-            saved.append(fname)
-        # global ground state bullet (lowest across all data), plotted at its seed-0 candidate
-        # position if it is in Seed 0, else at the last candidate with its rel energy
-        if global_min_e is not None and gs_struct is not None:
-            # ground-state rel-energy-per-atom relative to seed0's absolute minimum
-            seed0_min_abs = min(
-                (energies.min() for _, (_, energies) in seed_data.items()
-                 if len(energies) > 0), default=global_min_e)
-            gs_rel = (global_min_e - seed0_min_abs) / len(gs_struct)
-            # locate the nearest seed-0 candidate index to the ground-state energy
-            gs_x = seed0_n - 1
-            if len(seed0_rel_e) > 0:
-                gs_x = int(np.argmin(np.abs(seed0_rel_e - gs_rel)))
-            ax.plot(gs_x, gs_rel, "*", ms=14, zorder=61,
-                    mfc="red", mec="white", mew=1.2)
-            fname = os.path.join(plot_dir, "global_gs.xsf")
-            ase_write(fname, gs_struct)
-            saved.append(fname)
-        if saved:
-            print(f"  -> saved {len(saved)} xsf structures:")
-            for f in saved:
-                print(f"     {f}")
-    plt.tight_layout()
-
     out_path = os.path.join(plot_dir, "progression_seed_split_0.png")
     plt.savefig(out_path, dpi=300)
     plt.close(fig)
     print(f"  -> progression plot saved to {out_path}")
+    return out_path
+
+
+def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None, json_dir=None):
+    """Stage 1: emit JSON (if json_dir), write xsf side-output, draw the PNG."""
+    data = _progression_data(dataset_dir, start_iter=start_iter, e_max=e_max,
+                             outdir=outdir)
+    if json_dir:
+        _write_stage_json(json_dir, 1, data)
+    return _plot_progression_from_data(data, outdir)
 
 
 # ---------------------------------------------------------------------------
 # Stage 2 — Landscape analysis (PCA + state density)
 # ---------------------------------------------------------------------------
-def step2_landscape(structures, energies, outdir, e_max=None, normalize_density=False):
-    print("\n[STAGE 2] Landscape analysis")
+def _landscape_data(structures, energies, e_max=None, normalize_density=False):
+    """Return the Stage-2 plot inputs (PCA X_eigen, rel energies, e_limit, and the
+    fixed kwargs passed to plot_structure_landscape) as a JSON-safe dict."""
     num_atoms = len(structures[0])
     rel = (energies - energies.min()) / num_atoms
 
-    # PCA via Fingerprint descriptors
     fp = Fingerprint.from_atoms(structures[0])
     data = np.array([fp.create_features(s).flatten() for s in structures])
     Xc = data - np.mean(data, axis=0)
@@ -302,40 +387,77 @@ def step2_landscape(structures, energies, outdir, e_max=None, normalize_density=
     order = np.argsort(evals)[::-1]
     X_eigen = Xc @ evecs[:, order[0]]
 
-    os.makedirs(outdir, exist_ok=True)
-
-    if e_max is not None:
-        e_limit = (0.0 - 0.1, e_max, 5)
-    else:
-        e_limit = E_LIMIT_DEFAULT
-
+    e_limit = (0.0 - 0.1, e_max, 5) if e_max is not None else E_LIMIT_DEFAULT
     density_x_label = ("State Density\n(a.u.)" if normalize_density
                        else "State Density\n(config./eV)")
 
-    fig = plot_structure_landscape(
+    return {
+        "X_eigen": X_eigen,
+        "rel": rel,
+        "e_limit": list(e_limit),
+        "normalize_density": bool(normalize_density),
+        "density_x_label": density_x_label,
+        "num_atoms": num_atoms,
+        "params": {
+            "figsize": [3, 3], "wspace": 0.1, "fontsize": 10,
+            "fill_density": True, "dens_line_weight": 0.9, "show_limits": False,
+            "custom_peak_labels": None, "cmap": "PuBu", "show_colorbar": False,
+            "cbar_pad": 0.02, "z_limit": [5.85, 0, 5], "black_seed_zero": True,
+            "s": 15, "plot_z_vs_e": False, "animate_scatter": False,
+            "plot_density_only": False,
+        },
+    }
+
+
+def _plot_landscape_from_data(data, outdir):
+    """Draw the Stage-2 landscape PNG from a data dict (live run or JSON).
+
+    Re-calls plot_structure_landscape with the stored inputs (deterministic, so the
+    PNG reproduces faithfully). Also returns the computed arrays if the upstream
+    function returns them.
+    """
+    import matplotlib.pyplot as _plt
+    p = data["params"]
+    os.makedirs(outdir, exist_ok=True)
+    X_eigen = np.asarray(data["X_eigen"])
+    rel = np.asarray(data["rel"])
+    result = plot_structure_landscape(
         X_eigen, rel, z_data=None,
         save_path=outdir,
-        animate_scatter=False,
-        figsize=(3, 3),
-        wspace=0.1,
-        fontsize=10,
-        e_limit=e_limit,
-        fill_density=True,
-        dens_line_weight=0.9,
-        show_limits=False,
-        custom_peak_labels=None,
-        cmap="PuBu",
-        show_colorbar=False,
-        cbar_pad=0.02,
-        z_limit=(5.85, 0, 5),
-        black_seed_zero=True,
-        s=15,
-        normalize_density=normalize_density,
-        density_x_label=density_x_label,
-        plot_z_vs_e=False,
+        animate_scatter=p["animate_scatter"],
+        figsize=tuple(p["figsize"]), wspace=p["wspace"], fontsize=p["fontsize"],
+        plot_density_only=p["plot_density_only"],
+        e_limit=tuple(data["e_limit"]), fill_density=p["fill_density"],
+        dens_line_weight=p["dens_line_weight"], show_limits=p["show_limits"],
+        custom_peak_labels=p["custom_peak_labels"],
+        cmap=p["cmap"], show_colorbar=p["show_colorbar"], cbar_pad=p["cbar_pad"],
+        z_limit=tuple(p["z_limit"]), black_seed_zero=p["black_seed_zero"],
+        s=p["s"], normalize_density=data["normalize_density"],
+        density_x_label=data["density_x_label"],
+        plot_z_vs_e=p["plot_z_vs_e"], return_data=True,
     )
-    plt.close(fig)
+    if isinstance(result, dict):
+        arrays = result
+        _plt.close(arrays.pop("figure", None))
+    else:
+        arrays = {}
+        _plt.close(result)
     print(f"  -> landscape saved to {outdir}/conf_space.png")
+    return arrays
+
+
+def step2_landscape(structures, energies, outdir, e_max=None,
+                    normalize_density=False, json_dir=None):
+    """Stage 2: draw conf_space.png AND capture its plotted arrays into JSON."""
+    data = _landscape_data(structures, energies, e_max=e_max,
+                           normalize_density=normalize_density)
+    arrays = _plot_landscape_from_data(data, outdir)
+    # fold the computed curve arrays into the JSON payload (literal dump of the plot)
+    if arrays:
+        data["plot_arrays"] = arrays
+    if json_dir:
+        _write_stage_json(json_dir, 2, data)
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -353,23 +475,42 @@ def calculate_boltzmann_probs(energies, kde_model, T):
     return probs / probs.max()
 
 
-def step3_probability(structures, energies, outdir, e_max=None):
-    print("\n[STAGE 3] Boltzmann probability analysis")
+def _probability_data(structures, energies, e_max=None):
+    """Return the Stage-3 plotting data (relative energies, KDE rel grid, per-T
+    probabilities, temps, colors, axis windows) as a JSON-safe dict."""
     num_atoms = len(structures[0])
     rel = (energies - energies.min()) / num_atoms
     kde = gaussian_kde(rel)
-
-    fig, ax = plt.subplots(figsize=(4, 3), dpi=120)
+    series = []
     for T, color in zip(TEMPS, COLORS_PLASMA):
-        probs = calculate_boltzmann_probs(rel, kde, T)
-        ax.scatter(rel, probs, color=color, s=15, alpha=0.5,
-                   edgecolors="none", label=f"{T} K")
+        series.append({
+            "T": T,
+            "color": color,
+            "rel": rel.tolist(),
+            "probs": calculate_boltzmann_probs(rel, kde, T).tolist(),
+        })
+    e_lim = (-0.1, e_max) if e_max is not None else (0.0, float(rel.max()) + 0.05)
+    return {
+        "num_atoms": num_atoms,
+        "series": series,
+        "e_max": e_max,
+        "xlim": list(e_lim),
+        "ylim": [0.0, 1.05],
+    }
 
+
+def _plot_probability_from_data(data, outdir):
+    """Draw the Stage-3 Boltzmann P(T) PNG from a data dict (live run or JSON)."""
+    print("\n[STAGE 3] Boltzmann probability analysis")
+    fig, ax = plt.subplots(figsize=(4, 3), dpi=120)
+    for s in data["series"]:
+        ax.scatter(s["rel"], s["probs"], color=s["color"], s=15, alpha=0.5,
+                   edgecolors="none", label=f"{s['T']} K")
     ax.set_xlabel(E_LABEL)
     ax.set_ylabel("Probability P(E)")
     ax.legend(frameon=False, loc="upper right")
-    ax.set_ylim(0, 1 + 0.05)
-    ax.set_xlim(0, e_max if e_max is not None else rel.max() + 0.05)
+    ax.set_ylim(*data["ylim"])
+    ax.set_xlim(*data["xlim"])
     plt.tight_layout()
 
     out_path = os.path.join(outdir, "binding_probability_vs_temperature.png")
@@ -377,6 +518,36 @@ def step3_probability(structures, energies, outdir, e_max=None):
     plt.savefig(out_path, dpi=300)
     plt.close(fig)
     print(f"  -> probability plot saved to {out_path}")
+    return out_path
+
+
+def step3_probability(structures, energies, outdir, e_max=None, json_dir=None):
+    """Stage 3: emit JSON (if json_dir), then draw the Boltzmann P(T) PNG."""
+    data = _probability_data(structures, energies, e_max=e_max)
+    if json_dir:
+        _write_stage_json(json_dir, 3, data)
+    return _plot_probability_from_data(data, outdir)
+
+
+# ---------------------------------------------------------------------------
+# Re-plot from JSON
+# ---------------------------------------------------------------------------
+def replot_from_json(json_dir, outdir):
+    """Read the three Stage JSON files under json_dir and re-draw all PNGs under outdir.
+
+    Stages 1 and 3 store final curve arrays (faithful literal dump); Stage 2 stores the
+    plot inputs + params and re-runs plot_structure_landscape to reproduce conf_space.png.
+    """
+    os.makedirs(outdir, exist_ok=True)
+    d1 = _read_stage_json(json_dir, 1)
+    _plot_progression_from_data(d1, outdir)
+    d2 = _read_stage_json(json_dir, 2)
+    # If a literal plot_arrays dump exists (from a live run), fold it back into the data
+    # so conf_space.png is reproduced from stored inputs (arrays are informational).
+    _plot_landscape_from_data(d2, outdir)
+    d3 = _read_stage_json(json_dir, 3)
+    _plot_probability_from_data(d3, outdir)
+    print(f"\nRe-plotted all 3 graphs from JSON {json_dir} -> {outdir}")
 
 
 # ---------------------------------------------------------------------------
@@ -386,26 +557,51 @@ def main():
     parser = argparse.ArgumentParser(
         description="AGOX analysis (Stage 2 landscape + Stage 3 Boltzmann P(T)) "
                     "for the GPR+LCB-only dataset (e.g. 71/72 Novelty-LCB seed DBs)")
-    parser.add_argument("--dataset", required=True,
-                        help="path to the dataset dir containing seed_*/1_db/db_*.db")
+    parser.add_argument("--dataset", default=None,
+                        help="path to the dataset dir containing seed_*/1_db/db_*.db. "
+                             "Required for a full run; ignored when --from-json is used.")
     parser.add_argument("--outdir", required=True,
                         help="output dir for the analysis figures")
     parser.add_argument("--e-max", type=float, default=None,
-                        help="custom upper energy limit (eV/atom) for the Stage 2 "
-                             "landscape and Stage 3 probability plots. Default = "
-                             "each stage's default.")
+                        help="custom energy upper limit (eV/atom); when set, ALL "
+                             "three graphs (progression, landscape, probability) "
+                             "share the energy window [-0.1, e_max]. Default = "
+                             "each stage's auto/default window.")
     parser.add_argument("--normalize-density", action="store_true",
                         help="normalize the Stage 2 state-density panel to [0,1]")
     parser.add_argument("--start-iter", type=int, default=10,
                         help="keep only structures with AGOX iteration >= this value "
                              "(inclusive), mirroring process_database.py's start_iter. "
                              "Default 10.")
+    parser.add_argument("--json-dir", default=None,
+                        help="emit each stage's plotting data as JSON (one file per "
+                             "graph) into this dir, in addition to drawing the PNGs. "
+                             "Default: <outdir>/analysis_json when --json-dir omitted.")
+    parser.add_argument("--from-json", default=None,
+                        help="skip DB loading and instead read the stage JSON files "
+                             "from this dir, re-drawing all 3 PNGs into --outdir.")
     args = parser.parse_args()
+
+    # --- from-json mode: no DB access --------------------------------------
+    if args.from_json:
+        print("=" * 70)
+        print("AGOX ANALYSIS — replot from JSON")
+        print(f"from-json : {args.from_json}")
+        print(f"outdir    : {args.outdir}")
+        print("=" * 70)
+        replot_from_json(args.from_json, args.outdir)
+        return
+
+    if not args.dataset:
+        parser.error("--dataset is required for a full run (or use --from-json)")
+
+    json_dir = args.json_dir or os.path.join(args.outdir, "analysis_json")
 
     print("=" * 70)
     print("AGOX ANALYSIS PIPELINE (GPR+LCB-only dataset)")
     print("dataset:", args.dataset)
     print("outdir :", args.outdir)
+    print("json-dir:", json_dir)
     if args.e_max is not None:
         print(f"e-max  : {args.e_max} eV/atom")
     if args.normalize_density:
@@ -418,12 +614,16 @@ def main():
           f"(iteration >= {args.start_iter})")
 
     os.makedirs(args.outdir, exist_ok=True)
-    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter, e_max=args.e_max)
+    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
+                      e_max=args.e_max, json_dir=json_dir)
     step2_landscape(structures, energies, args.outdir,
-                    e_max=args.e_max, normalize_density=args.normalize_density)
-    step3_probability(structures, energies, args.outdir, e_max=args.e_max)
+                    e_max=args.e_max, normalize_density=args.normalize_density,
+                    json_dir=json_dir)
+    step3_probability(structures, energies, args.outdir, e_max=args.e_max,
+                      json_dir=json_dir)
 
     print(f"\nDONE. Outputs under: {os.path.abspath(args.outdir)}")
+    print(f"JSON data under: {os.path.abspath(json_dir)}")
 
 
 if __name__ == "__main__":

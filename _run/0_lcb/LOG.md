@@ -175,3 +175,62 @@ thrown by `run_analysis_indices.py` at Stage 2, when run on the 15_bPt results.
 
 **Time:** ~2026-08-31 (later session)
 
+---
+
+## 2026-09-02 — Session: JSON emit/replot for analysis_indices + xrd (v2.3.0 / v1.1.0)
+
+**Goal (user-confirmed via clarify):** (1) In `run_analysis_indices.py` add a flag to dump
+each stage's plotting data to JSON *before* drawing each PNG, and a way to read that JSON to
+reproduce the PNG, for ALL graphs; (2) do the same for the XRD plots produced by
+`xrd_simulate_crystallinity.py`; (3) update `TUTORIAL.md` with run/JSON/extraction/plot
+commands; (4) prepare commands to extract all current `analysis_indices` PNGs' json data
+plus `8_fxg_1b/xrd_out`, and a command to plot the json. (TUTORIAL + code update per owner
+command; LOG/VERSIONS auto-appended.)
+
+**Clarify decisions (user-confirmed):** json written to `--json-dir` AND png still drawn;
+`--from-json` replot mode in the same script; stage JSONs per-graph named
+`stage{1,2,3}_{...}.json`; default json-dir = `<outdir>/analysis_json`; store literal plotted
+arrays for full faithfulness; for Stage-2 `conf_space.png` edit
+`plot_structure_landscape.py` to optionally return computed arrays; also add json support to
+the xrd script; re-copy... (N/A). Scope = single + multi dir + json + extraction/plot in
+TUTORIAL.
+
+**Actions taken (code):**
+- `run_analysis_indices.py` v2.2.0→2.3.0: added `--json-dir` (default `<outdir>/analysis_json`)
+  + `--from-json`; made `--dataset` optional (error unless from-json given); split each stage
+  into a compute-data fn + `_plot_*_from_data` so live & replot share identical drawing;
+  JSON helpers `_to_jsonable`/`_color_to_hex`/`_write_stage_json`/`_read_stage_json`;
+  `_progression_data` now also writes the .xsf side-outputs; Stage 2 stores plot inputs +
+  params and re-runs `plot_structure_landscape`; Stage 1/3 store the literal curve arrays.
+- `scripts/plot_structure_landscape.py` v1.0.0→1.1.0: added optional `return_data` param
+  that returns the computed arrays (energy_grid, density_curves, peaks, scatter_x/e, e_limit)
+  alongside drawing conf_space.png.
+- `scripts/xrd_simulate_crystallinity.py` v1.0.0→1.1.0: added `--json` (writes
+  `xrd_plots.json` of per-window 2theta grid + intensity + CI rows) and `--from-json`
+  (replot both PNGs from it); split plotting into `plot_patterns_from_data`/
+  `plot_ci_from_data`; `--manifest` now optional (error unless from-json given).
+
+**Results (real output, verified):**
+- analysis_indices on `11_bTa/8_fxg_1b` (--e-max 1.0) wrote the 3 stage JSONs under
+  `<out>/analysis_json` and drew all 3 PNGs.
+- `--from-json` replot produced all 3 PNGs **byte-identical** to the original run
+  (cmp SAME for progression_seed_split_0, conf_space, binding_probability_vs_temperature).
+- xrd `--json` wrote xrd_plots.json; `--from-json` replot produced both xrd PNGs
+  **byte-identical** (cmp SAME).
+- py_compile OK under agox_v2 (run_analysis_indices, plot_structure_landscape) and pymat_xrd
+  (xrd_simulate_crystallinity).
+
+**Decisions & reasoning:** stage-2 arrays captured via an optional `return_data` in the
+external landscape function (cleanest faithful path, chosen over duplicating its KDE logic);
+colors serialized as hex (`_color_to_hex`) because `str()` of an RGBA tuple is not a valid
+matplotlib color; `--dataset`/`--manifest` made non-required so `--from-json` runs without DB/
+CIF access.
+
+**Open items**
+- Update `TUTORIAL.md` (owner-commanded next) with the run/multi-dir/JSON/extract/plot recipes.
+- Prepare the extraction command (collect analysis_indices JSONs + xrd_out json) and a
+  json-plot command (in TUTORIAL).
+- VERSIONS.md table refreshed to 2.3.0 / 1.1.0 / 1.1.0.
+
+**Time:** 2026-09-02
+
