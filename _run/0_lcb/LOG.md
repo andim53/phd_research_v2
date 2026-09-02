@@ -308,3 +308,34 @@ The xrd `regenerate_xrd_json.sh` already wrote `xrd_plots.json` into each leaf's
 
 **Time:** 2026-09-02
 
+---
+
+## 2026-09-02 — Session: README.AI.md updated to current 2_analysist state
+
+**Goal (user-confirmed via clarify):** Update `README.AI.md` in place to the true current
+state and correct the stale v2.1.0 / "Fe/MgO-scoped, don't-run-on-17_PPt" claims to match the
+real v2.3.0 project-agnostic runner; document all of 2_analysist (families, runner + 3 stages
++ scripts, JSON emit/replot + per-leaf layout, json_export drivers, entry-point commands).
+README.AI.md update is on explicit owner command; LOG auto-appended.
+
+**Actions taken:** Rewrote `README.AI.md` sections 1–6 in place:
+- identity now reflects interstitial alloys (Pt/Ta/W hosts, B/P) + the two envs;
+- layout adds `2_analysist/scripts/` (3 scripts w/ versions), `json_export/` drivers;
+- §2b runner updated to v2.3.0 project-agnostic (25 leaves incl. 17_PPt), JSON emit/replot;
+- new §2c XRD scripts, §2d json_export drivers;
+- entry-point commands updated (single leaf, all-25 driver, XRD, from-json);
+- §5 known gaps corrected (removed the obsolete "runner mismatch on 17_PPt"; added two-env,
+  --from-json, json-only-after-flag, xsf-DB-only notes);
+- §6 provenance corrected (runner IS used on 17_PPt; XRD scripts + json_export provenance).
+
+**Results:** README.AI.md written (11,970 bytes). Markdown lint N/A. No code changed.
+
+**Decisions & reasoning:** Chose an in-place rewrite (not an addendum) because the stale
+runner/warning wording would otherwise contradict the corrected body. Verified current facts
+first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_simulate v1.1.0,
+3 json_export scripts, 4 families present) before writing.
+
+**Open items:** None.
+
+**Time:** 2026-09-02
+
