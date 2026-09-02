@@ -234,3 +234,44 @@ CIF access.
 
 **Time:** 2026-09-02
 
+---
+
+## 2026-09-02 — Session: JSON-extraction command scripts + Obsidian report (0_lcb)
+
+**Goal (user-confirmed via clarify):** Write per-structure commands (one per leaf) to
+regenerate every existing analysis/xrd PNG WITH its companion JSON, a command to collect all
+JSONs, and a report in the Obsidian vault. Owner chose: REGENERATE semantics; one command per
+structure (NOT a monolithic loop); report appended to the existing `afi/report/2026-09-02.md`;
+scope = all 4 families (25 analysis leaves + 5 xrd_out); staging dir =
+`2_analysist/json_export/`. The ~1 h full run is NOT launched now — commands delivered for the
+owner to run.
+
+**Actions taken:**
+- Enumerated all 25 analysis_indices dirs (11_bTa 5, 15_bPt 4, 16_bW 4, 17_PPt 12; each has
+  seed DBs) + 5 xrd_out dirs (11_bTa only).
+- Wrote `json_export/regenerate_analysis_json.sh` (25 individual `run_analysis_indices.py
+  --e-max 0.5` commands, one per leaf, each emitting the 3 stage JSONs under
+  `<leaf>/analysis_indices/analysis_json` then redrawing the PNGs).
+- Wrote `json_export/regenerate_xrd_json.sh` (5 individual `xrd_simulate_crystallinity.py
+  --json` commands, one per leaf).
+- Wrote `json_export/collect_json.sh` (finds all `analysis_indices/analysis_json/stage*.json`
+  + `xrd_out/*.json`, copies them preserving family/leaf paths into `json_export/`).
+- Appended a dated report section to `/home/think/MEGA/Obsidian-Notes/afi/report/2026-09-02.md`.
+
+**Results (real output, verified):**
+- All three scripts pass `bash -n` (syntax OK).
+- collect_json.sh logic dry-run on a mirrored tree staged the expected 3 JSONs correctly.
+- Report appended to the Obsidian note (markdown lint N/A).
+
+**Decisions & reasoning:** One command per structure so the owner can run leaves individually
+or in any subset (matches prior heavy-run convention); JSONs emit in place under the leaf's
+analysis_json/xrd_out by default; collect preserves the family/leaf tree so provenance is
+clear. Did NOT launch the ~1 h regenerate (owner runs it).
+
+**Open items**
+- Owner runs `regenerate_analysis_json.sh` + `regenerate_xrd_json.sh`, then `collect_json.sh`.
+- Consider tracking `json_export/*.sh` in git (scripts, non-regenerable) vs gitignoring the
+  collected JSONs.
+
+**Time:** 2026-09-02
+
