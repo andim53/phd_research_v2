@@ -1,10 +1,20 @@
 # Presentation: 1_amorphous
 
-<!-- One-paragraph abstract of this presentation. What story does it tell? Fill after
-     the content is drafted. -->
+This talk motivates **amorphous heavy metals (W, Ta, Pt) for SOT-MRAM** and shows
+how to compute their **spintronics properties** despite the structural-definition problem
+**of amorphous structure**. Because a melt-quenched snapshot's stability is hard to
+define, we perform a **configurational-space sampling focused on the low-energy basin**, using an
+**active-learning ML model** (dual-scale randomization + ML surrogate relaxation to reach
+the basin, producing the **inherent-structure local-minima ensemble**), so the **spin-Hall
+conductivity becomes a well-defined statistical property**. Preliminary results show that
+**doping (W/B, Ta/B) and lattice expansion (Pt, +1–5%)** both **broaden the
+low-energy basin** (populating higher-energy states) — the onset of amorphization, confirmed by
+the loss of crystallinity in simulated XRD; hence both the **dopant concentration and volume** must
+be **controlled** to tune the amorphous state.
 
-Short description of the presentation's scope (amorphous structure research — topic,
-system, and the narrative arc across the four sections below).
+**Arc:** Introduction (motivation,purpose,structural problem) → Method (configurational sampling + active-learning ML to the low-energy basin) → Results (dopant + lattice effects on the basin) → Conclusions (two levers of amorphization, need for control。
+
+
 
 ## Audience / Purpose
 
