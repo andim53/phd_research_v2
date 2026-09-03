@@ -119,6 +119,107 @@ so `process_database` would find nothing; those benchmarks have their own analys
 > `*.db/*.png/*.traj/*.xsf/*.csv/*.out`) stay untracked; only the runner +
 > `2_analysist/scripts/` code is committed.
 
+## Step 4d — Extract-to-JSON + plot-from-JSON (two-phase analysis)
+
+Both analysis runners (`run_analysis_a_runs.py` single-seed, `run_analysis_indices.py`
+multi-seed) support a **two-phase** mode that decouples data extraction from
+plotting, so plots can be reproduced from a JSON file alone — no database needed.
+
+- `--extract` — read the DB and write a **single self-describing JSON file**
+  (`analysis_data.json` in `--outdir`) holding **all the raw data** needed to
+  reproduce every plot: per-seed absolute DFT energies (eV), relative energy per
+  atom (eV/atom), best-so-far, plus the global relative energies and the PCA
+  projection (`x_eigen`). The JSON is independent and AI-readable (clear structure,
+  named fields, and a `description` field explaining the schema). No plots are
+  produced.
+- `--plot-from-json <file>` — plot **only from that JSON file** (the DB is not
+  read) and reproduce the **same PNGs** — bit-identical to plotting directly from
+  the database. Each flag works on its own.
+
+The two flags are mutually exclusive. `--dataset` is required for `--extract` and
+the full pipeline, but **not** for `--plot-from-json`.
+
+### 4d.1 — Single-seed a-run (e.g. a1)
+
+```bash
+cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+
+# 1) Full pipeline (DB -> PNGs) — reference output
+$PY run_analysis_a_runs.py \
+    --dataset a1_mgofe_Seed3_Iter300/output \
+    --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
+
+# 2) Extract only (DB -> JSON, no plots)
+$PY run_analysis_a_runs.py \
+    --dataset a1_mgofe_Seed3_Iter300/output \
+    --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs \
+    --extract
+# -> writes a1_mgofe_Seed3_Iter300/analysis_a_runs/analysis_data.json
+
+# 3) Plot from JSON only (no DB read) — same PNGs as step 1
+$PY run_analysis_a_runs.py \
+    --plot-from-json a1_mgofe_Seed3_Iter300/analysis_a_runs/analysis_data.json \
+    --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
+```
+
+### 4d.2 — Multi-seed heavy run (e.g. 71)
+
+```bash
+cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+
+# 1) Full pipeline (DB -> PNGs)
+$PY run_analysis_indices.py \
+    --dataset 71_novel_runEWindow/dataset \
+    --outdir 71_novel_runEWindow/analysis_indices
+
+# 2) Extract only (DB -> JSON)
+$PY run_analysis_indices.py \
+    --dataset 71_novel_runEWindow/dataset \
+    --outdir 71_novel_runEWindow/analysis_indices \
+    --extract
+
+# 3) Plot from JSON only (no DB read)
+$PY run_analysis_indices.py \
+    --plot-from-json 71_novel_runEWindow/analysis_indices/analysis_data.json \
+    --outdir 71_novel_runEWindow/analysis_indices
+```
+
+### 4d.3 — Optional flags (apply to all three modes)
+
+```bash
+--e-max 0.8              # cap the energy window (eV/atom) for Stage 2 & 3
+--normalize-density      # normalize the Stage 2 state-density panel to [0,1]
+--start-iter 10          # keep only structures with AGOX iteration >= this (default 10)
+```
+
+### 4d.4 — Verify the two-phase round-trip
+
+To confirm `--plot-from-json` reproduces the full-pipeline PNGs exactly, run the
+full pipeline and the JSON-only plot into two separate outdirs and byte-compare:
+
+```bash
+cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+mkdir -p /tmp/full /tmp/fromjson
+
+$PY run_analysis_a_runs.py --dataset a1_mgofe_Seed3_Iter300/output --outdir /tmp/full
+$PY run_analysis_a_runs.py --dataset a1_mgofe_Seed3_Iter300/output --outdir /tmp/extract --extract
+$PY run_analysis_a_runs.py --plot-from-json /tmp/extract/analysis_data.json --outdir /tmp/fromjson
+
+for f in conf_space.png binding_probability_vs_temperature.png; do
+  cmp -s /tmp/full/$f /tmp/fromjson/$f && echo "IDENTICAL: $f" || echo "DIFFER: $f"
+done
+cmp -s /tmp/full/progression_plots/progression_seed_split_Seed3.png \
+      /tmp/fromjson/progression_plots/progression_seed_split_Seed3.png \
+  && echo "IDENTICAL: progression_seed_split_Seed3.png" || echo "DIFFER: progression"
+```
+
+Expected: all three PNGs report `IDENTICAL`. (The `.xsf` structure exports are only
+produced by the full pipeline — `--plot-from-json` reproduces the PNGs, not the
+structure files.)
+
 ## Step 5 — Energy-window: auto global-minimum mode (default)
 
 The Novelty-LCB window now defaults to the **auto global-minimum** mode in **energy
