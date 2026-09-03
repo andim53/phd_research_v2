@@ -408,3 +408,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 08:35 JST — TUTORIAL.md: reproduce command for 7_fxg_0b 0-0.03 run
 
 - On owner command, added subsection 'Reproduce the narrow-energy run (7_fxg_0b, 0-0.03 eV/atom)' to Step 3c of TUTORIAL.md with the exact Stage-1 + Stage-2 commands (xrd_extract_structures.py --e-max 0.03 --bin-width 0.005; xrd_simulate_crystallinity.py with --ci-x-data-max/--ci-x-max/--ci-y-max 1.0) and the bin-width/label-precision pitfall.
+
+## 2026-09-04 08:43 JST — Narrow 0-0.03 eV/atom XRD runs for 11_bTa 8/9/10
+
+- Data-only (scripts 1.1.0/1.3.0 unchanged). Re-ran Stage 1 (`--e-max 0.03 --bin-width 0.005`) + Stage 2 (`--ci-x-data-max 0.03 --ci-x-max 0.03 --ci-y-max 1.0`, --json) for 11_bTa leaves 8_fxg_1b, 9_fxg_3b, 10_fxg_5b -> outputs under each <leaf>/xrd_out_003/. CI: 8=pf~0.95-0.97/ic~0.82; 9=pf~0.90-0.92/ic~0.79; 10=pf~0.85-0.86/ic~0.75-0.77. Note 9_fxg_3b had an empty window 0.020-0.025 (skipped).
