@@ -1558,3 +1558,8 @@ analysis, and update AGENTS.md.
 
 ### Time
 ~35 min.
+
+## 2026-09-04 00:11 JST
+
+- PROMPTS.md: wrote improved prompt #1 (clarified: --extract writes single JSON with ALL raw data for all 3 plots across BOTH runners run_analysis_a_runs.py + run_analysis_indices.py; independent --plot-from-json plots from JSON only, DB-free, bit-identical PNG).
+- AGENTS.md: recorded in section 3b that PROMPTS.md is editable only on owner permission and may hold owner task prompts to run.
