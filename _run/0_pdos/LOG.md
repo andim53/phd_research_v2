@@ -53,3 +53,7 @@ state (results, runs, dataset_boron3).
 
 ### Time
 Scaffolding session, ~15 min.
+
+## 2026-09-04 00:13 JST
+
+- AGENTS.md: PROMPTS.md editable only on owner permission; may hold owner task prompts to run (dropped-in prompts = ordinary owner command).
