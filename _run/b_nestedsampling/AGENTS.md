@@ -195,6 +195,12 @@ track are tracked.
 work, each marked with a **flag code** and cleaned into a consistent grammar. It is a
 deliverable the agent must keep current alongside README/LOG/TUTORIAL.
 
+**`PROMPTS.md` is editable only when the owner grants permission.** It may hold the
+owner's pending task prompts (including the container brief telling the agent to
+improve a prompt, or to **run** a task). When the owner drops a prompt in for the
+agent to execute, treat it as an ordinary owner command: clarify first, then perform
+the task per these rules.
+
 ### Format of each prompt entry
 
 - **Flag heading.** Every prompt gets a first-level heading `# FLAG: <code>` above it,

@@ -5374,3 +5374,7 @@ before implementing a new flag.
 estimator, and confirmation of the read-back intent, before scaffolding any new flag.
 
 **Time:** 2026-08-31 (JST).
+
+## 2026-09-04 00:13 JST
+
+- AGENTS.md: PROMPTS.md editable only on owner permission; may hold owner task prompts to run (dropped-in prompts = ordinary owner command).
