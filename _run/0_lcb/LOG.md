@@ -371,3 +371,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 06:10 JST — Create 11_bTa/DISCUSSION.md (leaf composition)
 
 - On owner command, added `2_analysist/11_bTa/DISCUSSION.md` documenting the 3x3x3 BCC Ta host (54 Ta, a0~3.33 A, cubic ~9.99 A) and B composition of leaves 7_fxg_0b (0B/0.00%), 8_fxg_1b (1B/1.82%), 9_fxg_3b (3B/5.26%), 10_fxg_5b (5B/8.47%). Atom counts read from seed_0/1_db/db_*.db via agox_v2. Grounded in DB data.
+
+## 2026-09-04 06:22 JST — Stage-1 progression: --no-gs-star flag + replot 7-10 (bullets & star off)
+
+- **run_analysis_indices.py 2.7.0 -> 2.8.0** — add `--no-gs-star` flag to skip the global ground-state star (independent of `--no-bullets`). Threaded through _plot_progression_from_data / step1_progression / replot_from_json / main, live + --from-json. Replotted progression PNGs for 11_bTa/7-10_fxg with `--seeds 0-4 --xlabel "Sampled Structure" --x-max 140 --no-bullets --no-gs-star`. Verified on 8_fxg_1b: 5 plain curves, no markers, xlim (0,140).

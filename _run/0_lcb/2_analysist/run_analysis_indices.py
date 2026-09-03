@@ -53,7 +53,7 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.7.0"
+__version__ = "2.8.0"
 
 import argparse
 import glob
@@ -368,16 +368,16 @@ def _progression_data(dataset_dir, start_iter=10, e_max=None, outdir=None):
 
 
 def _plot_progression_from_data(data, outdir, seeds=None, xlabel="Evaluated Candidates",
-                                x_max=None, show_bullets=True):
+                                x_max=None, show_bullets=True, show_gs_star=True):
     """Draw the Stage-1 progression PNG from a data dict (from a live run or JSON).
 
     ``seeds`` optionally restricts the plotted curves to the given numeric seed
     indices (set of ints) — see ``_filter_progression_data``. ``xlabel`` overrides
     the x-axis title; ``x_max`` caps the x-axis at that value (clips curves beyond
-    it); ``show_bullets=False`` skips the Seed-0 window-minimum bullets (the global
-    ground-state star is always kept). The legend is placed inside the axes
-    (upper-left) when few curves are shown, else outside to the right with the
-    saved figure auto-sized so the legend is never clipped.
+    it); ``show_bullets=False`` skips the Seed-0 window-minimum bullets and
+    ``show_gs_star=False`` skips the global ground-state star. The legend is placed
+    inside the axes (upper-left) when few curves are shown, else outside to the
+    right with the saved figure auto-sized so the legend is never clipped.
     """
     from matplotlib.ticker import AutoMinorLocator
     print("\n[STAGE 1] Best-so-far progression plot")
@@ -422,7 +422,7 @@ def _plot_progression_from_data(data, outdir, seeds=None, xlabel="Evaluated Cand
             ax.plot(b["x"], b["rel_e"], "o", ms=7, zorder=60,
                     mfc="black", mec="white", mew=1.2)
     # global ground-state star
-    if data.get("global_gs"):
+    if show_gs_star and data.get("global_gs"):
         ax.plot(data["global_gs"]["x"], data["global_gs"]["rel_e"], "*", ms=14,
                 zorder=61, mfc="red", mec="white", mew=1.2)
     plot_dir = os.path.join(outdir, "progression_plots")
@@ -436,14 +436,15 @@ def _plot_progression_from_data(data, outdir, seeds=None, xlabel="Evaluated Cand
 
 def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None,
                       json_dir=None, seeds=None, xlabel="Evaluated Candidates",
-                      x_max=None, show_bullets=True):
+                      x_max=None, show_bullets=True, show_gs_star=True):
     """Stage 1: emit JSON (if json_dir), write xsf side-output, draw the PNG."""
     data = _progression_data(dataset_dir, start_iter=start_iter, e_max=e_max,
                              outdir=outdir)
     if json_dir:
         _write_stage_json(json_dir, 1, data)
     return _plot_progression_from_data(data, outdir, seeds=seeds, xlabel=xlabel,
-                                       x_max=x_max, show_bullets=show_bullets)
+                                       x_max=x_max, show_bullets=show_bullets,
+                                       show_gs_star=show_gs_star)
 
 
 # ---------------------------------------------------------------------------
@@ -609,19 +610,20 @@ def step3_probability(structures, energies, outdir, e_max=None, json_dir=None):
 # Re-plot from JSON
 # ---------------------------------------------------------------------------
 def replot_from_json(json_dir, outdir, seeds=None, xlabel="Evaluated Candidates",
-                     x_max=None, show_bullets=True):
+                     x_max=None, show_bullets=True, show_gs_star=True):
     """Read the three Stage JSON files under json_dir and re-draw all PNGs under outdir.
 
     Stages 1 and 3 store final curve arrays (faithful literal dump); Stage 2 stores the
     plot inputs + params and re-runs plot_structure_landscape to reproduce conf_space.png.
     ``seeds`` optionally restricts the Stage-1 progression plot to given seed indices;
     ``xlabel`` overrides that plot's x-axis title; ``x_max`` caps its x-axis;
-    ``show_bullets=False`` skips the Seed-0 window-minimum bullets.
+    ``show_bullets=False`` skips the Seed-0 window bullets; ``show_gs_star=False``
+    skips the global ground-state star.
     """
     os.makedirs(outdir, exist_ok=True)
     d1 = _read_stage_json(json_dir, 1)
     _plot_progression_from_data(d1, outdir, seeds=seeds, xlabel=xlabel, x_max=x_max,
-                                show_bullets=show_bullets)
+                                show_bullets=show_bullets, show_gs_star=show_gs_star)
     d2 = _read_stage_json(json_dir, 2)
     # If a literal plot_arrays dump exists (from a live run), fold it back into the data
     # so conf_space.png is reproduced from stored inputs (arrays are informational).
@@ -667,8 +669,11 @@ def main():
                              "Default: full data range.")
     parser.add_argument("--no-bullets", action="store_true",
                         help="(Stage 1 progression only) skip the Seed-0 "
-                             "window-minimum bullets (black circles). The global "
-                             "ground-state star is always kept.")
+                             "window-minimum bullets (black circles). Use "
+                             "--no-gs-star to also drop the global GS marker.")
+    parser.add_argument("--no-gs-star", action="store_true",
+                        help="(Stage 1 progression only) skip the global "
+                             "ground-state star marker.")
     parser.add_argument("--json-dir", default=None,
                         help="emit each stage's plotting data as JSON (one file per "
                              "graph) into this dir, in addition to drawing the PNGs. "
@@ -689,10 +694,12 @@ def main():
         print(f"xlabel    : {args.xlabel}")
         print(f"x-max     : {args.x_max or 'full range'}")
         print(f"bullets   : {'off' if args.no_bullets else 'on'}")
+        print(f"gs-star   : {'off' if args.no_gs_star else 'on'}")
         print("=" * 70)
         replot_from_json(args.from_json, args.outdir, seeds=seeds,
                          xlabel=args.xlabel, x_max=args.x_max,
-                         show_bullets=not args.no_bullets)
+                         show_bullets=not args.no_bullets,
+                         show_gs_star=not args.no_gs_star)
         return
 
     if not args.dataset:
@@ -720,7 +727,8 @@ def main():
     step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
                       e_max=args.e_max, json_dir=json_dir, seeds=seeds,
                       xlabel=args.xlabel, x_max=args.x_max,
-                      show_bullets=not args.no_bullets)
+                      show_bullets=not args.no_bullets,
+                      show_gs_star=not args.no_gs_star)
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density,
                     json_dir=json_dir)

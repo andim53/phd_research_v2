@@ -28,3 +28,5 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.6.0 | `--x-max` cap on Stage-1 x-axis |
 
 | `2_analysist/run_analysis_indices.py` | 2.7.0 | `--no-bullets` flag on Stage-1 progression |
+
+| `2_analysist/run_analysis_indices.py` | 2.8.0 | `--no-gs-star` flag on Stage-1 progression |
