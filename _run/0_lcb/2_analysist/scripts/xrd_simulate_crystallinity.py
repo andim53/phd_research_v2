@@ -32,7 +32,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import argparse
 import json
@@ -139,18 +139,30 @@ def plot_patterns_from_data(data, outdir):
     plt.close(fig)
 
 
-def plot_ci_from_data(data, outdir):
-    """Draw crystallinity_vs_energy.png from a plots-data dict."""
+def plot_ci_from_data(data, outdir, x_data_max=None, x_max=None, y_max=None):
+    """Draw crystallinity_vs_energy.png from a plots-data dict.
+
+    ``x_data_max`` drops plotted rows whose window centre exceeds it (the full
+    row set is kept in the JSON/CSV); ``x_max`` overrides the x-axis upper limit
+    (default: data e_max); ``y_max`` overrides the y-axis upper limit.
+    """
     leaf = data["leaf"]
+    rows = data["rows"]
+    if x_data_max is not None:
+        rows = [r for r in rows if r["center"] <= x_data_max]
+    if not rows:
+        raise SystemExit(f"[{leaf}] no CI rows left after --ci-x-data-max={x_data_max}")
     fig, ax = plt.subplots(figsize=(6, 4))
-    xs = [r["center"] for r in data["rows"]]
-    ax.plot(xs, [r["peak_fraction_ci"] for r in data["rows"]], "o-",
+    xs = [r["center"] for r in rows]
+    ax.plot(xs, [r["peak_fraction_ci"] for r in rows], "o-",
             label="peak-fraction CI")
-    ax.plot(xs, [r["integrated_ci"] for r in data["rows"]], "s--",
+    ax.plot(xs, [r["integrated_ci"] for r in rows], "s--",
             label="integrated CI")
     ax.set_xlabel(E_LABEL); ax.set_ylabel("Crystallinity index")
     ax.set_title(f"{leaf}")
-    ax.set_xlim(0, data.get("e_max", 0.5))
+    ax.set_xlim(0, x_max if x_max is not None else data.get("e_max", 0.5))
+    if y_max is not None:
+        ax.set_ylim(0, y_max)
     ax.legend()
     fig.savefig(os.path.join(outdir, "crystallinity_vs_energy.png"))
     plt.close(fig)
@@ -174,6 +186,16 @@ def main():
     parser.add_argument("--from-json", default=None,
                         help="skip simulation; read xrd_plots.json from this dir and "
                              "re-draw both PNGs into --outdir")
+    parser.add_argument("--ci-x-data-max", type=float, default=None,
+                        help="(crystallinity_vs_energy.png) only plot CI rows whose "
+                             "window centre <= this value; higher-energy rows are "
+                             "kept in the JSON/CSV but not drawn. Default: all rows.")
+    parser.add_argument("--ci-x-max", type=float, default=None,
+                        help="(crystallinity_vs_energy.png) x-axis upper limit. "
+                             "Default: data e_max.")
+    parser.add_argument("--ci-y-max", type=float, default=None,
+                        help="(crystallinity_vs_energy.png) y-axis upper limit. "
+                             "Default: auto.")
     args = parser.parse_args()
 
     # --- from-json mode: replot both XRD PNGs from stored arrays -----------
@@ -183,7 +205,8 @@ def main():
             data = json.load(f)
         os.makedirs(args.outdir, exist_ok=True)
         plot_patterns_from_data(data, args.outdir)
-        plot_ci_from_data(data, args.outdir)
+        plot_ci_from_data(data, args.outdir, x_data_max=args.ci_x_data_max,
+                          x_max=args.ci_x_max, y_max=args.ci_y_max)
         print(f"\nDONE. Re-plotted XRD PNGs from {jp} -> {os.path.abspath(args.outdir)}")
         return
 
@@ -235,7 +258,8 @@ def main():
 
     # ---- figures (shared plot-from-data helpers) ----
     plot_patterns_from_data(data, args.outdir)
-    plot_ci_from_data(data, args.outdir)
+    plot_ci_from_data(data, args.outdir, x_data_max=args.ci_x_data_max,
+                      x_max=args.ci_x_max, y_max=args.ci_y_max)
 
     # ---- CSV ----
     import csv

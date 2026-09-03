@@ -34,3 +34,5 @@ old→new in `LOG.md`.
 | `2_analysist/scripts/extract_rel_window_xsf.py` | 1.0.0 | new: .xsf export by rel-E/atom window |
 
 | `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.2.0 | CI-plot x-axis uses shared energy label E_LABEL |
+
+| `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.3.0 | `--ci-x-data-max`/`--ci-x-max`/`--ci-y-max` on CI plot |
