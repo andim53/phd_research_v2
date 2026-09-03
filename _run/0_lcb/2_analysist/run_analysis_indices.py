@@ -53,7 +53,7 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.4.0"
+__version__ = "2.5.0"
 
 import argparse
 import glob
@@ -367,13 +367,14 @@ def _progression_data(dataset_dir, start_iter=10, e_max=None, outdir=None):
     }
 
 
-def _plot_progression_from_data(data, outdir, seeds=None):
+def _plot_progression_from_data(data, outdir, seeds=None, xlabel="Evaluated Candidates"):
     """Draw the Stage-1 progression PNG from a data dict (from a live run or JSON).
 
     ``seeds`` optionally restricts the plotted curves to the given numeric seed
-    indices (set of ints) — see ``_filter_progression_data``. The legend is placed
-    inside the axes (upper-left) when few curves are shown, else outside to the
-    right with the saved figure auto-sized so the legend is never clipped.
+    indices (set of ints) — see ``_filter_progression_data``. ``xlabel`` overrides
+    the x-axis title. The legend is placed inside the axes (upper-left) when few
+    curves are shown, else outside to the right with the saved figure auto-sized
+    so the legend is never clipped.
     """
     from matplotlib.ticker import AutoMinorLocator
     print("\n[STAGE 1] Best-so-far progression plot")
@@ -384,7 +385,7 @@ def _plot_progression_from_data(data, outdir, seeds=None):
     for c in data["curves"]:
         ax.plot(c["x"], c["best_so_far"], label=c["name"], lw=c["lw"],
                 color=c["color"], zorder=50 if c["is_seed0"] else 1)
-    ax.set_xlabel("Evaluated Candidates")
+    ax.set_xlabel(xlabel)
     ax.set_ylabel(E_LABEL)
     ax.set_xlim(0, max_x)
     e_max = data.get("e_max")
@@ -429,13 +430,13 @@ def _plot_progression_from_data(data, outdir, seeds=None):
 
 
 def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None,
-                      json_dir=None, seeds=None):
+                      json_dir=None, seeds=None, xlabel="Evaluated Candidates"):
     """Stage 1: emit JSON (if json_dir), write xsf side-output, draw the PNG."""
     data = _progression_data(dataset_dir, start_iter=start_iter, e_max=e_max,
                              outdir=outdir)
     if json_dir:
         _write_stage_json(json_dir, 1, data)
-    return _plot_progression_from_data(data, outdir, seeds=seeds)
+    return _plot_progression_from_data(data, outdir, seeds=seeds, xlabel=xlabel)
 
 
 # ---------------------------------------------------------------------------
@@ -600,16 +601,17 @@ def step3_probability(structures, energies, outdir, e_max=None, json_dir=None):
 # ---------------------------------------------------------------------------
 # Re-plot from JSON
 # ---------------------------------------------------------------------------
-def replot_from_json(json_dir, outdir, seeds=None):
+def replot_from_json(json_dir, outdir, seeds=None, xlabel="Evaluated Candidates"):
     """Read the three Stage JSON files under json_dir and re-draw all PNGs under outdir.
 
     Stages 1 and 3 store final curve arrays (faithful literal dump); Stage 2 stores the
     plot inputs + params and re-runs plot_structure_landscape to reproduce conf_space.png.
-    ``seeds`` optionally restricts the Stage-1 progression plot to given seed indices.
+    ``seeds`` optionally restricts the Stage-1 progression plot to given seed indices;
+    ``xlabel`` overrides that plot's x-axis title.
     """
     os.makedirs(outdir, exist_ok=True)
     d1 = _read_stage_json(json_dir, 1)
-    _plot_progression_from_data(d1, outdir, seeds=seeds)
+    _plot_progression_from_data(d1, outdir, seeds=seeds, xlabel=xlabel)
     d2 = _read_stage_json(json_dir, 2)
     # If a literal plot_arrays dump exists (from a live run), fold it back into the data
     # so conf_space.png is reproduced from stored inputs (arrays are informational).
@@ -646,6 +648,9 @@ def main():
                         help="(Stage 1 progression only) restrict the plotted curves "
                              "to these seed indices, e.g. '0-4' or '0,1,5'. Applies to "
                              "both live runs and --from-json replots. Default: all seeds.")
+    parser.add_argument("--xlabel", default="Evaluated Candidates",
+                        help="(Stage 1 progression only) custom x-axis title. "
+                             "Default: 'Evaluated Candidates'.")
     parser.add_argument("--json-dir", default=None,
                         help="emit each stage's plotting data as JSON (one file per "
                              "graph) into this dir, in addition to drawing the PNGs. "
@@ -663,8 +668,10 @@ def main():
         print(f"from-json : {args.from_json}")
         print(f"outdir    : {args.outdir}")
         print(f"seeds     : {args.seeds or 'all'}")
+        print(f"xlabel    : {args.xlabel}")
         print("=" * 70)
-        replot_from_json(args.from_json, args.outdir, seeds=seeds)
+        replot_from_json(args.from_json, args.outdir, seeds=seeds,
+                         xlabel=args.xlabel)
         return
 
     if not args.dataset:
@@ -690,7 +697,8 @@ def main():
 
     os.makedirs(args.outdir, exist_ok=True)
     step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
-                      e_max=args.e_max, json_dir=json_dir, seeds=seeds)
+                      e_max=args.e_max, json_dir=json_dir, seeds=seeds,
+                      xlabel=args.xlabel)
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density,
                     json_dir=json_dir)

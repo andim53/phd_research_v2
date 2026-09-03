@@ -351,3 +351,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 00:40 JST — Stage-1 progression seed-subset (`--seeds`) + legend fix
 
 - **run_analysis_indices.py 2.3.0 -> 2.4.0** — add general `--seeds` flag for the Stage-1 progression plot (seed-subset curves in live + `--from-json`). Fix legend clipping: <=6 curves -> legend inside (upper-left); else outside-right with `bbox_inches="tight"`. New `_parse_seed_spec()` + `_filter_progression_data()`; each curve now carries a numeric `seed` field (older JSONs fall back to list index). Seed-0 bullets/GS dropped when Seed 0 not in subset; x-limit recomputed. Regenerated `11_bTa/7_fxg_0b` progression PNG from JSON using `--seeds 0-4`.
+
+## 2026-09-04 05:55 JST — Stage-1 progression: custom x-axis title (--xlabel)
+
+- **run_analysis_indices.py 2.4.0 -> 2.5.0** — add `--xlabel` option (default "Evaluated Candidates") to override the Stage-1 progression x-axis title. Threaded through _plot_progression_from_data / step1_progression / replot_from_json / main, in live + --from-json. Regenerated 11_bTa/7_fxg_0b progression PNG from JSON with `--seeds 0-4 --xlabel "Sampled Structure"`.
