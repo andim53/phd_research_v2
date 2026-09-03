@@ -23,6 +23,11 @@ to plotting directly from the database. Each flag must work on its own; the JSON
 must hold everything needed for a DB-free, bit-identical PNG rerun.
 
 #2
-write me a report. obsidion-daily-report skill. How much time does it take to finish 100 to 700 It
-eration, and also check, how much Iteration does it necessary to reach a convergence (find its globa
-l minimum). For
+Write me a report and save it via the obsidian-daily-report skill (Obsidian report
+dir, today's date). Cover the iteration-budget a-runs only: a1 (Iter300), a2
+(Iter500), and a3 (Iter700).
+
+For each run, report:
+- the wall-clock time it took to finish (from the gpaw_logs / j_*.out timestamps);
+- the iteration at which the global minimum (the lowest DFT energy) was first
+  found, from the progression data.
