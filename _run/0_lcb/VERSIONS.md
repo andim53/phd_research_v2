@@ -24,3 +24,5 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.4.0 | `--seeds` subset + legend-clip fix |
 
 | `2_analysist/run_analysis_indices.py` | 2.5.0 | `--xlabel` custom Stage-1 x-axis title |
+
+| `2_analysist/run_analysis_indices.py` | 2.6.0 | `--x-max` cap on Stage-1 x-axis |
