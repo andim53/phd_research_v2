@@ -20,3 +20,5 @@ old→new in `LOG.md`.
 
 > `17_PPt/` scripts and `main.py` files currently carry no module-level `__version__`
 > (pre-dates this project). Adding/bumping versions for them is a pending task.
+
+| `2_analysist/run_analysis_indices.py` | 2.4.0 | `--seeds` subset + legend-clip fix |

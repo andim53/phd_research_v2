@@ -53,7 +53,7 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.3.0"
+__version__ = "2.4.0"
 
 import argparse
 import glob
@@ -143,6 +143,55 @@ def _color_to_hex(color) -> str:
     for JSON-safe storage."""
     import matplotlib.colors as mcolors
     return mcolors.to_hex(color)
+
+
+def _parse_seed_spec(spec):
+    """Parse a --seeds CLI value ('0-4', '0,1,5', '0-2,7,10-12') into a set of ints.
+
+    Returns None when spec is falsy (meaning: no subsetting / show all seeds).
+    """
+    if not spec:
+        return None
+    seeds = set()
+    for part in str(spec).split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            lo, hi = part.split("-", 1)
+            seeds.update(range(int(lo.strip()), int(hi.strip()) + 1))
+        else:
+            seeds.add(int(part))
+    return seeds
+
+
+def _filter_progression_data(data, seeds):
+    """Return a copy of a Stage-1 data dict with only the curves whose numeric
+    seed index is in ``seeds`` (set of ints, or None = keep all).
+
+    Axis limits are recomputed from the surviving curves; Seed-0 bullets + the
+    global ground state (both anchored to Seed-0 x positions) are dropped when
+    Seed 0 is not part of the subset, since their reference curve would be gone.
+    """
+    if not seeds:
+        return data
+    # Curves are stored in ascending seed order. Live runs tag each with "seed";
+    # older JSONs lack the field, so fall back to the list index as the seed id.
+    curves = [c for i, c in enumerate(data["curves"])
+              if c.get("seed", i) in seeds]
+    # Seed-0 bullets / global GS are meaningful only when Seed 0 is plotted.
+    keep_markers = 0 in seeds
+    bullets = data["bullets"] if keep_markers else []
+    global_gs = data["global_gs"] if keep_markers else None
+    max_x = max((len(c["x"]) for c in curves), default=0)
+    return {
+        "curves": curves,
+        "bullets": bullets,
+        "global_gs": global_gs,
+        "e_max": data.get("e_max"),
+        "max_y": data.get("max_y", 0),
+        "max_x": max_x,
+    }
 
 
 def _write_stage_json(json_dir: str, stage: int, data: dict):
@@ -263,6 +312,7 @@ def _progression_data(dataset_dir, start_iter=10, e_max=None, outdir=None):
             current_color, linewidth, is_seed0 = cmap((i - 1) % 10), 1.5, False
         curves.append({
             "name": s_name,
+            "seed": i,                  # numeric seed index, for --seeds subsetting
             "x": list(range(len(s_best_so_far))),
             "best_so_far": s_best_so_far.tolist(),
             "color": _color_to_hex(current_color),
@@ -317,10 +367,17 @@ def _progression_data(dataset_dir, start_iter=10, e_max=None, outdir=None):
     }
 
 
-def _plot_progression_from_data(data, outdir):
-    """Draw the Stage-1 progression PNG from a data dict (from a live run or JSON)."""
+def _plot_progression_from_data(data, outdir, seeds=None):
+    """Draw the Stage-1 progression PNG from a data dict (from a live run or JSON).
+
+    ``seeds`` optionally restricts the plotted curves to the given numeric seed
+    indices (set of ints) — see ``_filter_progression_data``. The legend is placed
+    inside the axes (upper-left) when few curves are shown, else outside to the
+    right with the saved figure auto-sized so the legend is never clipped.
+    """
     from matplotlib.ticker import AutoMinorLocator
     print("\n[STAGE 1] Best-so-far progression plot")
+    data = _filter_progression_data(data, seeds)
     fig, ax = plt.subplots(figsize=(6, 3.5))
     max_y = data.get("max_y", 0)
     max_x = data.get("max_x", 0)
@@ -341,8 +398,19 @@ def _plot_progression_from_data(data, outdir):
     ax.spines["right"].set_visible(False)
     ax.tick_params(axis="both", which="both", top=False, right=False,
                    labeltop=False, labelright=False)
-    ax.legend(loc="upper left", fontsize=9, ncol=1, frameon=True,
-              bbox_to_anchor=(1.02, 1), borderaxespad=0.)
+    n_curves = len(data["curves"])
+    if n_curves <= 6:
+        # few curves: legend inside, upper-left (Seed 0 is black + topmost, so
+        # anchors first and never runs off the small figure)
+        ax.legend(loc="upper left", fontsize=9, ncol=1, frameon=True,
+                  borderaxespad=0.4)
+        tight_bbox = None
+    else:
+        # many curves: keep the legend outside, right; savefig auto-grows the
+        # canvas (bbox_inches="tight") so the legend is never clipped.
+        ax.legend(loc="upper left", fontsize=8, ncol=1, frameon=True,
+                  bbox_to_anchor=(1.02, 1), borderaxespad=0.)
+        tight_bbox = "tight"
     # Seed-0 window-minimum bullets (black fill / white ring)
     for b in data["bullets"]:
         ax.plot(b["x"], b["rel_e"], "o", ms=7, zorder=60,
@@ -351,23 +419,23 @@ def _plot_progression_from_data(data, outdir):
     if data.get("global_gs"):
         ax.plot(data["global_gs"]["x"], data["global_gs"]["rel_e"], "*", ms=14,
                 zorder=61, mfc="red", mec="white", mew=1.2)
-    plt.tight_layout()
     plot_dir = os.path.join(outdir, "progression_plots")
     os.makedirs(plot_dir, exist_ok=True)
     out_path = os.path.join(plot_dir, "progression_seed_split_0.png")
-    plt.savefig(out_path, dpi=300)
+    plt.savefig(out_path, dpi=300, bbox_inches=tight_bbox)
     plt.close(fig)
     print(f"  -> progression plot saved to {out_path}")
     return out_path
 
 
-def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None, json_dir=None):
+def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None,
+                      json_dir=None, seeds=None):
     """Stage 1: emit JSON (if json_dir), write xsf side-output, draw the PNG."""
     data = _progression_data(dataset_dir, start_iter=start_iter, e_max=e_max,
                              outdir=outdir)
     if json_dir:
         _write_stage_json(json_dir, 1, data)
-    return _plot_progression_from_data(data, outdir)
+    return _plot_progression_from_data(data, outdir, seeds=seeds)
 
 
 # ---------------------------------------------------------------------------
@@ -532,15 +600,16 @@ def step3_probability(structures, energies, outdir, e_max=None, json_dir=None):
 # ---------------------------------------------------------------------------
 # Re-plot from JSON
 # ---------------------------------------------------------------------------
-def replot_from_json(json_dir, outdir):
+def replot_from_json(json_dir, outdir, seeds=None):
     """Read the three Stage JSON files under json_dir and re-draw all PNGs under outdir.
 
     Stages 1 and 3 store final curve arrays (faithful literal dump); Stage 2 stores the
     plot inputs + params and re-runs plot_structure_landscape to reproduce conf_space.png.
+    ``seeds`` optionally restricts the Stage-1 progression plot to given seed indices.
     """
     os.makedirs(outdir, exist_ok=True)
     d1 = _read_stage_json(json_dir, 1)
-    _plot_progression_from_data(d1, outdir)
+    _plot_progression_from_data(d1, outdir, seeds=seeds)
     d2 = _read_stage_json(json_dir, 2)
     # If a literal plot_arrays dump exists (from a live run), fold it back into the data
     # so conf_space.png is reproduced from stored inputs (arrays are informational).
@@ -573,6 +642,10 @@ def main():
                         help="keep only structures with AGOX iteration >= this value "
                              "(inclusive), mirroring process_database.py's start_iter. "
                              "Default 10.")
+    parser.add_argument("--seeds", default=None,
+                        help="(Stage 1 progression only) restrict the plotted curves "
+                             "to these seed indices, e.g. '0-4' or '0,1,5'. Applies to "
+                             "both live runs and --from-json replots. Default: all seeds.")
     parser.add_argument("--json-dir", default=None,
                         help="emit each stage's plotting data as JSON (one file per "
                              "graph) into this dir, in addition to drawing the PNGs. "
@@ -581,6 +654,7 @@ def main():
                         help="skip DB loading and instead read the stage JSON files "
                              "from this dir, re-drawing all 3 PNGs into --outdir.")
     args = parser.parse_args()
+    seeds = _parse_seed_spec(args.seeds)
 
     # --- from-json mode: no DB access --------------------------------------
     if args.from_json:
@@ -588,8 +662,9 @@ def main():
         print("AGOX ANALYSIS — replot from JSON")
         print(f"from-json : {args.from_json}")
         print(f"outdir    : {args.outdir}")
+        print(f"seeds     : {args.seeds or 'all'}")
         print("=" * 70)
-        replot_from_json(args.from_json, args.outdir)
+        replot_from_json(args.from_json, args.outdir, seeds=seeds)
         return
 
     if not args.dataset:
@@ -615,7 +690,7 @@ def main():
 
     os.makedirs(args.outdir, exist_ok=True)
     step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
-                      e_max=args.e_max, json_dir=json_dir)
+                      e_max=args.e_max, json_dir=json_dir, seeds=seeds)
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density,
                     json_dir=json_dir)
