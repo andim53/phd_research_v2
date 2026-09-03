@@ -1,8 +1,7 @@
+# PROMPTS — Project a_lcbnovel prompt log
 
-Your task is to improve this prompt. Don't perform the prompt yet. 
-Clarify for things you don't understand or need more details on. 
-
-Prompt to Improve:
+This file logs every prompt the owner adds for future work, numbered simply `#1`,
+`#2`, `#3`, ... (newest last). See `AGENTS.md` §3b for the rules.
 
 #1
 Edit the analysis code in 2_analysist/ — apply the same change to both runners:

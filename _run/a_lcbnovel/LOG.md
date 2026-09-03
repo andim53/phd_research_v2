@@ -1563,3 +1563,7 @@ analysis, and update AGENTS.md.
 
 - PROMPTS.md: wrote improved prompt #1 (clarified: --extract writes single JSON with ALL raw data for all 3 plots across BOTH runners run_analysis_a_runs.py + run_analysis_indices.py; independent --plot-from-json plots from JSON only, DB-free, bit-identical PNG).
 - AGENTS.md: recorded in section 3b that PROMPTS.md is editable only on owner permission and may hold owner task prompts to run.
+
+## 2026-09-04 00:18 JST
+
+- AGENTS.md: PROMPTS.md section rewritten — no more grammar notes/flag codes; prompts numbered simply #1/#2/#3 (newest last). PROMPTS.md file updated to match (grammar blocks/notes removed).
