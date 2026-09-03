@@ -404,3 +404,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 
 - **2_analysist/scripts/xrd_extract_structures.py 1.0.0 -> 1.1.0** — window labels now use precision derived from bin_width (`_window_label`/`_label_decimals`), fixing duplicate/collapsed labels (e.g. '0.01_0.01') that occurred with fine bins (0.005 eV/atom) under the old fixed %.2f.
 - Re-ran Stage 1 for 11_bTa/7_fxg_0b (pure Ta, E_glob=-517.494 eV, 3967 structs iter>=10) with `--e-max 0.03 --bin-width 0.005` -> 6 windows [0,0.005)...[0.025,0.030]; outputs to new 11_bTa/7_fxg_0b/xrd_out_003/ (kept original 0-0.5 xrd_out). Stage 2 (pymat_xrd) with `--ci-x-data-max 0.03 --ci-x-max 0.03 --ci-y-max 1.0`: peak-fraction CI 1.000->0.965 across energy, integrated CI ~0.83-0.84 (near-flat). Wrote xrd_plots.json + both PNGs.
+
+## 2026-09-04 08:35 JST — TUTORIAL.md: reproduce command for 7_fxg_0b 0-0.03 run
+
+- On owner command, added subsection 'Reproduce the narrow-energy run (7_fxg_0b, 0-0.03 eV/atom)' to Step 3c of TUTORIAL.md with the exact Stage-1 + Stage-2 commands (xrd_extract_structures.py --e-max 0.03 --bin-width 0.005; xrd_simulate_crystallinity.py with --ci-x-data-max/--ci-x-max/--ci-y-max 1.0) and the bin-width/label-precision pitfall.

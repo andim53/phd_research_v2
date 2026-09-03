@@ -92,6 +92,38 @@ $PY_X scripts/xrd_simulate_crystallinity.py \
     --from-json 11_bTa/8_fxg_1b/xrd_out --outdir /tmp/xrd_replot
 ```
 
+### Reproduce the narrow-energy run (7_fxg_0b, 0–0.03 eV/atom)
+
+Example that restricts the analysis to a fine energy window near the ground state
+(the `11_bTa/7_fxg_0b` case). Stage 1 (`agox_v2`) bins with a fine `--bin-width`
+so several windows fit inside a narrow `--e-max`; Stage 2 (`pymat_xrd`) averages
+per window and plots CI with the x-axis limited to the same narrow range. Outputs
+go to a separate dir (`xrd_out_003`) so the original 0–0.5 analysis is kept.
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+# Stage 1 — bin 7_fxg_0b structures by rel-E/atom into [0,0.03] in 0.005 bins
+# (6 windows). Use bin_width <= e_max so the range is subdivided.
+$PY scripts/xrd_extract_structures.py --dataset 11_bTa/7_fxg_0b \
+    --outdir 11_bTa/7_fxg_0b/xrd_out_003 \
+    --e-max 0.03 --bin-width 0.005
+
+# Stage 2 — simulate + average XRD per window, plot CI with x to 0.03, y to 1
+$PY_X scripts/xrd_simulate_crystallinity.py \
+    --manifest 11_bTa/7_fxg_0b/xrd_out_003/manifest.json \
+    --outdir 11_bTa/7_fxg_0b/xrd_out_003 --json \
+    --ci-x-data-max 0.03 --ci-x-max 0.03 --ci-y-max 1.0
+```
+
+Produces `xrd_averaged_by_window.png`, `crystallinity_vs_energy.png`,
+`crystallinity.csv`, and `xrd_plots.json` under `11_bTa/7_fxg_0b/xrd_out_003/`.
+Pitfall: with `bin_width` finer than the label precision (e.g. 0.005 eV/atom) the
+window labels must carry enough decimals — the extraction script (v1.1.0+) derives
+this from `bin_width`; do not round the window names to 2 decimals.
+
 ## Step 3d — Run a loop over multiple leaf dataset dirs
 
 The runner analyses ONE leaf per invocation. To analyse every leaf of a family (or every
