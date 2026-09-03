@@ -1,34 +1,39 @@
 # A — Introduction
 
-## 1. Why amorphous for SOT-MRAM?
+## 1. SOT-MRAM as the next-generation MRAM
 
-- **Spin-orbit torque (SOT) MRAM** is a leading candidate for next-generation magnetic memory: fast, non-volatile, low power.
-- The **heavy-metal / ferromagnet interface** is where the spin-orbit torque is generated — and the choice of the **underlayer material** dictatesthe efficiency.
+- **Spin-orbit torque (SOT) MRAM** is positioned as the **next-generation MRAM**.
+- **STT-MRAM** was prone to **MTJ barrier degradation** due to the **high current
+  density** used in both reading and writing.
 
-  ![placeholder — SOT-MRAM schematic showing heavy-metal underlayer + ferromagnet](pngs/sot-mram-schematic.png)
-- **Amorphous heavy metals** (e.g. W, Ta, Pt) offer a practically attractive route: they can be deposited as smooth, uniform underlayers at scale, unlike crystalline ones.
+> **Speaker notes.** Frame the motivation: SOT replaces STT to avoid the barrier
+> degradation that high read/write current causes.
 
-  ![placeholder — crystalline vs amorphous underlayer illustration](pngs/crystalline-vs-amorphous.png)
+## 2. Why amorphous heavy metals
 
-> **Speaker notes.** Frame the pitch: amorphous metals make the SOT-MRAM stack manufacturable — but computing their spintronics needs a handle on their structure-first.
+- SOT-MRAM uses a **heavy metal** underlayer, but in its **metastable state**:
+  - **β-tungsten** has a high **spin-Hall angle (0.3–0.4)**;
+  - but it **degrades to α-tungsten** (spin-Hall angle ~0.07) during the
+    **Back-End-of-Line (BEOL)** process.
+- A **thermally stable** material is needed → **amorphous** was the solution.
 
-## 2. Purpose of this work
+> **Speaker notes.** The crystalline heavy metal is metastable and loses its
+> spin-Hall efficiency in fabrication; amorphous is the thermally stable answer.
 
-Compute the **spintronics properties** (spin-Hall conductivity, SHC; spin-orbit torque efficiency) for **amorphous** systems, in a way that respects their **structural disorder**.
+## 3. The computational problem
 
-> **Speaker notes.** One sentence: "We want the spintronics of amorphous metals — computed correctly for an intrinsically disordered structure."
+- **Computationally calculating amorphous materials for spintronics is
+  challenging**, mostly because we **don't have the right tool to define a stable
+  amorphous structure under room temperature**.
 
-## 3. The structural problem
+> **Speaker notes.** The bottleneck is structural: we cannot yet define a stable
+> room-temperature amorphous structure to run spintronics on.
 
-- To compute any electronic/spintronics property, we first need a **concrete structure** to run calculations on.
-- **Amorphous = no lattice periodicity**→ the very definition of the structure is non-trivial.
+## 4. Our solution
 
+- To solve this, we propose **exploring the amorphous structure by starting from a
+  reference (known-stable) structure**, then **slowly introducing an atomic
+  addition** to investigate its **disordering formation**.
 
-  ![placeholder — amorphous structural disorder definition figure](pngs/amorph-disorder-def.png)
-- **Melt-quench** is the standard way to build amorphous samples, but it is hard to know whether the quenched structure is truly **stable** (its exact thermodynamic stability is difficult to define positively).
-
-> **Speaker notes.** This sets upthe tension: the difficulty is not the electronic structure problem, but the *structural-definition* problem that comes first.
-
-## 4. Research question
-
-> **One-line question this deck answers:** *Can we define stable, representative amorphous structures — and compute their spin-Hall conductivity as a well-defined statistical property?*
+> **Speaker notes.** Instead of building amorphous from scratch, we perturb a known
+> stable reference and watch disorder emerge as we add atoms.

@@ -1,44 +1,25 @@
 # B — Method
 
-## 1. Idea: sample configurational space, focus on the low-energy basin
+## 1. Why we need a fast relaxer
 
-- To resolve the stability problem, we do NOT pin a single melt-quenched snapshot, we perform a **configurational-space sampling** focused on the **low-energy configurations**.
-- **Why the low-energy basin?** It is where the **most stable structures** live.
+- To investigate the **disordering formation**, we need to perform **multiple rapid
+  atomic relaxations**.
+- Doing this with regular **ab-initio** calculations is **expensive**.
 
+> **Speaker notes.** The method is driven by cost: many relaxations are needed, so
+> ab-initio alone is too slow.
 
+## 2. ML surrogate for relaxation
 
-> **Speaker notes.** "Instead of betting on one quench, we sample the low-energy part of structure space — the stable region."
+- We use **machine learning**, specifically tuned to **find the most relaxed atomic
+  structure**.
+- We **randomize the atom**, then **relax it with the GPR** surrogate.
 
-## 2. From sampled minima → a statistical property
+> **Speaker notes.** The ML surrogate replaces the expensive ab-initio relaxer.
 
-- Locating the **multiple low-energy snapshot** amorphous structures within the low-energy basin
-- Then define the **spin-Hall conductivity (SHC) as a statistical property** averaged over those low-energy structures.
+## 3. Sampling the low-energy basin
 
+- We **gather the low-energy basin** of the structure.
+- This lets us **investigate its stability**.
 
-
-> **Speaker notes.** The disorder is not a bug to average away — it is the object; SHC becomes a distribution over the stable-amorphous ensemble.
-
-## 3. Active-learning ML method (Inherent Structure approach)
-
-- Incorporate an **active-learning machine-learning model** to **locate the local minima** and derive their **preliminary local-minimum configurations** — the **Inherent Structure** picture.
-- **Generation step:** use **dual-scale randomization** to propose new structures (small local moves + large barrier-crossing moves).
-- **Relaxation step:** use the **ML surrogate** to **relax each proposed structure into the low-energy basin**.
-- The **relaxed structure** becomes the **cumulated local minimum** — a structure resident within the low-energy state / basin.
-
-
-
-> **Speaker notes.** Map the two roles clearly: randomization explores, surrogate relaxation descends to the basin, and each relaxed minimum is collected into the stable ensemble..
-
-  ![placeholder — method workflow: dual-scale randomization -> ML relaxation -> relaxed local minima (basin)](pngs/method-workflow.png]
-
-  ![placeholder — active-learning loop schematic (generate -> relax -> select/train (repeat](pngs/method-active-learning.png)
-
-## 4. Key parameters / choices
-
-- **Move set:** dual-scale randomization (small = local refinement, large = basin hopping.
-- **Energy model:** ML surrogate (cheap enough to relax many candidates into the basin)
-- **Sampling window:** focused on the low-energy region (not the full landscape)
-
-
-
-> **Speaker notes.** Eich choice exists to make the relax-to-basin cheap and the sampling stay near stabilitywhere THE thermodynamics lives.> **Placeholder — figures to supply (will be added to pngs/):** `method-workflow.png`, `method-active-learning.png`.
+> **Speaker notes.** Collecting the low-energy basin is how we probe stability cheaply.
