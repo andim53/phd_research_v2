@@ -383,3 +383,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 07:18 JST — xrd_simulate_crystallinity.py: x-axis title -> energy label (1.2.0)
 
 - **2_analysist/scripts/xrd_simulate_crystallinity.py 1.1.0 -> 1.2.0** — set crystallinity_vs_energy.png x-axis title to the shared energy label `E_LABEL = $E_{i}-E_{glob}$ (eV/atom)` (same as the analysis progression/landscape energy axis). Added module E_LABEL const. Re-running Stage 2 (with --json) for 11_bTa leaves 7-10 to regenerate xrd_out PNGs; 7_fxg_0b verified xlabel = '$E_{i}-E_{glob}$ (eV/atom)'.
+
+## 2026-09-04 07:22 JST — Regenerate crystallinity_vs_energy.png (x-axis = energy label) for 7-10
+
+- Data-only regen (no further code change). Re-ran Stage 2 (xrd_simulate_crystallinity.py 1.2.0, --json) on 11_bTa leaves 7_fxg_0b / 8_fxg_1b / 9_fxg_3b / 10_fxg_5b from their manifests. All four crystallinity_vs_energy.png regenerated with x-axis `$E_{i}-E_{glob}$ (eV/atom)`; xrd_plots.json written to each xrd_out. CI values unchanged (only label edited).
