@@ -375,3 +375,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 06:22 JST — Stage-1 progression: --no-gs-star flag + replot 7-10 (bullets & star off)
 
 - **run_analysis_indices.py 2.7.0 -> 2.8.0** — add `--no-gs-star` flag to skip the global ground-state star (independent of `--no-bullets`). Threaded through _plot_progression_from_data / step1_progression / replot_from_json / main, live + --from-json. Replotted progression PNGs for 11_bTa/7-10_fxg with `--seeds 0-4 --xlabel "Sampled Structure" --x-max 140 --no-bullets --no-gs-star`. Verified on 8_fxg_1b: 5 plain curves, no markers, xlim (0,140).
+
+## 2026-09-04 06:48 JST — New helper: extract_rel_window_xsf.py (rel-E/atom .xsf export)
+
+- Added `2_analysist/scripts/extract_rel_window_xsf.py` (v1.0.0, agox_v2) — exports .xsf for structures in relative-E/atom windows around targets (default 0.01/0.1/0.15) +/- tol (0.005), per-leaf global-min reference, up to N (3) lowest per window. Ran on 11_bTa leaves 7_fxg_0b (8 xsf), 8_fxg_1b (7), 9_fxg_3b (9), 10_fxg_5b (9). Outputs under each <leaf>/analysis_indices/rel_window_xsf/ (gitignored/regenerable).
