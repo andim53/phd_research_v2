@@ -1575,3 +1575,7 @@ analysis, and update AGENTS.md.
 ## 2026-09-04 00:23 JST
 
 - PROMPTS.md #2: rewrote broken prompt (dangling "For", incomplete clauses). Now: report via obsidian-daily-report skill covering a1/a2/a3 (Iter300/500/700); per-run wall-clock time (gpaw_logs/j_*.out) + iteration of first global-minimum find (progression data).
+
+## 2026-09-04 00:26 JST
+
+- PROMPTS.md: added #3 — "Make a new run, with dipole correction."

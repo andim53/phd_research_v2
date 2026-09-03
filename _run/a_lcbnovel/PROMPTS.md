@@ -31,3 +31,6 @@ For each run, report:
 - the wall-clock time it took to finish (from the gpaw_logs / j_*.out timestamps);
 - the iteration at which the global minimum (the lowest DFT energy) was first
   found, from the progression data.
+
+#3
+Make a new run, with dipole correction.
