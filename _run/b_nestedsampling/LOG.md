@@ -5378,3 +5378,7 @@ estimator, and confirmation of the read-back intent, before scaffolding any new 
 ## 2026-09-04 00:13 JST
 
 - AGENTS.md: PROMPTS.md editable only on owner permission; may hold owner task prompts to run (dropped-in prompts = ordinary owner command).
+
+## 2026-09-04 00:18 JST
+
+- AGENTS.md: PROMPTS.md section rewritten — no more grammar notes/flag codes; prompts numbered simply #1/#2/#3 (newest last). PROMPTS.md file updated to match (grammar blocks/notes removed).

@@ -189,11 +189,11 @@ track are tracked.
 
 ---
 
-## 3b. PROMPTS.md — the prompt log + grammar concept system
+## 3b. PROMPTS.md — the prompt log
 
 `PROMPTS.md` is the project's **prompt log**: every prompt the owner adds for future
-work, each marked with a **flag code** and cleaned into a consistent grammar. It is a
-deliverable the agent must keep current alongside README/LOG/TUTORIAL.
+work, numbered simply `#1`, `#2`, `#3`, ... (newest last). It is a deliverable the
+agent must keep current alongside README/LOG/TUTORIAL.
 
 **`PROMPTS.md` is editable only when the owner grants permission.** It may hold the
 owner's pending task prompts (including the container brief telling the agent to
@@ -201,34 +201,10 @@ improve a prompt, or to **run** a task). When the owner drops a prompt in for th
 agent to execute, treat it as an ordinary owner command: clarify first, then perform
 the task per these rules.
 
-### Format of each prompt entry
-
-- **Flag heading.** Every prompt gets a first-level heading `# FLAG: <code>` above it,
-  where `<code>` is derived from the local timestamp as **`YYYYMMDD_HHMM`**
-  (year, month, day, hour, **minute** — e.g. `20260826_1437`). Newer prompts sit
-  **above** older ones.
-- **Two grammar blocks** under each flag:
-  - `## Original (before grammar fix)` — the owner's raw text, preserved verbatim.
-  - `## Fixed grammar (after)` — the same prompt with the grammar corrected.
-- **One shared `## Grammar notes` section** covering the whole file — do **not**
-  create a new notes section per prompt.
-
-### The grammar notes are concept-based, not per-prompt
-
-When a prompt is added, its grammar fixes are folded into the **single existing**
-`## Grammar notes` section. Notes are organized as **generalized concepts** (each with
-the concrete instances from the flagged prompts underneath), so recurring mistakes are
-named once and recognized across prompts.
-
 ### Agent duties
 
-- When the owner adds a prompt (or one is dropped in with an empty flag), assign its
-  flag code from the local time, fix the grammar into the "after" block, and **fold the
-  fixes into the existing Grammar notes** (adding a new concept only if the mistake is
-  genuinely new, otherwise reusing/strengthening an existing one).
-- Keep the new prompt **above** older ones.
-- Treat `PROMPTS.md` as a tracked deliverable: update it when prompted, and keep its
-  grammar notes consistent with what is actually in the prompts.
+- When the owner adds a prompt, append it as the next number (`#1`, `#2`, ...).
+- Treat `PROMPTS.md` as a tracked deliverable: update it when prompted.
 
 ---
 
