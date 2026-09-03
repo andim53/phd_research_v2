@@ -1587,3 +1587,16 @@ analysis, and update AGENTS.md.
 ## 2026-09-04 00:37 JST
 
 - TUTORIAL.md: added Step 4d — two-phase extract-to-JSON + plot-from-JSON for both analysis runners, with complete commands (single-seed a1, multi-seed 71), optional flags, and a round-trip verification snippet.
+
+## 2026-09-04 — PROMPT #5 Part 1: fingerprint novelty data in analysis JSON
+- Enriched both analysis runners' `extract_json` to also record per-seed + run-level
+  fingerprint novelty: greedy distinct/duplicate counts (threshold 0.1, matching
+  `novelty_lcb/utils.py` `is_distinct`) + pairwise fingerprint-distance stats.
+- Added helpers `fingerprint_matrix()` and `compute_novelty_metrics()` to both
+  `2_analysist/run_analysis_a_runs.py` and `2_analysist/run_analysis_indices.py`.
+- Version bumps: run_analysis_a_runs.py 1.1.0 -> 1.2.0; run_analysis_indices.py
+  2.1.0 -> 2.2.0. JSON schema_version 1.0 -> 1.1. VERSIONS.md updated.
+- Re-ran `--extract` for a1-a9; each analysis_data.json now carries `novelty`.
+- Result: 0 duplicates in every run (all structures fingerprint-distinct); pairwise
+  mean distance 4.2-4.9; a5/a7/a8/a9 (k4, nw 0/2/3/4) identical novelty + same
+  global min (-436.0513 eV) -> novelty_weight had no effect on explored set.

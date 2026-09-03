@@ -57,7 +57,7 @@ agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 import argparse
 import glob
@@ -176,6 +176,67 @@ def compute_pca(structures):
     evals, evecs = np.linalg.eigh(cov)
     order = np.argsort(evals)[::-1]
     return Xc @ evecs[:, order[0]]
+
+
+def fingerprint_matrix(structures):
+    """(n, d) matrix of flattened Fingerprint feature vectors for a list of ASE
+    atoms, using the same descriptor + create_features call as compute_pca."""
+    if len(structures) == 0:
+        return np.zeros((0, 0))
+    fp = Fingerprint.from_atoms(structures[0])
+    return np.array([fp.create_features(s).flatten() for s in structures])
+
+
+def compute_novelty_metrics(structures, threshold=0.1):
+    """Fingerprint-novelty summary of a structure set for the report/JSON.
+
+    distinct / duplication: greedy count matching the repo's is_distinct semantics
+    (novelty_lcb/utils.py, default threshold 0.1) — a structure is a NEW distinct
+    representative iff its minimum Euclidean fingerprint distance to every
+    already-accepted distinct representative exceeds `threshold`; otherwise it is a
+    duplicate. variety / difference: distribution of all pairwise fingerprint
+    Euclidean distances.
+
+    Returns a JSON-serialisable dict (empty-safe)."""
+    n = len(structures)
+    empty = {
+        "n_structures": 0, "n_distinct": 0, "n_duplicates": 0,
+        "fraction_duplicates": None, "threshold": threshold,
+        "pairwise_fingerprint_distance": {
+            "n_pairs": 0, "mean": None, "median": None, "std": None,
+            "min": None, "max": None,
+        },
+    }
+    if n == 0:
+        return empty
+    F = fingerprint_matrix(structures)
+    reps = [F[0]]
+    for i in range(1, n):
+        d = np.linalg.norm(np.asarray(reps) - F[i], axis=1).min()
+        if d > threshold:
+            reps.append(F[i])
+    n_distinct = len(reps)
+    if n > 1:
+        from scipy.spatial.distance import pdist
+        pw = pdist(F, metric="euclidean")
+        pw_stats = {
+            "n_pairs": int(len(pw)),
+            "mean": float(pw.mean()), "median": float(np.median(pw)),
+            "std": float(pw.std()), "min": float(pw.min()), "max": float(pw.max()),
+        }
+    else:
+        pw_stats = {
+            "n_pairs": 0, "mean": 0.0, "median": 0.0,
+            "std": 0.0, "min": 0.0, "max": 0.0,
+        }
+    return {
+        "n_structures": n,
+        "n_distinct": n_distinct,
+        "n_duplicates": n - n_distinct,
+        "fraction_duplicates": round((n - n_distinct) / n, 6),
+        "threshold": threshold,
+        "pairwise_fingerprint_distance": pw_stats,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -420,13 +481,14 @@ def extract_json(dataset_dir, outdir, start_iter=10, e_max=None):
             "energies_eV": [float(x) for x in s_energies],
             "rel_energy_per_atom_eV": [float(x) for x in s_rel],
             "best_so_far_eV_per_atom": [float(x) for x in np.minimum.accumulate(s_rel)],
+            "novelty": compute_novelty_metrics(s_structs),
         })
 
     rel = (all_energies - all_energies.min()) / num_atoms
     x_eigen = compute_pca(all_structs)
 
     payload = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "runner": os.path.basename(__file__),
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "dataset": dataset_dir,
@@ -436,16 +498,20 @@ def extract_json(dataset_dir, outdir, start_iter=10, e_max=None):
         "description": (
             "Self-describing analysis data extracted from the AGOX database. "
             "'seeds' holds per-seed absolute DFT energies (eV) and relative energy "
-            "per atom (eV/atom, relative to that seed's minimum). 'global' holds the "
-            "flattened relative energies and the PCA projection (x_eigen) used by the "
-            "Stage 2 landscape. All three plots can be reproduced from this file alone "
-            "via --plot-from-json."
+            "per atom (eV/atom, relative to that seed's minimum), the best-so-far "
+            "progression, and a 'novelty' block (distinct/duplicate counts + "
+            "pairwise fingerprint-distance stats, see compute_novelty_metrics). "
+            "'global' holds the flattened relative energies, the PCA projection "
+            "(x_eigen) used by the Stage 2 landscape, and the run-level 'novelty' "
+            "across all seeds. All three plots can be reproduced from this file "
+            "alone via --plot-from-json."
         ),
         "seeds": seeds,
         "global": {
             "n_structures": int(len(all_energies)),
             "rel_energy_per_atom_eV": [float(x) for x in rel],
             "x_eigen": [float(x) for x in x_eigen],
+            "novelty": compute_novelty_metrics(all_structs),
         },
     }
 
