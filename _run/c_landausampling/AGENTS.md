@@ -39,12 +39,22 @@ No task is complete until all three are present and consistent with the work don
 
 1. **Clarify before every step.** Confirm the intended task, approach, and outputs
    with the project owner before writing or running code. Do not assume.
-2. **Ground everything in the repo.** Read the relevant existing code, the
-   `README.AI.md` spec, and `LOG.md` before acting. Never invent files, symbols, or
+2. **Ground everything in the repo.** Read the relevant existing code and the
+   `README.AI.md` spec before acting. Never invent files, symbols, or
    APIs that are not already present or explicitly requested.
-3. **Keep the deliverables current.** Every task that changes code or produces
-   results must update the Log, and, when behaviour changes, the README(s) and
-   Tutorial.
+   **When investigating the project, read only from `README.AI.md` first, then
+   the actual (relevant) code. All other notes — `README.md`, `TUTORIAL.md`,
+   `LOG.md`, `VERSIONS.md`, `PROMPTS.md`, `QNA.md`, `DISCUSSION.md`, etc. — must
+   NOT be read unless the project owner gives an explicit command. If the agent
+   thinks reading another note is necessary, it may ask the owner for
+   permission, which the owner may grant if they also think it is necessary
+   (permission covers READING only, not modifying the note).**
+3. **Keep the deliverables current.** After making any change within the code,
+   auto-update the Log (`LOG.md`) and version notes (`VERSIONS.md`), **append-only
+   and without reading them** — never rewrite existing entries. All **other**
+   notes (`README.md`, `README.AI.md`, `TUTORIAL.md`, `PROMPTS.md`,
+   `DISCUSSION.md`, `QNA.md`, etc.) are updated **only on explicit owner command**
+   (e.g. "update the README.AI.md", "update the TUTORIAL.md").
 4. **Log is append-only.** Never rewrite or delete prior Log entries; add new ones.
 5. **Verify before claiming done.** Run the relevant checks (compile, smoke test,
    build) and report what real execution returned. Do not fabricate results.
@@ -56,20 +66,25 @@ No task is complete until all three are present and consistent with the work don
    artifacts).
 8. **Do not modify another profile's skills/plugins/cron/memories** unless the owner
    explicitly directs it.
+9. **Ask permission before accessing other notes or other projects.** When it is
+   necessary to read, access, or modify any other note (anything beyond
+   `README.AI.md` and the relevant code) or any other project directory (inside
+   or outside this project), ask the owner for explicit permission first. Never
+   proceed on an assumed approval.
 
-## 3a. Run directories: `_runs/` and `_analysist/`
+## 3a. Run directories: `1_runs/` and `2_analysist/`
 
 Heavy runs and their analysis live in two sibling directories, separate from the
 project-root code/docs.
 
-### `_runs/` — self-contained run directories
+### `1_runs/` — self-contained run directories
 
-Each HPC run gets its **own self-contained directory** under `_runs/`, carrying
+Each HPC run gets its **own self-contained directory** under `1_runs/`, carrying
 everything that run needs — job script, run script(s), and copies of `scripts/`
 and `wang_landau/` — and does **not** depend on files in the project root.
 
 ```
-_runs/
+1_runs/
 └── <NN>_<descriptor>/            # e.g. c1_mgofe_N40_Emax04_Iter2e7
     ├── j_*.sh                    #   PJM batch script
     ├── main.py                   #   entry point (latest from project root)
@@ -88,13 +103,13 @@ Naming convention: **`<NN>_<descriptor>`** — running index + descriptive suffi
 **Keep run copies current.** Each run's `main.py`, `scripts/`, and `wang_landau/`
 should be kept in sync with the latest versioned copies in the project root.
 
-Everything under `_runs/` is **tracked in git** (code + docs), subject to the
+Everything under `1_runs/` is **tracked in git** (code + docs), subject to the
 regenerable-data exclusions.
 
-### `_analysist/` — analysed results
+### `2_analysist/` — analysed results
 
-Analysed/intermediate results live in `_analysist/`, one self-contained dir per
-run mirroring `_runs/<NN>_<descriptor>`, plus root-level analysis scripts and an
+Analysed/intermediate results live in `2_analysist/`, one self-contained dir per
+run mirroring `1_runs/<NN>_<descriptor>`, plus root-level analysis scripts and an
 archived `_archive/`. Analysis outputs are regenerable artifacts (gitignored);
 only the analysis code/scripts and per-run docs the owner chooses to track are
 tracked.
@@ -107,6 +122,12 @@ tracked.
 future work, each marked with a **flag code** and cleaned into a consistent
 grammar. It is a deliverable the agent must keep current alongside
 README/LOG/TUTORIAL.
+
+**`PROMPTS.md` is editable only when the owner grants permission.** It may hold the
+owner's pending task prompts (including the container brief telling the agent to
+improve a prompt, or to **run** a task). When the owner drops a prompt in for the
+agent to execute, treat it as an ordinary owner command: clarify first, then perform
+the task per these rules.
 
 - **Flag heading.** Every prompt gets `# FLAG: <code>` where `<code>` is derived
   from the local timestamp as **`YYYYMMDD_HHMM`** (e.g. `20260830_2030`). Newer

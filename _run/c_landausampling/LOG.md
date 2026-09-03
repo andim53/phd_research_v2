@@ -11,14 +11,14 @@ Decisions & reasoning, Open items, Time.
 **Goal (user-confirmed via clarify):** Create a new project dir at
 `/home/think/Desktop/research/_run/c_landausampling`, structured like
 `_run/b_nestedsampling` (README human+AI, LOG, TUTORIAL, VERSIONS, AGENTS,
-PROMPTS, `.gitignore`, plus `_runs/`, `_analysist/`, `_archives/`, `_tmp/`), and
+PROMPTS, `.gitignore`, plus `1_runs/`, `2_analysist/`, `_archives/`, `_tmp/`), and
 implement a **Wang–Landau** sampling that computes the density of states `g(E)`
 using a Python + AGOX GPR surrogate (like b), with the Fortran toy
 `_tmp/main_wanglandau_1d.f` as the algorithmic reference.
 
 **Clarify decisions (all user-confirmed):**
 1. **Scope:** scaffold the FULL project now — docs trio + AGENTS/VERSIONS/PROMPTS
-   + `.gitignore` + `_runs/_analysist/_archives/_tmp` layout + Wang–Landau code
+   + `.gitignore` + `1_runs/2_analysist/_archives/_tmp` layout + Wang–Landau code
    (`main.py` + `wang_landau` package + `j_wanglandau.sh`) + local smoke test +
    git commit.
 2. **Target:** real run on the AGOX GPR surrogate of the dataset; keep the 1D
@@ -33,7 +33,7 @@ using a Python + AGOX GPR surrogate (like b), with the Fortran toy
   skills; inspected `b_nestedsampling` deliverables (README/README.AI/AGENTS/
   VERSIONS/.gitignore/LOG/TUTORIAL/PROMPTS), the `nested_sampling` package, and
   `_tmp/main_wanglandau_1d.f`.
-- Scaffolded `c_landausampling/{wang_landau,_runs,_analysist,_archives,_tmp}`.
+- Scaffolded `c_landausampling/{wang_landau,1_runs,2_analysist,_archives,_tmp}`.
 - Wrote the `wang_landau/` package:
   - `wang_landau_sampler.py` (v1.0.0) — `WangLandauSampler`: flat-histogram
     density of states over relative energy per atom bins, small/large rattle
@@ -81,7 +81,7 @@ using a Python + AGOX GPR surrogate (like b), with the Fortran toy
 **Open items:**
 - Confirm the full real run completes and produces `g_of_E.*`,
   `thermodynamics.csv`, `heat_capacity.csv`.
-- Future: per-run dirs under `_runs/` and analysis under `_analysist/` as runs
+- Future: per-run dirs under `1_runs/` and analysis under `2_analysist/` as runs
   are launched.
 
 **Post-scaffold fix (main.py 1.0.0 → 1.0.1):** `--start-from-top` used
@@ -98,7 +98,7 @@ using a Python + AGOX GPR surrogate (like b), with the Fortran toy
 **Goal (user-confirmed via clarify):** Edit the Wang–Landau sampler so that
 systems with ≥2 atom species can perform a permutation (swap) move, controlled by
 a flag for swapping times per iteration, modeled on the reference
-`_archive/_analysist/1_result/66_MgOFe_20B/scripts/global_permutation_generator.py`.
+`_archive/2_analysist/1_result/66_MgOFe_20B/scripts/global_permutation_generator.py`.
 
 **Clarify decisions (all user-confirmed):**
 1. **Scope:** swap positions of two atoms of DIFFERENT species within the mobile
@@ -160,14 +160,14 @@ a flag for swapping times per iteration, modeled on the reference
 
 ---
 
-## Session 2026-08-30 (3) — Scaffold run dirs `_runs/c1` and `_runs/c2`
+## Session 2026-08-30 (3) — Scaffold run dirs `1_runs/c1` and `1_runs/c2`
 
 **Goal (user-confirmed via clarify):** Create two self-contained run dirs under
-`_runs/`: c1 uses the plain Fe/MgO `dataset`, c2 uses the B3-doped
+`1_runs/`: c1 uses the plain Fe/MgO `dataset`, c2 uses the B3-doped
 `dataset_boron3`.
 
 **Clarify decisions (all user-confirmed):**
-1. **Naming:** `_runs/c1_mgofe_N40_Emax04` and `_runs/c2_boron3_N40_Emax04`
+1. **Naming:** `1_runs/c1_mgofe_N40_Emax04` and `1_runs/c2_boron3_N40_Emax04`
    (`<NN>_<descriptor>` convention).
 2. **Params:** default for both — `--n-bins 40 --e-max 0.40 --mc-steps 20000000
    --small-step 0.05 --large-step 0.40 --temperatures 100..1000`.
@@ -178,7 +178,7 @@ a flag for swapping times per iteration, modeled on the reference
    dataset copies), ready to launch later — do NOT `pjsub`.
 
 **Actions taken:**
-- Created `_runs/c1_mgofe_N40_Emax04/` and `_runs/c2_boron3_N40_Emax04/`.
+- Created `1_runs/c1_mgofe_N40_Emax04/` and `1_runs/c2_boron3_N40_Emax04/`.
 - Copied `main.py` (v1.1.0) + `wang_landau/` package into each (self-contained).
 - Copied the datasets self-contained: `dataset/` (13 DBs, Fe/MgO) into c1,
   `dataset_boron3/` (7 DBs, B3Fe25Mg25O25) into c2. Removed embedded `.git`
@@ -197,8 +197,8 @@ a flag for swapping times per iteration, modeled on the reference
 
 **Open items:**
 - Launch the runs on HPC when ready: `pjsub
-  _runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04.sh` and `pjsub
-  _runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04.sh`.
+  1_runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04.sh` and `pjsub
+  1_runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04.sh`.
 
 **Time:** ~2026-08-30 21:15–21:30 (JST).
 
@@ -207,7 +207,7 @@ a flag for swapping times per iteration, modeled on the reference
 ## Session 2026-08-31 — c1 sweep job (mc-steps 10k/30k/50k)
 
 **Goal (user-confirmed via clarify):** Make a new job script in
-`_runs/c1_mgofe_N40_Emax04/` that runs the SAME parameters as
+`1_runs/c1_mgofe_N40_Emax04/` that runs the SAME parameters as
 `j_c1_mgofe_N40_Emax04.sh` but as an MC-steps sweep (10000 / 30000 / 50000),
 each saved to its own separate output dir.
 
@@ -221,7 +221,7 @@ each saved to its own separate output dir.
 4. Job script name: `j_c1_mgofe_N40_Emax04_sweep.sh`.
 
 **Actions taken:**
-- Created `_runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04_sweep.sh` (bare PJM,
+- Created `1_runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04_sweep.sh` (bare PJM,
   gpaw_env, 24 cores; three sequential `python ./main.py` calls).
 - Updated the run-dir `README.md` and `TUTORIAL.md` to document the sweep job.
 
@@ -231,7 +231,7 @@ each saved to its own separate output dir.
   --temperatures, --rng) are valid in this run's main.py (v1.1.0).
 
 **Open items:**
-- Launch `pjsub _runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04_sweep.sh` on HPC
+- Launch `pjsub 1_runs/c1_mgofe_N40_Emax04/j_c1_mgofe_N40_Emax04_sweep.sh` on HPC
   when ready.
 
 **Time:** ~2026-08-31 (JST).
@@ -241,7 +241,7 @@ each saved to its own separate output dir.
 ## Session 2026-08-31 (2) — c2 sweep job (mc-steps 10k/30k/50k)
 
 **Goal:** Mirror the c1 sweep for the c2 run (B3-doped) — a new job script in
-`_runs/c2_boron3_N40_Emax04/` running the SAME parameters as
+`1_runs/c2_boron3_N40_Emax04/` running the SAME parameters as
 `j_c2_boron3_N40_Emax04.sh` but as an MC-steps sweep (10000 / 30000 / 50000),
 each to its own output dir.
 
@@ -249,7 +249,7 @@ each to its own output dir.
 sweep, including the swap flags).
 
 **Actions taken:**
-- Created `_runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04_sweep.sh` (bare PJM,
+- Created `1_runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04_sweep.sh` (bare PJM,
   gpaw_env, 24 cores; three sequential `python ./main.py` calls, all params
   identical to the c2 baseline incl. swap: --dataset dataset_boron3 --n-bins 40
   --e-max 0.40 --small-step 0.05 --large-step 0.40 --perturb-symbols Fe,B
@@ -262,7 +262,7 @@ sweep, including the swap flags).
 **Results (real output):** job script created; docs updated. (Not launched.)
 
 **Open items:**
-- Launch `pjsub _runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04_sweep.sh` on HPC
+- Launch `pjsub 1_runs/c2_boron3_N40_Emax04/j_c2_boron3_N40_Emax04_sweep.sh` on HPC
   when ready.
 
 **Time:** ~2026-08-31 (JST).
@@ -278,7 +278,7 @@ metrics) for both c1 and c2, and plot the state density from each iteration.
 **Clarify decisions (all user-confirmed):**
 1. Fix the matplotlib math-text bug (the HPC PNGs failed) AND build the analysis
    tool.
-2. Single analysis script in `_analysist/` auto-discovering all `wl_output_*`
+2. Single analysis script in `2_analysist/` auto-discovering all `wl_output_*`
    dirs for c1 and c2, extracting per-output data + convergence metrics, plotting
    the state density per system.
 3. One state-density figure per system (c1: mc1000 + 3 sweeps = 4 curves; c2: 3
@@ -288,14 +288,14 @@ metrics) for both c1 and c2, and plot the state density from each iteration.
 - **Bug fix:** `main.py` g(E) x-label `r"$(E - E_{\\mathrm{min}})/N$"` had a
   double backslash (`\\mathrm`) → matplotlib mathtext `ParseSyntaxException`,
   crashing the HPC `g_of_E.png` write. Fixed to single `\mathrm` in all 5 copies
-  (root, `_runs/c1`, `_runs/c2`, `_analysist/c1`, `_analysist/c2`). Verified the
+  (root, `1_runs/c1`, `1_runs/c2`, `2_analysist/c1`, `2_analysist/c2`). Verified the
   label renders.
-- **New tool:** `_analysist/analyze_wl_outputs.py` (v1.0.0) auto-discovers
+- **New tool:** `2_analysist/analyze_wl_outputs.py` (v1.0.0) auto-discovers
   `wl_output_*`, reads `g_of_E.csv`/`thermodynamics.csv`/`heat_capacity.csv` and
   parses per-run segments from the job `.out` logs (init rel E, stages, final
   ln_f, rattle/swap moves, 1/t status, visited-bin trajectory). Writes
   `wl_analysis_summary.csv` + `state_density_c1.png` + `state_density_c2.png`.
-- **DISCUSSION.md** in `_analysist/` documenting the findings.
+- **DISCUSSION.md** in `2_analysist/` documenting the findings.
 
 **Results (real output):** tool runs; figures `state_density_c1.png` (2100x1350)
 and `state_density_c2.png` (2100x1350) + summary CSV produced. Key findings
@@ -311,14 +311,14 @@ and `state_density_c2.png` (2100x1350) + summary CSV produced. Key findings
 **Open items:**
 - Fix `initialize()` to start inside the tracked window / reject unphysical init
   rel E, and re-run the sweeps.
-- Note: user edited `_runs/c1`/`_runs/c2` job scripts to 64 cores and reverted
+- Note: user edited `1_runs/c1`/`1_runs/c2` job scripts to 64 cores and reverted
   the sweep README/TUTORIAL sections; those edits left untouched.
 
 **Time:** ~2026-08-31 (JST).
 
 ---
 
-## Session 2026-08-31 (4) — Fix initialize() to start inside the tracked window + new _runs
+## Session 2026-08-31 (4) — Fix initialize() to start inside the tracked window + new 1_runs
 
 **Goal (user-confirmed via clarify):** Fix the Wang-Landau initialization so the walker
 starts inside the tracked energy window (it previously started ABOVE it — c1 init rel E
@@ -329,7 +329,7 @@ run dirs for c1 and c2.
 1. Change the default init to start from the global minimum (`start_from_top=False`) and
    walk up (the robust choice; user also asked for an explicit `--start-from-min` flag).
 2. Bump `wang_landau_sampler.py` to 1.2.0; re-copy the fixed `wang_landau/` + `main.py`
-   into BOTH `_runs/c1` and `_runs/c2`; update VERSIONS/LOG.
+   into BOTH `1_runs/c1` and `1_runs/c2`; update VERSIONS/LOG.
 3. Regenerate the sweep job scripts (keep mc-steps 10k/30k/50k + same params, add
    `--start-from-min`).
 
@@ -340,8 +340,8 @@ run dirs for c1 and c2.
   checked the capped bin was in range, so rel E > e_max still landed in the top bin.
 - `main.py` 1.1.0 → 1.2.0: added explicit `--start-from-min` flag; default init = start from
   min; `--start-from-top` now `store_true` (was BooleanOptionalAction default True).
-- Re-copied fixed `main.py` + `wang_landau/*.py` into `_runs/c1_mgofe_N40_Emax04` and
-  `_runs/c2_boron3_N40_Emax04` (all v1.2.0).
+- Re-copied fixed `main.py` + `wang_landau/*.py` into `1_runs/c1_mgofe_N40_Emax04` and
+  `1_runs/c2_boron3_N40_Emax04` (all v1.2.0).
 - Regenerated `j_c1_..._sweep.sh` and `j_c2_..._sweep.sh` with `--start-from-min` added
   (kept 64-core headers, mc-steps 10k/30k/50k, same other params).
 - Updated VERSIONS.md.
@@ -363,7 +363,7 @@ run dirs for c1 and c2.
 
 ## Session 2026-08-31 (5) — Increase resolution: n_bins 100 + bigger sweep MC steps
 
-**Goal (user-confirmed via clarify):** Update the run scripts in `_runs/` to use a higher
+**Goal (user-confirmed via clarify):** Update the run scripts in `1_runs/` to use a higher
 resolution `--n-bins 100` (was 40), and bump the sweep MC-steps since the finer grid needs
 more visits.
 
@@ -461,7 +461,7 @@ across T, C_V≈0); no run reached flatness or the 1/t switch. Two distinct mech
 - Read c1 sweep outputs (30k/60k/100k) + `jc1_sweep.sh.6654357.out`; c2 sweep outputs
   (10k/30k/50k) + `j_c2_*_sweep.sh.6649512.out`; programmatically verified bin visitation,
   H share, and constant F per output.
-- Wrote `_analysist/c1_mgofe_N40_Emax04/DISCUSSION.md`: verdict, shared-failure table
+- Wrote `2_analysist/c1_mgofe_N40_Emax04/DISCUSSION.md`: verdict, shared-failure table
   (corrected c2's H claim — c2 H is all-zero, so table uses "bins with g>0"), two root-cause
   mechanisms, meaning for the bottom-up goal, and 4 recommended next steps (reduce
   --large-step, reject/re-seed near e_max, ground-state anchoring, re-sync c2 to v1.2.0 init).
@@ -486,10 +486,10 @@ column — the honest metric for c2 is "bins with ln_g>0" = 1/40.
 ## Session 2026-08-31 — Root fix v1.3.0: e-reject extrapolation guard + large-step default
 
 **Goal (user-confirmed via clarify):** Fix the root code per the DISCUSSION.md
-recommendations and re-copy to `_runs/`. User chose: BOTH core fixes (e-reject guard +
+recommendations and re-copy to `1_runs/`. User chose: BOTH core fixes (e-reject guard +
 default `--large-step` 0.40→0.20); guard strictness = reject only clearly-unphysical (far
 beyond e_max), keep capping for moderate over-window; re-copy fixed code to BOTH c1 and c2
-`_runs/`.
+`1_runs/`.
 
 **Actions taken (root code):**
 - `wang_landau/wang_landau_sampler.py` v1.2.0→1.3.0: added `e_reject` constructor param
@@ -508,8 +508,8 @@ beyond e_max), keep capping for moderate over-window; re-copy fixed code to BOTH
 0.20 + `--e-reject` row, tradeoff row, fixed stale `--start-from-top` "on"→"off"), README.AI.md
 (edge case #4 rewritten + example command), TUTORIAL.md (pitfall section + example command).
 
-**`_runs/` re-copy (per clarify):** copied fixed `main.py` + `wang_landau/*.py` (v1.3.0) to
-BOTH `_runs/c1_mgofe_N40_Emax04/` and `_runs/c2_boron3_N40_Emax04/` (brings c2 up to the
+**`1_runs/` re-copy (per clarify):** copied fixed `main.py` + `wang_landau/*.py` (v1.3.0) to
+BOTH `1_runs/c1_mgofe_N40_Emax04/` and `1_runs/c2_boron3_N40_Emax04/` (brings c2 up to the
 v1.2.0 init fix + new guard). Updated per-run README/TUTORIAL `--large-step 0.40`→0.20 and
 c1 README version ref v1.2.0→v1.3.0; updated both `j_*_sweep.sh` (large-step 0.20, echo
 v1.3.0). Compiled OK in run dirs.
@@ -537,7 +537,7 @@ relax to a local minimum via the GPR before binning). User then asked for an **u
 answer with clear pros/cons.
 
 **Actions taken:**
-- Read the reference `dataset/main.py` (the user-cited `_analysist/c1_mgofe_N40_Emax04/dataset/main.py`)
+- Read the reference `dataset/main.py` (the user-cited `2_analysist/c1_mgofe_N40_Emax04/dataset/main.py`)
   to ground "the GPR relax": `ParallelRelaxPostprocess(model=..., optimizer_run_kwargs={"steps": 100})`
   (lines 149-154), i.e. ~100 ASE steps using the GPR as the energy/force calculator.
 - Wrote the QnA answer into `README.md` (after the question). Rewrote once after the
@@ -574,7 +574,7 @@ cost estimate + local smoke test, if the user wants to compare estimators empiri
 README QnA discussion (MC-step + GPR relax = basin-hopping mode). User chose: BFGS on the
 GPR-as-calculator, fixing non-mobile atoms (matches reference `ParallelRelaxPostprocess`);
 default off (`--relax-steps 0`); add + run a fake-GPR relax smoke test; re-copy to BOTH c1
-and c2 `_runs/`.
+and c2 `1_runs/`.
 
 **Key finding (grounded):** The AGOX `GPR` is itself an ASE `Calculator` subclass
 (`implemented_properties = ['energy','forces']`, has `predict_forces`/`get_forces`), so it
@@ -600,8 +600,8 @@ bins (toy has 1 mobile DOF, basins collapse) — passes "not trapped at one bin"
 basin-hopping concept), README.AI.md (CLI row + fixed stale `--start-from-top` "on"→"off"),
 TUTORIAL.md (basin-hopping section).
 
-**`_runs/` re-copy (per clarify):** copied fixed `main.py` + `wang_landau/*.py` (v1.4.0) to
-BOTH `_runs/c1_mgofe_N40_Emax04/` and `_runs/c2_boron3_N40_Emax04/`. Compiled OK in both.
+**`1_runs/` re-copy (per clarify):** copied fixed `main.py` + `wang_landau/*.py` (v1.4.0) to
+BOTH `1_runs/c1_mgofe_N40_Emax04/` and `1_runs/c2_boron3_N40_Emax04/`. Compiled OK in both.
 
 **Decisions & reasoning:** relax defaults OFF to preserve the exact no-relax path; BFGS
 matches the AGOX relaxer; FixAtoms restricts relaxation to the mobile species (substrate
@@ -618,8 +618,8 @@ safety net after relaxation.
 
 ## Session 2026-08-31 (6) — GPR-relax sweep job scripts for c1 and c2
 
-**Goal (user-confirmed via clarify):** Add sh files for both runs (`_runs/c1`,
-`_runs/c2`) to perform a GPR-relax sweep using `--relax-steps` 10/30/50/100, at
+**Goal (user-confirmed via clarify):** Add sh files for both runs (`1_runs/c1`,
+`1_runs/c2`) to perform a GPR-relax sweep using `--relax-steps` 10/30/50/100, at
 `--mc-steps 30000`, each to its own output dir.
 
 **Clarify decisions (all user-confirmed):**
@@ -634,9 +634,9 @@ safety net after relaxation.
 4. Names: `jc1_sweepGPR.sh` (c1), `jc2_sweepGPR.sh` (c2).
 
 **Actions taken:**
-- Created `_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh` (4 runs: relax-steps
+- Created `1_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh` (4 runs: relax-steps
   10/30/50/100, mc-steps 30000, outputs wl_output_c1_relax10/30/50/100).
-- Created `_runs/c2_boron3_N40_Emax04/jc2_sweepGPR.sh` (same + swap flags,
+- Created `1_runs/c2_boron3_N40_Emax04/jc2_sweepGPR.sh` (same + swap flags,
   outputs wl_output_c2_relax10/30/50/100).
 - Both use 64-core PJM headers (matching the current sweep scripts).
 
@@ -650,3 +650,7 @@ safety net after relaxation.
 - Launch `pjsub` the relax sweeps on HPC when ready.
 
 **Time:** ~2026-08-31 (JST).
+
+## 2026-09-04 00:13 JST
+
+- AGENTS.md: PROMPTS.md editable only on owner permission; may hold owner task prompts to run (dropped-in prompts = ordinary owner command).
