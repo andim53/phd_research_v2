@@ -391,3 +391,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 07:26 JST — CI plot axis/data limits (--ci-* flags) + replot 7-10
 
 - **2_analysist/scripts/xrd_simulate_crystallinity.py 1.2.0 -> 1.3.0** — add `--ci-x-data-max` (drop plotted rows with window centre above it; rows kept in JSON/CSV), `--ci-x-max` (x-axis upper), `--ci-y-max` (y-axis upper) to plot_ci_from_data + CLI (live + --from-json). Replotted crystallinity_vs_energy.png for 11_bTa leaves 7-10 from each xrd_plots.json with `--ci-x-data-max 0.25 --ci-x-max 0.3 --ci-y-max 1.0`. Verified (10_fxg_5b): 3 points/line (centres 0.05/0.15/0.25), xlim (0,0.3), ylim (0,1).
+
+## 2026-09-04 08:21 JST — XRD crystallinity analysis on 17_PPt families 0_plus5cell / 1_plus0cell / 2_plus3cell
+
+- Data-only run (xrd_extract_structures.py 1.0.0 + xrd_simulate_crystallinity.py 1.3.0 unchanged). Stage 1: 13 Pt-P leaves -> manifest/CIFs. Stage 2 (pymat_xrd, 3-way parallel): powder-XRD average + CI per energy window per leaf, plotting with `--ci-x-data-max 0.25 --ci-x-max 0.3 --ci-y-max 1.0` (energy x-label $E_i-E_glob$). All 13 wrote xrd_plots.json + crystallinity.csv + crystallinity_vs_energy.png under <leaf>/xrd_out/. Cells up to 320 atoms (0_PPt_4x4_20P = Pt256 P64).
