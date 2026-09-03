@@ -163,6 +163,33 @@ $PY run_analysis_a_runs.py \
     --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
 ```
 
+### 4d.1b — Extract JSON for all a-runs (a1–a10)
+
+Loop the single-seed runner over every a-run to write `analysis_data.json` into each
+run's `analysis_a_runs/` dir (one JSON per run, no plots):
+
+```bash
+cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+
+for run in a1_mgofe_Seed3_Iter300 a2_mgofe_Seed3_Iter500 a3_mgofe_Seed3_Iter700 \
+           a4_mgofe_Seed3_Iter500_k3 a5_mgofe_Seed3_Iter500_k4 a6_mgofe_Seed3_Iter500_k5 \
+           a7_mgofe_Seed3_Iter500_k4_nw2 a8_mgofe_Seed3_Iter500_k4_nw3 a9_mgofe_Seed3_Iter500_k4_nw4 \
+           a10_mgofeb_Seed3_Iter500; do
+  $PY run_analysis_a_runs.py --dataset "$run/output" --outdir "$run/analysis_a_runs" --extract
+done
+# -> writes <run>/analysis_a_runs/analysis_data.json for each of a1..a10
+```
+
+Each run's dataset is its `output/` dir (holding `seed_3/1_db/db_3.db`); the JSON lands
+in that run's `analysis_a_runs/`. To plot any one of them back without the DB:
+
+```bash
+$PY run_analysis_a_runs.py \
+    --plot-from-json a3_mgofe_Seed3_Iter700/analysis_a_runs/analysis_data.json \
+    --outdir a3_mgofe_Seed3_Iter700/analysis_a_runs
+```
+
 ### 4d.2 — Multi-seed heavy run (e.g. 71)
 
 ```bash
