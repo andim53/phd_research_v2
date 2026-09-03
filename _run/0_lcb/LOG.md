@@ -395,3 +395,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 08:21 JST — XRD crystallinity analysis on 17_PPt families 0_plus5cell / 1_plus0cell / 2_plus3cell
 
 - Data-only run (xrd_extract_structures.py 1.0.0 + xrd_simulate_crystallinity.py 1.3.0 unchanged). Stage 1: 13 Pt-P leaves -> manifest/CIFs. Stage 2 (pymat_xrd, 3-way parallel): powder-XRD average + CI per energy window per leaf, plotting with `--ci-x-data-max 0.25 --ci-x-max 0.3 --ci-y-max 1.0` (energy x-label $E_i-E_glob$). All 13 wrote xrd_plots.json + crystallinity.csv + crystallinity_vs_energy.png under <leaf>/xrd_out/. Cells up to 320 atoms (0_PPt_4x4_20P = Pt256 P64).
+
+## 2026-09-04 08:23 JST — Add 17_PPt/DISCUSSION.md + Obsidian report (XRD crystallinity)
+
+- On owner command: added `2_analysist/17_PPt/DISCUSSION.md` (method, cells/composition, per-window CI table, observations grounded in the numbers). Prepend a summary entry to Obsidian report `afi/report/2026-09-04.md` covering families 0_plus5cell / 1_plus0cell / 2_plus3cell CI findings (Pt-only most crystalline; P-doped low flat integrated CI; 4x4 20P outlier).
