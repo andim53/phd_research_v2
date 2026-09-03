@@ -31,7 +31,11 @@ No task is complete until all three are present and consistent with the work don
 - **Versions** — `VERSIONS.md`: one table row per source file with its
   `__version__`, plus the bump rules.
 - **Prompts** — `PROMPTS.md`: future-work prompt log with a single shared
-  `## Grammar notes` section.
+  `## Grammar notes` section. `PROMPTS.md` is **editable only when the owner grants
+  permission**; it may hold the owner's pending task prompts (including the container
+  brief telling the agent to improve a prompt, or to **run** a task). When the owner
+  drops a prompt in for the agent to execute, treat it as an ordinary owner command:
+  clarify first, then perform the task per these rules.
 
 ## 3. Rules of Operation
 

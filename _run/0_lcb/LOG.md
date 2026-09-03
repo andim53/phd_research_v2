@@ -339,3 +339,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 
 **Time:** 2026-09-02
 
+
+## 2026-09-04 00:13 JST
+
+- AGENTS.md: PROMPTS.md editable only on owner permission; may hold owner task prompts to run (dropped-in prompts = ordinary owner command).
