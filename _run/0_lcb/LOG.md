@@ -359,3 +359,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 05:57 JST — Stage-1 progression: x-axis cap (--x-max)
 
 - **run_analysis_indices.py 2.5.0 -> 2.6.0** — add `--x-max` option to cap the Stage-1 progression x-axis (clips curves beyond the value). Threaded through _plot_progression_from_data / step1_progression / replot_from_json / main, live + --from-json. Regenerated 11_bTa/7_fxg_0b progression PNG from JSON with `--seeds 0-4 --xlabel "Sampled Structure" --x-max 140`; verified ax.get_xlim() == (0, 140).
+
+## 2026-09-04 06:00 JST — Regenerate progression PNGs for 8_fxg_1b / 9_fxg_3b / 10_fxg_5b (seeds 0-4, xlabel, x-max 140)
+
+- Data-only regeneration (no code change; run_analysis_indices.py remains 2.6.0). Re-ran `--from-json ... --seeds 0-4 --xlabel "Sampled Structure" --x-max 140` on 11_bTa/8_fxg_1b, 9_fxg_3b, 10_fxg_5b (leaf 8_fxg_3b in request confirmed as typo for 8_fxg_1b). Each PNG verified: 5 curves (Seeds 0-4), xlim (0,140). PNGs are gitignored outputs.
