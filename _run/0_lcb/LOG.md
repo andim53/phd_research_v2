@@ -399,3 +399,8 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 08:23 JST — Add 17_PPt/DISCUSSION.md + Obsidian report (XRD crystallinity)
 
 - On owner command: added `2_analysist/17_PPt/DISCUSSION.md` (method, cells/composition, per-window CI table, observations grounded in the numbers). Prepend a summary entry to Obsidian report `afi/report/2026-09-04.md` covering families 0_plus5cell / 1_plus0cell / 2_plus3cell CI findings (Pt-only most crystalline; P-doped low flat integrated CI; 4x4 20P outlier).
+
+## 2026-09-04 08:33 JST — xrd_extract_structures label-precision fix (1.1.0) + 7_fxg_0b 0-0.03 re-run
+
+- **2_analysist/scripts/xrd_extract_structures.py 1.0.0 -> 1.1.0** — window labels now use precision derived from bin_width (`_window_label`/`_label_decimals`), fixing duplicate/collapsed labels (e.g. '0.01_0.01') that occurred with fine bins (0.005 eV/atom) under the old fixed %.2f.
+- Re-ran Stage 1 for 11_bTa/7_fxg_0b (pure Ta, E_glob=-517.494 eV, 3967 structs iter>=10) with `--e-max 0.03 --bin-width 0.005` -> 6 windows [0,0.005)...[0.025,0.030]; outputs to new 11_bTa/7_fxg_0b/xrd_out_003/ (kept original 0-0.5 xrd_out). Stage 2 (pymat_xrd) with `--ci-x-data-max 0.03 --ci-x-max 0.03 --ci-y-max 1.0`: peak-fraction CI 1.000->0.965 across energy, integrated CI ~0.83-0.84 (near-flat). Wrote xrd_plots.json + both PNGs.

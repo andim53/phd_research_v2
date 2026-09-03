@@ -36,3 +36,5 @@ old→new in `LOG.md`.
 | `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.2.0 | CI-plot x-axis uses shared energy label E_LABEL |
 
 | `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.3.0 | `--ci-x-data-max`/`--ci-x-max`/`--ci-y-max` on CI plot |
+
+| `2_analysist/scripts/xrd_extract_structures.py` | 1.1.0 | adaptive window-label precision for fine bins |
