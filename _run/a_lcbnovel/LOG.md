@@ -1579,3 +1579,7 @@ analysis, and update AGENTS.md.
 ## 2026-09-04 00:26 JST
 
 - PROMPTS.md: added #3 — "Make a new run, with dipole correction."
+
+## 2026-09-04 00:35 JST
+
+- run_analysis_a_runs.py 1.0.0->1.1.0, run_analysis_indices.py 2.0.0->2.1.0: added --extract (DB->single self-describing analysis_data.json with ALL raw data for all 3 plots) and --plot-from-json (JSON->same PNGs, DB-free). Verified bit-identical PNGs (full vs from-json) on a1 (single-seed) and 71 (multi-seed, 15 seeds). VERSIONS.md updated.

@@ -34,23 +34,37 @@ All arguments mirror the reference runner:
   --normalize-density : normalize state-density panel to [0,1] (Stage 2 only)
   --start-iter     : keep only structures with AGOX iteration >= this (default 10)
 
+Two-phase (extract / plot-from-json) mode:
+  --extract        : read the DB and write a SINGLE self-describing JSON file
+                     (analysis_data.json in --outdir) holding ALL raw data needed to
+                     reproduce every plot. No plots are produced.
+  --plot-from-json <file> : plot ONLY from that JSON file (the DB is not read) and
+                     reproduce the same PNGs — identical to plotting directly from
+                     the database. Each flag works on its own.
+
 Run from /home/think/Desktop/research/_run/a_lcbnovel/2_analysist with the
 agox_v2 conda env:
   /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_a_runs.py \
       --dataset a1_mgofe_Seed3_Iter300/output \
       --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
   ... --e-max 0.8
+  ... --extract --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
+  ... --plot-from-json a1_mgofe_Seed3_Iter300/analysis_a_runs/analysis_data.json \
+      --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
 """
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import glob
+import json
 import os
 import re
 import sys
+from collections import OrderedDict
+from datetime import datetime
 
 import numpy as np
 import matplotlib
@@ -139,7 +153,6 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
     filtered by iteration >= start_iter. Returns an ordered dict
     {seed_label: (structures, energies)} plus the flattened structures/energies.
     Labels use the actual seed number (e.g. 'Seed 3'), not a positional index."""
-    from collections import OrderedDict
     db_paths = sorted(glob.glob(os.path.join(dataset_dir, "seed_*/1_db/db_*.db")))
     if not db_paths:
         raise FileNotFoundError(f"No DBs matched {os.path.join(dataset_dir, 'seed_*/1_db/db_*.db')}")
@@ -160,23 +173,37 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
     return seed_data, all_structs, np.asarray(all_energies, dtype=float)
 
 
+def compute_pca(structures):
+    """PCA projection (Fingerprint PC1) of the structures onto the leading
+    eigenvector — the X_eigen array consumed by Stage 2's landscape plot."""
+    fp = Fingerprint.from_atoms(structures[0])
+    data = np.array([fp.create_features(s).flatten() for s in structures])
+    Xc = data - np.mean(data, axis=0)
+    cov = np.cov(Xc, rowvar=False)
+    evals, evecs = np.linalg.eigh(cov)
+    order = np.argsort(evals)[::-1]
+    return Xc @ evecs[:, order[0]]
+
+
 # ---------------------------------------------------------------------------
 # Stage 1 — Best-so-far progression plot (single seed)
 # ---------------------------------------------------------------------------
-def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
+def step1_progression(seed_data, outdir, num_atoms, e_max=None, export_xsf=True):
     """Single-seed best-so-far relative-energy-per-atom progression plot, mirroring
     the multi-seed runner's Stage 1 but labelled with the actual seed number. Each
     seed's best-so-far curve is drawn (typically one for the a-runs), with bullets on
     the low-energy candidate windows (0-20, 20-40, 40-60, 60-80) and the global
     ground state exported as .xsf.
 
+    seed_data is an OrderedDict {label: (structures_or_None, energies)}. When
+    structures are None (plot-from-json mode) the .xsf exports are skipped
+    (export_xsf=False) but the PNG is reproduced identically.
+
     If e_max is given (eV/atom), each seed's structures are filtered to those with
     relative-energy-per-atom <= e_max (i.e. (E - seed_min)/n_atoms <= e_max), matching
     the --e-max energy cap used in Stage 2/3."""
     print("\n[STAGE 1] Best-so-far progression plot (single seed)")
     from matplotlib.ticker import AutoMinorLocator
-
-    seed_data, _, _ = load_all_seeds_by_seed(dataset_dir, start_iter=start_iter)
 
     # Capture the first seed's filtered structures/energies for the bullets + xsf export
     first_structs = None
@@ -190,21 +217,22 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
     cmap = plt.get_cmap("tab10")
     for i, s_name in enumerate(sorted_seed_names):
         s_structs, s_energies = seed_data[s_name]
-        if not s_structs:
+        if len(s_energies) == 0:
             continue
         # relative energy per atom within this seed (mirrors calculate_relative_energy)
         e_min = s_energies.min()
-        s_rel_e_atom = np.asarray([(e - e_min) / len(a) for e, a in zip(s_energies, s_structs)])
+        s_rel_e_atom = np.asarray([(e - e_min) / num_atoms for e in s_energies])
         # apply the energy filter (relative to the seed min, per atom)
         if e_max is not None:
             mask = s_rel_e_atom <= e_max
             s_rel_e_atom = s_rel_e_atom[mask]
-            s_structs = [a for a, m in zip(s_structs, mask) if m]
+            s_structs = [a for a, m in zip(s_structs, mask) if m] if s_structs else None
         if len(s_rel_e_atom) == 0:
             continue
         # remember the first seed's filtered data for bullets/xsf
-        if first_structs is None:
+        if first_structs is None and s_structs is not None:
             first_structs = s_structs
+        if first_rel_e is None:
             first_rel_e = s_rel_e_atom
             first_n = len(s_rel_e_atom)
             first_label = s_name
@@ -237,15 +265,15 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
     # candidate window (0-20, 20-40, 40-60, 60-80), plus the global ground state. ---
     plot_dir = os.path.join(outdir, "progression_plots")
     os.makedirs(plot_dir, exist_ok=True)
-    if first_structs is not None:
+    if first_rel_e is not None:
         # global minimum across ALL data (for the ground-state bullet)
         global_min_e = min(
             (energies.min() for _, (_, energies) in seed_data.items() if len(energies) > 0),
             default=None)
         gs_struct = None
-        if global_min_e is not None:
+        if global_min_e is not None and export_xsf:
             for s_name, (s_structs, s_energies) in seed_data.items():
-                if len(s_energies) > 0:
+                if len(s_energies) > 0 and s_structs is not None:
                     gi = int(s_energies.argmin())
                     gs_struct = s_structs[gi]
                     break
@@ -261,25 +289,27 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
             ax.plot(jmin, first_rel_e[jmin], "o", ms=7, zorder=60,
                     mfc="black", mec="white", mew=1.2)
             # save the structure
-            fname = os.path.join(plot_dir, f"seed0_min_w{wlo}-{whi}.xsf")
-            ase_write(fname, first_structs[jmin])
-            saved.append(fname)
+            if export_xsf and first_structs is not None:
+                fname = os.path.join(plot_dir, f"seed0_min_w{wlo}-{whi}.xsf")
+                ase_write(fname, first_structs[jmin])
+                saved.append(fname)
         # global ground state bullet, plotted at its nearest first-seed candidate position
-        if global_min_e is not None and gs_struct is not None:
+        if global_min_e is not None:
             # ground-state rel-energy-per-atom relative to the first seed's absolute minimum
             first_min_abs = min(
                 (energies.min() for _, (_, energies) in seed_data.items()
                  if len(energies) > 0), default=global_min_e)
-            gs_rel = (global_min_e - first_min_abs) / len(gs_struct)
+            gs_rel = (global_min_e - first_min_abs) / num_atoms
             # locate the nearest first-seed candidate index to the ground-state energy
             gs_x = first_n - 1
             if len(first_rel_e) > 0:
                 gs_x = int(np.argmin(np.abs(first_rel_e - gs_rel)))
             ax.plot(gs_x, gs_rel, "*", ms=14, zorder=61,
                     mfc="red", mec="white", mew=1.2)
-            fname = os.path.join(plot_dir, "global_gs.xsf")
-            ase_write(fname, gs_struct)
-            saved.append(fname)
+            if export_xsf and gs_struct is not None:
+                fname = os.path.join(plot_dir, "global_gs.xsf")
+                ase_write(fname, gs_struct)
+                saved.append(fname)
         if saved:
             print(f"  -> saved {len(saved)} xsf structures:")
             for f in saved:
@@ -296,19 +326,14 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None):
 # ---------------------------------------------------------------------------
 # Stage 2 — Landscape analysis (PCA + state density)
 # ---------------------------------------------------------------------------
-def step2_landscape(structures, energies, outdir, e_max=None, normalize_density=False):
+def step2_landscape(structures, energies, outdir, num_atoms, e_max=None,
+                    normalize_density=False, x_eigen=None):
     print("\n[STAGE 2] Landscape analysis")
-    num_atoms = len(structures[0])
     rel = (energies - energies.min()) / num_atoms
 
-    # PCA via Fingerprint descriptors
-    fp = Fingerprint.from_atoms(structures[0])
-    data = np.array([fp.create_features(s).flatten() for s in structures])
-    Xc = data - np.mean(data, axis=0)
-    cov = np.cov(Xc, rowvar=False)
-    evals, evecs = np.linalg.eigh(cov)
-    order = np.argsort(evals)[::-1]
-    X_eigen = Xc @ evecs[:, order[0]]
+    # PCA via Fingerprint descriptors (or reuse a precomputed projection)
+    if x_eigen is None:
+        x_eigen = compute_pca(structures)
 
     os.makedirs(outdir, exist_ok=True)
 
@@ -321,7 +346,7 @@ def step2_landscape(structures, energies, outdir, e_max=None, normalize_density=
                        else "State Density\n(config./eV)")
 
     fig = plot_structure_landscape(
-        X_eigen, rel, z_data=None,
+        x_eigen, rel, z_data=None,
         save_path=outdir,
         animate_scatter=False,
         figsize=(3, 3),
@@ -361,9 +386,8 @@ def calculate_boltzmann_probs(energies, kde_model, T):
     return probs / probs.max()
 
 
-def step3_probability(structures, energies, outdir, e_max=None):
+def step3_probability(energies, outdir, num_atoms, e_max=None):
     print("\n[STAGE 3] Boltzmann probability analysis")
-    num_atoms = len(structures[0])
     rel = (energies - energies.min()) / num_atoms
     kde = gaussian_kde(rel)
 
@@ -388,14 +412,99 @@ def step3_probability(structures, energies, outdir, e_max=None):
 
 
 # ---------------------------------------------------------------------------
+# Extract / plot-from-json helpers
+# ---------------------------------------------------------------------------
+def extract_json(dataset_dir, outdir, start_iter=10, e_max=None):
+    """Read the DB and write a single self-describing JSON file holding ALL raw
+    data needed to reproduce every plot (progression, landscape, Boltzmann P(T)).
+    The JSON is independent and AI-readable: clear structure, named fields, and
+    enough context to interpret each value without the database."""
+    seed_data, all_structs, all_energies = load_all_seeds_by_seed(dataset_dir, start_iter=start_iter)
+    num_atoms = len(all_structs[0])
+
+    seeds = []
+    for s_name, (s_structs, s_energies) in seed_data.items():
+        e_min = s_energies.min()
+        s_rel = np.asarray([(e - e_min) / num_atoms for e in s_energies])
+        seeds.append({
+            "label": s_name,
+            "n_structures": int(len(s_energies)),
+            "energies_eV": [float(x) for x in s_energies],
+            "rel_energy_per_atom_eV": [float(x) for x in s_rel],
+            "best_so_far_eV_per_atom": [float(x) for x in np.minimum.accumulate(s_rel)],
+        })
+
+    rel = (all_energies - all_energies.min()) / num_atoms
+    x_eigen = compute_pca(all_structs)
+
+    payload = {
+        "schema_version": "1.0",
+        "runner": os.path.basename(__file__),
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "dataset": dataset_dir,
+        "start_iter": int(start_iter),
+        "e_max": e_max,
+        "num_atoms": int(num_atoms),
+        "description": (
+            "Self-describing analysis data extracted from the AGOX database. "
+            "'seeds' holds per-seed absolute DFT energies (eV) and relative energy "
+            "per atom (eV/atom, relative to that seed's minimum). 'global' holds the "
+            "flattened relative energies and the PCA projection (x_eigen) used by the "
+            "Stage 2 landscape. All three plots can be reproduced from this file alone "
+            "via --plot-from-json."
+        ),
+        "seeds": seeds,
+        "global": {
+            "n_structures": int(len(all_energies)),
+            "rel_energy_per_atom_eV": [float(x) for x in rel],
+            "x_eigen": [float(x) for x in x_eigen],
+        },
+    }
+
+    os.makedirs(outdir, exist_ok=True)
+    out_path = os.path.join(outdir, "analysis_data.json")
+    with open(out_path, "w") as f:
+        json.dump(payload, f, indent=2)
+    print(f"  -> extracted analysis data to {out_path}")
+    return out_path
+
+
+def plot_from_json(json_path, outdir, e_max=None, normalize_density=False):
+    """Plot ONLY from the given JSON file (the DB is not read), reproducing the
+    same PNGs as plotting directly from the database."""
+    with open(json_path) as f:
+        payload = json.load(f)
+    num_atoms = int(payload["num_atoms"])
+
+    seed_data = OrderedDict()
+    for s in payload["seeds"]:
+        seed_data[s["label"]] = (None, np.asarray(s["energies_eV"], dtype=float))
+
+    rel = np.asarray(payload["global"]["rel_energy_per_atom_eV"], dtype=float)
+    x_eigen = np.asarray(payload["global"]["x_eigen"], dtype=float)
+    # Stage 2/3 only consume rel = (E - Emin)/N; passing rel*N as "energies"
+    # reproduces the identical rel (rel.min() == 0), so no absolute energies needed.
+    energies = rel * num_atoms
+
+    os.makedirs(outdir, exist_ok=True)
+    step1_progression(seed_data, outdir, num_atoms, e_max=e_max, export_xsf=False)
+    step2_landscape(None, energies, outdir, num_atoms,
+                    e_max=e_max, normalize_density=normalize_density, x_eigen=x_eigen)
+    step3_probability(energies, outdir, num_atoms, e_max=e_max)
+
+    print(f"\nDONE. Outputs under: {os.path.abspath(outdir)}")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser(
         description="Single-seed AGOX analysis (Stage 2 landscape + Stage 3 Boltzmann "
                     "P(T)) for the Novelty-LCB a-runs (e.g. a1_mgofe_Seed3_Iter300)")
-    parser.add_argument("--dataset", required=True,
-                        help="path to the run output dir containing seed_*/1_db/db_*.db")
+    parser.add_argument("--dataset", default=None,
+                            help="path to the run output dir containing seed_*/1_db/db_*.db "
+                                 "(not needed with --plot-from-json)")
     parser.add_argument("--outdir", required=True,
                         help="output dir for the analysis figures")
     parser.add_argument("--e-max", type=float, default=None,
@@ -408,7 +517,19 @@ def main():
                         help="keep only structures with AGOX iteration >= this value "
                              "(inclusive), mirroring process_database.py's start_iter. "
                              "Default 10.")
+    parser.add_argument("--extract", action="store_true",
+                        help="read the DB and write a single self-describing JSON file "
+                             "(analysis_data.json in --outdir) with ALL raw data needed "
+                             "to reproduce every plot. No plots are produced.")
+    parser.add_argument("--plot-from-json", metavar="JSON", default=None,
+                        help="plot ONLY from the given JSON file (the DB is not read) "
+                             "and reproduce the same PNGs. Each flag works on its own.")
     args = parser.parse_args()
+
+    if args.extract and args.plot_from_json:
+        parser.error("--extract and --plot-from-json are mutually exclusive")
+    if args.dataset is None and not args.plot_from_json:
+        parser.error("--dataset is required (unless --plot-from-json is used)")
 
     print("=" * 70)
     print("SINGLE-SEED AGOX ANALYSIS (Novelty-LCB a-runs)")
@@ -421,15 +542,33 @@ def main():
     print(f"start-iter : {args.start_iter} (iteration >= {args.start_iter})")
     print("=" * 70)
 
+    # --- Extract-only mode: DB -> JSON, no plots ---------------------------
+    if args.extract:
+        extract_json(args.dataset, args.outdir, start_iter=args.start_iter, e_max=args.e_max)
+        print(f"\nDONE. JSON under: {os.path.abspath(args.outdir)}")
+        return
+
+    # --- Plot-from-json mode: JSON -> PNGs, no DB read ----------------------
+    if args.plot_from_json:
+        if not os.path.isfile(args.plot_from_json):
+            parser.error(f"--plot-from-json file not found: {args.plot_from_json}")
+        plot_from_json(args.plot_from_json, args.outdir,
+                       e_max=args.e_max, normalize_density=args.normalize_density)
+        return
+
+    # --- Full pipeline mode: DB -> PNGs -------------------------------------
     structures, energies = load_all_seeds(args.dataset, start_iter=args.start_iter)
     print(f"\nTotal: {len(structures)} structures, {len(structures[0])} atoms each "
           f"(iteration >= {args.start_iter})")
+    num_atoms = len(structures[0])
 
     os.makedirs(args.outdir, exist_ok=True)
-    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter, e_max=args.e_max)
-    step2_landscape(structures, energies, args.outdir,
+    seed_data, _, _ = load_all_seeds_by_seed(args.dataset, start_iter=args.start_iter)
+    step1_progression(seed_data, args.outdir, num_atoms,
+                      e_max=args.e_max, export_xsf=True)
+    step2_landscape(structures, energies, args.outdir, num_atoms,
                     e_max=args.e_max, normalize_density=args.normalize_density)
-    step3_probability(structures, energies, args.outdir, e_max=args.e_max)
+    step3_probability(energies, args.outdir, num_atoms, e_max=args.e_max)
 
     print(f"\nDONE. Outputs under: {os.path.abspath(args.outdir)}")
 
