@@ -12,7 +12,10 @@ Add a CLI flag `--extract` that reads the database and writes a **single JSON fi
 containing **all the raw data** needed to produce every plot the runner currently
 outputs: the per-seed best-so-far progression, the PCA landscape + state density
 (`conf_space.png`), and the Boltzmann probability vs temperature
-(`binding_probability_vs_temperature.png`).
+(`binding_probability_vs_temperature.png`). The JSON must be an **independent,
+self-describing file** that an AI can read on its own to understand the resulting
+data (clear structure, named fields, and enough context to interpret each value
+without the database).
 
 Add a second, **independent** flag `--plot-from-json` that plots **only from that
 JSON file** (the database is not read) and reproduces the **same PNGs** — identical

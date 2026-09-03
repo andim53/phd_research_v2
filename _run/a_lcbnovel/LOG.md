@@ -1567,3 +1567,7 @@ analysis, and update AGENTS.md.
 ## 2026-09-04 00:18 JST
 
 - AGENTS.md: PROMPTS.md section rewritten — no more grammar notes/flag codes; prompts numbered simply #1/#2/#3 (newest last). PROMPTS.md file updated to match (grammar blocks/notes removed).
+
+## 2026-09-04 00:21 JST
+
+- PROMPTS.md #1: added requirement that the extracted JSON be an independent, self-describing file an AI can read to understand the resulting data.
