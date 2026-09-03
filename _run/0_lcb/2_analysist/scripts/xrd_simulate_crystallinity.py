@@ -32,7 +32,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import json
@@ -58,6 +58,8 @@ plt.rcParams.update({
 TT_MIN_DEFAULT, TT_MAX_DEFAULT = 10.0, 90.0
 TT_STEP = 0.02  # 2theta grid step for resampling/averaging
 BROADEN_SIGMA = 0.15  # deg — Gaussian broaden each delta to mimic instrument
+# energy-axis title shared with the analysis progression/landscape plots
+E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"
 
 
 def load_calc():
@@ -146,7 +148,7 @@ def plot_ci_from_data(data, outdir):
             label="peak-fraction CI")
     ax.plot(xs, [r["integrated_ci"] for r in data["rows"]], "s--",
             label="integrated CI")
-    ax.set_xlabel("Relative energy (eV/atom)"); ax.set_ylabel("Crystallinity index")
+    ax.set_xlabel(E_LABEL); ax.set_ylabel("Crystallinity index")
     ax.set_title(f"{leaf}")
     ax.set_xlim(0, data.get("e_max", 0.5))
     ax.legend()

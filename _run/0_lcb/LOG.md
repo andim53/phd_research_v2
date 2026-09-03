@@ -379,3 +379,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 06:48 JST — New helper: extract_rel_window_xsf.py (rel-E/atom .xsf export)
 
 - Added `2_analysist/scripts/extract_rel_window_xsf.py` (v1.0.0, agox_v2) — exports .xsf for structures in relative-E/atom windows around targets (default 0.01/0.1/0.15) +/- tol (0.005), per-leaf global-min reference, up to N (3) lowest per window. Ran on 11_bTa leaves 7_fxg_0b (8 xsf), 8_fxg_1b (7), 9_fxg_3b (9), 10_fxg_5b (9). Outputs under each <leaf>/analysis_indices/rel_window_xsf/ (gitignored/regenerable).
+
+## 2026-09-04 07:18 JST — xrd_simulate_crystallinity.py: x-axis title -> energy label (1.2.0)
+
+- **2_analysist/scripts/xrd_simulate_crystallinity.py 1.1.0 -> 1.2.0** — set crystallinity_vs_energy.png x-axis title to the shared energy label `E_LABEL = $E_{i}-E_{glob}$ (eV/atom)` (same as the analysis progression/landscape energy axis). Added module E_LABEL const. Re-running Stage 2 (with --json) for 11_bTa leaves 7-10 to regenerate xrd_out PNGs; 7_fxg_0b verified xlabel = '$E_{i}-E_{glob}$ (eV/atom)'.

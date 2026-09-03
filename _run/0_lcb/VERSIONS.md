@@ -32,3 +32,5 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.8.0 | `--no-gs-star` flag on Stage-1 progression |
 
 | `2_analysist/scripts/extract_rel_window_xsf.py` | 1.0.0 | new: .xsf export by rel-E/atom window |
+
+| `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.2.0 | CI-plot x-axis uses shared energy label E_LABEL |
