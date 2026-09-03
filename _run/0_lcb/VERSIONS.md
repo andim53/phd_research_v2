@@ -26,3 +26,5 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.5.0 | `--xlabel` custom Stage-1 x-axis title |
 
 | `2_analysist/run_analysis_indices.py` | 2.6.0 | `--x-max` cap on Stage-1 x-axis |
+
+| `2_analysist/run_analysis_indices.py` | 2.7.0 | `--no-bullets` flag on Stage-1 progression |

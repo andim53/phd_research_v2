@@ -363,3 +363,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 06:00 JST — Regenerate progression PNGs for 8_fxg_1b / 9_fxg_3b / 10_fxg_5b (seeds 0-4, xlabel, x-max 140)
 
 - Data-only regeneration (no code change; run_analysis_indices.py remains 2.6.0). Re-ran `--from-json ... --seeds 0-4 --xlabel "Sampled Structure" --x-max 140` on 11_bTa/8_fxg_1b, 9_fxg_3b, 10_fxg_5b (leaf 8_fxg_3b in request confirmed as typo for 8_fxg_1b). Each PNG verified: 5 curves (Seeds 0-4), xlim (0,140). PNGs are gitignored outputs.
+
+## 2026-09-04 06:07 JST — Stage-1 progression: no-bullets flag + replot 7-10
+
+- **run_analysis_indices.py 2.6.0 -> 2.7.0** — add `--no-bullets` flag to skip the Seed-0 window-minimum bullets (global GS star always kept). Threaded through _plot_progression_from_data / step1_progression / replot_from_json / main, live + --from-json. Replotted progression PNGs for 11_bTa/7_fxg_0b, 8_fxg_1b, 9_fxg_3b, 10_fxg_5b with `--seeds 0-4 --xlabel "Sampled Structure" --x-max 140 --no-bullets`. Verified on 8_fxg_1b: 6 lines = 5 curves (no markers) + GS star only; xlim (0,140); legend Seeds 0-4.
