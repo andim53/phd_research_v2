@@ -124,6 +124,39 @@ Pitfall: with `bin_width` finer than the label precision (e.g. 0.005 eV/atom) th
 window labels must carry enough decimals — the extraction script (v1.1.0+) derives
 this from `bin_width`; do not round the window names to 2 decimals.
 
+### Reproduce the ground-state XRD comparison (17_PPt per family)
+
+Compares the global ground state (rel-E = 0) of each concentration leaf in a Pt-P
+family, as one XRD pattern per concentration plus CI vs P content. Stage 1
+(`agox_v2`) extracts each leaf's rel-E=0 structure to a CIF; Stage 2 (`pymat_xrd`)
+simulates its powder XRD and draws the two comparison figures.
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+# Stage 1 — extract each leaf's global ground-state CIF (one per concentration)
+$PY scripts/xrd_groundstate_extract.py --family 17_PPt/1_plus0cell \
+    --outdir 17_PPt/1_plus0cell/xrd_gs_compare
+# To exclude a leaf (e.g. the 4x4 cell in 0_plus5cell), pass the subset explicitly:
+#   $PY scripts/xrd_groundstate_extract.py --family 17_PPt/0_plus5cell \
+#       --leaves 3_3x3_0P 4_3x3_10p 1_3x3_20P 2_3x3_30P --outdir .../xrd_gs_compare
+
+# Stage 2 — simulate each ground-state XRD (true intensity) + CI, draw comparison
+$PY_X scripts/xrd_groundstate_compare.py \
+    --manifest 17_PPt/1_plus0cell/xrd_gs_compare/manifest.json \
+    --outdir 17_PPt/1_plus0cell/xrd_gs_compare --json
+```
+
+Produces `xrd_averaged_by_window.png` (overlaid ground-state XRD patterns) and
+`crystallinity_vs_energy.png` (peak-fraction & integrated CI vs P concentration)
+under `<family>/xrd_gs_compare/`, plus `xrd_plots.json`.
+Pitfall: intensity is physically meaningful only because both scripts simulate with
+pymatgen `scaled=False` (since v1.4.0 / v1.1.0) — do not reintroduce the default
+`scaled=True`, which pins every pattern's strongest peak to 100 and hides the real
+~6x amplitude drop between 0P and 30P ground states.
+
 ## Step 3d — Run a loop over multiple leaf dataset dirs
 
 The runner analyses ONE leaf per invocation. To analyse every leaf of a family (or every
