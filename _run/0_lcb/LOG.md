@@ -420,3 +420,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 09:09 JST — Ground-state XRD comparison for 17_PPt/1_plus0cell
 
 - Added two v1.0.0 scripts: `2_analysist/scripts/xrd_groundstate_extract.py` (agox_v2) extracts each 1_plus0cell leaf's rel-E=0 ground-state structure as a CIF; `2_analysist/scripts/xrd_groundstate_compare.py` (pymat_xrd) simulates each ground-state powder XRD + CI and draws two comparison plots (overlaid ground-state XRD patterns; CI vs P concentration). Ran on 0P/10P/20P/30P leaves: ground states Pt108/P12/P27/P46. Results: 0P pf=1.000/ic=0.841, 10P 0.853/0.645, 20P 0.859/0.470, 30P 0.991/0.377 — integrated CI falls with P content. Outputs under 17_PPt/1_plus0cell/xrd_gs_compare/.
+
+## 2026-09-04 09:11 JST — Ground-state XRD comparison for 17_PPt/2_plus3cell & 0_plus5cell
+
+- Data-only (scripts 1.0.0 unchanged). Ran ground-state extraction + comparison on families 2_plus3cell (4 leaves) and 0_plus5cell (5 leaves, incl. 4x4 0_PPt_4x4_20P). Outputs under each family's xrd_gs_compare/. 2_plus3cell CI (0/10/20/30%P): ic=0.841/0.556/0.387/0.366. 0_plus5cell: Pt-only(3_3x3_0P) ic=0.841; 10P(4_3x3_10p)=0.579; 20P 3x3=0.374 & 4x4=0.239; 30P=0.364. Integrated CI falls with P content in all families; 4x4 20P lowest (~0.24).
