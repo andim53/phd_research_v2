@@ -412,3 +412,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 08:43 JST — Narrow 0-0.03 eV/atom XRD runs for 11_bTa 8/9/10
 
 - Data-only (scripts 1.1.0/1.3.0 unchanged). Re-ran Stage 1 (`--e-max 0.03 --bin-width 0.005`) + Stage 2 (`--ci-x-data-max 0.03 --ci-x-max 0.03 --ci-y-max 1.0`, --json) for 11_bTa leaves 8_fxg_1b, 9_fxg_3b, 10_fxg_5b -> outputs under each <leaf>/xrd_out_003/. CI: 8=pf~0.95-0.97/ic~0.82; 9=pf~0.90-0.92/ic~0.79; 10=pf~0.85-0.86/ic~0.75-0.77. Note 9_fxg_3b had an empty window 0.020-0.025 (skipped).
+
+## 2026-09-04 09:02 JST — Narrow 0-0.03 eV/atom XRD runs for 17_PPt families 0/1/2
+
+- Data-only (scripts 1.1.0/1.3.0 unchanged). Ran Stage 1 (`--e-max 0.03 --bin-width 0.005`) + Stage 2 (`--ci-x-data-max 0.03 --ci-x-max 0.03 --ci-y-max 1.0`, --json) on the 13 Pt-P leaves of 17_PPt families 0_plus5cell/1_plus0cell/2_plus3cell -> outputs under each <leaf>/xrd_out_003/ (13/13 complete). Low-E-window CI varies strongly with cell/P content: Pt-only hosts ic~0.84; 0_PPt_4x4_20P ic~0.23; P-doped 3x3 leaves span ic~0.35-0.64 (see per-leaf json). High-E windows have tiny n (down to 1-3) -> least reliable.
