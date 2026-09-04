@@ -38,3 +38,6 @@ old→new in `LOG.md`.
 | `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.3.0 | `--ci-x-data-max`/`--ci-x-max`/`--ci-y-max` on CI plot |
 
 | `2_analysist/scripts/xrd_extract_structures.py` | 1.1.0 | adaptive window-label precision for fine bins |
+
+| `2_analysist/scripts/xrd_groundstate_extract.py` | 1.0.0 | new: extract rel-E=0 ground-state CIFs |
+| `2_analysist/scripts/xrd_groundstate_compare.py` | 1.0.0 | new: ground-state XRD + CI comparison plots |
