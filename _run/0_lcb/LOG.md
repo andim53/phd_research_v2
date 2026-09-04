@@ -446,3 +446,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 11:00 JST — Ground-state overlay legend: subscripted formula + conc (Ta₅₄B₀ (0.0% B))
 
 - **xrd_groundstate_compare.py 2.0.0 -> 2.1.0**: overlay-plot legend entries now use the subscripted formula + concentration format `HostₙInterₙ (X.X% Sym)` (e.g. Ta₅₄B₀ (0.0% B), Ta₅₄B₅ (8.5% B)). Carried n_host/n_interstitial through leaf records; new _formula_label helper; comparison-wide interstitial symbol used so a pure-host leaf shows 0 interstitial. Regenerated 11_bTa/xrd_gs_compare.
+
+## 2026-09-04 11:04 JST — Apply subscripted-formula legend to 17_PPt ground-state overlays
+
+- Data-only (xrd_groundstate_compare.py 2.1.0 unchanged). Re-ran extract + compare for 17_PPt families 1_plus0cell, 2_plus3cell, 0_plus5cell (0_plus5cell keeps 4-leaf subset excl. 0_PPt_4x4_20P) so the overlay legends use the subscripted formula+conc format, e.g. Pt₁₀₈P₀ (0.0% P), Pt₁₀₈P₁₂ (10.0% P). CI values unchanged. Outputs under each family's xrd_gs_compare/.
