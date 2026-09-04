@@ -44,3 +44,6 @@ old→new in `LOG.md`.
 
 | `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.4.0 | XRD sim uses scaled=False (true intensity) |
 | `2_analysist/scripts/xrd_groundstate_compare.py` | 1.1.0 | XRD sim uses scaled=False (true intensity) |
+
+| `2_analysist/scripts/xrd_groundstate_extract.py` | 2.0.0 | element-agnostic host/interstitial detection |
+| `2_analysist/scripts/xrd_groundstate_compare.py` | 2.0.0 | element-agnostic labels; works for any host/interstitial |

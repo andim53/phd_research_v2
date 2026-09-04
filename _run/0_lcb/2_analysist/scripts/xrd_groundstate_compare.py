@@ -24,7 +24,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 
 import argparse
 import json
@@ -88,36 +88,49 @@ def integrated_ci(two_theta, inten, bg_window_deg=5.0):
     return float(np.trapezoid(np.maximum(inten - bg, 0.0), two_theta) / total)
 
 
+def _conc_key(l):
+    """Return the concentration (%) from a leaf record, supporting both the
+    element-agnostic 'concentration_pct' and legacy 'P_concentration_pct'."""
+    return l.get("concentration_pct", l.get("P_concentration_pct", 0.0))
+
+
 def plot_from_data(data, outdir):
     """Draw both comparison PNGs from a data dict (live run or JSON)."""
     leaves = data["leaves"]
+    family = data.get("family", "")
+    fam_base = os.path.basename(family.rstrip("/")) if family else ""
+    # interstitial symbol: use the first leaf that actually has one (a pure-host
+    # first leaf, e.g. 7_fxg_0b Ta-only, must not mislabel the whole plot); fall
+    # back to the host symbol if none have an interstitial.
+    inter = next((l.get("interstitial_symbol") for l in leaves
+                  if l.get("interstitial_symbol")), None) or "X"
     # --- Figure 1: overlaid ground-state XRD patterns ---
     fig, ax = plt.subplots(figsize=(8, 4.5))
     cmap = plt.get_cmap("viridis")
-    concs = [l["P_concentration_pct"] for l in leaves]
+    concs = [_conc_key(l) for l in leaves]
     vmin, vmax = min(concs), max(concs)
     for l in leaves:
         if not l["grid"]:
             continue
-        color = cmap((l["P_concentration_pct"] - vmin) / (vmax - vmin + 1e-9)) \
+        color = cmap((_conc_key(l) - vmin) / (vmax - vmin + 1e-9)) \
             if vmax > vmin else "C0"
         ax.plot(l["grid"], l["intensity"], lw=1.1, color=color,
-                label=f"{l['leaf']} ({l['P_concentration_pct']:.0f}%P)")
+                label=f"{l['leaf']} ({_conc_key(l):.0f}%{inter})")
     ax.set_xlabel(r"2$\theta$ (deg)"); ax.set_ylabel("Intensity (a.u.)")
-    ax.set_title("Ground-state XRD — Pt–P 1_plus0cell (per P concentration)")
-    ax.legend(title="P concentration", fontsize=8, ncol=2, loc="upper right")
+    ax.set_title(f"Ground-state XRD — {fam_base} (per {inter} concentration)")
+    ax.legend(title=f"{inter} concentration", fontsize=8, ncol=2, loc="upper right")
     fig.savefig(os.path.join(outdir, "xrd_averaged_by_window.png"))
     plt.close(fig)
 
-    # --- Figure 2: CI vs P concentration ---
+    # --- Figure 2: CI vs interstitial concentration ---
     fig, ax = plt.subplots(figsize=(6, 4))
-    xs = [l["P_concentration_pct"] for l in leaves]
+    xs = [_conc_key(l) for l in leaves]
     ax.plot(xs, [l["peak_fraction_ci"] for l in leaves], "o-",
             label="peak-fraction CI")
     ax.plot(xs, [l["integrated_ci"] for l in leaves], "s--",
             label="integrated CI")
-    ax.set_xlabel("P concentration (%)"); ax.set_ylabel("Crystallinity index")
-    ax.set_title("Ground-state crystallinity vs P content (1_plus0cell)")
+    ax.set_xlabel(f"{inter} concentration (%)"); ax.set_ylabel("Crystallinity index")
+    ax.set_title(f"Ground-state crystallinity vs {inter} content ({fam_base})")
     ax.set_xlim(0, max(xs) + 5 if xs else 40)
     ax.set_ylim(0, 1)
     ax.legend()
@@ -171,7 +184,9 @@ def main():
         ic = integrated_ci(grid, inten)
         leaves.append({
             "leaf": l["leaf"],
-            "P_concentration_pct": l["P_concentration_pct"],
+            "concentration_pct": _conc_key(l),
+            "interstitial_symbol": l.get("interstitial_symbol", "X"),
+            "host_symbol": l.get("host_symbol", ""),
             "formula": l["formula"],
             "E_glob_eV": l["E_glob_eV"],
             "grid": grid.tolist(),
@@ -179,7 +194,8 @@ def main():
             "peak_fraction_ci": pf,
             "integrated_ci": ic,
         })
-        print(f"  {l['leaf']:6s} {l['formula']:10s} P={l['P_concentration_pct']:.1f}%  "
+        inter = l.get("interstitial_symbol", "X")
+        print(f"  {l['leaf']:6s} {l['formula']:10s} {inter}={_conc_key(l):.1f}%  "
               f"peak-fraction CI={pf:.3f}  integrated CI={ic:.3f}")
 
     data = {"family": man.get("family"), "leaves": leaves}

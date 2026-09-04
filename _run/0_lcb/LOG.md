@@ -437,3 +437,8 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 09:20 JST — TUTORIAL.md: reproduce command for ground-state XRD comparison
 
 - On owner command, added 'Reproduce the ground-state XRD comparison (17_PPt per family)' subsection to Step 3c of TUTORIAL.md with the exact Stage-1 + Stage-2 commands (xrd_groundstate_extract.py / xrd_groundstate_compare.py, incl. --leaves subset note) and the scaled=False intensity pitfall.
+
+## 2026-09-04 09:25 JST — Generalize ground-state scripts to any host/interstitial + 11_bTa comparison
+
+- **xrd_groundstate_extract.py 1.0.0 -> 2.0.0** and **xrd_groundstate_compare.py 1.1.0 -> 2.0.0**: generalized from Pt/P-hardcoded to auto-detecting host (majority) + interstitial from each structure (new detect_host_interstitial + generic concentration_pct/host_symbol/interstitial_symbol fields; element-agnostic plot titles/x-labels/legends).
+- Ran ground-state XRD comparison for 11_bTa Ta-B leaves 7_fxg_0b/8_fxg_1b/9_fxg_3b/10_fxg_5b (B 0/1/3/5). CI: 0B pf=1.000/ic=0.841, 1B 0.969/0.824, 3B 0.918/0.798, 5B 0.855/0.752. Outputs under 11_bTa/xrd_gs_compare/. Verifed plots labelled 'B concentration'. Pt-P outputs unaffected (same generic path).

@@ -19,7 +19,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 import argparse
 import glob
@@ -30,6 +30,22 @@ import numpy as np
 
 from agox.databases import Database
 from ase.io import write as ase_write
+
+
+def detect_host_interstitial(counts):
+    """Given a {element: count} Counter, return
+    (host_symbol, interstitial_symbol, interstitial_symbols, concentration_pct).
+
+    Host = majority species; everything else is treated as interstitial (summed).
+    interstitial_symbol is the single minority element when there is exactly one,
+    else None; concentration_pct = 100 * n_inter / total."""
+    host = max(counts, key=lambda k: counts[k])
+    inter_symbols = sorted(k for k in counts if k != host)
+    n_host = counts[host]
+    n_inter = sum(counts[k] for k in inter_symbols)
+    conc = 100.0 * n_inter / (n_host + n_inter) if (n_host + n_inter) else 0.0
+    inter_symbol = inter_symbols[0] if len(inter_symbols) == 1 else None
+    return host, inter_symbol, inter_symbols, float(conc)
 
 
 def load_leaf(dataset_dir: str, start_iter: int = 10):
@@ -98,18 +114,22 @@ def main():
         from collections import Counter
         c = Counter(gs.get_chemical_symbols())
         n_atoms = len(gs)
-        nP = c.get("P", 0); nPt = c.get("Pt", 0)
-        conc = 100.0 * nP / (nPt + nP) if (nPt + nP) else 0.0
+        host_sym, inter_sym, inter_symbols, conc = detect_host_interstitial(c)
         leaf_out = os.path.join(args.outdir, os.path.basename(ld))
         os.makedirs(leaf_out, exist_ok=True)
         ase_write(os.path.join(leaf_out, "groundstate.cif"), gs)
+        inter_label = inter_sym if inter_sym is not None else "+".join(inter_symbols)
         rec = {
             "leaf": os.path.basename(ld),
             "composition": dict(c),
             "formula": comp,
             "n_atoms": n_atoms,
-            "nPt": nPt, "nP": nP,
-            "P_concentration_pct": float(conc),
+            "host_symbol": host_sym,
+            "interstitial_symbol": inter_label,
+            "interstitial_symbols": inter_symbols,
+            "n_host": int(c[host_sym]),
+            "n_interstitial": int(sum(c[k] for k in inter_symbols)),
+            "concentration_pct": float(conc),
             "E_glob_eV": float(eg),
             "cif": os.path.join(os.path.basename(ld), "groundstate.cif"),
         }
@@ -117,7 +137,8 @@ def main():
             json.dump(rec, f, indent=1)
         manifest.append(rec)
         print(f"  {os.path.basename(ld):6s} {comp:12s} E_glob={eg:.3f}  "
-              f"P={conc:.1f}%  -> {rec['cif']}")
+              f"{(inter_label + '=') if inter_label else ''}{conc:.1f}%  "
+              f"-> {rec['cif']}")
 
     with open(os.path.join(args.outdir, "manifest.json"), "w") as f:
         json.dump({"family": args.family, "leaves": manifest}, f, indent=1)
