@@ -450,3 +450,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 11:04 JST — Apply subscripted-formula legend to 17_PPt ground-state overlays
 
 - Data-only (xrd_groundstate_compare.py 2.1.0 unchanged). Re-ran extract + compare for 17_PPt families 1_plus0cell, 2_plus3cell, 0_plus5cell (0_plus5cell keeps 4-leaf subset excl. 0_PPt_4x4_20P) so the overlay legends use the subscripted formula+conc format, e.g. Pt₁₀₈P₀ (0.0% P), Pt₁₀₈P₁₂ (10.0% P). CI values unchanged. Outputs under each family's xrd_gs_compare/.
+
+## 2026-09-04 11:07 JST — Ground-state XRD comparison for 16_bW (W-B) with subscripted legend
+
+- Data-only (scripts 2.0.0/2.1.0 unchanged). Ran extract + compare on 16_bW leaves 1_w0b/2_w1b/3_w3b/4_p_w10b (W host, B interstitial 0/1/3/6). Legend format W₅₄B₀ (0.0% B)...W₅₄B₆ (10.0% B). CI: 0B pf=0.998/ic=0.841, 1B 0.976/0.828, 3B 0.917/0.794, 6B 0.864/0.770. Outputs under 16_bW/xrd_gs_compare/.
