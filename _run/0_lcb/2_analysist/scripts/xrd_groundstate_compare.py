@@ -24,7 +24,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import json
@@ -55,7 +55,7 @@ def simulate_pattern(calc, cif_path, tt_min, tt_max):
     """Simulate a structure's powder XRD on a common 2theta grid and Gaussian-broaden."""
     grid = np.arange(tt_min, tt_max + TT_STEP, TT_STEP)
     struct = Structure.from_file(cif_path)
-    pat = calc.get_pattern(struct, two_theta_range=(tt_min, tt_max))
+    pat = calc.get_pattern(struct, two_theta_range=(tt_min, tt_max), scaled=False)
     inten = np.zeros_like(grid)
     for x, y in zip(pat.x, pat.y):
         gi = int(round((x - tt_min) / TT_STEP))

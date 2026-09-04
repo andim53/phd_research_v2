@@ -41,3 +41,6 @@ old→new in `LOG.md`.
 
 | `2_analysist/scripts/xrd_groundstate_extract.py` | 1.0.0 | new: extract rel-E=0 ground-state CIFs |
 | `2_analysist/scripts/xrd_groundstate_compare.py` | 1.0.0 | new: ground-state XRD + CI comparison plots |
+
+| `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.4.0 | XRD sim uses scaled=False (true intensity) |
+| `2_analysist/scripts/xrd_groundstate_compare.py` | 1.1.0 | XRD sim uses scaled=False (true intensity) |

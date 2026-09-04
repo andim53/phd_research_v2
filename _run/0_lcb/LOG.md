@@ -428,3 +428,8 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 09:13 JST — 0_plus5cell ground-state comparison without 0_PPt_4x4_20P
 
 - Data-only (scripts 1.0.0). Re-ran 17_PPt/0_plus5cell ground-state comparison with `--leaves 3_3x3_0P 4_3x3_10p 1_3x3_20P 2_3x3_30P` (excludes the 4x4 0_PPt_4x4_20P cell). Regenerated plots/json under xrd_gs_compare/; removed the stale 0_PPt_4x4_20P/ CIF dir. CI: 0P ic=0.841, 10P 0.579, 20P 0.374, 30P 0.364.
+
+## 2026-09-04 09:18 JST — XRD: disable pymatgen intensity scaling (scaled=False)
+
+- Investigation: identical peak heights across ground-state patterns traced to pymatgen get_pattern default scaled=True (each pattern max set to 100) + fixed Gaussian broadening. Changed `xrd_simulate_crystallinity.py 1.3.0 -> 1.4.0` and `xrd_groundstate_compare.py 1.0.0 -> 1.1.0` to call get_pattern(..., scaled=False) so patterns carry true relative intensity.
+- Regenerated the 3 ground-state comparisons (1_plus0cell/2_plus3cell/0_plus5cell). True peak heights now differ (~6x lower from 0P to 30P); CI values unchanged (scale-invariant area ratios). Peak max (1_plus0cell): 0P=3.01e8, 10P=1.95e8, 20P=1.52e8, 30P=5.20e7 while total sum ~conserved (~1.3e10) -> P redistributes scattering from one dominant Pt peak into many weaker peaks.

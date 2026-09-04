@@ -32,7 +32,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import argparse
 import json
@@ -74,7 +74,8 @@ def average_pattern(calc, cif_paths, manifest_dir, tt_min, tt_max):
     for cif in cif_paths:
         full = cif if os.path.isabs(cif) else os.path.join(manifest_dir, cif)
         struct = Structure.from_file(full)
-        pat = calc.get_pattern(struct, two_theta_range=(tt_min, tt_max))
+        pat = calc.get_pattern(struct, two_theta_range=(tt_min, tt_max),
+                               scaled=False)
         # scatter each delta onto nearest grid point then Gaussian-broaden
         inten = np.zeros_like(grid)
         for x, y in zip(pat.x, pat.y):
