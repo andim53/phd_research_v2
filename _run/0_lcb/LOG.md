@@ -424,3 +424,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 09:11 JST — Ground-state XRD comparison for 17_PPt/2_plus3cell & 0_plus5cell
 
 - Data-only (scripts 1.0.0 unchanged). Ran ground-state extraction + comparison on families 2_plus3cell (4 leaves) and 0_plus5cell (5 leaves, incl. 4x4 0_PPt_4x4_20P). Outputs under each family's xrd_gs_compare/. 2_plus3cell CI (0/10/20/30%P): ic=0.841/0.556/0.387/0.366. 0_plus5cell: Pt-only(3_3x3_0P) ic=0.841; 10P(4_3x3_10p)=0.579; 20P 3x3=0.374 & 4x4=0.239; 30P=0.364. Integrated CI falls with P content in all families; 4x4 20P lowest (~0.24).
+
+## 2026-09-04 09:13 JST — 0_plus5cell ground-state comparison without 0_PPt_4x4_20P
+
+- Data-only (scripts 1.0.0). Re-ran 17_PPt/0_plus5cell ground-state comparison with `--leaves 3_3x3_0P 4_3x3_10p 1_3x3_20P 2_3x3_30P` (excludes the 4x4 0_PPt_4x4_20P cell). Regenerated plots/json under xrd_gs_compare/; removed the stale 0_PPt_4x4_20P/ CIF dir. CI: 0P ic=0.841, 10P 0.579, 20P 0.374, 30P 0.364.
