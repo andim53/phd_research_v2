@@ -24,7 +24,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import argparse
 import json
@@ -94,6 +94,25 @@ def _conc_key(l):
     return l.get("concentration_pct", l.get("P_concentration_pct", 0.0))
 
 
+_SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
+
+
+def _formula_label(l, inter):
+    """Legend label like 'Ta₅₄B₀ (0.0% B)' for a leaf record.
+
+    ``inter`` is the comparison-wide interstitial symbol (e.g. 'B'), so even a
+    pure-host leaf (0 interstitial) renders as, e.g., 'Ta₅₄B₀ (0.0% B)'.
+    """
+    host = l.get("host_symbol", "")
+    nh = l.get("n_host", 0)
+    ni = l.get("n_interstitial", 0)
+    formula = f"{host}{str(nh).translate(_SUB)}"
+    if inter:
+        formula += f"{inter}{str(ni).translate(_SUB)}"
+    inter_lab = inter or host
+    return f"{formula} ({_conc_key(l):.1f}% {inter_lab})"
+
+
 def plot_from_data(data, outdir):
     """Draw both comparison PNGs from a data dict (live run or JSON)."""
     leaves = data["leaves"]
@@ -115,7 +134,7 @@ def plot_from_data(data, outdir):
         color = cmap((_conc_key(l) - vmin) / (vmax - vmin + 1e-9)) \
             if vmax > vmin else "C0"
         ax.plot(l["grid"], l["intensity"], lw=1.1, color=color,
-                label=f"{l['leaf']} ({_conc_key(l):.0f}%{inter})")
+                label=_formula_label(l, inter))
     ax.set_xlabel(r"2$\theta$ (deg)"); ax.set_ylabel("Intensity (a.u.)")
     ax.set_title(f"Ground-state XRD — {fam_base} (per {inter} concentration)")
     ax.legend(title=f"{inter} concentration", fontsize=8, ncol=2, loc="upper right")
@@ -187,6 +206,8 @@ def main():
             "concentration_pct": _conc_key(l),
             "interstitial_symbol": l.get("interstitial_symbol", "X"),
             "host_symbol": l.get("host_symbol", ""),
+            "n_host": l.get("n_host", 0),
+            "n_interstitial": l.get("n_interstitial", 0),
             "formula": l["formula"],
             "E_glob_eV": l["E_glob_eV"],
             "grid": grid.tolist(),

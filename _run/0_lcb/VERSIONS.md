@@ -47,3 +47,5 @@ old→new in `LOG.md`.
 
 | `2_analysist/scripts/xrd_groundstate_extract.py` | 2.0.0 | element-agnostic host/interstitial detection |
 | `2_analysist/scripts/xrd_groundstate_compare.py` | 2.0.0 | element-agnostic labels; works for any host/interstitial |
+
+| `2_analysist/scripts/xrd_groundstate_compare.py` | 2.1.0 | subscripted-formula legend (e.g. Ta₅₄B₀ (0.0% B)) |

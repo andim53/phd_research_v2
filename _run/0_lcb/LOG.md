@@ -442,3 +442,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 
 - **xrd_groundstate_extract.py 1.0.0 -> 2.0.0** and **xrd_groundstate_compare.py 1.1.0 -> 2.0.0**: generalized from Pt/P-hardcoded to auto-detecting host (majority) + interstitial from each structure (new detect_host_interstitial + generic concentration_pct/host_symbol/interstitial_symbol fields; element-agnostic plot titles/x-labels/legends).
 - Ran ground-state XRD comparison for 11_bTa Ta-B leaves 7_fxg_0b/8_fxg_1b/9_fxg_3b/10_fxg_5b (B 0/1/3/5). CI: 0B pf=1.000/ic=0.841, 1B 0.969/0.824, 3B 0.918/0.798, 5B 0.855/0.752. Outputs under 11_bTa/xrd_gs_compare/. Verifed plots labelled 'B concentration'. Pt-P outputs unaffected (same generic path).
+
+## 2026-09-04 11:00 JST — Ground-state overlay legend: subscripted formula + conc (Ta₅₄B₀ (0.0% B))
+
+- **xrd_groundstate_compare.py 2.0.0 -> 2.1.0**: overlay-plot legend entries now use the subscripted formula + concentration format `HostₙInterₙ (X.X% Sym)` (e.g. Ta₅₄B₀ (0.0% B), Ta₅₄B₅ (8.5% B)). Carried n_host/n_interstitial through leaf records; new _formula_label helper; comparison-wide interstitial symbol used so a pure-host leaf shows 0 interstitial. Regenerated 11_bTa/xrd_gs_compare.
