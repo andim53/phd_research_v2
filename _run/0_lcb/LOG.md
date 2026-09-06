@@ -458,3 +458,14 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-06 14:43 JST — TUTORIAL: generalize ground-state reproduce command to bTa/bW/PPt
 
 - On owner command, expanded the 'Reproduce the ground-state XRD comparison' TUTORIAL subsection to cover all three families (11_bTa, 16_bW, 17_PPt) with the element-agnostic extract+compare commands and the 0_plus5cell 4-leaf subset note.
+
+## 2026-09-06 — Add INSTRUCTION.md + AGENTS.md rule 11 (owner-side how-to)
+
+- On owner command, created `INSTRUCTION.md` (owner-side how-to playbook, scaffold:
+  purpose + append-only/numbering/voice/tracking convention; no blocks yet).
+- **AGENTS.md**: added `INSTRUCTION.md` to §2 deliverables and new Rule 11 —
+  on the owner's explicit request to *prepare an instruction* for a task, the agent
+  **appends** a second-person, line-by-line user-facing block (commands, edit
+  file:line, smoke test, expected output) to the end of `INSTRUCTION.md`; newest
+  last; `INSTR #N` headers increment; it instructs, it does not execute; tracked +
+  committed + LOG entry per append.
