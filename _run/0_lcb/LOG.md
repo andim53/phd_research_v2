@@ -476,3 +476,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 - Facts (grounded): 0_lcb_femgo = Fe/MgO no B, seeds 3-15 (13 DBs, 100 iters), 75-atom heterostructure Fe25|Mg25O25, 5x5 a~14.35 A. 1_lcb_febmgo = +B in Fe-layer hollows (add_adsorbate_to_hollows, num_atoms_add=3), seeds 0-6 (7 DBs; seed_6 empty), 78-atom Fe25B3|Mg25O25. Shared: LCAO/dzp/PBE spinpol, kpts(1,1,1), LCB kappa=2, GPR+Fingerprint, ncores=24, pjsub gpaw_env. HPC/run artifacts (.d0*, job_*.out, trash, stop_16) noted.
 - **.gitignore**: added rules so both trees keep regenerable run data out (seed_*/stop_*/trash/) while tracking main.py + job_*.sh + scripts/*.py.
 - Stage/commit: code + .gitignore + README.AI.md + this LOG entry.
+
+## 2026-09-06 — INSTR #1: Fe/MgO LCB run with dipole correction (1_runs/0_femgo_dip)
+
+- On owner request, appended INSTR #1 to INSTRUCTION.md (append-only, newest last): a step-by-step, second-person how-to that lets the owner build `1_runs/0_femgo_dip/` by hand — copy 0_lcb_femgo's main.py + scripts/ + job script, add `poissonsolver={"dipolelayer": "xy"}` to the SubprocessGPAW kwargs (vacuum axis z => plane xy), compile-gate under agox_v2, and a tiny GPAW dipole-acceptance smoke run. Grounded in agox_v2's GPAW 25.7.0 (dipolelayer spelling verified vs gpaw test_dipole.py) and SubprocessGPAW kwarg forwarding (agox/helpers/gpaw_subprocess.py). No run dir was created or executed — instruction only.
