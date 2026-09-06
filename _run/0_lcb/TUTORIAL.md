@@ -124,38 +124,58 @@ Pitfall: with `bin_width` finer than the label precision (e.g. 0.005 eV/atom) th
 window labels must carry enough decimals — the extraction script (v1.1.0+) derives
 this from `bin_width`; do not round the window names to 2 decimals.
 
-### Reproduce the ground-state XRD comparison (17_PPt per family)
+### Reproduce the ground-state XRD comparison (bTa / bW / PPt per family)
 
-Compares the global ground state (rel-E = 0) of each concentration leaf in a Pt-P
-family, as one XRD pattern per concentration plus CI vs P content. Stage 1
-(`agox_v2`) extracts each leaf's rel-E=0 structure to a CIF; Stage 2 (`pymat_xrd`)
-simulates its powder XRD and draws the two comparison figures.
+Compares the global ground state (rel-E = 0) of each concentration leaf in an
+interstitial family, as one XRD pattern per concentration plus CI vs interstitial
+content. Stage 1 (`agox_v2`) extracts each leaf's rel-E=0 structure to a CIF;
+Stage 2 (`pymat_xrd`) simulates its powder XRD (true intensity) and draws the two
+comparison figures. The scripts are element-agnostic (auto-detect host/interstitial),
+so the same command reproduces any family:
+
+- `11_bTa` (Ta–B; leaves `7_fxg_0b …10_fxg_5b`) → legend `Ta₅₄Bₓ`
+- `16_bW` (W–B; leaves `1_w0b,2_w1b,3_w3b,4_p_w10b`) → legend `W₅₄Bₓ`
+- `17_PPt` (Pt–P; families `1_plus0cell`,`2_plus3cell`,`0_plus5cell`) → legend `Pt₁₀₈Pₓ`
 
 ```bash
 PY=/home/think/miniconda3/envs/agox_v2/bin/python
 PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
 cd /home/think/Desktop/research/_run/0_lcb/2_analysist
 
-# Stage 1 — extract each leaf's global ground-state CIF (one per concentration)
+# --- 11_bTa (Ta-B) ---
+$PY scripts/xrd_groundstate_extract.py --family 11_bTa --outdir 11_bTa/xrd_gs_compare
+$PY_X scripts/xrd_groundstate_compare.py \
+    --manifest 11_bTa/xrd_gs_compare/manifest.json \
+    --outdir 11_bTa/xrd_gs_compare --json
+
+# --- 16_bW (W-B) ---
+$PY scripts/xrd_groundstate_extract.py --family 16_bW --outdir 16_bW/xrd_gs_compare
+$PY_X scripts/xrd_groundstate_compare.py \
+    --manifest 16_bW/xrd_gs_compare/manifest.json \
+    --outdir 16_bW/xrd_gs_compare --json
+
+# --- 17_PPt, family 1_plus0cell ---
 $PY scripts/xrd_groundstate_extract.py --family 17_PPt/1_plus0cell \
     --outdir 17_PPt/1_plus0cell/xrd_gs_compare
-# To exclude a leaf (e.g. the 4x4 cell in 0_plus5cell), pass the subset explicitly:
-#   $PY scripts/xrd_groundstate_extract.py --family 17_PPt/0_plus5cell \
-#       --leaves 3_3x3_0P 4_3x3_10p 1_3x3_20P 2_3x3_30P --outdir .../xrd_gs_compare
-
-# Stage 2 — simulate each ground-state XRD (true intensity) + CI, draw comparison
 $PY_X scripts/xrd_groundstate_compare.py \
     --manifest 17_PPt/1_plus0cell/xrd_gs_compare/manifest.json \
     --outdir 17_PPt/1_plus0cell/xrd_gs_compare --json
+# ...repeat for 17_PPt/2_plus3cell and 17_PPt/0_plus5cell.
+# 0_plus5cell excludes the 4x4 cell (0_PPt_4x4_20P); pass the leaf subset:
+#   $PY scripts/xrd_groundstate_extract.py --family 17_PPt/0_plus5cell \
+#       --leaves 3_3x3_0P 4_3x3_10p 1_3x3_20P 2_3x3_30P \
+#       --outdir 17_PPt/0_plus5cell/xrd_gs_compare
 ```
 
 Produces `xrd_averaged_by_window.png` (overlaid ground-state XRD patterns) and
-`crystallinity_vs_energy.png` (peak-fraction & integrated CI vs P concentration)
-under `<family>/xrd_gs_compare/`, plus `xrd_plots.json`.
+`crystallinity_vs_energy.png` (peak-fraction & integrated CI vs interstitial
+concentration) under each `<family>/xrd_gs_compare/`, plus `xrd_plots.json`.
+The overlay legend uses the subscripted formula + concentration, e.g.
+`Ta₅₄B₁ (1.8% B)` / `Pt₁₀₈P₂₇ (20.0% P)`.
 Pitfall: intensity is physically meaningful only because both scripts simulate with
 pymatgen `scaled=False` (since v1.4.0 / v1.1.0) — do not reintroduce the default
 `scaled=True`, which pins every pattern's strongest peak to 100 and hides the real
-~6x amplitude drop between 0P and 30P ground states.
+amplitude drop with increasing interstitial content.
 
 ## Step 3d — Run a loop over multiple leaf dataset dirs
 

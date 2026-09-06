@@ -454,3 +454,7 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-04 11:07 JST — Ground-state XRD comparison for 16_bW (W-B) with subscripted legend
 
 - Data-only (scripts 2.0.0/2.1.0 unchanged). Ran extract + compare on 16_bW leaves 1_w0b/2_w1b/3_w3b/4_p_w10b (W host, B interstitial 0/1/3/6). Legend format W₅₄B₀ (0.0% B)...W₅₄B₆ (10.0% B). CI: 0B pf=0.998/ic=0.841, 1B 0.976/0.828, 3B 0.917/0.794, 6B 0.864/0.770. Outputs under 16_bW/xrd_gs_compare/.
+
+## 2026-09-06 14:43 JST — TUTORIAL: generalize ground-state reproduce command to bTa/bW/PPt
+
+- On owner command, expanded the 'Reproduce the ground-state XRD comparison' TUTORIAL subsection to cover all three families (11_bTa, 16_bW, 17_PPt) with the element-agnostic extract+compare commands and the 0_plus5cell 4-leaf subset note.
