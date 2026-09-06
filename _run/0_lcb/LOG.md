@@ -487,3 +487,10 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 - Root cause: the INSTR #1 smoke script wrote `mode={'name':'lcao','basis':'dzp'}`. In GPAW 25.7 the mode dict is passed straight to the wave-function constructor (create_wave_function_mode -> LCAO.__init__), which accepts only atomic_correction/interpolation/force_complex_dtype — not basis. basis must be a top-level GPAW kwarg, as 0_lcb_femgo/main.py and 1_femgo_dip/main.py already do. Not a dipole-kwarg issue.
 - Updated INSTR #1 Step 5: replaced the smoke script (basis moved out of mode dict; KohnShamConvergenceError caught so the smoke only proves the dipole kwarg is accepted by reaching the SCF loop, per owner steer that convergence need not be required), added an explanation block + fix + pitfall #2.
 - Verified: corrected smoke_dipole.py (owner dir 1_runs/1_femgo_dip) runs clean, prints 'DIPOLE KWARG ACCEPTED', rc=0. Owner main.py confirmed correct (basis top-level, dipolelayer present).
+
+## 2026-09-06 — INSTRUCTION ordering REVERSED to newest-first + INSTR #2 (thicker MgO runs)
+
+- Owner directed (OOB, reverses the 2026-09-06 earlier convention): INSTRUCTION.md blocks are now **newest-first** — each new instruction is PREPENDED at the top of the instructions list (above INSTR #1), not appended to the end. Updated AGENTS.md (Rule 11 + 2 deliverable bullet) and INSTRUCTION.md convention note to newest-first; this entry records the reversal.
+- Appended **INSTR #2** (placed at top): create `1_runs/2_femgo_3mgo`, `3_femgo_5mgo`, `4_femgo_10mgo` as plain 0_lcb_femgo replicas (no dipole) with mgo_layer_number=3/5/10 and vacuum=24.2/28.4/39.0 (rule vacuum=20+2.106*(N-1)), + a stacking smoke test on the generator structure.
+- Grounded by importing the real 0_lcb_femgo build_* scripts: each MgO monolayer = one coplanar Mg+O plane spaced 2.106 A; Fe sits 0.50 A above top MgO; cell clearance above Fe 27-42 A.
+- Verified smoke_stack.py passes for N=3/5/10 (STACKING SMOKE PASS; layer counts/spacing/coplanarity/Fe-gap/clearance all PASS).

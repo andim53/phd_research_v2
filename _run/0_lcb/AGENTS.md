@@ -39,7 +39,7 @@ No task is complete until all three are present and consistent with the work don
 - **Instructions** — `INSTRUCTION.md`: owner-side how-to playbook. Holds
   self-contained, second-person, line-by-line guides that let the OWNER do the
   work by hand that the agent would otherwise do. Append-only; blocks are headed
-  `INSTR #N — <short title>` + date, newest last. See Rule 11.
+  `INSTR #N — <short title>` + date, **newest first** (see Rule 11).
 
 ## 3. Rules of Operation
 
@@ -84,18 +84,19 @@ No task is complete until all three are present and consistent with the work don
     proceed on an assumed approval.
 11. **`INSTRUCTION.md` is an append-only, owner-facing how-to.** On the owner's
     explicit request to *prepare an instruction* for a task (and after clarifying
-    the task/approach when needed), the agent **appends** a new self-contained
-    block to the **end** of `INSTRUCTION.md` — it does **not** read-and-rewrite
-    or replace prior blocks. The agent's job is to instruct the owner, not to
-    perform the task itself. Each block is written in the **second person**
-    ("you run …", "edit `file.py:LINE` …") and includes the exact commands (with
-    the correct env python), the precise edit location(s) and how to edit, how to
-    run the smoke/verification step, and the expected output / how to verify.
-    Blocks are headed `INSTR #N — <short title>` + date, newest last; the next
-    `N` is the highest existing header number + 1 (determined by a targeted
-    header lookup). Do **not** append one automatically for every executed task —
-    only on request. Track and commit each append under the explicit `_run/0_lcb`
-    pathspec, and add a `LOG.md` entry for it.
+    the task/approach when needed), the agent **prepends** a new self-contained
+    block **at the top of the instructions list** in `INSTRUCTION.md` (newest
+    first) — it does **not** read-and-rewrite or replace prior blocks. The
+    agent's job is to instruct the owner, not to perform the task itself. Each
+    block is written in the **second person** ("you run …", "edit `file.py:LINE`
+    …") and includes the exact commands (with the correct env python), the
+    precise edit location(s) and how to edit, how to run the smoke/verification
+    step, and the expected output / how to verify. Blocks are headed
+    `INSTR #N — <short title>` + date; the next `N` is the highest existing
+    header number + 1 (determined by a targeted header lookup). Do **not** append
+    one automatically for every executed task — only on request. Track and commit
+    each prepend under the explicit `_run/0_lcb` pathspec, and add a `LOG.md`
+    entry for it.
 
 ## 3a. Project-specific conventions
 
