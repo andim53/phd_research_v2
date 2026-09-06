@@ -480,3 +480,10 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 ## 2026-09-06 — INSTR #1: Fe/MgO LCB run with dipole correction (1_runs/0_femgo_dip)
 
 - On owner request, appended INSTR #1 to INSTRUCTION.md (append-only, newest last): a step-by-step, second-person how-to that lets the owner build `1_runs/0_femgo_dip/` by hand — copy 0_lcb_femgo's main.py + scripts/ + job script, add `poissonsolver={"dipolelayer": "xy"}` to the SubprocessGPAW kwargs (vacuum axis z => plane xy), compile-gate under agox_v2, and a tiny GPAW dipole-acceptance smoke run. Grounded in agox_v2's GPAW 25.7.0 (dipolelayer spelling verified vs gpaw test_dipole.py) and SubprocessGPAW kwarg forwarding (agox/helpers/gpaw_subprocess.py). No run dir was created or executed — instruction only.
+
+## 2026-09-06 — INSTR #1 fix: smoke script basis-in-mode TypeError (Step 5)
+
+- Owner followed INSTR #1 and hit `LCAO.__init__() got an unexpected keyword argument 'basis'` on the Step-5 smoke. Reproduced and fixed.
+- Root cause: the INSTR #1 smoke script wrote `mode={'name':'lcao','basis':'dzp'}`. In GPAW 25.7 the mode dict is passed straight to the wave-function constructor (create_wave_function_mode -> LCAO.__init__), which accepts only atomic_correction/interpolation/force_complex_dtype — not basis. basis must be a top-level GPAW kwarg, as 0_lcb_femgo/main.py and 1_femgo_dip/main.py already do. Not a dipole-kwarg issue.
+- Updated INSTR #1 Step 5: replaced the smoke script (basis moved out of mode dict; KohnShamConvergenceError caught so the smoke only proves the dipole kwarg is accepted by reaching the SCF loop, per owner steer that convergence need not be required), added an explanation block + fix + pitfall #2.
+- Verified: corrected smoke_dipole.py (owner dir 1_runs/1_femgo_dip) runs clean, prints 'DIPOLE KWARG ACCEPTED', rc=0. Owner main.py confirmed correct (basis top-level, dipolelayer present).
