@@ -18,6 +18,15 @@ gpaw_logs/
 gpaw_logs.*/
 seed_*/0_result/
 
+# === Fe/MgO interface trees (0_lcb_femgo, 1_lcb_febmgo): code tracked, run data out ===
+# Their seed/stop/trash dirs hold regenerable AGOX/GPAW output (db, xsf, latt_log).
+# Keep main.py + job_*.sh + scripts/*.py at the tree root; ignore the run subdirs.
+2_analysist/0_lcb_femgo/seed_*/
+2_analysist/0_lcb_femgo/stop_*/
+2_analysist/0_lcb_femgo/trash/
+2_analysist/1_lcb_febmgo/seed_*/
+2_analysist/1_lcb_febmgo/trash/
+
 # === Analysis staging/final (regenerable) ===
 2_analysist/0_analy/
 2_analysist/1_result/

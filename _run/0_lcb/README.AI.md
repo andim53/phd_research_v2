@@ -10,10 +10,13 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
   alloys** — a heavy-metal host (Pt, Ta, W) doped with an interstitial
   (B or P). Home to the pre-existing `17_PPt` analysis/run tree, now under the
   AI-Agent Project Workflow, plus the family analysis runner under `2_analysist/`.
+  Also hosts two **Fe/MgO interface LCB runs** (`0_lcb_femgo`, `1_lcb_febmgo`)
+  analysed with the same project-agnostic runner (see §2e).
 - **Physics:** heavy-metal hosts (Pt fcc `a = 3.975534 Å`, Ta, W) with cells
   scaled +0/+3/+5/+10 %, supercells 3×3×3 (and variants), interstitials at
   0–30 %, `LowerConfidenceBoundAcquisitor`, GPR + Fingerprint,
-  GPAW LCAO/dzp/PBE.
+  GPAW LCAO/dzp/PBE. **Fe/MgO interface runs**: Fe(001) overlayer on MgO(001),
+  5×5 supercell `a ≈ 14.35 Å`, LCAO/dzp/PBE spin-polarized (see §2e).
 - **Environment (invariant):** `/home/think/miniconda3/envs/agox_v2/bin/python`
   (AGOX + ASE + GPAW) for analysis/local work; `pymat_xrd`
   (`/home/think/miniconda3/envs/pymat_xrd/bin/python`, pymatgen, no ASE) for the
@@ -46,15 +49,21 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 │   ├── 11_bTa/                   # Ta–B family (5 leaves)
 │   ├── 15_bPt/                   # Pt–B family (4 leaves)
 │   ├── 16_bW/                    # W–B family (4 leaves)
-│   └── 17_PPt/                  # incorporated Pt–P run/analysis tree
+│   ├── 17_PPt/                  # incorporated Pt–P run/analysis tree
+│   ├── 0_lcb_femgo/            # Fe/MgO interface LCB run, no B (13 seeds) [§2e]
+│   └── 1_lcb_febmgo/           # Fe/MgO + B hollow-adsorbate LCB run (7 seeds) [§2e]
 └── 1_runs/               # (empty) future self-contained run dirs
 ```
 
 > `2_analysist/11_bTa/` (a Ta–B system) is present on disk but **gitignored** — it
 > is off-scope for the Pt–P project identity and excluded from commits (see
-> `.gitignore`). The family analysis output PNGs/JSONs are regenerable and
-> gitignored; only the analysis **code** (`run_analysis_indices.py`, `scripts/`,
-> `json_export/*.sh`) and tracked docs are committed.
+> `.gitignore`). `0_lcb_femgo/` and `1_lcb_febmgo/` are Fe/MgO interface runs —
+> distinct physics from the Pt–P/Ta–W interstitial families, but **tracked code**
+> (main.py, job `*.sh`, `scripts/`) and analysable by the same project-agnostic
+> runner (they use the same `seed_*/1_db/db_*.db` layout). The family analysis
+> output PNGs/JSONs are regenerable and gitignored; only the analysis **code**
+> (`run_analysis_indices.py`, `scripts/`, `json_export/*.sh`) and tracked docs are
+> committed.
 
 ### 2a. `2_analysist/17_PPt/` — incorporated analysis tree
 
@@ -124,6 +133,42 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 - `regenerate_xrd_json.sh` — 5 per-leaf commands to regenerate each `xrd_out` PNG
   + `xrd_plots.json`.
 
+### 2e. Fe/MgO interface LCB run trees (`0_lcb_femgo`, `1_lcb_febmgo`)
+
+Two **Fe(001)/MgO(001) interface** LCB AGOX runs. Distinct from the Pt–P/Ta–W
+interstitial-alloy identity above (different physics), but they live under
+`2_analysist/` and follow the **same `seed_*/1_db/db_*.db` layout**, so the
+project-agnostic runner (`run_analysis_indices.py`) analyses them the same way —
+point `--dataset` at one of these dirs. Seed dirs `seed_N/` each hold `0_result/`
+(xsf/fig) + `1_db/db_N.db`; run data is regenerable/gitignored, code tracked.
+
+- **`0_lcb_femgo/`** — Fe/MgO, **no B dopant**. Seeds **3–15** (13 DBs present;
+  `main.py` loops seeds `3..104`, `N_iterations=100`). Each seed's heterostructure
+  = 75 atoms: Fe(001) overlayer **Fe₂₅** (5×5, one ML) on an MgO(001) substrate
+  (**Mg₂₅ O₂₅**). Supercell 5×5×1, `a ≈ 14.35 Å`, `c = 40 Å` vacuum.
+- **`1_lcb_febmgo/`** — Fe/MgO **with B added into Fe-layer hollows** (script
+  `add_adsorbate_to_hollows`, `symbol_add='B'`, `num_atoms_add=3`, `z=0`).
+  Seeds **0–6** (7 DBs present; `main.py` loops `0..102`, 100 iters; seed_6 DB is
+  empty). Each seed's heterostructure = **Fe₂₅ B₃** overlayer on Mg₂₅ O₂₅
+  (78 atoms). Same 5×5 supercell.
+- **Shared run params:** matched interface (`a_mgo=4.212 Å` → `/√2` matched to
+  Fe `a_fe=2.870190 Å`, ~2.6% strain), Fe bcc(001), 1 ML Fe + 1 ML MgO,
+  `dist_z_fe2o=0.5 Å` interface gap, confinement height ×4, generators
+  `HeteroStructRandomize` + `RattleGenerator`, GPR + Fingerprint, LCB
+  (`kappa=2`), GPAW LCAO/dzp/PBE, `kpts=(1,1,1)`, spin-polarized, `ncores=24`.
+  Both also carry stray HPC artifacts on disk: `job_*.sh.*.out` run logs and
+  `.d00052*` / `.d00052*_nodeinfo` pjsub remnants (untracked / gitignored),
+  plus a `trash/` (old `main.py`, `db_0.db`) and — in `0_lcb_femgo` — a `stop_16/`
+  dir (seed 16 aborted after ~37 iterations; `trash/` holds an earlier seed-0 run
+  that reached ~50).
+- **Scripts:** `0_lcb_femgo/scripts/` holds the run's build/generator/analysis
+  helpers (e.g. `build_fe_stack.py`, `build_mgo_stack.py`, `hetero_struct_randomize.py`);
+  `1_lcb_febmgo/scripts/` additionally has `remove_random_atoms_by_species.py`,
+  `add_adsorbate_to_hollows.py` and a `running_scripts/` subdir with alternate
+  mains (`main_amorph.py`, `main_boron.py`, `main_dos.py`). These are per-run
+  snapshots local to each dir — treat `main.py` at each tree root as canonical
+  for that tree.
+
 ## 3. Entry points & commands
 
 ```bash
@@ -152,6 +197,25 @@ $PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
 $PY run_analysis_indices.py --from-json 11_bTa/8_fxg_1b/analysis_indices \
     --outdir /tmp/ai_plot
 ```
+
+### Analysis run (Fe/MgO interface tree — one of 0_lcb_femgo / 1_lcb_febmgo)
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+# Fe/MgO no-B tree: 13 seeds
+$PY run_analysis_indices.py --dataset 0_lcb_femgo \
+    --outdir 0_lcb_femgo/analysis_indices \
+    --json-dir 0_lcb_femgo/analysis_indices --e-max 0.5
+# Fe/MgO + B tree: 7 seeds (note seed_6 DB is empty; runner must skip it)
+$PY run_analysis_indices.py --dataset 1_lcb_febmgo \
+    --outdir 1_lcb_febmgo/analysis_indices \
+    --json-dir 1_lcb_febmgo/analysis_indices --e-max 0.5
+```
+> Each seed in these trees holds a **fixed-composition** heterostructure
+> (substrate Mg₂₅O₂₅ constant; only Fe/B overlayer atoms move), so per-atom
+> relative-energy windows are meaningful per seed. Because composition differs
+> between the no-B and +B trees, keep the two trees separate (never mix their DBs
+> into one analysis). An empty seed DB (`1_lcb_febmgo/seed_6`) must be skipped,
+> not treated as a zero-row leaf.
 
 ### Analysis run (all 25 leaves — JSON extraction driver)
 ```bash
@@ -194,10 +258,11 @@ Batch scripts use `gpaw_env` and the `#PJM` scheduler. Launch with
   (no ASE/AGOX).
 - **`--from-json` needs `--outdir`:** when replotting from JSON you must pass both
   `--from-json <dir>` and `--outdir <out>`; `--dataset`/`--manifest` are ignored.
-- **Energy units/windows:** energy scales differ by system (Ta–B vs Pt–P). Use a
-  per-system `--e-max`; keep assumptions consistent across the progression /
-  landscape / probability windows. The XRD `--e-max` filter also drops
-  high-energy outliers (e.g. `10_fxg_5b` relE up to ~93 eV/atom).
+- **Energy units/windows:** energy scales differ by system (Ta–B vs Pt–P vs
+  Fe/MgO). Use a per-system `--e-max`; keep assumptions consistent across the
+  progression / landscape / probability windows. The XRD `--e-max` filter also
+  drops high-energy outliers (e.g. `10_fxg_5b` relE up to ~93 eV/atom). For the
+  Fe/MgO trees, do not mix the no-B and +B DBs in one run (composition differs).
 - **JSONs only after `--json`:** historical PNGs that predate the `--json` flags
   have **no** companion JSON until re-run with `--json`/the drivers.
 - **`.xsf` side output is DB-only:** Stage-1 window-minima + ground-state `.xsf`
@@ -215,4 +280,8 @@ Batch scripts use `gpaw_env` and the `#PJM` scheduler. Launch with
 - `scripts/xrd_extract_structures.py`, `scripts/xrd_simulate_crystallinity.py`
   added 2026-09-02 (proposal → code).
 - `json_export/` drivers added 2026-09-02.
+- `2_analysist/0_lcb_femgo/` and `1_lcb_febmgo/` (Fe/MgO interface LCB runs, dated
+  Sep 2026) placed under `2_analysist/` and documented in README.AI on 2026-09-06.
+  They share the project-agnostic runner layout and are tracked for their code
+  (main.py, job `*.sh`, `scripts/`); DB/xsf/out data stays gitignored.
 - Scaffold (this doc set) created 2026-08-31 under the AI-Agent Project Workflow.

@@ -469,3 +469,10 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   file:line, smoke test, expected output) to the end of `INSTRUCTION.md`; newest
   last; `INSTR #N` headers increment; it instructs, it does not execute; tracked +
   committed + LOG entry per append.
+
+## 2026-09-06 — README.AI: document Fe/MgO interface LCB trees (0_lcb_femgo, 1_lcb_febmgo)
+
+- On owner command, added `2_analysist/0_lcb_femgo/` and `2_analysist/1_lcb_febmgo/` (Fe(001)/MgO(001) interface LCB AGOX runs) to README.AI.md: new §2e, layout tree lines, identity + physics notes, an analysis-run command example, and edge-case/provenance updates.
+- Facts (grounded): 0_lcb_femgo = Fe/MgO no B, seeds 3-15 (13 DBs, 100 iters), 75-atom heterostructure Fe25|Mg25O25, 5x5 a~14.35 A. 1_lcb_febmgo = +B in Fe-layer hollows (add_adsorbate_to_hollows, num_atoms_add=3), seeds 0-6 (7 DBs; seed_6 empty), 78-atom Fe25B3|Mg25O25. Shared: LCAO/dzp/PBE spinpol, kpts(1,1,1), LCB kappa=2, GPR+Fingerprint, ncores=24, pjsub gpaw_env. HPC/run artifacts (.d0*, job_*.out, trash, stop_16) noted.
+- **.gitignore**: added rules so both trees keep regenerable run data out (seed_*/stop_*/trash/) while tracking main.py + job_*.sh + scripts/*.py.
+- Stage/commit: code + .gitignore + README.AI.md + this LOG entry.
