@@ -207,8 +207,8 @@ c_landausampling/
 ├── j_wanglandau.sh            # PJM batch script (HPC)
 ├── smoke_test_wang_landau.py  # cheap local validation (fake double-well GPR)
 ├── README.md / README.AI.md / LOG.md / TUTORIAL.md / VERSIONS.md / AGENTS.md / PROMPTS.md
-├── _runs/                     # self-contained HPC run dirs (scaffolded)
-├── _analysist/                # per-run analysed results (scaffolded)
+├── 1_runs/                     # self-contained HPC run dirs (scaffolded)
+├── 2_analysist/                # per-run analysed results (scaffolded)
 ├── _archives/                 # archived artifacts
 └── _tmp/                      # scratch output (holds main_wanglandau_1d.f reference)
 ```
@@ -296,7 +296,7 @@ and is out of scope for this documentation pass.
 
 New Question:
 
-In Landau Sampling, we only care that during our sampling, we reach the minimum energy (Monte Carlo is just a means of randomizing), but essentially, using the regular rattling makes it difficult and we only end up in the high energy state. With that in mind, what about using Monte Carlo Step + GPR relax? After we rattle, we perform GPR relaxation which can be embedded from the agox library (like in /home/think/Desktop/research/_run/c_landausampling/_analysist/c1_mgofe_N40_Emax04/dataset/main.py for reference. With 100 Step GPR relax.) This way, we will never have to worry regarding reaching the minimum energy, and we can even incoorporate higher rattling. What do you think?
+In Landau Sampling, we only care that during our sampling, we reach the minimum energy (Monte Carlo is just a means of randomizing), but essentially, using the regular rattling makes it difficult and we only end up in the high energy state. With that in mind, what about using Monte Carlo Step + GPR relax? After we rattle, we perform GPR relaxation which can be embedded from the agox library (like in /home/think/Desktop/research/_run/c_landausampling/2_analysist/c1_mgofe_N40_Emax04/dataset/main.py for reference. With 100 Step GPR relax.) This way, we will never have to worry regarding reaching the minimum energy, and we can even incoorporate higher rattling. What do you think?
 
 ### What your proposal is
 
@@ -435,7 +435,7 @@ Does the current landau gpr relax is parallel? I remember agox ray can run a par
 
 ### Answer
 
-**No — the GPR relax in this project is strictly serial, and AGOX's Ray (`--use-ray`) does not parallelise it.** Ray only parallelises GPR *training*; the per-trial relaxation is a single-process BFGS descent. This is true both in the code and in the current `_runs` job scripts.
+**No — the GPR relax in this project is strictly serial, and AGOX's Ray (`--use-ray`) does not parallelise it.** Ray only parallelises GPR *training*; the per-trial relaxation is a single-process BFGS descent. This is true both in the code and in the current `1_runs` job scripts.
 
 ### Where the relax happens (and why it is serial)
 
@@ -458,9 +458,9 @@ The Wang–Landau walk is a **single Markov chain**: each step's trial is genera
 
 So even if you add `--use-ray`, the relax loop stays serial: Ray helps only the one-time GPR training, not the ~`relax_steps` force/energy evaluations per MC step.
 
-### What the current `_runs` scripts actually do
+### What the current `1_runs` scripts actually do
 
-The GPR-relax sweep jobs (`_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh`, `_runs/c2_boron3_N40_Emax04/jc2_sweepGPR.sh`) confirm this:
+The GPR-relax sweep jobs (`1_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh`, `1_runs/c2_boron3_N40_Emax04/jc2_sweepGPR.sh`) confirm this:
 
 - They run `OMP_NUM_THREADS=1 python ./main.py ... --relax-steps 10/30/50/100 ...` — **no `--use-ray` flag** is passed.
 - The four relax runs (`relax10/30/50/100`) are executed **sequentially** in the script, one after another.
@@ -470,7 +470,7 @@ The GPR-relax sweep jobs (`_runs/c1_mgofe_N40_Emax04/jc1_sweepGPR.sh`, `_runs/c2
 
 - Current GPR relax: **serial** (single BFGS per MC step, single process).
 - `--use-ray`: **does not** parallelise the relax; it only parallelises GPR training's hyperparameter search.
-- To actually parallelise the relax you would need a different architecture (e.g. multiple independent walkers / replicas, or relaxing a batch of trials in parallel) — that is not what the current sampler or the current `_runs` scripts do. 
+- To actually parallelise the relax you would need a different architecture (e.g. multiple independent walkers / replicas, or relaxing a batch of trials in parallel) — that is not what the current sampler or the current `1_runs` scripts do. 
 
 New Question:
 
@@ -564,7 +564,7 @@ Run N fully independent `WangLandauSampler` instances (each with its own `ln_g`,
 
 1. **Reaches flatness faster (Mode A).** Because flatness is judged on the combined histogram, N walkers collectively visit all bins N× faster, so the refinement schedule (`ln_f` halvings) advances sooner. This is the main reason to use parallel WL.
 2. **Better statistics / lower variance (both modes).** More total visits per bin → a smoother, more converged `ln_g`; averaging (Mode B) further reduces the noise of the final estimate.
-3. **Directly uses idle cores.** The current `_runs` jobs request 64 cores but run one serial process; N walkers would actually use them.
+3. **Directly uses idle cores.** The current `1_runs` jobs request 64 cores but run one serial process; N walkers would actually use them.
 4. **No change to the physics.** Each walker still does the same WL walk on the same GPR; only the bookkeeping is shared. The `g(E)` meaning is unchanged.
 5. **Fault-tolerant / composable (Mode B).** Independent jobs can be submitted separately and merged later; a failed walker doesn't corrupt the others.
 

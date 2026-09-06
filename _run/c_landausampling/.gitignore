@@ -1,5 +1,5 @@
-# === _analysist: analysed results (per-run dirs tracked; regenerable outputs excluded) ===
-_analysist/_archive/
+# === 2_analysist: analysed results (per-run dirs tracked; regenerable outputs excluded) ===
+2_analysist/_archive/
 
 # === Regenerable artifact types (defensive; parent repo also ignores these) ===
 *.db

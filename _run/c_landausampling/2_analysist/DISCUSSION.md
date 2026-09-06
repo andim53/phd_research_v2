@@ -1,15 +1,15 @@
 # DISCUSSION — Wang-Landau HPC outputs (c1 Fe/MgO, c2 B3)
 
-Analysis tool: `_analysist/analyze_wl_outputs.py` (v1.0.0)
-Data: `_analysist/c1_mgofe_N40_Emax04/wl_output_*` and
-`_analysist/c2_boron3_N40_Emax04/wl_output_*` (HPC output dirs), plus the job
+Analysis tool: `2_analysist/analyze_wl_outputs.py` (v1.0.0)
+Data: `2_analysist/c1_mgofe_N40_Emax04/wl_output_*` and
+`2_analysist/c2_boron3_N40_Emax04/wl_output_*` (HPC output dirs), plus the job
 `.out` logs.
 
 Figures produced:
-- `_analysist/state_density_c1.png` — ln g(E) vs rel energy per atom for all
+- `2_analysist/state_density_c1.png` — ln g(E) vs rel energy per atom for all
   c1 outputs (mc1000 + sweep 10k/30k/50k).
-- `_analysist/state_density_c2.png` — same for c2 (sweep 10k/30k/50k).
-- `_analysist/wl_analysis_summary.csv` — per-output metrics.
+- `2_analysist/state_density_c2.png` — same for c2 (sweep 10k/30k/50k).
+- `2_analysist/wl_analysis_summary.csv` — per-output metrics.
 
 ---
 
@@ -32,7 +32,7 @@ the PNG save. The CSVs are written before that, so the g(E)/thermo data
 survived but the figure did not.
 
 **Fix:** replace `E_{\\mathrm` with `E_{\mathrm` (single backslash) in all
-`main.py` copies (project root, `_runs/c1`, `_runs/c2`, and the `_analysist`
+`main.py` copies (project root, `1_runs/c1`, `1_runs/c2`, and the `2_analysist`
 snapshots). Verified the label now renders.
 
 ---
@@ -123,8 +123,8 @@ thermodynamics.
 ## 5. Reproduce
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_analysist
+cd /home/think/Desktop/research/_run/c_landausampling/2_analysist
 /home/think/miniconda3/envs/agox_v2/bin/python analyze_wl_outputs.py
 ```
 Writes `state_density_c1.png`, `state_density_c2.png`, `wl_analysis_summary.csv`
-in `_analysist/`.
+in `2_analysist/`.

@@ -1,7 +1,7 @@
 # DISCUSSION — c1/c2 Wang–Landau sweeps: both runs are degenerate, non-converged
 
-Run: `_analysist/c1_mgofe_N40_Emax04/` (plain Fe/MgO) and
-`_analysist/c2_boron3_N40_Emax04/` (B3-doped). Data read from the
+Run: `2_analysist/c1_mgofe_N40_Emax04/` (plain Fe/MgO) and
+`2_analysist/c2_boron3_N40_Emax04/` (B3-doped). Data read from the
 `wl_output_*_sweep_*` CSV files and the job `.out` logs
 (`jc1_sweep.sh.6654357.out`, `j_c2_*_sweep.sh.6649512.out`).
 
@@ -111,7 +111,7 @@ project QnA:
 ## Recommended next steps (implemented in v1.3.0)
 
 The core fixes were implemented in project-root v1.3.0 and re-copied to both
-`_runs/` dirs:
+`1_runs/` dirs:
 
 1. **Reduce `--large-step` 0.40 → 0.20 Å (default)** — a single rattle is less
    likely to catapult the walker into GPR-extrapolation territory. (Implemented.)
@@ -123,7 +123,7 @@ The core fixes were implemented in project-root v1.3.0 and re-copied to both
 3. **Ground-state anchoring / re-seed** — not yet implemented (a larger change);
    if the reduced large-step + guard still trap the walk, add a periodic re-seed
    from the global minimum or a downward acceptance bias.
-4. **c2 re-sync to the fixed code** — done: `_runs/c2_boron3_N40_Emax04/`
+4. **c2 re-sync to the fixed code** — done: `1_runs/c2_boron3_N40_Emax04/`
    `main.py` + `wang_landau/` re-copied to v1.3.0 (which includes the v1.2.0 init
    fix + the new guard). (Implemented.)
 

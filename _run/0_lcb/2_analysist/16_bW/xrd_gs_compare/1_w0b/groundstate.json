@@ -1,0 +1,16 @@
+{
+ "leaf": "1_w0b",
+ "composition": {
+  "W": 54
+ },
+ "formula": "W54",
+ "n_atoms": 54,
+ "host_symbol": "W",
+ "interstitial_symbol": "",
+ "interstitial_symbols": [],
+ "n_host": 54,
+ "n_interstitial": 0,
+ "concentration_pct": 0.0,
+ "E_glob_eV": -611.1228400320654,
+ "cif": "1_w0b/groundstate.cif"
+}

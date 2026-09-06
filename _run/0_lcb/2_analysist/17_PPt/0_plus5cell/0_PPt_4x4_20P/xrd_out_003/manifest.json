@@ -1,0 +1,117 @@
+{
+  "leaf": "0_PPt_4x4_20P",
+  "natoms": 320,
+  "composition": {
+    "Pt": 256,
+    "P": 64
+  },
+  "nTa": 0,
+  "nB": 0,
+  "e_glob": -1832.406229981228,
+  "e_max": 0.03,
+  "bin_width": 0.005,
+  "windows": [
+    {
+      "label": "0.000_0.005",
+      "lo": 0.0,
+      "hi": 0.005,
+      "n_total": 3,
+      "n_sampled": 3,
+      "cifs": [
+        "windows/0.000_0.005/seed_0_s0000.cif",
+        "windows/0.000_0.005/seed_0_s0001.cif",
+        "windows/0.000_0.005/seed_0_s0002.cif"
+      ],
+      "rel_energies": [
+        0.0,
+        0.0041,
+        0.0046
+      ]
+    },
+    {
+      "label": "0.005_0.010",
+      "lo": 0.005,
+      "hi": 0.01,
+      "n_total": 4,
+      "n_sampled": 4,
+      "cifs": [
+        "windows/0.005_0.010/seed_0_s0000.cif",
+        "windows/0.005_0.010/seed_0_s0001.cif",
+        "windows/0.005_0.010/seed_0_s0002.cif",
+        "windows/0.005_0.010/seed_0_s0003.cif"
+      ],
+      "rel_energies": [
+        0.006,
+        0.0077,
+        0.0093,
+        0.0096
+      ]
+    },
+    {
+      "label": "0.010_0.015",
+      "lo": 0.01,
+      "hi": 0.015,
+      "n_total": 4,
+      "n_sampled": 4,
+      "cifs": [
+        "windows/0.010_0.015/seed_0_s0000.cif",
+        "windows/0.010_0.015/seed_0_s0001.cif",
+        "windows/0.010_0.015/seed_0_s0002.cif",
+        "windows/0.010_0.015/seed_0_s0003.cif"
+      ],
+      "rel_energies": [
+        0.01,
+        0.0121,
+        0.0138,
+        0.0149
+      ]
+    },
+    {
+      "label": "0.015_0.020",
+      "lo": 0.015,
+      "hi": 0.02,
+      "n_total": 3,
+      "n_sampled": 3,
+      "cifs": [
+        "windows/0.015_0.020/seed_0_s0000.cif",
+        "windows/0.015_0.020/seed_0_s0001.cif",
+        "windows/0.015_0.020/seed_0_s0002.cif"
+      ],
+      "rel_energies": [
+        0.0156,
+        0.0167,
+        0.0197
+      ]
+    },
+    {
+      "label": "0.020_0.025",
+      "lo": 0.02,
+      "hi": 0.025,
+      "n_total": 3,
+      "n_sampled": 3,
+      "cifs": [
+        "windows/0.020_0.025/seed_0_s0000.cif",
+        "windows/0.020_0.025/seed_0_s0001.cif",
+        "windows/0.020_0.025/seed_0_s0002.cif"
+      ],
+      "rel_energies": [
+        0.0218,
+        0.0232,
+        0.0245
+      ]
+    },
+    {
+      "label": "0.025_0.030",
+      "lo": 0.025,
+      "hi": 0.03,
+      "n_total": 1,
+      "n_sampled": 1,
+      "cifs": [
+        "windows/0.025_0.030/seed_0_s0000.cif"
+      ],
+      "rel_energies": [
+        0.0299
+      ]
+    }
+  ]
+}

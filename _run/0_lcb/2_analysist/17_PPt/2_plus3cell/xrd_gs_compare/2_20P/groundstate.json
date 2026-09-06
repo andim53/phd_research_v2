@@ -1,0 +1,19 @@
+{
+ "leaf": "2_20P",
+ "composition": {
+  "Pt": 108,
+  "P": 27
+ },
+ "formula": "P27Pt108",
+ "n_atoms": 135,
+ "host_symbol": "Pt",
+ "interstitial_symbol": "P",
+ "interstitial_symbols": [
+  "P"
+ ],
+ "n_host": 108,
+ "n_interstitial": 27,
+ "concentration_pct": 20.0,
+ "E_glob_eV": -762.4304332124411,
+ "cif": "2_20P/groundstate.cif"
+}

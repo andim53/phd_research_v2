@@ -1,0 +1,19 @@
+{
+ "leaf": "3_w3b",
+ "composition": {
+  "W": 54,
+  "B": 3
+ },
+ "formula": "B3W54",
+ "n_atoms": 57,
+ "host_symbol": "W",
+ "interstitial_symbol": "B",
+ "interstitial_symbols": [
+  "B"
+ ],
+ "n_host": 54,
+ "n_interstitial": 3,
+ "concentration_pct": 5.2631578947368425,
+ "E_glob_eV": -626.0320630243286,
+ "cif": "3_w3b/groundstate.cif"
+}

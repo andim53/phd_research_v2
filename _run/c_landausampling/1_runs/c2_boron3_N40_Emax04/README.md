@@ -1,6 +1,6 @@
 # Run c2_boron3_N40_Emax04 — Wang–Landau on B3-doped (dataset_boron3)
 
-Run directory: `_runs/c2_boron3_N40_Emax04/` (self-contained, launchable on HPC).
+Run directory: `1_runs/c2_boron3_N40_Emax04/` (self-contained, launchable on HPC).
 Copied from the latest project-root code (**main.py v1.2.0** + `wang_landau/`
 package) + the **B3-doped** dataset (`dataset_boron3/`, 7 seeds, B3Fe25Mg25O25 /
 78 atoms).

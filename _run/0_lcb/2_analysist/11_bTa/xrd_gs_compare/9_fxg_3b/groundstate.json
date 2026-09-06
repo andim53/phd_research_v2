@@ -1,0 +1,19 @@
+{
+ "leaf": "9_fxg_3b",
+ "composition": {
+  "Ta": 54,
+  "B": 3
+ },
+ "formula": "B3Ta54",
+ "n_atoms": 57,
+ "host_symbol": "Ta",
+ "interstitial_symbol": "B",
+ "interstitial_symbols": [
+  "B"
+ ],
+ "n_host": 54,
+ "n_interstitial": 3,
+ "concentration_pct": 5.2631578947368425,
+ "E_glob_eV": -538.026668864088,
+ "cif": "9_fxg_3b/groundstate.cif"
+}

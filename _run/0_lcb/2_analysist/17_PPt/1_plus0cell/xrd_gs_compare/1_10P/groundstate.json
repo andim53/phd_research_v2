@@ -1,0 +1,19 @@
+{
+ "leaf": "1_10P",
+ "composition": {
+  "Pt": 108,
+  "P": 12
+ },
+ "formula": "P12Pt108",
+ "n_atoms": 120,
+ "host_symbol": "Pt",
+ "interstitial_symbol": "P",
+ "interstitial_symbols": [
+  "P"
+ ],
+ "n_host": 108,
+ "n_interstitial": 12,
+ "concentration_pct": 10.0,
+ "E_glob_eV": -687.707760417749,
+ "cif": "1_10P/groundstate.cif"
+}

@@ -1,7 +1,7 @@
 # TUTORIAL — Reproduce run c1_mgofe_N40_Emax04
 
 This reproduces the Wang–Landau run in
-`_runs/c1_mgofe_N40_Emax04/`: **plain Fe/MgO** (`dataset`, 13 seeds),
+`1_runs/c1_mgofe_N40_Emax04/`: **plain Fe/MgO** (`dataset`, 13 seeds),
 `--n-bins 100 --e-max 0.40`, `--mc-steps 20000000`, rattle-only on Fe (no swap).
 
 ## Prerequisites
@@ -12,7 +12,7 @@ This reproduces the Wang–Landau run in
 ## Reproduce (one-line, local)
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_mgofe_N40_Emax04
+cd /home/think/Desktop/research/_run/c_landausampling/1_runs/c1_mgofe_N40_Emax04
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --dataset dataset --n-bins 100 --e-max 0.40 \
     --mc-steps 20000000 --small-step 0.05 --large-step 0.40 \
@@ -24,7 +24,7 @@ cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_mgofe_N40_Emax04
 ## Reproduce (HPC, PJM)
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_mgofe_N40_Emax04
+cd /home/think/Desktop/research/_run/c_landausampling/1_runs/c1_mgofe_N40_Emax04
 pjsub j_c1_mgofe_N40_Emax04.sh
 ```
 

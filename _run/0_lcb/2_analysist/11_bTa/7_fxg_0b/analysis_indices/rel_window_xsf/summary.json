@@ -1,0 +1,106 @@
+{
+ "dataset": "7_fxg_0b",
+ "n_atoms_per_struct": 54,
+ "n_structures_loaded": 3967,
+ "start_iter": 10,
+ "E_glob_eV": -517.4939460543682,
+ "tol": 0.005,
+ "windows": {
+  "0.010": {
+   "window": [
+    0.005,
+    0.015
+   ],
+   "n_in_window_total": 26,
+   "n_exported": 3,
+   "files": [
+    "relE_0.010_seed_25_iter60_rel0.005758.xsf",
+    "relE_0.010_seed_20_iter32_rel0.005860.xsf",
+    "relE_0.010_seed_2_iter13_rel0.005919.xsf"
+   ]
+  },
+  "0.100": {
+   "window": [
+    0.095,
+    0.10500000000000001
+   ],
+   "n_in_window_total": 4,
+   "n_exported": 3,
+   "files": [
+    "relE_0.100_seed_33_iter11_rel0.095641.xsf",
+    "relE_0.100_seed_27_iter14_rel0.095909.xsf",
+    "relE_0.100_seed_34_iter11_rel0.097776.xsf"
+   ]
+  },
+  "0.150": {
+   "window": [
+    0.145,
+    0.155
+   ],
+   "n_in_window_total": 2,
+   "n_exported": 2,
+   "files": [
+    "relE_0.150_seed_24_iter11_rel0.146772.xsf",
+    "relE_0.150_seed_6_iter11_rel0.153472.xsf"
+   ]
+  }
+ },
+ "exported": [
+  {
+   "target": 0.01,
+   "rel_e": 0.00575827749779339,
+   "file": "relE_0.010_seed_25_iter60_rel0.005758.xsf",
+   "seed": "seed_25",
+   "iteration": 60
+  },
+  {
+   "target": 0.01,
+   "rel_e": 0.005859822745728033,
+   "file": "relE_0.010_seed_20_iter32_rel0.005860.xsf",
+   "seed": "seed_20",
+   "iteration": 32
+  },
+  {
+   "target": 0.01,
+   "rel_e": 0.005918738746768465,
+   "file": "relE_0.010_seed_2_iter13_rel0.005919.xsf",
+   "seed": "seed_2",
+   "iteration": 13
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.09564111027160775,
+   "file": "relE_0.100_seed_33_iter11_rel0.095641.xsf",
+   "seed": "seed_33",
+   "iteration": 11
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.09590931395639178,
+   "file": "relE_0.100_seed_27_iter14_rel0.095909.xsf",
+   "seed": "seed_27",
+   "iteration": 14
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.09777566556751978,
+   "file": "relE_0.100_seed_34_iter11_rel0.097776.xsf",
+   "seed": "seed_34",
+   "iteration": 11
+  },
+  {
+   "target": 0.15,
+   "rel_e": 0.14677242544888608,
+   "file": "relE_0.150_seed_24_iter11_rel0.146772.xsf",
+   "seed": "seed_24",
+   "iteration": 11
+  },
+  {
+   "target": 0.15,
+   "rel_e": 0.1534716982450772,
+   "file": "relE_0.150_seed_6_iter11_rel0.153472.xsf",
+   "seed": "seed_6",
+   "iteration": 11
+  }
+ ]
+}

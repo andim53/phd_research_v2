@@ -1,0 +1,16 @@
+{
+ "leaf": "3_3x3_0P",
+ "composition": {
+  "Pt": 108
+ },
+ "formula": "Pt108",
+ "n_atoms": 108,
+ "host_symbol": "Pt",
+ "interstitial_symbol": "",
+ "interstitial_symbols": [],
+ "n_host": 108,
+ "n_interstitial": 0,
+ "concentration_pct": 0.0,
+ "E_glob_eV": -628.2177260243816,
+ "cif": "3_3x3_0P/groundstate.cif"
+}

@@ -1,0 +1,19 @@
+{
+ "leaf": "8_fxg_1b",
+ "composition": {
+  "Ta": 54,
+  "B": 1
+ },
+ "formula": "BTa54",
+ "n_atoms": 55,
+ "host_symbol": "Ta",
+ "interstitial_symbol": "B",
+ "interstitial_symbols": [
+  "B"
+ ],
+ "n_host": 54,
+ "n_interstitial": 1,
+ "concentration_pct": 1.8181818181818181,
+ "E_glob_eV": -523.8593939483187,
+ "cif": "8_fxg_1b/groundstate.cif"
+}

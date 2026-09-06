@@ -1,6 +1,6 @@
 # Run c1_parallel_w500 — Wang–Landau on plain Fe/MgO (dataset), Mode A parallel walkers
 
-Run directory: `_runs/c1_parallel_w500/` (self-contained, launchable on HPC).
+Run directory: `1_runs/c1_parallel_w500/` (self-contained, launchable on HPC).
 Copied from the latest project-root code (**main.py v1.5.0** with `--n-walkers` +
 `wang_landau/` including `parallel_wl.py`) + the **plain Fe/MgO** dataset
 (`dataset/`, 13 seeds, 1297 structures, Fe25Mg25O25 / 75 atoms).

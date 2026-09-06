@@ -1,0 +1,125 @@
+{
+  "leaf": "2_3x3_30P",
+  "natoms": 154,
+  "composition": {
+    "Pt": 108,
+    "P": 46
+  },
+  "nTa": 0,
+  "nB": 0,
+  "e_glob": -820.5698175112703,
+  "e_max": 0.03,
+  "bin_width": 0.005,
+  "windows": [
+    {
+      "label": "0.000_0.005",
+      "lo": 0.0,
+      "hi": 0.005,
+      "n_total": 1,
+      "n_sampled": 1,
+      "cifs": [
+        "windows/0.000_0.005/seed_2_s0000.cif"
+      ],
+      "rel_energies": [
+        0.0
+      ]
+    },
+    {
+      "label": "0.005_0.010",
+      "lo": 0.005,
+      "hi": 0.01,
+      "n_total": 1,
+      "n_sampled": 1,
+      "cifs": [
+        "windows/0.005_0.010/seed_2_s0000.cif"
+      ],
+      "rel_energies": [
+        0.0052
+      ]
+    },
+    {
+      "label": "0.010_0.015",
+      "lo": 0.01,
+      "hi": 0.015,
+      "n_total": 1,
+      "n_sampled": 1,
+      "cifs": [
+        "windows/0.010_0.015/seed_3_s0000.cif"
+      ],
+      "rel_energies": [
+        0.0122
+      ]
+    },
+    {
+      "label": "0.015_0.020",
+      "lo": 0.015,
+      "hi": 0.02,
+      "n_total": 4,
+      "n_sampled": 4,
+      "cifs": [
+        "windows/0.015_0.020/seed_0_s0000.cif",
+        "windows/0.015_0.020/seed_2_s0001.cif",
+        "windows/0.015_0.020/seed_2_s0002.cif",
+        "windows/0.015_0.020/seed_0_s0003.cif"
+      ],
+      "rel_energies": [
+        0.0156,
+        0.0181,
+        0.0186,
+        0.0196
+      ]
+    },
+    {
+      "label": "0.020_0.025",
+      "lo": 0.02,
+      "hi": 0.025,
+      "n_total": 5,
+      "n_sampled": 5,
+      "cifs": [
+        "windows/0.020_0.025/seed_3_s0000.cif",
+        "windows/0.020_0.025/seed_0_s0001.cif",
+        "windows/0.020_0.025/seed_2_s0002.cif",
+        "windows/0.020_0.025/seed_0_s0003.cif",
+        "windows/0.020_0.025/seed_0_s0004.cif"
+      ],
+      "rel_energies": [
+        0.0201,
+        0.0208,
+        0.0225,
+        0.0225,
+        0.0248
+      ]
+    },
+    {
+      "label": "0.025_0.030",
+      "lo": 0.025,
+      "hi": 0.03,
+      "n_total": 10,
+      "n_sampled": 10,
+      "cifs": [
+        "windows/0.025_0.030/seed_2_s0000.cif",
+        "windows/0.025_0.030/seed_2_s0001.cif",
+        "windows/0.025_0.030/seed_0_s0002.cif",
+        "windows/0.025_0.030/seed_0_s0003.cif",
+        "windows/0.025_0.030/seed_0_s0004.cif",
+        "windows/0.025_0.030/seed_2_s0005.cif",
+        "windows/0.025_0.030/seed_0_s0006.cif",
+        "windows/0.025_0.030/seed_2_s0007.cif",
+        "windows/0.025_0.030/seed_0_s0008.cif",
+        "windows/0.025_0.030/seed_0_s0009.cif"
+      ],
+      "rel_energies": [
+        0.0254,
+        0.0257,
+        0.0261,
+        0.0265,
+        0.0266,
+        0.027,
+        0.0281,
+        0.0281,
+        0.0284,
+        0.0289
+      ]
+    }
+  ]
+}

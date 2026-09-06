@@ -1,0 +1,78 @@
+{
+ "family": "11_bTa",
+ "leaves": [
+  {
+   "leaf": "7_fxg_0b",
+   "composition": {
+    "Ta": 54
+   },
+   "formula": "Ta54",
+   "n_atoms": 54,
+   "host_symbol": "Ta",
+   "interstitial_symbol": "",
+   "interstitial_symbols": [],
+   "n_host": 54,
+   "n_interstitial": 0,
+   "concentration_pct": 0.0,
+   "E_glob_eV": -517.4939460543682,
+   "cif": "7_fxg_0b/groundstate.cif"
+  },
+  {
+   "leaf": "8_fxg_1b",
+   "composition": {
+    "Ta": 54,
+    "B": 1
+   },
+   "formula": "BTa54",
+   "n_atoms": 55,
+   "host_symbol": "Ta",
+   "interstitial_symbol": "B",
+   "interstitial_symbols": [
+    "B"
+   ],
+   "n_host": 54,
+   "n_interstitial": 1,
+   "concentration_pct": 1.8181818181818181,
+   "E_glob_eV": -523.8593939483187,
+   "cif": "8_fxg_1b/groundstate.cif"
+  },
+  {
+   "leaf": "9_fxg_3b",
+   "composition": {
+    "Ta": 54,
+    "B": 3
+   },
+   "formula": "B3Ta54",
+   "n_atoms": 57,
+   "host_symbol": "Ta",
+   "interstitial_symbol": "B",
+   "interstitial_symbols": [
+    "B"
+   ],
+   "n_host": 54,
+   "n_interstitial": 3,
+   "concentration_pct": 5.2631578947368425,
+   "E_glob_eV": -538.026668864088,
+   "cif": "9_fxg_3b/groundstate.cif"
+  },
+  {
+   "leaf": "10_fxg_5b",
+   "composition": {
+    "Ta": 54,
+    "B": 5
+   },
+   "formula": "B5Ta54",
+   "n_atoms": 59,
+   "host_symbol": "Ta",
+   "interstitial_symbol": "B",
+   "interstitial_symbols": [
+    "B"
+   ],
+   "n_host": 54,
+   "n_interstitial": 5,
+   "concentration_pct": 8.474576271186441,
+   "E_glob_eV": -550.9853482153258,
+   "cif": "10_fxg_5b/groundstate.cif"
+  }
+ ]
+}

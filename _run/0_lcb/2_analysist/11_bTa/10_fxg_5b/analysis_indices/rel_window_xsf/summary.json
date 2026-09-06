@@ -1,0 +1,114 @@
+{
+ "dataset": "10_fxg_5b",
+ "n_atoms_per_struct": 59,
+ "n_structures_loaded": 1486,
+ "start_iter": 10,
+ "E_glob_eV": -550.9853482153258,
+ "tol": 0.005,
+ "windows": {
+  "0.010": {
+   "window": [
+    0.005,
+    0.015
+   ],
+   "n_in_window_total": 133,
+   "n_exported": 3,
+   "files": [
+    "relE_0.010_seed_4_iter77_rel0.005288.xsf",
+    "relE_0.010_seed_4_iter80_rel0.005402.xsf",
+    "relE_0.010_seed_4_iter81_rel0.005405.xsf"
+   ]
+  },
+  "0.100": {
+   "window": [
+    0.095,
+    0.10500000000000001
+   ],
+   "n_in_window_total": 19,
+   "n_exported": 3,
+   "files": [
+    "relE_0.100_seed_1_iter33_rel0.096149.xsf",
+    "relE_0.100_seed_0_iter71_rel0.097281.xsf",
+    "relE_0.100_seed_3_iter11_rel0.097363.xsf"
+   ]
+  },
+  "0.150": {
+   "window": [
+    0.145,
+    0.155
+   ],
+   "n_in_window_total": 18,
+   "n_exported": 3,
+   "files": [
+    "relE_0.150_seed_0_iter33_rel0.145415.xsf",
+    "relE_0.150_seed_0_iter13_rel0.146321.xsf",
+    "relE_0.150_seed_1_iter15_rel0.146977.xsf"
+   ]
+  }
+ },
+ "exported": [
+  {
+   "target": 0.01,
+   "rel_e": 0.005287721097155076,
+   "file": "relE_0.010_seed_4_iter77_rel0.005288.xsf",
+   "seed": "seed_4",
+   "iteration": 77
+  },
+  {
+   "target": 0.01,
+   "rel_e": 0.005401939939100869,
+   "file": "relE_0.010_seed_4_iter80_rel0.005402.xsf",
+   "seed": "seed_4",
+   "iteration": 80
+  },
+  {
+   "target": 0.01,
+   "rel_e": 0.005404987521472522,
+   "file": "relE_0.010_seed_4_iter81_rel0.005405.xsf",
+   "seed": "seed_4",
+   "iteration": 81
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.0961485592426347,
+   "file": "relE_0.100_seed_1_iter33_rel0.096149.xsf",
+   "seed": "seed_1",
+   "iteration": 33
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.09728132179267027,
+   "file": "relE_0.100_seed_0_iter71_rel0.097281.xsf",
+   "seed": "seed_0",
+   "iteration": 71
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.0973631974968631,
+   "file": "relE_0.100_seed_3_iter11_rel0.097363.xsf",
+   "seed": "seed_3",
+   "iteration": 11
+  },
+  {
+   "target": 0.15,
+   "rel_e": 0.14541524621090773,
+   "file": "relE_0.150_seed_0_iter33_rel0.145415.xsf",
+   "seed": "seed_0",
+   "iteration": 33
+  },
+  {
+   "target": 0.15,
+   "rel_e": 0.14632078231430198,
+   "file": "relE_0.150_seed_0_iter13_rel0.146321.xsf",
+   "seed": "seed_0",
+   "iteration": 13
+  },
+  {
+   "target": 0.15,
+   "rel_e": 0.14697745754316294,
+   "file": "relE_0.150_seed_1_iter15_rel0.146977.xsf",
+   "seed": "seed_1",
+   "iteration": 15
+  }
+ ]
+}

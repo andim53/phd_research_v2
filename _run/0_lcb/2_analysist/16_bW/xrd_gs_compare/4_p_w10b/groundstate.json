@@ -1,0 +1,19 @@
+{
+ "leaf": "4_p_w10b",
+ "composition": {
+  "W": 54,
+  "B": 6
+ },
+ "formula": "B6W54",
+ "n_atoms": 60,
+ "host_symbol": "W",
+ "interstitial_symbol": "B",
+ "interstitial_symbols": [
+  "B"
+ ],
+ "n_host": 54,
+ "n_interstitial": 6,
+ "concentration_pct": 10.0,
+ "E_glob_eV": -636.3860164766038,
+ "cif": "4_p_w10b/groundstate.cif"
+}

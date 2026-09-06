@@ -1,7 +1,7 @@
 # TUTORIAL — Reproduce run c2_boron3_N40_Emax04
 
 This reproduces the Wang–Landau run in
-`_runs/c2_boron3_N40_Emax04/`: **B3-doped** (`dataset_boron3`, 7 seeds),
+`1_runs/c2_boron3_N40_Emax04/`: **B3-doped** (`dataset_boron3`, 7 seeds),
 `--n-bins 100 --e-max 0.40`, `--mc-steps 20000000`, mobile Fe+B with the
 **swap (permutation) move enabled** (`--swap-prob 0.2 --max-swaps 2`).
 
@@ -13,7 +13,7 @@ This reproduces the Wang–Landau run in
 ## Reproduce (one-line, local)
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_runs/c2_boron3_N40_Emax04
+cd /home/think/Desktop/research/_run/c_landausampling/1_runs/c2_boron3_N40_Emax04
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --dataset dataset_boron3 --n-bins 100 --e-max 0.40 \
     --mc-steps 20000000 --small-step 0.05 --large-step 0.20 \
@@ -26,7 +26,7 @@ cd /home/think/Desktop/research/_run/c_landausampling/_runs/c2_boron3_N40_Emax04
 ## Reproduce (HPC, PJM)
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_runs/c2_boron3_N40_Emax04
+cd /home/think/Desktop/research/_run/c_landausampling/1_runs/c2_boron3_N40_Emax04
 pjsub j_c2_boron3_N40_Emax04.sh
 ```
 

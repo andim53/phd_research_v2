@@ -20,10 +20,11 @@ human-facing `README.md`. Read `AGENTS.md` (governing rules) and `LOG.md`
 
 ```
 c_landausampling/
-├── main.py                    # Entry point: load dataset -> train GPR -> WangLandauSampler -> thermodynamics
+├── main.py                    # Entry point: load dataset -> train GPR -> WangLandauSampler -> thermodynamics (v1.5.0)
 ├── wang_landau/               # package
 │   ├── __init__.py            #   re-exports WangLandauSampler, load_all_seeds, build_gpr, validate_gpr, K_B, g_of_E_to_thermodynamics
-│   ├── wang_landau_sampler.py #   WangLandauSampler (flat-histogram density of states)
+│   ├── wang_landau_sampler.py #   WangLandauSampler (flat-histogram density of states, v1.4.0)
+│   ├── parallel_wl.py         #   Mode A parallel WL (v1.5.0): shared-state Ray actors, run_parallel_walkers
 │   ├── gpr_training.py        #   load_all_seeds, build_gpr, validate_gpr
 │   ├── thermodynamics.py      #   g_of_E_to_thermodynamics, heat_capacity_from_thermo
 │   └── utils.py               #   K_B constant, shift_energies, _logsumexp
@@ -31,29 +32,34 @@ c_landausampling/
 ├── dataset_boron3/            # B3-doped (7 DBs, B3Fe25Mg25O25, 78 atoms)
 ├── dataset_boron/             # B7-doped (5 DBs, B7Fe25Mg25O25, 82 atoms)
 ├── j_wanglandau.sh            # PJM batch script (HPC launch)
-├── smoke_test_wang_landau.py  # cheap local validation (fake 1-atom double-well GPR)
-├── README.md / README.AI.md / LOG.md / TUTORIAL.md / VERSIONS.md / AGENTS.md / PROMPTS.md
-├── _runs/                     # (scaffolded) self-contained run dirs (HPC)
-├── _analysist/                # (scaffolded) per-run analysed results
-├── _archives/                 # (scaffolded) archived artifacts
-└── _tmp/                      # scratch output (holds main_wanglandau_1d.f reference)
+├── smoke_test_wang_landau.py  # cheap local validation (fake 1-atom double-well GPR, v1.3.0)
+├── README.md / README.AI.md / LOG.md / TUTORIAL.md / VERSIONS.md / AGENTS.md / PROMPTS.md / QNA.md
+├── 1_runs/                     # self-contained HPC run dirs: c1_mgofe_N40_Emax04, c2_boron3_N40_Emax04, c3_parallel_w500
+├── 2_analysist/                # per-run analysed results (c1, c2) + analyze_wl_outputs.py + DISCUSSION.md
+├── _archives/                 # archived artifacts
+└── _tmp/                      # scratch output (holds main_wanglandau_1d.f reference + wl_output_c*_relax* runs)
 ```
 
-### 2a. `_runs/` and `_analysist/` (scaffolded, per the run-directory convention)
-- **`_runs/<NN>_<descriptor>/`** — self-contained HPC run dirs, each holding
+### 2a. `1_runs/` and `2_analysist/` (per the run-directory convention)
+- **`1_runs/<NN>_<descriptor>/`** — self-contained HPC run dirs, each holding
   `j_*.sh` + `main*.py` + copies of `scripts/` and `wang_landau/`, launchable in
   isolation. HPC runs carry a per-run `README.md` + `TUTORIAL.md`.
-- **`_analysist/`** — per-run analysed results, one self-contained dir per run
-  mirroring `_runs/`, plus root-level analysis scripts and an archived
-  `_archive/`. Outputs regenerable/gitignored; analysis code + per-run docs
-  tracked.
+  - `c1_mgofe_N40_Emax04` — plain Fe/MgO, main.py **v1.4.0** (serial).
+  - `c2_boron3_N40_Emax04` — B3-doped, main.py **v1.4.0** (serial).
+  - `c3_parallel_w500` — plain Fe/MgO, main.py **v1.5.0** (`--n-walkers 500`,
+    Mode A parallel). Contains `parallel_wl.py`; **note:** its `README.md`/job
+    script still say `c1_parallel_w500` (copy not fully renamed).
+- **`2_analysist/`** — per-run analysed results, one self-contained dir per run
+  mirroring `1_runs/`, plus root-level analysis scripts (`analyze_wl_outputs.py`)
+  and a `DISCUSSION.md`. Outputs regenerable/gitignored; analysis code + per-run
+  docs tracked.
 
 ### 2b. Source-code versioning
 Every in-scope source file carries a module-level `__version__ = "X.Y.Z"`
 (semver). `VERSIONS.md` is the single-source manifest. **Bump rule:** patch on
 every code edit; minor on API/behavior changes. On every edit: bump
 `__version__`, update `VERSIONS.md`, record old→new in `LOG.md`. In-scope:
-`main.py`, `wang_landau/`, `smoke_test_wang_landau.py`. `dataset/`, `_runs/`
+`main.py`, `wang_landau/`, `smoke_test_wang_landau.py`. `dataset/`, `1_runs/`
 snapshots are **not** individually versioned.
 
 ## 3. Entry points & commands
@@ -78,9 +84,17 @@ $PY main.py --dataset dataset --n-bins 40 --e-max 0.40 \
 $PY main.py --dataset dataset_boron3 ... --output ./wl_output_boron3
 $PY main.py --dataset dataset_boron  ... --output ./wl_output_boron
 
+# Mode A parallel WL (v1.5.0): N walkers share one H/ln_g via Ray actors
+$PY main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 30000 \
+    --relax-steps 100 --n-walkers 500 --output ./wl_output_parallel --rng 42
+
 # HPC launch (reads existing dataset/seed_*/1_db/db_*.db)
 pjsub j_wanglandau.sh
 ```
+
+Note: `run_parallel_walkers` lives in `wang_landau/parallel_wl.py` and is
+imported directly by `main.py` (`from wang_landau.parallel_wl import
+run_parallel_walkers`); it is **not** re-exported from `wang_landau/__init__.py`.
 
 ### `main.py` CLI
 | Flag | Default | Meaning |
@@ -88,7 +102,7 @@ pjsub j_wanglandau.sh
 | `--dataset` | `dataset` | `dataset` \| `dataset_boron3` \| `dataset_boron`. |
 | `--n-bins` | `40` | Energy bins. |
 | `--e-min` / `--e-max` | `0.0` / `0.40` | Bin range (eV/atom rel). |
-| `--small-step` / `--large-step` | `0.05` / `0.40` | Walk displacement scales (Å). |
+| `--small-step` / `--large-step` | `0.05` / `0.20` | Walk displacement scales (Å). Large reduced from 0.40 (v1.3.0) to avoid GPR-extrapolation escapes. |
 | `--perturb-symbols` | `Fe` | Atoms to rattle. |
 | `--flatness-criterion` | `0.80` | Flatness threshold. |
 | `--check-interval` | `5000` | Flatness check interval. |
@@ -97,12 +111,15 @@ pjsub j_wanglandau.sh
 | `--max-swaps` | `1` | Max swaps per swap move (random 1..max). |
 | `--swap-rattle` | `0.05` | Gaussian displacement (Å) applied to the two swapped atoms. |
 | `--relax-steps` | `0` | Basin-hopping GPR relax: if > 0, relax each trial with this many BFGS steps on the GPR (fixing non-mobile atoms) before binning. Default 0 (off). |
+| `--e-reject` | `5×e_max` | Relative energy (eV/atom) above which a trial is treated as an unphysical GPR extrapolation and REJECTED (revisits current bin) instead of being capped into the top bin. Set ≤ e_max to disable. |
 | `--mc-steps` | `2000000` | WL MC steps. |
 | `--temperatures` | `100,200,300,500,1000` | Thermodynamics temperatures. |
 | `--start-from-top` | off | Init at top of bin range (default off = start from the global minimum, bottom-up). |
+| `--start-from-min` | off | Explicitly initialize from the global minimum (default behaviour; `--start-from-top` + `--start-from-min` → min wins). |
 | `--output` | `./wl_output` | Output dir. |
 | `--rng` | `42` | Seed. |
 | `--use-ray` | off | Enable Ray in GPR. |
+| `--n-walkers` | `1` | **Mode A parallel WL** (v1.5.0): N concurrent Wang–Landau walkers sharing one histogram `H`/`ln_g` via Ray actors; seeds `--rng+i`; flatness/refinement act on the combined histogram. `N=1` = serial. |
 
 ## 4. Dependencies & environment
 - Conda env **`agox_v2`** (AGOX 3.10.2, ASE 3.25.0, Ray) — **local** dev/test.

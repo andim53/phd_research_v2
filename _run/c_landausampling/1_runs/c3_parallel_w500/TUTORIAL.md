@@ -1,7 +1,7 @@
 # TUTORIAL — Reproduce run c1_parallel_w500 (Mode A parallel walkers)
 
 This reproduces the Wang–Landau run in
-`_runs/c1_parallel_w500/`: **plain Fe/MgO** (`dataset`, 13 seeds),
+`1_runs/c1_parallel_w500/`: **plain Fe/MgO** (`dataset`, 13 seeds),
 `--n-bins 100 --e-max 0.40`, `--relax-steps 100`, and **500 shared-histogram
 walkers** (`--n-walkers 500`, Mode A).
 
@@ -14,7 +14,7 @@ walkers** (`--n-walkers 500`, Mode A).
 ## Reproduce (one-line, local, fewer walkers to test)
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_parallel_w500
+cd /home/think/Desktop/research/_run/c_landausampling/1_runs/c1_parallel_w500
 /home/think/miniconda3/envs/agox_v2/bin/python main.py \
     --dataset dataset --n-bins 100 --e-max 0.40 \
     --mc-steps 3000 --small-step 0.05 --large-step 0.20 \
@@ -29,7 +29,7 @@ cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_parallel_w500
 ## Reproduce (HPC, PJM)
 
 ```bash
-cd /home/think/Desktop/research/_run/c_landausampling/_runs/c1_parallel_w500
+cd /home/think/Desktop/research/_run/c_landausampling/1_runs/c1_parallel_w500
 pjsub j_c1_parallel_w500.sh
 ```
 

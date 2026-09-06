@@ -1,0 +1,98 @@
+{
+ "dataset": "8_fxg_1b",
+ "n_atoms_per_struct": 55,
+ "n_structures_loaded": 1456,
+ "start_iter": 10,
+ "E_glob_eV": -523.8593939483187,
+ "tol": 0.005,
+ "windows": {
+  "0.010": {
+   "window": [
+    0.005,
+    0.015
+   ],
+   "n_in_window_total": 102,
+   "n_exported": 3,
+   "files": [
+    "relE_0.010_seed_7_iter20_rel0.005043.xsf",
+    "relE_0.010_seed_1_iter29_rel0.005064.xsf",
+    "relE_0.010_seed_7_iter23_rel0.005067.xsf"
+   ]
+  },
+  "0.100": {
+   "window": [
+    0.095,
+    0.10500000000000001
+   ],
+   "n_in_window_total": 5,
+   "n_exported": 3,
+   "files": [
+    "relE_0.100_seed_6_iter11_rel0.102004.xsf",
+    "relE_0.100_seed_0_iter23_rel0.102325.xsf",
+    "relE_0.100_seed_0_iter57_rel0.103194.xsf"
+   ]
+  },
+  "0.150": {
+   "window": [
+    0.145,
+    0.155
+   ],
+   "n_in_window_total": 1,
+   "n_exported": 1,
+   "files": [
+    "relE_0.150_seed_0_iter64_rel0.148386.xsf"
+   ]
+  }
+ },
+ "exported": [
+  {
+   "target": 0.01,
+   "rel_e": 0.00504333734915318,
+   "file": "relE_0.010_seed_7_iter20_rel0.005043.xsf",
+   "seed": "seed_7",
+   "iteration": 20
+  },
+  {
+   "target": 0.01,
+   "rel_e": 0.005064047846425721,
+   "file": "relE_0.010_seed_1_iter29_rel0.005064.xsf",
+   "seed": "seed_1",
+   "iteration": 29
+  },
+  {
+   "target": 0.01,
+   "rel_e": 0.005067468355016238,
+   "file": "relE_0.010_seed_7_iter23_rel0.005067.xsf",
+   "seed": "seed_7",
+   "iteration": 23
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.10200377923665242,
+   "file": "relE_0.100_seed_6_iter11_rel0.102004.xsf",
+   "seed": "seed_6",
+   "iteration": 11
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.1023248784609264,
+   "file": "relE_0.100_seed_0_iter23_rel0.102325.xsf",
+   "seed": "seed_0",
+   "iteration": 23
+  },
+  {
+   "target": 0.1,
+   "rel_e": 0.10319351379000223,
+   "file": "relE_0.100_seed_0_iter57_rel0.103194.xsf",
+   "seed": "seed_0",
+   "iteration": 57
+  },
+  {
+   "target": 0.15,
+   "rel_e": 0.1483856000896243,
+   "file": "relE_0.150_seed_0_iter64_rel0.148386.xsf",
+   "seed": "seed_0",
+   "iteration": 64
+  }
+ ]
+}

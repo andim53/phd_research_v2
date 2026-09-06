@@ -2,7 +2,7 @@
 """
 Analyze Wang-Landau HPC outputs for c_landausampling (c1 = Fe/MgO, c2 = B3).
 
-Auto-discovers every `wl_output_*` directory under each run dir in `_analysist/`,
+Auto-discovers every `wl_output_*` directory under each run dir in `2_analysist/`,
 and for each extracts:
 
   - State density g(E):  `g_of_E.csv`  (rel_eV_per_atom, ln_g, H)
@@ -260,7 +260,7 @@ def print_table(rows):
 def main():
     p = argparse.ArgumentParser(description="Analyze c_landausampling Wang-Landau HPC outputs")
     p.add_argument("--runs", nargs="+", default=DEFAULT_RUNS,
-                   help="run dir names under _analysist/ (default c1, c2)")
+                   help="run dir names under 2_analysist/ (default c1, c2)")
     p.add_argument("--outdir", default=".",
                    help="output dir for summary CSV + figures (default current dir)")
     p.add_argument("--log-suffix", default=".out",

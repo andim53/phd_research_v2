@@ -1,6 +1,6 @@
 # Run c1_mgofe_N40_Emax04 — Wang–Landau on plain Fe/MgO (dataset)
 
-Run directory: `_runs/c1_mgofe_N40_Emax04/` (self-contained, launchable on HPC).
+Run directory: `1_runs/c1_mgofe_N40_Emax04/` (self-contained, launchable on HPC).
 Copied from the latest project-root code (**main.py v1.3.0** + `wang_landau/`
 package) + the **plain Fe/MgO** dataset (`dataset/`, 13 seeds, 1297 structures,
 Fe25Mg25O25 / 75 atoms).

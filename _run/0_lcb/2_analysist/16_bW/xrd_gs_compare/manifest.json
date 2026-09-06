@@ -1,0 +1,78 @@
+{
+ "family": "16_bW",
+ "leaves": [
+  {
+   "leaf": "1_w0b",
+   "composition": {
+    "W": 54
+   },
+   "formula": "W54",
+   "n_atoms": 54,
+   "host_symbol": "W",
+   "interstitial_symbol": "",
+   "interstitial_symbols": [],
+   "n_host": 54,
+   "n_interstitial": 0,
+   "concentration_pct": 0.0,
+   "E_glob_eV": -611.1228400320654,
+   "cif": "1_w0b/groundstate.cif"
+  },
+  {
+   "leaf": "2_w1b",
+   "composition": {
+    "W": 54,
+    "B": 1
+   },
+   "formula": "BW54",
+   "n_atoms": 55,
+   "host_symbol": "W",
+   "interstitial_symbol": "B",
+   "interstitial_symbols": [
+    "B"
+   ],
+   "n_host": 54,
+   "n_interstitial": 1,
+   "concentration_pct": 1.8181818181818181,
+   "E_glob_eV": -615.9778324667353,
+   "cif": "2_w1b/groundstate.cif"
+  },
+  {
+   "leaf": "3_w3b",
+   "composition": {
+    "W": 54,
+    "B": 3
+   },
+   "formula": "B3W54",
+   "n_atoms": 57,
+   "host_symbol": "W",
+   "interstitial_symbol": "B",
+   "interstitial_symbols": [
+    "B"
+   ],
+   "n_host": 54,
+   "n_interstitial": 3,
+   "concentration_pct": 5.2631578947368425,
+   "E_glob_eV": -626.0320630243286,
+   "cif": "3_w3b/groundstate.cif"
+  },
+  {
+   "leaf": "4_p_w10b",
+   "composition": {
+    "W": 54,
+    "B": 6
+   },
+   "formula": "B6W54",
+   "n_atoms": 60,
+   "host_symbol": "W",
+   "interstitial_symbol": "B",
+   "interstitial_symbols": [
+    "B"
+   ],
+   "n_host": 54,
+   "n_interstitial": 6,
+   "concentration_pct": 10.0,
+   "E_glob_eV": -636.3860164766038,
+   "cif": "4_p_w10b/groundstate.cif"
+  }
+ ]
+}

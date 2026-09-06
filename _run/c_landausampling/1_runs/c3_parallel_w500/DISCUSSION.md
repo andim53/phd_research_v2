@@ -8,7 +8,7 @@ run (`.6667777.out`) — the subject of this section.
 
 ## Problem 1 — crash: `pthread_create: Resource temporarily unavailable`
 
-Run: `_runs/c3_parallel_w500/` — Mode A parallel WL, `--n-walkers 500`.
+Run: `1_runs/c3_parallel_w500/` — Mode A parallel WL, `--n-walkers 500`.
 Error report: `jc3_parallel_w500.sh.6667338.out`.
 
 ## 1. What happened
@@ -164,7 +164,7 @@ limit, and constrain Ray's resource claims. The memory model was correct for the
 
 ## Problem 2 — the run completes but produces empty (all-zero) results
 
-Run: `_runs/c3_parallel_w500/`, error/report file `jc3_parallel_w500.sh.6667777.out`.
+Run: `1_runs/c3_parallel_w500/`, error/report file `jc3_parallel_w500.sh.6667777.out`.
 Outputs: `wl_output_c1_parallel_w500/`.
 
 ### 1. What happened

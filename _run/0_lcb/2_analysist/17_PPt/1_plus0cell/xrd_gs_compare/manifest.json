@@ -1,0 +1,78 @@
+{
+ "family": "17_PPt/1_plus0cell",
+ "leaves": [
+  {
+   "leaf": "0_0P",
+   "composition": {
+    "Pt": 108
+   },
+   "formula": "Pt108",
+   "n_atoms": 108,
+   "host_symbol": "Pt",
+   "interstitial_symbol": "",
+   "interstitial_symbols": [],
+   "n_host": 108,
+   "n_interstitial": 0,
+   "concentration_pct": 0.0,
+   "E_glob_eV": -653.8059397383421,
+   "cif": "0_0P/groundstate.cif"
+  },
+  {
+   "leaf": "1_10P",
+   "composition": {
+    "Pt": 108,
+    "P": 12
+   },
+   "formula": "P12Pt108",
+   "n_atoms": 120,
+   "host_symbol": "Pt",
+   "interstitial_symbol": "P",
+   "interstitial_symbols": [
+    "P"
+   ],
+   "n_host": 108,
+   "n_interstitial": 12,
+   "concentration_pct": 10.0,
+   "E_glob_eV": -687.707760417749,
+   "cif": "1_10P/groundstate.cif"
+  },
+  {
+   "leaf": "2_20P",
+   "composition": {
+    "Pt": 108,
+    "P": 27
+   },
+   "formula": "P27Pt108",
+   "n_atoms": 135,
+   "host_symbol": "Pt",
+   "interstitial_symbol": "P",
+   "interstitial_symbols": [
+    "P"
+   ],
+   "n_host": 108,
+   "n_interstitial": 27,
+   "concentration_pct": 20.0,
+   "E_glob_eV": -704.2371336361273,
+   "cif": "2_20P/groundstate.cif"
+  },
+  {
+   "leaf": "3_30P",
+   "composition": {
+    "Pt": 108,
+    "P": 46
+   },
+   "formula": "P46Pt108",
+   "n_atoms": 154,
+   "host_symbol": "Pt",
+   "interstitial_symbol": "P",
+   "interstitial_symbols": [
+    "P"
+   ],
+   "n_host": 108,
+   "n_interstitial": 46,
+   "concentration_pct": 29.87012987012987,
+   "E_glob_eV": -644.2845444649289,
+   "cif": "3_30P/groundstate.cif"
+  }
+ ]
+}

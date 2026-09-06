@@ -22,12 +22,12 @@ Versioning rules:
 | `wang_landau/thermodynamics.py` | 1.0.0 | g_of_E_to_thermodynamics, heat_capacity_from_thermo |
 | `wang_landau/utils.py` | 1.0.0 | K_B constant, shift_energies, _logsumexp |
 | `smoke_test_wang_landau.py` | 1.3.0 | Cheap local validation (fake 1-atom double-well GPR) + 2-species swap-move test + extrapolation-guard test + basin-hopping relax test |
-| `_analysist/analyze_wl_outputs.py` | 1.0.0 | Extract per-output g(E)/thermo/convergence metrics from c1/c2 wl_output_* dirs + .out logs; plot state density per system |
+| `2_analysist/analyze_wl_outputs.py` | 1.0.0 | Extract per-output g(E)/thermo/convergence metrics from c1/c2 wl_output_* dirs + .out logs; plot state density per system |
 
 ## Not individually versioned (duplicated snapshots / data)
 
 - `dataset/`, `dataset_boron3/`, `dataset_boron/` — AGOX seed DBs + original
   search code (data; DBs/xsf gitignored).
-- `_runs/`, `_analysist/`, `_archives/`, `_tmp/` — run/analysis outputs and
+- `1_runs/`, `2_analysist/`, `_archives/`, `_tmp/` — run/analysis outputs and
   per-run copies (regenerable or snapshots).
 - `j_wanglandau.sh` — batch launcher (not versioned as source).

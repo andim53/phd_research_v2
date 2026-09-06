@@ -58,7 +58,8 @@ $PY main.py --dataset dataset --n-bins 40 --e-max 0.40 \
 `--mc-steps 20000000` is the HPC-scale budget (the Fortran uses up to 2e7 steps).
 For a quick local check use `--mc-steps 400000 --check-interval 100000
 --n-stages-standard 3` so the run finishes in minutes and still exercises the
-standard→1/t switch.
+standard→1/t switch. The `--large-step 0.20` default and the `--e-reject`
+extrapolation guard (default `5×e_max`) are active automatically (v1.3.0+).
 
 ## Step 4 — Other datasets
 ```bash
@@ -82,6 +83,24 @@ $PY main.py --dataset dataset_boron3 --n-bins 40 --e-max 0.40 \
 ```
 The plain Fe/MgO `dataset` has a single mobile species (Fe); there
 `--swap-prob` is ignored with a WARNING and the walk falls back to rattling only.
+
+## Step 4c — Mode A parallel walkers (`--n-walkers`, v1.5.0)
+To reach flatness faster, run **N concurrent Wang–Landau walkers** that share
+one histogram `H`/`ln_g` via Ray actors (seeds `--rng+i`; flatness/refinement
+act on the combined histogram). The c3 run uses 500 walkers:
+```bash
+cd /home/think/Desktop/research/_run/c_landausampling
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+$PY main.py --dataset dataset --n-bins 100 --e-max 0.40 --mc-steps 30000 \
+    --small-step 0.05 --large-step 0.20 --perturb-symbols Fe --relax-steps 100 \
+    --temperatures 100,200,300,500,1000 \
+    --n-walkers 500 --output ./wl_output_parallel --rng 42
+```
+Each walker costs ≈ 135 MB (GPR copy + Ray process); 500 walkers ≈ 68 GB
+(≈73% of the 92.7 GB genkai node limit). On a 64-core node wall-time speedup
+saturates near ~64 (over-subscribed ~8×); the win is statistical — independent
+chains aggregate to flatness in fewer total MC steps. For a quick local test
+use `--n-walkers 24 --mc-steps 1000 --check-interval 250`.
 
 ## Basin-hopping mode (GPR relax, `--relax-steps`)
 To sample the density of *minimized* (basin) energies instead of raw rattled
@@ -141,5 +160,7 @@ includes a `test_extrapolation_guard` case.
 - [ ] `g_of_E.csv` / `g_of_E.png` / `thermodynamics.csv` produced
 - [ ] `heat_capacity.csv` written (needs ≥3 temperatures)
 - [ ] Run reached the 1/t switch (or you consciously accept the standard scheme)
+- [ ] (Optional) `--n-walkers N` parallel run completes and writes aggregate
+      `g_of_E.csv` from the shared actor
 - [ ] `j_wanglandau.sh` kept bare; correct env (`gpaw_env`) and launch
       (`pjsub j_wanglandau.sh`)

@@ -1,0 +1,19 @@
+{
+ "leaf": "3_30P",
+ "composition": {
+  "Pt": 108,
+  "P": 46
+ },
+ "formula": "P46Pt108",
+ "n_atoms": 154,
+ "host_symbol": "Pt",
+ "interstitial_symbol": "P",
+ "interstitial_symbols": [
+  "P"
+ ],
+ "n_host": 108,
+ "n_interstitial": 46,
+ "concentration_pct": 29.87012987012987,
+ "E_glob_eV": -644.2845444649289,
+ "cif": "3_30P/groundstate.cif"
+}
