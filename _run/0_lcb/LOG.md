@@ -544,3 +544,21 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   (family+leaves schema, concentration_pct). All 5 gs_compare dirs carry
   xrd_plots.json today.
 - Committed INSTRUCTION.md + this LOG entry only.
+
+## 2026-09-08 — TUTORIAL: all-systems run-all + replot-from-JSON commands
+- Owner asked (after "check the TUTORIAL"): is there a command producing all the
+  amorphous heavy-metal+dopant systems' conf_space.png + binding_probability_vs_temperature.png,
+  else include one. TUTORIAL Step 3d already loops one FAMILY's leaves (produces
+  all 3 PNGs per leaf) but is per-family.
+- Clarified scope with owner: run-all covers 11_bTa, 16_bW, and 17_PPt
+  0_plus5cell/1_plus0cell/2_plus3cell — EXCLUDING the 4x4 (0_PPt_4x4_20P),
+  15_bPt, 3_plus10cell, trash/, and Fe/MgO trees; --e-max 0.5. Owner flow:
+  (1) run all (extracts JSON as it goes), (2) run all replot from JSON.
+- Added a TUTORIAL block after Step 3d: two loops over the 5 family roots
+  (11_bTa 16_bW 17_PPt/{0_plus5cell,1_plus0cell,2_plus3cell}), run-all with
+  --json-dir per leaf, then a --from-json replot-all loop. 21 target leaves all
+  hold their 3 stage JSONs today.
+- Verified the replot path end-to-end (2026-09-08): --from-json
+  11_bTa/8_fxg_1b/analysis_indices -> /tmp reproduced conf_space.png +
+  binding_probability_vs_temperature.png + progression plot, no DB re-load.
+- Committed TUTORIAL.md + this LOG entry only.

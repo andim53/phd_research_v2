@@ -198,6 +198,69 @@ done
 Add `--json-dir "$leaf/analysis_indices/analysis_json"` (or rely on the default) to emit
 the per-leaf JSON alongside the PNGs.
 
+### Run ALL amorphous interstitial systems at once (11_bTa + 16_bW + 17_PPt +5/+0/+3)
+
+The loop above is per-family. To run every leaf of every **amorphous
+heavy-metal + dopant** system in the project in one pass — `11_bTa` (Ta–B),
+`16_bW` (W–B), and the `17_PPt` (Pt–P) `0_plus5cell` / `1_plus0cell` /
+`2_plus3cell` supercell families — but **excluding** the 4×4 cell
+(`0_PPt_4x4_20P`), `15_bPt`, `3_plus10cell`, any `trash/`, and the Fe/MgO
+interface trees, enumerate the family roots and glob the leaves inside. Each
+leaf run writes its **3 stage PNGs** (`progression_seed_split_0.png`,
+`conf_space.png`, `binding_probability_vs_temperature.png`) AND its **3 stage
+JSONs** into its own `analysis_indices/` (Stage-2 `conf_space.png` + Stage-3
+`binding_probability_vs_temperature.png` are the two you asked about; the
+progression plot rides along). Use `--e-max 0.5` so every energy axis shares one
+window and graphs are directly comparable across systems:
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+for root in 11_bTa 16_bW 17_PPt/0_plus5cell 17_PPt/1_plus0cell 17_PPt/2_plus3cell; do
+    for leaf in "$root"/*/; do
+        leaf=${leaf%/}
+        case "$leaf" in *4x4_20P|*trash*) continue;; esac
+        [ -d "$leaf"/seed_0/1_db ] || continue
+        echo "=== analysing $leaf ==="
+        $PY run_analysis_indices.py --dataset "$leaf" \
+            --outdir "$leaf/analysis_indices" \
+            --json-dir "$leaf/analysis_indices" --e-max 0.5
+    done
+done
+```
+
+Each leaf pass ends `DONE. Outputs under ...` + `JSON data under .../analysis_indices`.
+This is the "run all" step — it **extracts** the JSONs as it goes (stage JSONs
+land per-leaf under that leaf's `analysis_indices/`).
+
+To then **replot all 3 graphs from the extracted JSONs** (no DB access — pure
+figure reproduction), loop the same leaves over `--from-json`:
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+for root in 11_bTa 16_bW 17_PPt/0_plus5cell 17_PPt/1_plus0cell 17_PPt/2_plus3cell; do
+    for leaf in "$root"/*/; do
+        leaf=${leaf%/}
+        case "$leaf" in *4x4_20P|*trash*) continue;; esac
+        [ -f "$leaf/analysis_indices/stage1_progression.json" ] || continue
+        echo "=== replot $leaf ==="
+        $PY run_analysis_indices.py \
+            --from-json "$leaf/analysis_indices" \
+            --outdir "$leaf/analysis_indices"
+    done
+done
+```
+
+Each replot pass ends `Re-plotted all 3 graphs from JSON <leaf>/analysis_indices`.
+All 21 target leaves (5×11_bTa, 4×16_bW, 12×17_PPt across +5/+0/+3 minus the
+4×4) already hold their 3 stage JSONs today, so this replot-all loop is
+immediately runnable (verified on one leaf, 2026-09-08: reproduces
+`conf_space.png`, `binding_probability_vs_temperature.png`, and the progression
+plot from JSON with no DB re-load).
+
 ## Step 3e — Extract JSON data from existing outputs
 
 **Note:** the plotted-data JSONs (`stage1/2/3_*.json`, `xrd_plots.json`) only exist for
