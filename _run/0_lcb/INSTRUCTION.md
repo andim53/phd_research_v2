@@ -35,6 +35,115 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #8 — Reproduce the 11_bTa analysis (leaves 7/8/9/11) with `--e-max 0.5` and `--h 0.05`, then plot the 3 graphs from JSON
+
+**Date:** 2026-09-08
+
+**Goal:** Re-run the analysis for the **11_bTa** leaves **7_fxg_0b, 8_fxg_1b,
+9_fxg_3b, 11_p_Ta10b** with a shared energy window `--e-max 0.5` (eV/atom) and a
+**sharper** Gaussian-KDE bandwidth `--h 0.05` (the INSTR #7 flag, live in the
+runner at v2.11.0), producing each leaf's stage JSONs, then re-draw the **three
+graphs** — `progression_seed_split_0.png` (energy progression), `conf_space.png`,
+and `binding_probability_vs_temperature.png` — from those JSONs. This is a
+**two-step** recipe: (1) run the analysis (writes JSON + PNGs together), (2) a
+`--from-json` replot command that draws the 3 graphs purely from the saved JSONs
+(no DB re-load). (`10_fxg_5b` is **not** in this set — you named 7/8/9/11.)
+
+Uses the canonical runner `2_analysist/run_analysis_indices.py` (v2.11.0, has
+`--h`/`kde_bw`), under the **agox_v2** env.
+
+### Step 1 — run the analysis for the 4 leaves (writes JSON + PNGs)
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+for leaf in 11_bTa/7_fxg_0b 11_bTa/8_fxg_1b 11_bTa/9_fxg_3b 11_bTa/11_p_Ta10b; do
+    echo "=== analysing $leaf ==="
+    $PY run_analysis_indices.py --dataset "$leaf" \
+        --outdir "$leaf/analysis_indices" \
+        --json-dir "$leaf/analysis_indices" \
+        --e-max 0.5 --h 0.05
+done
+```
+
+What this does per leaf:
+- loads all `seed_*/1_db/db_*.db` (iteration ≥ 10),
+- draws `progression_seed_split_0.png` (energy progression), `conf_space.png`,
+  `binding_probability_vs_temperature.png` **and** writes
+  `stage1_progression.json`, `stage2_landscape.json`, `stage3_probability.json`
+  (all under `<leaf>/analysis_indices/`),
+- applies `--e-max 0.5` to every energy axis (comparable across leaves) and
+  `--h 0.05` (sharp KDE) to the Stage-2 density + Stage-3 probability.
+
+Each leaf pass ends `DONE. Outputs under ...` + `JSON data under .../analysis_indices`.
+(The JSONs are written with the self-describing `description` block from v2.9.0.)
+
+### Step 2 — re-draw the 3 graphs from the saved JSONs (no DB)
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+for leaf in 11_bTa/7_fxg_0b 11_bTa/8_fxg_1b 11_bTa/9_fxg_3b 11_bTa/11_p_Ta10b; do
+    echo "=== replot $leaf from JSON ==="
+    $PY run_analysis_indices.py \
+        --from-json "$leaf/analysis_indices" \
+        --outdir "$leaf/analysis_indices"
+done
+```
+
+Each pass ends `Re-plotted all 3 graphs from JSON <leaf>/analysis_indices ...`.
+This reproduces `progression_seed_split_0.png`, `conf_space.png`, and
+`binding_probability_vs_temperature.png` for each leaf **purely from the stage
+JSONs** (Stage 2 re-runs `plot_structure_landscape` with the stored inputs
+including `kde_bw=0.05` in `params`, so the sharp bandwidth is preserved on
+replot).
+
+### Step 3 — verify
+
+```bash
+# each leaf should have all 3 PNGs + 3 stage JSONs
+for leaf in 11_bTa/7_fxg_0b 11_bTa/8_fxg_1b 11_bTa/9_fxg_3b 11_bTa/11_p_Ta10b; do
+    echo "$leaf : $(ls "$leaf/analysis_indices"/stage*_*.json 2>/dev/null | wc -l)/3 JSONs, "\
+         "$(ls "$leaf/analysis_indices"/*.png 2>/dev/null | wc -l) PNGs (+ progression_plots/)"
+done
+
+# confirm the sharp bandwidth is recorded in each Stage-2 JSON
+python3 -c "
+import json,glob
+for f in sorted(glob.glob('11_bTa/*/analysis_indices/stage2_landscape.json')):
+    d=json.load(open(f))['data']
+    print(f, 'params.kde_bw=', d['params'].get('kde_bw'), 'e_max=', d.get('e_limit',[None,None,None])[1])
+"
+```
+
+Expected: `params.kde_bw = 0.05` and the energy axis cap `= 0.5` for every leaf.
+Open one `conf_space.png` and one `binding_probability_vs_temperature.png` to
+confirm the density/probability curves are visibly sharper than a default run.
+
+### Step 4 — record + commit (under the explicit `_run/0_lcb` pathspec)
+
+```bash
+# append-only LOG.md. No VERSIONS bump needed — this only re-runs existing code.
+cd /home/think/Desktop/research   # parent repo
+git add _run/0_lcb/LOG.md
+git diff --cached --stat          # confirm only LOG.md (docs)
+git commit -m "docs(0_lcb): INSTR #8 reproduce 11_bTa 7/8/9/11 analysis (e-max 0.5, h 0.05) + plot from JSON"
+```
+
+> Do **not** stage regenerated PNGs/JSONs (`analysis_indices/*.png`,
+> `stage*_*.json` are gitignored regenerable outputs). Do **not** run a blanket
+> `git add -A`.
+
+**Verification checklist:** Step 1 runs all 4 leaves with `--e-max 0.5 --h 0.05`
+and writes 3 PNGs + 3 stage JSONs per leaf; Step 2 replots all 3 graphs from
+JSON; Step 3 shows `kde_bw=0.05` and energy cap `0.5` in each Stage-2 JSON and
+visibly sharper curves; `LOG.md` appended + committed under the `_run/0_lcb`
+pathspec only.
+
+---
+
 ## INSTR #7 — Add a `--h` Gaussian-KDE bandwidth flag (sharper / broader) to `conf_space.png` + `binding_probability` analysis
 
 **Date:** 2026-09-08

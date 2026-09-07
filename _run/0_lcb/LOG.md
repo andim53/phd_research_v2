@@ -631,3 +631,17 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   INSTR #6 --novelty-dist work (v2.10.0) in the working tree; committing after
   INSTR #7 lands #6+#7 together unless #6 committed first.
 - Committed INSTRUCTION.md + this LOG entry only.
+
+## 2026-09-08 — INSTR #8 (INSTRUCTION.md prepend)
+- Owner wants a reproduce recipe for 11_bTa leaves 7/8/9/11 with --e-max 0.5 and
+  --h 0.05, producing the JSONs, then a command to make the graphs (energy
+  progression, conf_space, binding probability). Clarified: two-step
+  (run->JSON, then --from-json replot); leaves 7_fxg_0b/8_fxg_1b/9_fxg_3b/11_p_Ta10b
+  (10_fxg_5b excluded per owner).
+- Confirmed the --h (kde_bw) flag is live in the runner at v2.11.0 (owner applied
+  INSTR #7); --from-json replot re-applies kde_bw from params.
+- Prepped **INSTR #8**: Step 1 run loop (--e-max 0.5 --h 0.05, writes 3 PNGs +
+  3 stage JSONs per leaf); Step 2 --from-json replot loop (3 graphs from JSON,
+  no DB); Step 3 verify (kde_bw=0.05, e_limit cap 0.5 per leaf); Step 4 commit
+  (LOG.md only, PNGs/JSONs gitignored). No VERSIONS bump (re-runs existing code).
+- Committed INSTRUCTION.md + this LOG entry only.
