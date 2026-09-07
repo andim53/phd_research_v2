@@ -494,3 +494,17 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
 - Appended **INSTR #2** (placed at top): create `1_runs/2_femgo_3mgo`, `3_femgo_5mgo`, `4_femgo_10mgo` as plain 0_lcb_femgo replicas (no dipole) with mgo_layer_number=3/5/10 and vacuum=24.2/28.4/39.0 (rule vacuum=20+2.106*(N-1)), + a stacking smoke test on the generator structure.
 - Grounded by importing the real 0_lcb_femgo build_* scripts: each MgO monolayer = one coplanar Mg+O plane spaced 2.106 A; Fe sits 0.50 A above top MgO; cell clearance above Fe 27-42 A.
 - Verified smoke_stack.py passes for N=3/5/10 (STACKING SMOKE PASS; layer counts/spacing/coplanarity/Fe-gap/clearance all PASS).
+
+## 2026-09-08 — INSTR #3 (INSTRUCTION.md prepend)
+- Owner asked for a presentation-ready recolor of `xrd_averaged_by_window.png`
+  (viridis makes the highest-energy window yellow — poor legibility on a white
+  projector/slide, esp. for older viewers). Owner chose: do NOT apply the recolor
+  to code; instead write an owner-executable how-to.
+- Prepped **INSTR #3** at top of INSTRUCTION.md: recolor the shared
+  `plot_patterns_from_data()` (2_analysist/scripts/xrd_simulate_crystallinity.py
+  lines 128-135) from viridis to **tab10 categorical** (energy order, never
+  yellow), lw 1.1 -> **1.8**, plus cycling line styles as a 2nd legibility
+  channel. Bump __version__ 1.4.0 -> 1.4.1; compile gate under pymat_xrd;
+  --from-json test regen; optional full sweep (39 JSONs); record + commit under
+  _run/0_lcb pathspec.
+- Committed INSTRUCTION.md + this LOG entry only (no code changed in this step).

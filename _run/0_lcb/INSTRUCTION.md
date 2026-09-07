@@ -35,6 +35,135 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #3 — Recolor `xrd_averaged_by_window.png` for presentation legibility (tab10 + thicker lines + distinct line styles)
+
+**Date:** 2026-09-08
+
+**Goal:** The figure colours each energy-window's averaged XRD curve with the
+`viridis` colormap (`xrd_simulate_crystallinity.py:128`), so the highest-energy
+window renders **yellow** — hard to see on a white projector/slide, especially
+for an older audience. Recolour it to high-contrast **tab10** categorical
+colours in energy order, raise the line width to **1.8**, and give each window a
+**distinct line style** as a second channel (colour-blind/legibility safety).
+This one edit updates every leaf's figure because all `xrd_averaged_by_window.png`
+are drawn by the same shared function — no per-leaf work needed.
+
+**Where (canonical):** `2_analysist/scripts/xrd_simulate_crystallinity.py`,
+function `plot_patterns_from_data(data, outdir)` — currently lines **124–140**,
+plotting body **128–135**. This is the canonical Stage-2 XRD script under
+`pymat_xrd`. Per-run `scripts/` copies under each leaf are **snapshots — do NOT
+edit them**; edit the top-level canonical copy only (see `AGENTS.md §3a`). The
+module `__version__` is on **line 35**.
+
+### Step 1 — open the canonical script and locate the block
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb
+# open 2_analysist/scripts/xrd_simulate_crystallinity.py
+# go to: def plot_patterns_from_data(data, outdir):  (~line 124)
+```
+
+The plotting body you will replace currently reads (lines 128–135):
+
+```python
+    cmap = plt.get_cmap("viridis")
+    centers = [w["center"] for w in data["windows"] if w["grid"]]
+    vmin, vmax = min(centers), max(centers)
+    for w in data["windows"]:
+        if not w["grid"]:
+            continue
+        color = cmap((w["center"] - vmin) / (vmax - vmin + 1e-9)) if vmax > vmin else "C0"
+        ax.plot(w["grid"], w["intensity"], lw=1.1, color=color, label=w["label"])
+```
+
+### Step 2 — replace those lines with the presentation-ready version
+
+Select and replace **exactly** the 8 lines in Step 1 with:
+
+```python
+    tab10 = plt.get_cmap("tab10")
+    ls_cycle = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 2))]
+    ordered = sorted((w for w in data["windows"] if w["grid"]),
+                     key=lambda w: w["center"])
+    for i, w in enumerate(ordered):
+        ax.plot(w["grid"], w["intensity"], lw=1.8,
+                color=tab10(i % tab10.N),
+                linestyle=ls_cycle[i % len(ls_cycle)],
+                label=w["label"])
+```
+
+What it does: drops `viridis`/the `center`-normalized colour ramp; instead sorts
+windows by energy `center` (low → high) and assigns the high-contrast `tab10`
+colours in order (blue, orange, green, red, … — never yellow), raises `lw` to
+**1.8**, and cycles solid/dashed/dash-dot/dotted line styles so curves stay
+distinguishable even where colours are close or vision is impaired. `ordered`
+also drops empty windows (same guard the old `if not w["grid"]: continue` gave).
+
+### Step 3 — bump the module version
+
+At line 35 change `__version__ = "1.4.0"` → `"1.4.1"` (cosmetic figure edit,
+patch bump per `AGENTS.md` rule 8).
+
+### Step 4 — compile gate (run under `pymat_xrd`)
+
+```bash
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+$PY_X -m py_compile 2_analysist/scripts/xrd_simulate_crystallinity.py
+```
+
+Expected: exit 0, no output (success). Ignore any LSP/Pyright colouring under
+base `python3` — judge by this compile.
+
+### Step 5 — regenerate ONE test figure from a saved JSON (no DB/CIF needed)
+
+Pick any leaf with an existing `xrd_plots.json` (e.g. `11_bTa/8_fxg_1b/xrd_out`):
+
+```bash
+$PY_X 2_analysist/scripts/xrd_simulate_crystallinity.py \
+    --from-json 2_analysist/11_bTa/8_fxg_1b/xrd_out \
+    --outdir /tmp/xrd_instr3
+```
+
+Expected stdout ends `DONE. Re-plotted XRD PNGs from ... -> /tmp/xrd_instr3`.
+Then open the figure to verify:
+
+```bash
+xdg-open /tmp/xrd_instr3/xrd_averaged_by_window.png
+```
+
+**Check:** the highest-energy curve is no longer yellow; curves are thicker
+(~1.8); each window has a distinct colour **and** line style; 2θ axis still
+~10–90°; the legend is intact and still energy-labelled.
+
+### Step 6 — (optional) regenerate every other figure from its JSON
+
+Same `--from-json <leaf_dir> --outdir <leaf_dir>` command per leaf that holds an
+`xrd_plots.json` (39 exist; `xrd_gs_compare/` dirs too). Output PNGs are
+regenerable/gitignored, so this is cosmetic — no need to re-run if you only want
+the test figure recoloured.
+
+### Step 7 — record + commit (under the explicit `_run/0_lcb` pathspec)
+
+```bash
+# append-only LOG.md + VERSIONS.md updates (bump the row for
+# 2_analysist/scripts/xrd_simulate_crystallinity.py: 1.4.0 -> 1.4.1)
+cd /home/think/Desktop/research   # parent repo
+git add _run/0_lcb/2_analysist/scripts/xrd_simulate_crystallinity.py \
+        _run/0_lcb/INSTRUCTION.md _run/0_lcb/LOG.md _run/0_lcb/VERSIONS.md
+git diff --cached --stat          # confirm ONLY the intended 4 files
+git commit -m "fix(0_lcb/xrd): tab10+lw1.8+line-styles recolor of xrd_averaged_by_window.png (INSTR #3)"
+```
+
+> Do **not** stage the regenerated PNGs (they are gitignored outputs). Do **not**
+> run a blanket `git add -A`.
+
+**Verification checklist:** compile gate passes (Step 4); test PNG regenerated
+and eyeballed (Step 5) showing non-yellow, thicker, distinctly-styled curves;
+`VERSIONS.md` row bumped and `LOG.md` appended; commit staged under the explicit
+`_run/0_lcb` pathspec only.
+
+---
+
 ## INSTR #2 — Stand up Fe/MgO LCB runs with more MgO layers (`1_runs/2_femgo_3mgo`, `3_femgo_5mgo`, `4_femgo_10mgo`)
 
 **Date:** 2026-09-06 · **Goal:** create three self-contained run dirs under
