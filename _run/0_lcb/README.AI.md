@@ -37,7 +37,7 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 ├── PROMPTS.md           # future-work prompt log (+ shared grammar notes)
 ├── .gitignore           # project-level ignores (regenerable outputs)
 ├── 2_analysist/          # analysed/intermediate results + family analysis code
-│   ├── run_analysis_indices.py   # family analysis runner (v2.3.0, project-agnostic)
+│   ├── run_analysis_indices.py   # family analysis runner (v2.9.0, project-agnostic)
 │   ├── scripts/                  # runner deps + XRD stage
 │   │   ├── plot_structure_landscape.py   # Stage-2 landscape (v1.1.0)
 │   │   ├── xrd_extract_structures.py     # XRD Stage 1 (v1.0.0, agox_v2)
@@ -82,7 +82,7 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 
 ### 2b. `run_analysis_indices.py` — family analysis runner (project-agnostic)
 
-- **`__version__ = "2.3.0"`.** A **project-agnostic** analysis runner that globs
+- **`__version__ = "2.9.0"`.** A **project-agnostic** analysis runner that globs
   `seed_*/1_db/db_*.db` and reads the atom count from each structure, so it runs
   on **any** interstitial-alloy family under `2_analysist/` — `11_bTa` (5 leaves),
   `15_bPt` (4), `16_bW` (4), `17_PPt` (12) = **25 leaves total**. It is NOT
@@ -102,25 +102,42 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 - **JSON data emission (v2.3.0):** each stage's plotted data is dumped to a JSON
   AND the PNG is drawn. Add `--json-dir <DIR>` (default `<outdir>/analysis_json`);
   writes `stage1_progression.json`, `stage2_landscape.json`,
-  `stage3_probability.json`. Re-draw the PNGs from a saved JSON (no DB access)
-  with `--from-json <DIR> --outdir <OUT>`. Per current owner convention the
-  JSONs are saved **per-leaf, multiple files**, directly inside that leaf's own
-  `analysis_indices/` dir (pass `--json-dir <leaf>/analysis_indices`); there is no
-  central staging. `plot_structure_landscape.py` accepts `return_data=True` to
-  expose Stage-2's computed arrays (energy grid, densities, peaks) for the JSON.
+ `stage3_probability.json`. Re-draw the PNGs from a saved JSON (no DB access)
+ with `--from-json <DIR> --outdir <OUT>`. Per current owner convention the
+ JSONs are saved **per-leaf, multiple files**, directly inside that leaf's own
+ `analysis_indices/` dir (pass `--json-dir <leaf>/analysis_indices`); there is no
+ central staging. `plot_structure_landscape.py` accepts `return_data=True` to
+ expose Stage-2's computed arrays (energy grid, densities, peaks) for the JSON.
+ - **Self-describing JSON (v2.9.0):** each stage JSON's top level embeds a
+ `description` block (schema, kind, dataset path, num_atoms/formula, origin,
+ energy units, and a per-field legend) so a downstream AI agent can interpret
+ the file **without the working tree**. The plot payload is unchanged under
+ `data`, so `--from-json` replot is unaffected; `description` is additive.
 
 ### 2c. XRD crystallinity scripts (two-env bridge)
 
 - **`scripts/xrd_extract_structures.py`** (v1.0.0, `agox_v2`): reads DB structures,
   computes relative energy/atom `(E−E_glob)/n`, bins into energy windows, writes
   windowed CIFs + `manifest.json` (Stage 1).
-- **`scripts/xrd_simulate_crystallinity.py`** (v1.1.0, **`pymat_xrd`**): simulates
+- **`scripts/xrd_simulate_crystallinity.py`** (v1.4.3, **`pymat_xrd`**): simulates
   powder XRD per CIF (pymatgen `XRDCalculator`, Cu Kα), averages per window, and
   computes crystallinity indices (peak-fraction + integrated). Writes
   `xrd_averaged_by_window.png`, `crystallinity_vs_energy.png`,
   `crystallinity.csv`. With `--json` also writes `xrd_plots.json` (per-window
   2θ grid + intensity + CI rows); `--from-json <dir>` replots both PNGs from it.
   `--manifest`/`--dataset` are non-required so `--from-json` runs without CIF/DB.
+- **`scripts/xrd_groundstate_compare.py`** (v2.1.2, **`pymat_xrd`**): simulates
+  the single ground-state (rel-E=0) powder pattern per concentration leaf of a
+  family and overlays them (one curve per dopant %), plus CI vs concentration.
+  Writes `xrd_averaged_by_window.png`, `crystallinity_vs_energy.png`, and with
+  `--json` an `xrd_plots.json` (`family` + `leaves`). A `--figsize 'W,H'` flag
+  controls the overlay figure size (default `8,4.5`).
+- **Self-describing JSON:** both XRD scripts embed a top-level `description`
+  block (schema, kind, method = pymatgen Cu-Kα, scaled=False true-intensity,
+  units incl. 2θ in degrees, and a per-field legend) in their `xrd_plots.json`,
+  so a downstream AI agent can interpret the file without the working tree. The
+  block is additive — the pattern/CI arrays under their original keys are
+  unchanged, so `--from-json` replot is unaffected.
 - Why two envs: `agox_v2` has ASE/AGOX but no pymatgen; `pymat_xrd` has pymatgen
   + XRD but no ASE. The bridge is CIF files on disk.
 

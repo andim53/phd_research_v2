@@ -303,6 +303,77 @@ $PY_X scripts/xrd_simulate_crystallinity.py --from-json <leaf>/xrd_out \
     --outdir /tmp/xrd_plot
 ```
 
+### Self-describing JSON (`description` block) + regenerate all JSONs
+
+Since v2.9.0 (`run_analysis_indices.py`) / v1.4.3 & v2.1.2 (the XRD scripts), every
+emitted JSON embeds a top-level **`description`** map — schema, kind, dataset /
+family, method (incl. pymatgen Cu-Kα, `scaled=False` true-intensity, 2θ in
+degrees), units, and a per-field legend — so a downstream AI agent can interpret
+the file **without this working tree**. The plot payload is unchanged under its
+original keys (`data` for the stage JSONs, the pattern/CI arrays for XRD), so
+`--from-json` replot is unaffected; `description` is purely additive. **Note:**
+JSONs written *before* this change do NOT have the block — regenerate them to add
+it.
+
+Regenerate all analysis stage JSONs (with `description`) for every leaf of the
+amorphous interstitial systems (`11_bTa`, `16_bW`, `17_PPt` +5/+0/+3, excluding
+the 4×4, `15_bPt`, `3_plus10cell`, `trash/`, Fe/MgO trees; `--e-max 0.5`):
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+for root in 11_bTa 16_bW 17_PPt/0_plus5cell 17_PPt/1_plus0cell 17_PPt/2_plus3cell; do
+    for leaf in "$root"/*/; do
+        leaf=${leaf%/}
+        case "$leaf" in *4x4_20P|*trash*) continue;; esac
+        [ -d "$leaf"/seed_0/1_db ] || continue
+        echo "=== analysing $leaf ==="
+        $PY run_analysis_indices.py --dataset "$leaf" \
+            --outdir "$leaf/analysis_indices" \
+            --json-dir "$leaf/analysis_indices" --e-max 0.5
+    done
+done
+```
+
+Regenerate the XRD JSONs (with `description`): per-leaf energy-window plots from
+each existing Stage-1 manifest, and the family ground-state comparison JSONs:
+
+```bash
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+# per-leaf xrd_out energy-window plots (needs the manifest + windowed CIFs)
+for m in $(find 11_bTa 16_bW 17_PPt -path '*/xrd_out*/manifest.json' \
+               2>/dev/null | grep -v trash); do
+    echo "=== xrd sim $m ==="
+    $PY_X scripts/xrd_simulate_crystallinity.py --manifest "$m" \
+        --outdir "$(dirname "$m")" --json
+done
+
+# family ground-state comparison plots (5 xrd_gs_compare dirs)
+for gs in 11_bTa/xrd_gs_compare 16_bW/xrd_gs_compare \
+          17_PPt/0_plus5cell/xrd_gs_compare \
+          17_PPt/1_plus0cell/xrd_gs_compare \
+          17_PPt/2_plus3cell/xrd_gs_compare; do
+    [ -f "$gs/manifest.json" ] || continue
+    echo "=== xrd gs $gs ==="
+    $PY_X scripts/xrd_groundstate_compare.py --manifest "$gs/manifest.json" \
+        --outdir "$gs" --json
+done
+```
+
+Verify the block exists after regeneration:
+
+```bash
+# any regenerated file should print a description map
+python3 -c "import json,sys; d=json.load(open(sys.argv[1])); print(json.dumps(d.get('description','MISSING'),indent=1)[:400])" \
+    2_analysist/11_bTa/8_fxg_1b/analysis_indices/stage2_landscape.json
+```
+
+Output PNGs/JSONs are regenerable and gitignored, so these loops are cosmetic and
+safe to run.
+
 ## Step 4 — (Future) HPC heavy runs
 
 Heavy runs go in self-contained `1_runs/<NN>_<descriptor>/` dirs (job `j_*.sh` +

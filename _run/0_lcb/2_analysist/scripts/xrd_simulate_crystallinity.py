@@ -32,7 +32,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.4.2"
+__version__ = "1.4.3"
 
 import argparse
 import json
@@ -60,6 +60,46 @@ TT_STEP = 0.02  # 2theta grid step for resampling/averaging
 BROADEN_SIGMA = 0.15  # deg — Gaussian broaden each delta to mimic instrument
 # energy-axis title shared with the analysis progression/landscape plots
 E_LABEL = r"$E_{i}-E_{glob}$ (eV/atom)"
+
+
+def xrd_energy_window_description(leaf, e_max, composition):
+    """Self-describing 'description' block embedded in the emitted xrd_plots.json.
+
+    Lets a downstream AI agent interpret the file (method, units, per-field
+    legend) without knowing this working directory.
+    """
+    return {
+        "kind": "Simulated powder-XRD pattern averaged per relative-energy window "
+                "for one fixed-composition AGOX leaf",
+        "schema": "0_lcb_xrd_simulate_crystallinity/v1",
+        "leaf": leaf,
+        "e_max": e_max,
+        "composition": composition,
+        "method": "pymatgen XRDCalculator (Cu K-alpha) per sampled structure, "
+                  "2theta grid step 0.02 deg, each reflection Gaussian-broadened "
+                  "with sigma 0.15 deg; per-window average over sampled "
+                  "structures (deterministic lowest-energy-first stride)",
+        "intensity_scaling": "scaled=False (true relative intensity; NOT "
+                             "rescaled so each pattern's max = 100)",
+        "units": {
+            "grid": "two-theta angle in degrees",
+            "intensity": "true relative diffracted intensity (arbitrary units)",
+            "center": "window-centre relative energy in eV/atom",
+            "rows[].center": "same energy units (eV/atom)",
+        },
+        "fields": {
+            "rows": "per-window crystallinity rows: window = rel-energy label "
+                    "(eV/atom), center = window centre, n = number of sampled "
+                    "structures averaged, peak_fraction_ci = area in resolved-"
+                    "peak neighbourhoods / total area, integrated_ci = "
+                    "(total - amorphous background)/total with background a "
+                    "wide running mean (see peak_fraction_ci/integrated_ci)",
+            "windows": "per-window averaged pattern: label/center as rows, "
+                       "grid = 2theta (deg), intensity = averaged pattern",
+            "e_max": "relative-energy cutoff (eV/atom) applied to sampled "
+                     "structures (see leaf energy scale)",
+        },
+    }
 
 
 def load_calc():
@@ -265,6 +305,8 @@ def main():
         "composition": man["composition"],
         "rows": rows,
         "windows": patterns,
+        "description": xrd_energy_window_description(leaf, man["e_max"],
+                                                    man["composition"]),
     }
 
     # ---- figures (shared plot-from-data helpers) ----

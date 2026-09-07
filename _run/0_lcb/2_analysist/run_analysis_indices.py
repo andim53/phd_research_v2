@@ -53,7 +53,7 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.8.0"
+__version__ = "2.9.0"
 
 import argparse
 import glob
@@ -194,14 +194,118 @@ def _filter_progression_data(data, seeds):
     }
 
 
-def _write_stage_json(json_dir: str, stage: int, data: dict):
-    """Write one stage's plot data to <json_dir>/<STAGE_JSON[stage]>, making json_dir."""
+def _write_stage_json(json_dir: str, stage: int, data: dict,
+                      description: dict = None):
+    """Write one stage's plot data to <json_dir>/<STAGE_JSON[stage]>, making json_dir.
+
+    ``description`` (optional) is embedded at the payload top level as a
+    self-describing block (schema/kind/method/origin/units/per-field legend) so a
+    downstream AI agent can interpret the file without the working tree.
+    """
     os.makedirs(json_dir, exist_ok=True)
     path = os.path.join(json_dir, STAGE_JSON[stage])
     payload = {"stage": stage, "data": _to_jsonable(data)}
+    if description:
+        payload["description"] = description
     with open(path, "w") as f:
         json.dump(payload, f, indent=1)
     print(f"  -> stage {stage} JSON written to {path}")
+
+
+def _num_atoms_formula(structures):
+    """Return (num_atoms, chemical_formula) from the first structure, or (None, '')."""
+    try:
+        a0 = structures[0]
+        return len(a0), a0.get_chemical_formula()
+    except Exception:
+        return None, ""
+
+
+def _stage_description(stage: int, dataset: str, num_atoms, formula) -> dict:
+    """Build the self-describing 'description' block embedded in each stage JSON.
+
+    ``dataset`` is the dataset-dir path passed to --dataset (identity/provenance);
+    ``num_atoms``/``formula`` describe the fixed-composition supercell. The block
+    is meant for an AI agent to interpret the JSON standalone (units, method,
+    per-field legend) without knowing this working directory.
+    """
+    rel_desc = "rel = (E_i - E_min)/N, per-atom relative energy in eV/atom; " \
+               "E_min = lowest energy among loaded structures (global min when " \
+               "all seeds share composition); axis label $E_i-E_{glob}$ (eV/atom)."
+    base = {
+        "dataset": dataset,
+        "num_atoms": num_atoms,
+        "formula": formula or None,
+        "origin": "AGOX GPR+LCB search over DFT-relaxed structures read from "
+                  "seed_*/1_db/db_*.db (AGOX Database, iteration >= start_iter)",
+        "energy_units": "eV/atom",
+        "rel": rel_desc,
+    }
+    if stage == 1:
+        base.update({
+            "kind": "AGOX Stage-1 best-so-far progression data",
+            "schema": "0_lcb_analysis_stage1/v1",
+            "fields": {
+                "curves": "per-seed best-so-far curve: x = evaluated-candidate "
+                          "index (0..max_x), best_so_far = running-min rel "
+                          "energy/atom up to that candidate, color = hex, "
+                          "lw = linewidth, is_seed0 = seed-0 flag",
+                "bullets": "seed-0 window-minimum markers: x = candidate index, "
+                           "rel_e = rel energy/atom at that window minimum",
+                "global_gs": "global ground-state marker: x = candidate index of "
+                             "the lowest-energy structure, rel_e = its rel energy/atom",
+                "e_max": "energy-axis upper limit (eV/atom) applied to all stages",
+                "max_y": "max rel energy/atom across kept structures",
+                "max_x": "max candidate index (x-axis extent)",
+            },
+        })
+    elif stage == 2:
+        base.update({
+            "kind": "AGOX Stage-2 PCA landscape + state-density data (conf_space.png)",
+            "schema": "0_lcb_analysis_stage2/v1",
+            "fields": {
+                "X_eigen": "per-structure PC1 score = projection of the "
+                           "mean-centered ASE Fingerprint descriptor matrix onto "
+                           "the leading eigenvector of its covariance "
+                           "(dimensionless; x-axis of the scatter panel, label "
+                           "$\\psi_{1d}$)",
+                "rel": rel_desc + "  (y-axis of the scatter panel)",
+                "num_atoms": "atoms in the fixed supercell",
+                "normalize_density": "if true, state-density curves scaled so "
+                                     "global peak = 1",
+                "density_x_label": "x-axis label of the density panel",
+                "params": "matplotlib kwargs used to draw the figure",
+                "plot_arrays.energy_grid": "rel-energy/atom grid (eV/atom) the "
+                                           "KDE is evaluated on",
+                "plot_arrays.total_density": "sum of per-seed gaussian_kde "
+                    "state densities (config./eV) over energy_grid",
+                "plot_arrays.density_curves": "per-seed {name, density, color} "
+                    "of the gaussian_kde over rel",
+                "plot_arrays.peaks_energy": "rel-energy/atom of detected peaks "
+                    "in total_density (find_peaks, prominence 5% of max)",
+                "plot_arrays.scatter_x": "X_eigen values (PC1) per structure",
+                "plot_arrays.scatter_e": "rel energy/atom per structure",
+            },
+        })
+    elif stage == 3:
+        base.update({
+            "kind": "AGOX Stage-3 Boltzmann probability vs temperature data "
+                    "(binding_probability_vs_temperature.png)",
+            "schema": "0_lcb_analysis_stage3/v1",
+            "fields": {
+                "num_atoms": "atoms in the fixed supercell",
+                "series": "one entry per temperature T: rel = rel energy/atom "
+                          "grid, probs = normalized P(E) where "
+                          "P_i = rho_i*exp(-dE_i/kB*T)/Z with rho = gaussian_kde "
+                          "density of rel, kB = 8.6173e-5 eV/K, rescaled so the "
+                          "global peak = 1; color = hex",
+                "series[].T": "temperature in Kelvin",
+                "e_max": "energy-axis upper limit (eV/atom)",
+                "xlim": "(lo, hi) x-axis limits = rel-energy/atom range",
+                "ylim": "[0, 1.05] normalized-probability axis",
+            },
+        })
+    return base
 
 
 def _read_stage_json(json_dir: str, stage: int) -> dict:
@@ -441,7 +545,9 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None,
     data = _progression_data(dataset_dir, start_iter=start_iter, e_max=e_max,
                              outdir=outdir)
     if json_dir:
-        _write_stage_json(json_dir, 1, data)
+        _write_stage_json(json_dir, 1, data,
+                          description=_stage_description(1, dataset_dir,
+                                                         None, ""))
     return _plot_progression_from_data(data, outdir, seeds=seeds, xlabel=xlabel,
                                        x_max=x_max, show_bullets=show_bullets,
                                        show_gs_star=show_gs_star)
@@ -524,7 +630,7 @@ def _plot_landscape_from_data(data, outdir):
 
 
 def step2_landscape(structures, energies, outdir, e_max=None,
-                    normalize_density=False, json_dir=None):
+                    normalize_density=False, json_dir=None, dataset=None):
     """Stage 2: draw conf_space.png AND capture its plotted arrays into JSON."""
     data = _landscape_data(structures, energies, e_max=e_max,
                            normalize_density=normalize_density)
@@ -533,7 +639,10 @@ def step2_landscape(structures, energies, outdir, e_max=None,
     if arrays:
         data["plot_arrays"] = arrays
     if json_dir:
-        _write_stage_json(json_dir, 2, data)
+        n_atoms, formula = _num_atoms_formula(structures)
+        _write_stage_json(json_dir, 2, data,
+                          description=_stage_description(2, dataset,
+                                                         n_atoms, formula))
     return data
 
 
@@ -598,11 +707,15 @@ def _plot_probability_from_data(data, outdir):
     return out_path
 
 
-def step3_probability(structures, energies, outdir, e_max=None, json_dir=None):
+def step3_probability(structures, energies, outdir, e_max=None, json_dir=None,
+                      dataset=None):
     """Stage 3: emit JSON (if json_dir), then draw the Boltzmann P(T) PNG."""
     data = _probability_data(structures, energies, e_max=e_max)
     if json_dir:
-        _write_stage_json(json_dir, 3, data)
+        n_atoms, formula = _num_atoms_formula(structures)
+        _write_stage_json(json_dir, 3, data,
+                          description=_stage_description(3, dataset,
+                                                         n_atoms, formula))
     return _plot_probability_from_data(data, outdir)
 
 
@@ -731,9 +844,9 @@ def main():
                       show_gs_star=not args.no_gs_star)
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density,
-                    json_dir=json_dir)
+                    json_dir=json_dir, dataset=args.dataset)
     step3_probability(structures, energies, args.outdir, e_max=args.e_max,
-                      json_dir=json_dir)
+                      json_dir=json_dir, dataset=args.dataset)
 
     print(f"\nDONE. Outputs under: {os.path.abspath(args.outdir)}")
     print(f"JSON data under: {os.path.abspath(json_dir)}")

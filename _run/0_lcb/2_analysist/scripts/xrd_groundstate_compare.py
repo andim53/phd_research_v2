@@ -24,7 +24,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "2.1.0"
+__version__ = "2.1.2"
 
 import argparse
 import json
@@ -49,6 +49,42 @@ plt.rcParams.update({
 TT_MIN_DEFAULT, TT_MAX_DEFAULT = 10.0, 90.0
 TT_STEP = 0.02
 BROADEN_SIGMA = 0.15
+
+
+def gs_compare_description(family):
+    """Self-describing 'description' block embedded in the emitted xrd_plots.json.
+
+    Lets a downstream AI agent interpret the file (method, units, per-field
+    legend) without knowing this working directory.
+    """
+    return {
+        "kind": "Ground-state powder-XRD comparison across dopant concentrations "
+                "for one amorphous interstitial-alloy family",
+        "schema": "0_lcb_xrd_groundstate_compare/v1",
+        "family": family,
+        "method": "pymatgen XRDCalculator (Cu K-alpha) per leaf's single "
+                  "global-ground-state (rel-E = 0) structure, 2theta grid step "
+                  "0.02 deg, each reflection Gaussian-broadened sigma 0.15 deg",
+        "intensity_scaling": "scaled=False (true relative intensity)",
+        "units": {
+            "leaves[].grid": "two-theta angle in degrees",
+            "leaves[].intensity": "true relative diffracted intensity (a.u.)",
+            "leaves[].concentration_pct": "interstitial dopant concentration in "
+                                          "atom percent",
+            "leaves[].E_glob_eV": "global ground-state total energy in eV",
+        },
+        "fields": {
+            "leaves": "one record per concentration leaf of the family: the "
+                      "ground-state (lowest-energy, rel-E = 0) simulated powder "
+                      "pattern plus composition (host/interstitial symbols, atom "
+                      "counts), formula, concentration %, E_glob, and the two "
+                      "crystallinity indices peak_fraction_ci / integrated_ci",
+            "leaves[].peak_fraction_ci": "area in resolved-peak neighbourhoods / "
+                                         "total area",
+            "leaves[].integrated_ci": "(total - amorphous running-mean "
+                                      "background)/total",
+        },
+    }
 
 
 def simulate_pattern(calc, cif_path, tt_min, tt_max):
@@ -113,7 +149,7 @@ def _formula_label(l, inter):
     return f"{formula} ({_conc_key(l):.1f}% {inter_lab})"
 
 
-def plot_from_data(data, outdir):
+def plot_from_data(data, outdir, figsize=(8, 4.5)):
     """Draw both comparison PNGs from a data dict (live run or JSON)."""
     leaves = data["leaves"]
     family = data.get("family", "")
@@ -124,17 +160,24 @@ def plot_from_data(data, outdir):
     inter = next((l.get("interstitial_symbol") for l in leaves
                   if l.get("interstitial_symbol")), None) or "X"
     # --- Figure 1: overlaid ground-state XRD patterns ---
-    fig, ax = plt.subplots(figsize=(8, 4.5))
-    cmap = plt.get_cmap("viridis")
-    concs = [_conc_key(l) for l in leaves]
-    vmin, vmax = min(concs), max(concs)
-    for l in leaves:
-        if not l["grid"]:
-            continue
-        color = cmap((_conc_key(l) - vmin) / (vmax - vmin + 1e-9)) \
-            if vmax > vmin else "C0"
-        ax.plot(l["grid"], l["intensity"], lw=1.1, color=color,
-                label=_formula_label(l, inter))
+    w, h = figsize
+    fig, ax = plt.subplots(figsize=(w, h))
+    cmap = plt.get_cmap("tab10")
+    ordered = sorted((l for l in leaves if l["grid"]),
+                     key=lambda l: _conc_key(l))
+    for i, l in enumerate(ordered):
+        ax.plot(l["grid"], l["intensity"], lw=1.8,
+                color=cmap(i % cmap.N), label=_formula_label(l, inter))
+    # cmap = plt.get_cmap("viridis")
+    # concs = [_conc_key(l) for l in leaves]
+    # vmin, vmax = min(concs), max(concs)
+    # for l in leaves:
+    #     if not l["grid"]:
+    #         continue
+    #     color = cmap((_conc_key(l) - vmin) / (vmax - vmin + 1e-9)) \
+    #         if vmax > vmin else "C0"
+    #     ax.plot(l["grid"], l["intensity"], lw=1.1, color=color,
+    #             label=_formula_label(l, inter))
     ax.set_xlabel(r"2$\theta$ (deg)"); ax.set_ylabel("Intensity (a.u.)")
     ax.set_title(f"Ground-state XRD — {fam_base} (per {inter} concentration)")
     ax.legend(title=f"{inter} concentration", fontsize=8, ncol=2, loc="upper right")
@@ -169,13 +212,16 @@ def main():
                         help="also write xrd_plots.json")
     parser.add_argument("--from-json", default=None,
                         help="re-draw both PNGs from xrd_plots.json in this dir")
+    parser.add_argument("--figsize", default="8,4.5",
+                        help="overlay figure size 'W,H' in inches (default 8,4.5)")
     args = parser.parse_args()
+    args.figsize = tuple(float(x) for x in args.figsize.split(","))
 
     if args.from_json:
         with open(os.path.join(args.from_json, "xrd_plots.json")) as f:
             data = json.load(f)
         os.makedirs(args.outdir, exist_ok=True)
-        plot_from_data(data, args.outdir)
+        plot_from_data(data, args.outdir, figsize=args.figsize)
         print(f"\nDONE. Re-plotted ground-state PNGs from "
               f"{os.path.join(args.from_json, 'xrd_plots.json')}")
         return
@@ -219,9 +265,10 @@ def main():
         print(f"  {l['leaf']:6s} {l['formula']:10s} {inter}={_conc_key(l):.1f}%  "
               f"peak-fraction CI={pf:.3f}  integrated CI={ic:.3f}")
 
-    data = {"family": man.get("family"), "leaves": leaves}
+    data = {"family": man.get("family"), "leaves": leaves,
+            "description": gs_compare_description(man.get("family"))}
 
-    plot_from_data(data, args.outdir)
+    plot_from_data(data, args.outdir, figsize=args.figsize)
 
     if args.json:
         with open(os.path.join(args.outdir, "xrd_plots.json"), "w") as f:

@@ -562,3 +562,30 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   11_bTa/8_fxg_1b/analysis_indices -> /tmp reproduced conf_space.png +
   binding_probability_vs_temperature.png + progression plot, no DB re-load.
 - Committed TUTORIAL.md + this LOG entry only.
+
+## 2026-09-08 — self-describing JSON (`description` block) in all three emitters
+- Owner: JSONs currently lack context for a standalone AI to interpret them
+  (units/method/provenance live only in code/README). Asked to improve the code
+  so it writes self-explain JSON an AI can analyze independently. Scope: all
+  three emitters; additive top-level `description` map (backward compatible);
+  simplified but enough for independent analysis; docs updated + reproduce-all
+  command added.
+- run_analysis_indices.py 2.8.0 -> 2.9.0: stage JSONs now embed `description`
+  (schema/kind/dataset/origin/energy units + per-field legend). Each stage's
+  step now receives dataset path (stage1 had it; threaded into step2/step3);
+  _write_stage_json takes optional description; added helpers
+  _num_atoms_formula, _stage_description. `data` payload unchanged.
+- xrd_simulate_crystallinity.py 1.4.2 -> 1.4.3: added
+  xrd_energy_window_description(); xrd_plots.json embeds `description` (Cu-Ka,
+  scaled=False true intensity, 2theta deg, per-field legend).
+- xrd_groundstate_compare.py 2.1.0 -> 2.1.2: this commit ALSO completes the
+  owner's INSTR#5 --figsize work (which was uncommitted + partial): signature,
+  --figsize arg, from-json + (now) live-run forwarding, tab10 recolor. Added
+  gs_compare_description(); xrd_plots.json embeds `description`. Bumped to
+  2.1.2 (figsize feature + description).
+- Verified at runtime (agox_v2 / pymat_xrd): all three emitters write the
+  `description` key; --from-json replot unaffected (extra key ignored).
+- Docs: README.AI.md v2.9.0/1.4.3/2.1.2 + description + --figsize; TUTORIAL.md
+  "Self-describing JSON + regenerate all JSONs" block with reproduce commands;
+  VERSIONS.md rows appended.
+- Committed together per owner (INSTR#5 figsize + description) under _run/0_lcb.

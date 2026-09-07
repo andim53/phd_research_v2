@@ -49,3 +49,7 @@ old→new in `LOG.md`.
 | `2_analysist/scripts/xrd_groundstate_compare.py` | 2.0.0 | element-agnostic labels; works for any host/interstitial |
 
 | `2_analysist/scripts/xrd_groundstate_compare.py` | 2.1.0 | subscripted-formula legend (e.g. Ta₅₄B₀ (0.0% B)) |
+
+| `2_analysist/run_analysis_indices.py` | 2.9.0 | self-describing `description` block embedded in each stage JSON |
+| `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.4.3 | self-describing `description` block embedded in xrd_plots.json |
+| `2_analysist/scripts/xrd_groundstate_compare.py` | 2.1.2 | `--figsize 'W,H'` overlay size flag (INSTR#5) + self-describing `description` block in xrd_plots.json |
