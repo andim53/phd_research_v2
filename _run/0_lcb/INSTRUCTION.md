@@ -35,6 +35,118 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #4 — XRD figure: color-only recolor (drop the dash/dot line styles)
+
+**Date:** 2026-09-08
+
+**Goal:** You applied INSTR #3 (working tree, uncommitted — `xrd_simulate_crystallinity.py`
+is at `__version__ 1.4.1`, tab10 colours + an `ls_cycle` of solid/dash/dot line
+styles). You **don't want the dash/dot line styles** — you want each energy
+window distinguished **by colour only**. This refines INSTR #3: keep the tab10
+colours (distinct, never yellow) and the thicker `lw=1.8`, but drop the
+`ls_cycle` entirely so every curve is a **solid** line. Windows are few
+(≤ ~6), so colour alone cleanly separates them. Recolour already applied — the
+only remaining edit is removing the line-style machinery.
+
+**Where (canonical):** `2_analysist/scripts/xrd_simulate_crystallinity.py`,
+function `plot_patterns_from_data(data, outdir)`, active block **lines 129–137**.
+Per-run `scripts/` copies are snapshots — do NOT edit them. `__version__` is on
+**line 35** (currently `"1.4.1"`).
+
+### Step 1 — locate the active plotting block
+
+In the canonical script, the block currently reads (lines 129–137):
+
+```python
+    tab10 = plt.get_cmap("tab10")
+    ls_cycle = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 2))]
+    ordered = sorted((w for w in data["windows"] if w["grid"]),
+                     key=lambda w: w["center"])
+    for i, w in enumerate(ordered):
+        ax.plot(w["grid"], w["intensity"], lw=1.8,
+                color=tab10(i % tab10.N),
+                linestyle=ls_cycle[i % len(ls_cycle)],
+                label=w["label"])
+```
+
+### Step 2 — replace that block with the color-only version
+
+Select and replace **exactly** the 9 lines in Step 1 (from `tab10 =` through the
+`label=w["label"])`) with:
+
+```python
+    tab10 = plt.get_cmap("tab10")
+    ordered = sorted((w for w in data["windows"] if w["grid"]),
+                     key=lambda w: w["center"])
+    for i, w in enumerate(ordered):
+        ax.plot(w["grid"], w["intensity"], lw=1.8,
+                color=tab10(i % tab10.N),
+                label=w["label"])
+```
+
+What it does: deletes the `ls_cycle` list and the `linestyle=...` argument, so
+every window plots as a **solid** tab10 colour (blue, orange, green, red, … in
+energy order) at `lw=1.8` — colour-only distinction, no dash or dot.
+
+### Step 3 — (clean-up, recommended) remove the commented-out legacy block
+
+Directly below the loop, INSTR #3 left the old viridis code commented out
+(lines ~138–147, beginning `# cmap = plt.get_cmap("tab10")`). Delete those
+commented lines and the stray blank line, so the function reads cleanly from the
+loop straight to `ax.set_xlabel(...)`. This is cosmetic; if you prefer to leave
+it, skip — it has no effect on the figure.
+
+### Step 4 — bump the module version
+
+At line 35 change `__version__ = "1.4.1"` → `"1.4.2"` (figure edit, patch bump).
+
+### Step 5 — compile gate (run under `pymat_xrd`)
+
+```bash
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+$PY_X -m py_compile 2_analysist/scripts/xrd_simulate_crystallinity.py
+```
+
+Expected: exit 0, no output. (The working tree is already uncommitted-modified,
+so compile checks the current file, not HEAD.)
+
+### Step 6 — regenerate ONE test figure from a saved JSON
+
+```bash
+$PY_X 2_analysist/scripts/xrd_simulate_crystallinity.py \
+    --from-json 2_analysist/11_bTa/8_fxg_1b/xrd_out \
+    --outdir /tmp/xrd_instr4
+xdg-open /tmp/xrd_instr4/xrd_averaged_by_window.png
+```
+
+**Check:** curves are distinct tab10 **colours** with **no** dashed/dotted
+lines — every line solid and ~1.8 thick; highest-energy window is not yellow;
+legend intact and energy-labelled; 2θ axis ~10–90°.
+
+### Step 7 — record + commit (under the explicit `_run/0_lcb` pathspec)
+
+This step also commits the not-yet-committed INSTR #3 recolor already in the
+working tree (script `1.4.0 → 1.4.1 → 1.4.2` lands in one commit).
+
+```bash
+# append-only LOG.md + VERSIONS.md updates (bump the row for
+# 2_analysist/scripts/xrd_simulate_crystallinity.py to 1.4.2)
+cd /home/think/Desktop/research   # parent repo
+git add _run/0_lcb/2_analysist/scripts/xrd_simulate_crystallinity.py \
+        _run/0_lcb/INSTRUCTION.md _run/0_lcb/LOG.md _run/0_lcb/VERSIONS.md
+git diff --cached --stat          # confirm ONLY the intended 4 files
+git commit -m "fix(0_lcb/xrd): XRD figure color-only recolor (tab10+lw1.8, drop dash/dot line styles) (INSTR #3+#4)"
+```
+
+> Do **not** stage the regenerated PNGs (gitignored). Do **not** run a blanket
+> `git add -A`.
+
+**Verification checklist:** compile gate passes (Step 5); test PNG shows solid,
+colour-distinct, non-yellow curves (Step 6); `VERSIONS.md` row at 1.4.2 and
+`LOG.md` appended; commit staged under the `_run/0_lcb` pathspec only.
+
+---
+
 ## INSTR #3 — Recolor `xrd_averaged_by_window.png` for presentation legibility (tab10 + thicker lines + distinct line styles)
 
 **Date:** 2026-09-08

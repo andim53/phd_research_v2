@@ -508,3 +508,16 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   --from-json test regen; optional full sweep (39 JSONs); record + commit under
   _run/0_lcb pathspec.
 - Committed INSTRUCTION.md + this LOG entry only (no code changed in this step).
+
+## 2026-09-08 — INSTR #4 (INSTRUCTION.md prepend; refines #3)
+- Owner reviewed INSTR #3's recolor (already applied in working tree, script at
+  __version__ 1.4.1, tab10 + ls_cycle dash/dot line styles) and decided they do
+  NOT want dash/dot line styles — colour-only distinction.
+- Prepped **INSTR #4** at top of INSTRUCTION.md: remove `ls_cycle` and the
+  `linestyle=` arg in plot_patterns_from_data() (2_analysist/scripts/
+  xrd_simulate_crystallinity.py lines 129-137) so curves are solid tab10 colours
+  (energy order, lw 1.8); delete commented legacy viridis block (cosmetic);
+  bump __version__ 1.4.1 -> 1.4.2; compile gate under pymat_xrd; --from-json test
+  regen; Step 7 also commits the pending INSTR #3 script change (1.4.0->1.4.2 in
+  one commit). Append-only refinement; INSTR #3 block retained below.
+- Committed INSTRUCTION.md + this LOG entry only.
