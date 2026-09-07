@@ -589,3 +589,22 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   "Self-describing JSON + regenerate all JSONs" block with reproduce commands;
   VERSIONS.md rows appended.
 - Committed together per owner (INSTR#5 figsize + description) under _run/0_lcb.
+
+## 2026-09-08 — INSTR #6 (INSTRUCTION.md prepend)
+- Owner wants a novelty filter on the conf_space + binding-probability analysis
+  (run_analysis_indices.py): deduplicate structures by raw Euclidean distance of
+  the Oganov/Fingerprint descriptor vectors, mirroring _run/9_novelFilter/run_filter.py
+  + the NoveltyLCBAcquisitor measure; a flag activates it and sets the distance
+  threshold. Clarified: filter applies BEFORE Stages 2/3 only; Stage 1 progression
+  stays on the full raw set; implementation self-contained in the runner (no
+  cross-project import); filter limits data to distinct (novel) structures for the
+  KDE/PCA.
+- Prepped **INSTR #6** (top of INSTRUCTION.md): add --novelty-dist <float> parser
+  flag (default None = off), a _filter_novel_structures() greedy
+  lowest-energy-first helper (raw Euclidean Fingerprint distance, keep iff min
+  dist to already-kept > threshold), gate Stages 2/3 onto the filtered
+  structures/energies between step1 and step2, bump __version__ 2.9.0 -> 2.10.0,
+  compile gate under agox_v2, smoke test on 11_bTa/8_fxg_1b, on-vs-off X_eigen
+  verification, threshold calibration sweep (0.5/1.0/1.5/2.0), record + commit
+  under _run/0_lcb pathspec. Grounded in run_filter.py/filter.py signatures.
+- Committed INSTRUCTION.md + this LOG entry only.

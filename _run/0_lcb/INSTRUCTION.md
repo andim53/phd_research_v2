@@ -35,6 +35,235 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #6 — Add a structural-novelty filter (raw Euclidean Fingerprint distance) to `conf_space.png` + `binding_probability` analysis
+
+**Date:** 2026-09-08
+
+**Goal:** The analysis runner `2_analysist/run_analysis_indices.py` (v2.9.0) draws
+`conf_space.png` (Stage 2) and `binding_probability_vs_temperature.png` (Stage 3)
+from **every** DFT-relaxed structure across all seeds. You want an optional
+**novelty filter** so these two plots use only structurally *distinct* structures
+(removing near-duplicate relaxations = variety without double counting), measured
+by the **raw Euclidean distance of the AGOX Oganov/Fingerprint descriptor vectors**
+— the same greedy measure as `_run/9_novelFilter/run_filter.py` + the
+`NoveltyLCBAcquisitor`. A **CLI flag activates the filter and sets the distance
+threshold**. Stage 1 (progression) is **not** filtered — it always uses the full
+raw set. Filtering happens **after** all seeds are loaded, and only the
+`structures`/`energies` arrays fed to Stages 2 & 3 are replaced by the novel
+subset. Off by default (no behaviour change until you pass the flag).
+
+The greedy rule (mirrors `novel_filter/filter.py:filter_novel`): process
+structures **lowest energy first**; keep a structure iff its minimum Euclidean
+distance in Fingerprint space to **every already-kept** structure is **strictly
+greater** than the threshold. The lowest-energy member of each basin is kept.
+
+**Where (canonical):** `2_analysist/run_analysis_indices.py`. `__version__` is on
+**line 56**; `Fingerprint` is already imported (**line 70**, `from
+agox.models.descriptors.fingerprint import Fingerprint`); the load call + Stage
+2/3 calls are near the end of `main()` (**lines 835–849**); the `--start-iter`
+parser arg is ~**line 768**. Per-run `scripts/` copies are snapshots — edit only
+this canonical top-level file.
+
+### Step 1 — add the parser flag
+
+Find the `--start-iter` `parser.add_argument` block (line ~768) and insert this
+argument just after it:
+
+```python
+    parser.add_argument("--novelty-dist", type=float, default=None,
+                        help="activate a structural-novelty filter for Stages 2/3 "
+                             "only: deduplicate structures by raw Euclidean "
+                             "Fingerprint distance, keeping a structure iff its "
+                             "min distance to all already-kept (lower-energy) "
+                             "structures is strictly > this value (raw descriptor "
+                             "units). Larger = fewer, more diverse structures. "
+                             "Stage 1 progression always uses the full raw set. "
+                             "Default: None (filter off).")
+```
+
+### Step 2 — add the self-contained filter helper
+
+Insert this function right after `load_all_seeds_by_seed(...)` (it ends ~line
+371, before the `# ---- Stage 1 ----` header). It needs `np` and `Fingerprint`,
+both already imported:
+
+```python
+def _filter_novel_structures(structures, energies, threshold):
+    """Return (kept_structs, kept_energies) of structurally distinct structures.
+
+    Greedy, lowest-energy-first dedup by RAW Euclidean Fingerprint (Oganov)
+    distance: keep a structure iff its min distance to every already-kept
+    structure is strictly > threshold. Mirrors
+    _run/9_novelFilter/novel_filter/filter.py:filter_novel and the
+    NoveltyLCBAcquisitor novelty measure. Threshold is in raw descriptor units
+    (NOT row-normalised); distinct minima are typically ~1-6 apart, near-duplicate
+    relaxations much closer.
+    """
+    fp = Fingerprint.from_atoms(structures[0])
+    feats = np.vstack([fp.create_features(s).ravel() for s in structures])
+    order = np.argsort(energies, kind="stable")   # lowest energy first
+    keep_idx, kept_feats = [], []
+    for i in order:
+        f = feats[i]
+        if kept_feats:
+            dmin = float(np.linalg.norm(np.vstack(kept_feats) - f, axis=1).min())
+            if dmin <= threshold:
+                continue
+        else:
+            dmin = float("inf")
+        keep_idx.append(int(i)); kept_feats.append(f)
+    keep_idx = np.asarray(keep_idx, dtype=int)
+    print(f"[novelty] threshold={threshold:.4f}: kept {len(keep_idx)}/"
+          f"{len(structures)} novel structures "
+          f"(removed {len(structures) - len(keep_idx)} near-duplicates)")
+    return ([structures[i] for i in keep_idx],
+            np.asarray([energies[i] for i in keep_idx]))
+```
+
+### Step 3 — gate Stages 2/3 onto the filtered set (Stage 1 stays raw)
+
+In `main()`, the code currently is (lines 835–849):
+
+```python
+    structures, energies = load_all_seeds(args.dataset, start_iter=args.start_iter)
+    print(f"\nTotal: {len(structures)} structures, {len(structures[0])} atoms each "
+          f"(iteration >= {args.start_iter})")
+
+    os.makedirs(args.outdir, exist_ok=True)
+    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
+                      e_max=args.e_max, json_dir=json_dir, seeds=seeds,
+                      xlabel=args.xlabel, x_max=args.x_max,
+                      show_bullets=not args.no_bullets,
+                      show_gs_star=not args.no_gs_star)
+    step2_landscape(structures, energies, args.outdir,
+                    e_max=args.e_max, normalize_density=args.normalize_density,
+                    json_dir=json_dir, dataset=args.dataset)
+    step3_probability(structures, energies, args.outdir, e_max=args.e_max,
+                      json_dir=json_dir, dataset=args.dataset)
+```
+
+Replace it with (note: filtering is applied **between** Stage 1 and Stages 2/3,
+so `step1_progression` still gets the raw set via `args.dataset`, while
+`step2_landscape`/`step3_probability` receive the novel subset):
+
+```python
+    structures, energies = load_all_seeds(args.dataset, start_iter=args.start_iter)
+    print(f"\nTotal: {len(structures)} structures, {len(structures[0])} atoms each "
+          f"(iteration >= {args.start_iter})")
+
+    os.makedirs(args.outdir, exist_ok=True)
+    # Stage 1 always uses the full raw set (per-seed best-so-far progression).
+    step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
+                      e_max=args.e_max, json_dir=json_dir, seeds=seeds,
+                      xlabel=args.xlabel, x_max=args.x_max,
+                      show_bullets=not args.no_bullets,
+                      show_gs_star=not args.no_gs_star)
+
+    # Optional novelty filter -> Stages 2 & 3 use only structurally distinct
+    # structures (raw Euclidean Fingerprint distance > --novelty-dist).
+    if args.novelty_dist is not None:
+        structures, energies = _filter_novel_structures(structures, energies,
+                                                        args.novelty_dist)
+        print(f"[novelty] Stages 2/3 now analyse {len(structures)} novel "
+              f"structures")
+
+    step2_landscape(structures, energies, args.outdir,
+                    e_max=args.e_max, normalize_density=args.normalize_density,
+                    json_dir=json_dir, dataset=args.dataset)
+    step3_probability(structures, energies, args.outdir, e_max=args.e_max,
+                      json_dir=json_dir, dataset=args.dataset)
+```
+
+### Step 4 — bump the module version
+
+At **line 56** change `__version__ = "2.9.0"` → `"2.10.0"` (new feature →
+minor bump per `AGENTS.md` rule 8). Update the `run_analysis_indices.py` row in
+`VERSIONS.md` and append a `LOG.md` entry.
+
+### Step 5 — compile gate (run under `agox_v2`)
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+$PY -m py_compile 2_analysist/run_analysis_indices.py
+```
+
+Expected: exit 0, no output. (AGOX/ASE imports will show as Pyright/LSP
+unresolved under base python — judge by this `py_compile`.)
+
+### Step 6 — smoke test with the filter ON, on one leaf
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+$PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+    --outdir /tmp/nv_smoke --json-dir /tmp/nv_smoke \
+    --e-max 0.5 --novelty-dist 1.0
+```
+
+Expected stdout: the normal pipeline PLUS a line like
+`[novelty] threshold=1.0000: kept <K>/<N> novel structures (removed <R>
+near-duplicates)` and `[novelty] Stages 2/3 now analyse <K> novel structures`.
+`conf_space.png` and `binding_probability_vs_temperature.png` are written under
+`/tmp/nv_smoke` using only the `<K>` novel structures; `stage1_progression.json`
+still reflects the full raw set.
+
+### Step 7 — verify the filter actually changes the Stage 2/3 data
+
+Compare a run with `--novelty-dist` against a run without it:
+
+```bash
+$PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+    --outdir /tmp/nv_off --json-dir /tmp/nv_off --e-max 0.5            # no filter
+$PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+    --outdir /tmp/nv_on --json-dir /tmp/nv_on --e-max 0.5 --novelty-dist 1.0
+# stage2 X_eigen length should shrink from N to K; stage3 series[].rel likewise
+python3 -c "import json;print('no-filter X_eigen:',len(json.load(open('/tmp/nv_off/stage2_landscape.json'))['data']['X_eigen']));print('filtered X_eigen:',len(json.load(open('/tmp/nv_on/stage2_landscape.json'))['data']['X_eigen']))"
+```
+
+Expected: filtered `X_eigen` length = K < N (the number kept). Stage 1
+`stage1_progression.json` is unchanged between the two runs.
+
+### Step 8 — calibrate the threshold (recommended, not guesswork)
+
+The filter prints how many it keeps. Threshold is in **raw** Fingerprint units:
+for Fe/MgO, distinct minima are ~1–6 apart and near-duplicates much closer, so
+~1.0 is a reasonable start. Sweep to find a sensible value for your system:
+
+```bash
+for t in 0.5 1.0 1.5 2.0; do
+  echo "=== --novelty-dist $t ==="
+  $PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+      --outdir /tmp/nv_t$t --json-dir /tmp/nv_t$t --e-max 0.5 --novelty-dist $t \
+      | grep -E '\[novelty\]|Total:'
+done
+```
+
+Pick the largest threshold that still keeps enough distinct structures for a
+meaningful KDE (Stage 2/3). Re-run your production leaves with that `--novelty-dist`.
+
+### Step 9 — record + commit (under the explicit `_run/0_lcb` pathspec)
+
+```bash
+# append-only VERSIONS.md (run_analysis_indices.py -> 2.10.0) + LOG.md
+cd /home/think/Desktop/research   # parent repo
+git add _run/0_lcb/2_analysist/run_analysis_indices.py \
+        _run/0_lcb/VERSIONS.md _run/0_lcb/LOG.md
+git diff --cached --stat          # confirm ONLY those intended files
+git commit -m "feat(0_lcb): --novelty-dist novelty filter for conf_space + binding_probability stages (INSTR #6)"
+```
+
+> Do **not** stage regenerated PNGs/JSONs (gitignored). Do **not** run a blanket
+> `git add -A`.
+
+**Verification checklist:** compile gate passes (Step 5); a `--novelty-dist` run
+prints the kept/removed line and writes Stage 2/3 PNGs (Step 6); filtered
+`X_eigen`/`series[].rel` are shorter than the no-filter run while Stage 1 is
+unchanged (Step 7); threshold chosen from the sweep, not guessed (Step 8);
+`VERSIONS.md` at 2.10.0 + `LOG.md` appended; commit staged under the `_run/0_lcb`
+pathspec only. With no `--novelty-dist` flag, behaviour is byte-identical to
+before (filter fully off by default).
+
+---
+
 ## INSTR #5 — `xrd_groundstate_compare.py`: add a `--figsize` flag + tab10 solid recolor of the concentration XRD overlay
 
 **Date:** 2026-09-08
