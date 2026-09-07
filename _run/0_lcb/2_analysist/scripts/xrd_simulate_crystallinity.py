@@ -32,7 +32,7 @@ Usage (pymat_xrd):
 """
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.4.2"
 
 import argparse
 import json
@@ -125,14 +125,24 @@ def plot_patterns_from_data(data, outdir):
     """Draw xrd_averaged_by_window.png from a plots-data dict."""
     leaf = data["leaf"]
     fig, ax = plt.subplots(figsize=(8, 4.5))
-    cmap = plt.get_cmap("viridis")
-    centers = [w["center"] for w in data["windows"] if w["grid"]]
-    vmin, vmax = min(centers), max(centers)
-    for w in data["windows"]:
-        if not w["grid"]:
-            continue
-        color = cmap((w["center"] - vmin) / (vmax - vmin + 1e-9)) if vmax > vmin else "C0"
-        ax.plot(w["grid"], w["intensity"], lw=1.1, color=color, label=w["label"])
+
+    tab10 = plt.get_cmap("tab10")
+    ordered = sorted((w for w in data["windows"] if w["grid"]),
+                     key=lambda w: w["center"])
+    for i, w in enumerate(ordered):
+        ax.plot(w["grid"], w["intensity"], lw=1.8,
+                color=tab10(i % tab10.N),
+                label=w["label"])
+        
+    # cmap = plt.get_cmap("tab10")
+    # centers = [w["center"] for w in data["windows"] if w["grid"]]
+    # vmin, vmax = min(centers), max(centers)
+    # for w in data["windows"]:
+    #     if not w["grid"]:
+    #         continue
+    #     color = cmap((w["center"] - vmin) / (vmax - vmin + 1e-9)) if vmax > vmin else "C0"
+    #     ax.plot(w["grid"], w["intensity"], lw=1.1, color=color, label=w["label"])
+    
     ax.set_xlabel(r"2$\theta$ (deg)"); ax.set_ylabel("Intensity (a.u.)")
     ax.set_title(f"{leaf} — averaged XRD per energy window (eV/atom)")
     ax.legend(title="window [eV/atom]", fontsize=8, ncol=2, loc="upper left")
