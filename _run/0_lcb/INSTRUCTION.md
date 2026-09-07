@@ -35,6 +35,163 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #5 — `xrd_groundstate_compare.py`: add a `--figsize` flag + tab10 solid recolor of the concentration XRD overlay
+
+**Date:** 2026-09-08
+
+**Goal:** The **concentration-based** XRD figure (one ground-state XRD curve per
+dopant concentration, saved as `xrd_averaged_by_window.png`) is drawn by
+`xrd_groundstate_compare.py` — a dedicated script that already reads from its
+`xrd_plots.json` (`family` + `leaves`, each with `concentration_pct`, `grid`,
+`intensity`). It is currently **viridis**-coloured with a **hard-coded**
+`figsize=(8, 4.5)`. You want (a) a **`--figsize`** CLI flag to control figure
+size (e.g. `4,4`, `6,4`, `10,5`) and (b) the figure recoloured to the **tab10
+solid, color-only** scheme (no viridis, no dash/dot line styles, thicker
+`lw=1.8`) consistent with the colour decision made for the by-window script in
+INSTR #4. This script IS the concentration plotter — no new "concentration
+mode" flag is needed; the additions are the `--figsize` flag and the recolor.
+
+**Where (canonical):** `2_analysist/scripts/xrd_groundstate_compare.py`
+(v2.1.0). Per-run `scripts/` copies are snapshots — do NOT edit them. Function
+`plot_from_data(data, outdir)` starts at **line 116**; the Figure-1 (overlay)
+body is **lines 127–142**; `__version__` is on **line 27**.
+
+### Step 1 — add the `--figsize` parser argument
+
+In `main()`, in the `parser.add_argument` block, insert right after the
+`--from-json` argument (currently lines ~170–172):
+
+```python
+    parser.add_argument("--figsize", default="8,4.5",
+                        help="overlay figure size 'W,H' in inches (default 8,4.5)")
+```
+
+Then, immediately after `args = parser.parse_args()` (line ~210), add one line
+to convert the string to a float tuple:
+
+```python
+    args.figsize = tuple(float(x) for x in args.figsize.split(","))
+```
+
+### Step 2 — pass `figsize` through `plot_from_data`
+
+Change the signature on **line 116**:
+
+```python
+def plot_from_data(data, outdir, figsize=(8, 4.5)):
+```
+
+and update BOTH call sites to forward it — the `--from-json` call (near line
+178) and the live-run call (near line 224). Both currently read
+`plot_from_data(data, args.outdir)`; change each to:
+
+```python
+    plot_from_data(data, args.outdir, figsize=args.figsize)
+```
+
+### Step 3 — recolor Figure 1 (the concentration XRD overlay) to tab10 solid
+
+In `plot_from_data`, replace the Figure-1 body — currently lines **128–137**
+(the `cmap = plt.get_cmap("viridis")` ramp and the loop that plots each leaf
+with a viridis-normalised colour at `lw=1.1`) — with:
+
+```python
+    cmap = plt.get_cmap("tab10")
+    ordered = sorted((l for l in leaves if l["grid"]),
+                     key=lambda l: _conc_key(l))
+    for i, l in enumerate(ordered):
+        ax.plot(l["grid"], l["intensity"], lw=1.8,
+                color=cmap(i % cmap.N), label=_formula_label(l, inter))
+```
+
+Also on the line just above that block, replace the hard-coded figure size —
+`fig, ax = plt.subplots(figsize=(8, 4.5))` (line ~127) — with:
+
+```python
+    w, h = figsize
+    fig, ax = plt.subplots(figsize=(w, h))
+```
+
+Effect: each concentration's ground-state curve is a **solid, distinct tab10
+colour** (blue, orange, green, red, … in increasing dopant %, never yellow) at
+`lw=1.8`; no line-style cycling; the overlay size follows `--figsize`.
+(Figure 2, the CI-vs-concentration panel, keeps its own 6×4 size — leave it.)
+
+### Step 4 — bump the module version
+
+At **line 27** change `__version__ = "2.1.0"` → `"2.1.1"` (feature+cosmetic,
+patch bump).
+
+### Step 5 — compile gate (run under `pymat_xrd`)
+
+```bash
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+$PY_X -m py_compile 2_analysist/scripts/xrd_groundstate_compare.py
+```
+
+Expected: exit 0, no output.
+
+### Step 6 — reproduce ONE concentration graph from its JSON (example: 11_bTa)
+
+```bash
+$PY_X 2_analysist/scripts/xrd_groundstate_compare.py \
+    --from-json 2_analysist/11_bTa/xrd_gs_compare \
+    --outdir /tmp/xrd_conc_example --figsize 6,4
+xdg-open /tmp/xrd_conc_example/xrd_averaged_by_window.png
+```
+
+**Check:** 4 curves (Ta₅₄B₀ → Ta₅₄B₅) are distinct solid tab10 colours, none
+yellow, ~1.8 thick; no dashed/dotted lines; image is 6×4 in; legend shows the
+subscript formula + concentration (e.g. `Ta₅₄B₁ (1.8% B)`); x = 2θ (10–90°).
+
+### Step 7 — one command to (re)produce the concentration XRD graph for EVERY system
+
+All 5 existing `xrd_gs_compare` dirs already hold an `xrd_plots.json`, so this
+loop replots each family from its own JSON into place (no DB / no CIF / no
+re-simulation), with a chosen figure size:
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+for gs in 11_bTa/xrd_gs_compare 16_bW/xrd_gs_compare \
+          17_PPt/0_plus5cell/xrd_gs_compare \
+          17_PPt/1_plus0cell/xrd_gs_compare \
+          17_PPt/2_plus3cell/xrd_gs_compare; do
+    [ -f "$gs/xrd_plots.json" ] || continue
+    echo "=== replot $gs ==="
+    $PY_X scripts/xrd_groundstate_compare.py --from-json "$gs" \
+        --outdir "$gs" --figsize 6,4
+done
+```
+
+Each pass ends `DONE. Re-plotted ground-state PNGs from …`. The 5 families are:
+Ta–B (`11_bTa`), W–B (`16_bW`), and the three Pt–P supercell families under
+`17_PPt` (`0_plus5cell`, `1_plus0cell`, `2_plus3cell`). The PNGs are gitignored,
+so this is cosmetic.
+
+### Step 8 — record + commit (under the explicit `_run/0_lcb` pathspec)
+
+```bash
+# append-only LOG.md + VERSIONS.md updates (bump the row for
+# 2_analysist/scripts/xrd_groundstate_compare.py: 2.1.0 -> 2.1.1)
+cd /home/think/Desktop/research   # parent repo
+git add _run/0_lcb/2_analysist/scripts/xrd_groundstate_compare.py \
+        _run/0_lcb/INSTRUCTION.md _run/0_lcb/LOG.md _run/0_lcb/VERSIONS.md
+git diff --cached --stat          # confirm ONLY the intended 4 files
+git commit -m "feat(0_lcb/xrd): --figsize flag + tab10 solid recolor of concentration XRD overlay in xrd_groundstate_compare.py (INSTR #5)"
+```
+
+> Do **not** stage the regenerated PNGs (gitignored). Do **not** run a blanket
+> `git add -A`. Note: this script was CLEAN in git before Step 1 (unlike
+> `xrd_simulate_crystallinity.py`, which still carries your uncommitted INSTR #3
+> recolor) — this commit touches `xrd_groundstate_compare.py` only.
+
+**Verification checklist:** compile gate passes (Step 5); single example replot
+(Step 6) shows 4 solid tab10, non-yellow, ~1.8-thick curves at the given
+`--figsize`; all-5 loop (Step 7) prints a `DONE` per family; `VERSIONS.md` row at
+2.1.1 and `LOG.md` appended; commit staged under the `_run/0_lcb` pathspec only.
+
+---
+
 ## INSTR #4 — XRD figure: color-only recolor (drop the dash/dot line styles)
 
 **Date:** 2026-09-08

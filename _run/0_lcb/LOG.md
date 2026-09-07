@@ -521,3 +521,26 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   regen; Step 7 also commits the pending INSTR #3 script change (1.4.0->1.4.2 in
   one commit). Append-only refinement; INSTR #3 block retained below.
 - Committed INSTRUCTION.md + this LOG entry only.
+
+## 2026-09-08 — INSTR #5 (INSTRUCTION.md prepend)
+- Owner asked for a concentration-based XRD figure + a figsize-controlling flag,
+  a reproduce command for one concentration example, and one command to produce
+  all systems system-by-system. After clarify (owner: "the xrd plot code",
+  "from the json", figsize "you can set", tab10 "yes"), owner accepted Calyx's
+  recommendation to target the EXISTING concentration plotter
+  xrd_groundstate_compare.py (v2.1.0, clean in git) rather than duplicate a
+  concentration mode into the by-window xrd_simulate_crystallinity.py.
+- Prepped **INSTR #5**: add a `--figsize 'W,H'` CLI flag (default 8,4.5; parsed
+  to a float tuple; threaded through plot_from_data signature + both call sites)
+  controlling the Figure-1 concentration XRD overlay, and recolor that overlay
+  from viridis (hardcoded figsize 8,4.5, lw 1.1) to tab10 SOLID color-only
+  (sorted by concentration %, lw 1.8, no line styles) consistent with INSTR #4.
+  Bump __version__ 2.1.0 -> 2.1.1; compile gate under pymat_xrd; reproduce one
+  example from JSON (11_bTa/xrd_gs_compare, --figsize 6,4); all-5 loop over
+  xrd_gs_compare JSONs; record + commit under _run/0_lcb pathspec. Figure 2 (CI
+  vs concentration) left at its own 6x4 size.
+- Grounding: read TUTORIAL (owner-directed) confirming the ground-state
+  concentration workflow + scripts; inspected existing xrd_gs_compare/*.json
+  (family+leaves schema, concentration_pct). All 5 gs_compare dirs carry
+  xrd_plots.json today.
+- Committed INSTRUCTION.md + this LOG entry only.
