@@ -608,3 +608,26 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   verification, threshold calibration sweep (0.5/1.0/1.5/2.0), record + commit
   under _run/0_lcb pathspec. Grounded in run_filter.py/filter.py signatures.
 - Committed INSTRUCTION.md + this LOG entry only.
+
+## 2026-09-08 — INSTR #7 (INSTRUCTION.md prepend)
+- Owner wants a flag to change the Gaussian-KDE bandwidth on the conf_space +
+  binding_probability analysis, to make curves sharper or broader. Clarified:
+  --h (scipy gaussian_kde bw_method scalar multiplier on Scott's rule; <1
+  sharper, >1 broader, absent = default); applies to BOTH Stage 2 (conf_space
+  density) and Stage 3 (binding probability); default behavior unchanged.
+- Key grounding: two KDE call sites — Stage 3 in run_analysis_indices.py:700
+  (gaussian_kde(rel)), Stage 2 in the dependency
+  scripts/plot_structure_landscape.py:236 (gaussian_kde(data_array), reached at
+  run_analysis_indices.py:638). So the flag must be threaded through
+  run_analysis_indices.py AND plot_structure_landscape.py (signature + params +
+  _plot_landscape_from_data forwarding + main()).
+- Prepped **INSTR #7**: add --h (dest kde_bw, default None); thread into
+  _probability_data/step3_probability and _landscape_data(params)/step2_landscape/
+  _plot_landscape_from_data/plot_structure_landscape; store kde_bw in Stage-2
+  params for from-json round-trip (p.get fallback None=Scott); bump runner
+  2.10.0 -> 2.11.0 and plot_structure_landscape 1.1.0 -> 1.2.0; compile gates
+  under agox_v2; sharper/br默认/no-flag smoke (h 0.5/2.0); JSON numeric check.
+- NOTE recorded in block: run_analysis_indices.py already carries uncommitted
+  INSTR #6 --novelty-dist work (v2.10.0) in the working tree; committing after
+  INSTR #7 lands #6+#7 together unless #6 committed first.
+- Committed INSTRUCTION.md + this LOG entry only.

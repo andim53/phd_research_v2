@@ -35,6 +35,207 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #7 — Add a `--h` Gaussian-KDE bandwidth flag (sharper / broader) to `conf_space.png` + `binding_probability` analysis
+
+**Date:** 2026-09-08
+
+**Goal:** `run_analysis_indices.py` (v2.10.0) draws the state-density curve on
+`conf_space.png` (Stage 2) and the `binding_probability_vs_temperature.png`
+(Stage 3) using `scipy.stats.gaussian_kde` with the **default (Scott) bandwidth**.
+You want a CLI flag to control the KDE bandwidth so you can make the density /
+probability curves **sharper** or **broader**. The flag is `--h <factor>`: a
+**scalar multiplier on Scott's rule** (`gaussian_kde(..., bw_method=h)`), so
+`h < 1` = sharper/narrower, `h > 1` = broader/smoother, and `h = 1` (or absent)
+= the Scott default. It controls the KDE in **both** Stage 2 and Stage 3.
+
+Two KDE call sites, so this spans two files:
+- **Stage 3** — `run_analysis_indices.py:700` → `kde = gaussian_kde(rel)`. This
+  KDE also feeds `calculate_boltzmann_probs` (via `kde_model`).
+- **Stage 2** — the density KDE lives in the **dependency**
+  `2_analysist/scripts/plot_structure_landscape.py:236` →
+  `kde = gaussian_kde(data_array)`, reached from `run_analysis_indices.py:638`.
+
+`__version__` is `2.10.0` at `run_analysis_indices.py:56` and `1.1.0` at
+`plot_structure_landscape.py:3`. Per-run `scripts/` copies are snapshots — edit
+only the canonical top-level files.
+
+### Step 1 — add the parser flag (run_analysis_indices.py)
+
+Find the `--novelty-dist` `parser.add_argument` block (around line 803) and
+insert this argument just after it:
+
+```python
+    parser.add_argument("--h", dest="kde_bw", type=float, default=None,
+                        help="Gaussian-KDE bandwidth as a scalar multiplier on "
+                             "Scott's rule for Stages 2 & 3: <1 = sharper/"
+                             "narrower density & probability curves, >1 = broader/"
+                             "smoother, 1 or omitted = Scott default "
+                             "(gaussian_kde(bw_method=...)). Default: None.")
+```
+
+### Step 2 — thread `h` into Stage 3 (run_analysis_indices.py)
+
+(a) Add `kde_bw=None` to `_probability_data` and pass it to `gaussian_kde`
+(currently `run_analysis_indices.py:695,700`):
+
+```python
+def _probability_data(structures, energies, e_max=None, kde_bw=None):
+    ...
+    kde = gaussian_kde(rel, bw_method=kde_bw)
+```
+
+(b) Add `kde_bw=None` to `step3_probability` and forward it:
+
+```python
+def step3_probability(structures, energies, outdir, e_max=None, json_dir=None,
+                      dataset=None, kde_bw=None):
+    ...
+    data = _probability_data(structures, energies, e_max=e_max, kde_bw=kde_bw)
+```
+
+### Step 3 — thread `h` into Stage 2 (run_analysis_indices.py + dependency)
+
+(a) In `run_analysis_indices.py`, add `kde_bw=None` to `_landscape_data`, store
+it in the returned `params` dict (which `_plot_landscape_from_data` forwards to
+`plot_structure_landscape`):
+
+```python
+def _landscape_data(structures, energies, e_max=None, normalize_density=False,
+                    kde_bw=None):
+    ...
+    "params": {
+        ...
+        "plot_density_only": False,
+        "kde_bw": kde_bw,
+    },
+```
+
+(b) In `run_analysis_indices.py`, in `_plot_landscape_from_data`'s call to
+`plot_structure_landscape` (line 638), add the forwarding argument:
+
+```python
+    result = plot_structure_landscape(
+        X_eigen, rel, z_data=None,
+        ...
+        plot_z_vs_e=p["plot_z_vs_e"], return_data=True,
+        kde_bw=p.get("kde_bw"),
+    )
+```
+
+(c) In `run_analysis_indices.py`, add `kde_bw=None` to `step2_landscape` and
+forward it into `_landscape_data`.
+
+(d) In the **dependency** `2_analysist/scripts/plot_structure_landscape.py`:
+add `kde_bw=None` to the `plot_structure_landscape` signature (near
+`normalize_density=False`, line 57) and use it in the KDE call (line 236):
+
+```python
+def plot_structure_landscape(
+    ...
+    normalize_density=False,  # if True, scale density x-axis to [0, 1]
+    kde_bw=None,              # Gaussian-KDE bandwidth (bw_method scalar); None = Scott default
+    ...
+):
+    ...
+            kde = gaussian_kde(data_array, bw_method=kde_bw)
+```
+
+### Step 4 — forward `args.kde_bw` in `main()` (run_analysis_indices.py)
+
+At the Stage 2/3 calls (lines 895–899), add `kde_bw=args.kde_bw` to both:
+
+```python
+    step2_landscape(structures, energies, args.outdir,
+                    e_max=args.e_max, normalize_density=args.normalize_density,
+                    json_dir=json_dir, dataset=args.dataset, kde_bw=args.kde_bw)
+    step3_probability(structures, energies, args.outdir, e_max=args.e_max,
+                      json_dir=json_dir, dataset=args.dataset, kde_bw=args.kde_bw)
+```
+
+> The Stage-2 `kde_bw` also round-trips through the JSON: it is stored in
+> `params`, so a `--from-json` replot re-applies the same bandwidth. Old JSONs
+> without `kde_bw` in `params` fall back to `p.get("kde_bw")` → `None` → Scott.
+
+### Step 5 — bump versions
+
+- `run_analysis_indices.py:56` `"2.10.0"` → `"2.11.0"` (new feature → minor).
+- `plot_structure_landscape.py:3` `"1.1.0"` → `"1.2.0"` (new optional param →
+  minor; signature gains an argument).
+
+Update both rows in `VERSIONS.md` and append a `LOG.md` entry.
+
+### Step 6 — compile gates
+
+```bash
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+$PY -m py_compile 2_analysist/run_analysis_indices.py
+$PY -m py_compile 2_analysist/scripts/plot_structure_landscape.py
+```
+
+Expected: exit 0 each, no output. (AGOX/ASE imports flag as Pyright/LSP
+unresolved under base python — judge by these `py_compile`s.)
+
+### Step 7 — smoke test: sharper vs broader vs default on one leaf
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+$PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+    --outdir /tmp/h_default --json-dir /tmp/h_default --e-max 0.5
+$PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+    --outdir /tmp/h_sharp --json-dir /tmp/h_sharp --e-max 0.5 --h 0.5
+$PY run_analysis_indices.py --dataset 11_bTa/8_fxg_1b \
+    --outdir /tmp/h_broad --json-dir /tmp/h_broad --e-max 0.5 --h 2.0
+```
+
+Expected: all three write `conf_space.png` + `binding_probability_vs_temperature.png`.
+Open them and confirm `--h 0.5` gives **narrower/sharp** density + probability
+peaks, `--h 2.0` gives **broader/smoother** curves, and the no-flag run is the
+unchanged Scott default. The default run must be visually identical to before
+the change.
+
+### Step 8 — verify via JSON (optional, numeric check)
+
+```bash
+python3 -c "
+import json
+for name in ['h_sharp','h_default','h_broad']:
+    d=json.load(open(f'/tmp/{name}/stage2_landscape.json'))
+    print(name, 'params.kde_bw=', d['data']['params'].get('kde_bw'),
+          'density sum=', round(sum(d['data']['plot_arrays']['total_density']),3))
+"
+```
+
+The `total_density` curve shape should differ across `--h` values (sharper
+`--h 0.5` concentrates density into fewer bins; broader `--h 2.0` spreads it),
+while `params.kde_bw` records the value used (None for the default run).
+
+### Step 9 — record + commit (under the explicit `_run/0_lcb` pathspec)
+
+```bash
+# append-only VERSIONS.md (runner -> 2.11.0, plot_structure_landscape -> 1.2.0)
+# + LOG.md. NOTE: run_analysis_indices.py also still carries the uncommitted
+# INSTR #6 --novelty-dist work (v2.10.0) in the same working tree — committing
+# now lands #6 + #7 together unless you commit #6 first.
+cd /home/think/Desktop/research   # parent repo
+git add _run/0_lcb/2_analysist/run_analysis_indices.py \
+        _run/0_lcb/2_analysist/scripts/plot_structure_landscape.py \
+        _run/0_lcb/VERSIONS.md _run/0_lcb/LOG.md
+git diff --cached --stat          # confirm ONLY those intended files
+git commit -m "feat(0_lcb): --h KDE bandwidth flag for conf_space + binding_probability stages (INSTR #7)"
+```
+
+> Do **not** stage regenerated PNGs/JSONs (`/tmp/h_*`, `nv_*`, analysis output —
+> all gitignored). Do **not** run a blanket `git add -A`.
+
+**Verification checklist:** compile gates pass (Step 6); `--h 0.5` visibly
+sharper and `--h 2.0` visibly broader on both conf_space density and probability,
+default run unchanged (Step 7); `params.kde_bw` stored in Stage-2 JSON and
+re-applied on `--from-json` (Step 8); `VERSIONS.md` at runner 2.11.0 +
+plot_structure_landscape 1.2.0, `LOG.md` appended; commit staged under the
+`_run/0_lcb` pathspec only.
+
+---
+
 ## INSTR #6 — Add a structural-novelty filter (raw Euclidean Fingerprint distance) to `conf_space.png` + `binding_probability` analysis
 
 **Date:** 2026-09-08
