@@ -35,6 +35,199 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #10 — Regenerate all analysis_indices (JSONs + PNGs) with the ∫P dE=1 density default and `--h 0.05`, via a new material-grouped script (11_bTa, 16_bW, 17_PPt)
+
+**Date:** 2026-09-08
+
+**Goal:** Create and run a new command that **regenerates every `analysis_indices`
+dir (the 3 stage JSONs + 3 PNGs)** for the **21 leaves** that carry BOTH an
+`analysis_indices` dir AND an xrd dir, across the **11_bTa (5), 16_bW (4),
+17_PPt (12)** families — now using the **new ∫P dE = 1 continuous-density default**
+(no `--peak-norm`) and the **`--h 0.05`** sharper KDE bandwidth, both at
+`--e-max 0.5` eV/atom. The command is written as **explicit per-leaf commands
+grouped by material family** (the existing `json_export/regenerate_analysis_json.sh`
+style) so you can run a whole family, or comment out any leaf to skip it.
+
+**Why these 21:** the leaves that have an xrd dir AND an analysis_indices dir.
+`15_bPt` is excluded (its leaves have no per-leaf xrd dir — only a family-level
+`xrd_gs_compare`). `17_PPt/0_plus5cell/0_PPt_4x4_20P` is excluded (it has `xrd_out`
+but **no** `analysis_indices`/runner dataset). List:
+
+- **11_bTa (5):** `7_fxg_0b`, `8_fxg_1b`, `9_fxg_3b`, `10_fxg_5b`, `11_p_Ta10b`
+- **16_bW (4):** `1_w0b`, `2_w1b`, `3_w3b`, `4_p_w10b`
+- **17_PPt (12):** `0_plus5cell/{1_3x3_20P,2_3x3_30P,3_3x3_0P,4_3x3_10p}`,
+  `1_plus0cell/{0_0P,1_10P,2_20P,3_30P}`, `2_plus3cell/{0_0P,1_10P,2_20P,3_30P}`
+
+**Environment python:** `/home/think/miniconda3/envs/agox_v2/bin/python`
+(AGOX 3.10.2 + ASE + GPAW). Base `python3` has none of these.
+
+**Note:** the runner is now **v2.12.0** — the density mode is the *default*, so each
+command emits `stage3_probability.json` with `data.norm = "density"`, per-series
+`egrid` (500-pt) + `probs` (each integrates to ~1), and a schema-v2 self-describing
+`description`. `--h 0.05` now actually sharpens Stage 3 (the 2.12.0 fix). No
+`--peak-norm` is passed, so every leaf is regenerated in density mode.
+
+---
+
+### 1. Create the new command script
+
+Save this as `json_export/regenerate_all_density.sh` (in
+`/home/think/Desktop/research/_run/0_lcb/2_analysist/json_export/`), then
+`chmod +x` it:
+
+```bash
+#!/bin/bash
+# Regenerate the analysis_indices JSONs + PNGs for every leaf that has BOTH an
+# analysis_indices dir AND an xrd dir, across the xrd-bearing families 11_bTa,
+# 16_bW, 17_PPt (21 leaves). Uses the runner's new DEFAULT continuous probability
+# density (integral P dE = 1; no --peak-norm) and --h 0.05 (sharper KDE) at
+# --e-max 0.5 eV/atom. One command per leaf, grouped by material family.
+# Run from: /home/think/Desktop/research/_run/0_lcb/2_analysist
+# Heavy (~1 h for all 21 leaves). To skip a leaf, comment its line out.
+set -u
+PY=/home/think/miniconda3/envs/agox_v2/bin/python
+H=0.05
+EMX=0.5
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist || exit 1
+echo "Regenerating analysis_indices with density default (integral P dE = 1), --h $H, --e-max $EMX"
+
+# ===================== 11_bTa (Ta-B) =====================
+"$PY" run_analysis_indices.py --dataset "11_bTa/7_fxg_0b"   --outdir "11_bTa/7_fxg_0b/analysis_indices"   --json-dir "11_bTa/7_fxg_0b/analysis_indices"   --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "11_bTa/8_fxg_1b"   --outdir "11_bTa/8_fxg_1b/analysis_indices"   --json-dir "11_bTa/8_fxg_1b/analysis_indices"   --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "11_bTa/9_fxg_3b"   --outdir "11_bTa/9_fxg_3b/analysis_indices"   --json-dir "11_bTa/9_fxg_3b/analysis_indices"   --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "11_bTa/10_fxg_5b"  --outdir "11_bTa/10_fxg_5b/analysis_indices"  --json-dir "11_bTa/10_fxg_5b/analysis_indices"  --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "11_bTa/11_p_Ta10b" --outdir "11_bTa/11_p_Ta10b/analysis_indices" --json-dir "11_bTa/11_p_Ta10b/analysis_indices" --e-max "$EMX" --h "$H"
+
+# ===================== 16_bW (W-B) =====================
+"$PY" run_analysis_indices.py --dataset "16_bW/1_w0b"     --outdir "16_bW/1_w0b/analysis_indices"     --json-dir "16_bW/1_w0b/analysis_indices"     --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "16_bW/2_w1b"     --outdir "16_bW/2_w1b/analysis_indices"     --json-dir "16_bW/2_w1b/analysis_indices"     --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "16_bW/3_w3b"     --outdir "16_bW/3_w3b/analysis_indices"     --json-dir "16_bW/3_w3b/analysis_indices"     --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "16_bW/4_p_w10b"  --outdir "16_bW/4_p_w10b/analysis_indices"  --json-dir "16_bW/4_p_w10b/analysis_indices"  --e-max "$EMX" --h "$H"
+
+# ===================== 17_PPt (Pt-P), 0_plus5cell =====================
+"$PY" run_analysis_indices.py --dataset "17_PPt/0_plus5cell/1_3x3_20P" --outdir "17_PPt/0_plus5cell/1_3x3_20P/analysis_indices" --json-dir "17_PPt/0_plus5cell/1_3x3_20P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/0_plus5cell/2_3x3_30P" --outdir "17_PPt/0_plus5cell/2_3x3_30P/analysis_indices" --json-dir "17_PPt/0_plus5cell/2_3x3_30P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/0_plus5cell/3_3x3_0P"  --outdir "17_PPt/0_plus5cell/3_3x3_0P/analysis_indices"  --json-dir "17_PPt/0_plus5cell/3_3x3_0P/analysis_indices"  --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/0_plus5cell/4_3x3_10p" --outdir "17_PPt/0_plus5cell/4_3x3_10p/analysis_indices" --json-dir "17_PPt/0_plus5cell/4_3x3_10p/analysis_indices" --e-max "$EMX" --h "$H"
+
+# ===================== 17_PPt (Pt-P), 1_plus0cell =====================
+"$PY" run_analysis_indices.py --dataset "17_PPt/1_plus0cell/0_0P" --outdir "17_PPt/1_plus0cell/0_0P/analysis_indices" --json-dir "17_PPt/1_plus0cell/0_0P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/1_plus0cell/1_10P" --outdir "17_PPt/1_plus0cell/1_10P/analysis_indices" --json-dir "17_PPt/1_plus0cell/1_10P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/1_plus0cell/2_20P" --outdir "17_PPt/1_plus0cell/2_20P/analysis_indices" --json-dir "17_PPt/1_plus0cell/2_20P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/1_plus0cell/3_30P" --outdir "17_PPt/1_plus0cell/3_30P/analysis_indices" --json-dir "17_PPt/1_plus0cell/3_30P/analysis_indices" --e-max "$EMX" --h "$H"
+
+# ===================== 17_PPt (Pt-P), 2_plus3cell =====================
+"$PY" run_analysis_indices.py --dataset "17_PPt/2_plus3cell/0_0P" --outdir "17_PPt/2_plus3cell/0_0P/analysis_indices" --json-dir "17_PPt/2_plus3cell/0_0P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/2_plus3cell/1_10P" --outdir "17_PPt/2_plus3cell/1_10P/analysis_indices" --json-dir "17_PPt/2_plus3cell/1_10P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/2_plus3cell/2_20P" --outdir "17_PPt/2_plus3cell/2_20P/analysis_indices" --json-dir "17_PPt/2_plus3cell/2_20P/analysis_indices" --e-max "$EMX" --h "$H"
+"$PY" run_analysis_indices.py --dataset "17_PPt/2_plus3cell/3_30P" --outdir "17_PPt/2_plus3cell/3_30P/analysis_indices" --json-dir "17_PPt/2_plus3cell/3_30P/analysis_indices" --e-max "$EMX" --h "$H"
+
+echo "DONE: all 21 leaves regenerated (density default, --h $H, --e-max $EMX)"
+```
+
+---
+
+### 2. Smoke test ONE leaf first (scratch outdir, so no tracked output is touched)
+
+Before the full run, verify the exact behaviour on one leaf into `/tmp` (do **not**
+overwrite the leaf's tracked `analysis_indices/` yet):
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
+  --dataset "11_bTa/7_fxg_0b" --outdir /tmp/instr10_smoke \
+  --json-dir /tmp/instr10_smoke/analysis_json --e-max 0.5 --h 0.05
+```
+
+**Verify:** `/tmp/instr10_smoke/binding_probability_vs_temperature.png` shows smooth
+per-temperature curves (density mode), and the JSON is a density payload:
+
+```python
+/home/think/miniconda3/envs/agox_v2/bin/python -c "
+import json
+from scipy.integrate import trapezoid
+d = json.load(open('/tmp/instr10_smoke/analysis_json/stage3_probability.json'))
+print('schema      :', d['description']['schema'])     # expect 0_lcb_analysis_stage3/v2
+print('data.norm   :', d['data']['norm'])              # expect density
+print('series keys :', list(d['data']['series'][0].keys()))  # egrid+probs+norm+T+color
+for s in d['data']['series']:
+    print(f\"  {s['T']:8.2f} K  area={trapezoid(s['probs'], s['egrid']):.5f}  peak={max(s['probs']):.3f}\")
+"
+```
+
+Each series area should be `~1.0000` and the peak **> 1** (a narrow ∫=1 density).
+`--h 0.05` should give visibly sharper (narrower, taller) curves than the Scott
+default. If any area is far from 1 or the JSON is not density mode, **stop** and
+check the runner version is 2.12.0.
+
+---
+
+### 3. Run the full regeneration
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+bash json_export/regenerate_all_density.sh
+```
+
+This regenerates, for each of the 21 leaves, its `analysis_indices/` content:
+`progression_seed_split_0.png` (under `progression_plots/`), `conf_space.png`,
+`binding_probability_vs_temperature.png`, and the 3 stage JSONs
+(`stage1_progression.json`, `stage2_landscape.json`, `stage3_probability.json`) —
+all now in **density mode** with `--h 0.05`. It writes directly into each leaf's
+tracked `analysis_indices/` (the per-leaf convention). Expect ~1 h total.
+
+---
+
+### 4. Verify every leaf is density mode + ∫=1
+
+Run a check across all 21 `stage3_probability.json` files:
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb
+/home/think/miniconda3/envs/agox_v2/bin/python -c "
+import json, glob
+from scipy.integrate import trapezoid
+paths = glob.glob('2_analysist/*/*/analysis_indices/stage3_probability.json') + \
+        glob.glob('2_analysist/*/*/*/analysis_indices/stage3_probability.json')
+paths = [p for p in paths if any(f in p for f in ('11_bTa','16_bW','17_PPt'))]
+bad = 0
+for p in sorted(paths):
+    d = json.load(open(p))
+    data = d.get('data', {})
+    norm = data.get('norm'); schema = d.get('description',{}).get('schema')
+    s0 = data.get('series',[{}])[0]
+    areas = [trapezoid(s['probs'], s['egrid']) for s in data.get('series',[]) if 'egrid' in s]
+    ok = norm=='density' and schema.endswith('/v2') and areas and all(abs(a-1)<1e-3 for a in areas)
+    bad += 0 if ok else 1
+    print(('OK ' if ok else 'BAD') + f'  {norm:7} {schema:22} nseries={len(data.get(\"series\",[]))} n={data.get(\"n_structures\")}  {p}')
+print('total', len(paths), 'files,', bad, 'not in density/∫=1 form')
+"
+```
+
+Expect all 21 lines `OK` with `norm=density`, schema `.../v2`, and area ≈ 1.
+
+---
+
+### 5. Commit (script + regenerated outputs + LOG/VERSIONS)
+
+The regenerated `analysis_indices` JSONs/PNGs ARE tracked for these leaves, so stage
+the script and all regenerated outputs plus the docs and commit under the explicit
+`_run/0_lcb` pathspec:
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb
+git add 2_analysist/json_export/regenerate_all_density.sh \
+        2_analysist/11_bTa/ 2_analysist/16_bW/ 2_analysist/17_PPt/
+git commit -m "feat(0_lcb): regenerate 21 analysis_indices dirs in density mode (∫P dE=1 default) with --h 0.05 (11_bTa/16_bW/17_PPt)"
+```
+
+Before committing, confirm the staged set only contains what you expect
+(`git status --short` + `git diff --cached --stat`); stage 15_bPt etc. only if you
+also want them. Add a `LOG.md` entry describing the regeneration (runner stays
+2.12.0 — the `.sh` script is not versioned). Do **not** commit the `/tmp` smoke dir.
+
+---
+
 ## INSTR #9 — Add a Stage-3 flag for a true continuous probability density (∫ P dE = 1); make it the default, with `--peak-norm` to reproduce the old peak=1 figure, and forward `--h` into Stage 3
 
 **Date:** 2026-09-08

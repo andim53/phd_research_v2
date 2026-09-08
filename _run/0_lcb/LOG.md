@@ -710,3 +710,15 @@ Applied on top of the owner's uncommitted INSTR #9 code (runner → v2.12.0, den
 Verified by real run on 11_bTa/7_fxg_0b (--e-max 0.5): density JSON area=1.0000 per T,
 peak≈56 (>1, correct); peak JSON norm=peak, probs max=1.0; --from-json replots both a
 density JSON and a legacy v1 JSON correctly. Scratch outputs under /tmp removed.
+
+## 2026-09-08 — INSTR #10 prepended (owner how-to, no code change)
+Prepared and prepended **INSTR #10** to INSTRUCTION.md. Instructs the owner to create
+a new material-grouped script `2_analysist/json_export/regenerate_all_density.sh`
+(explicit per-leaf commands under 11_bTa/16_bW/17_PPt headers) and run it to
+regenerate all analysis_indices (3 stage JSONs + 3 PNGs) in the **∫P dE=1 density
+default** (no --peak-norm) with **--h 0.05** and **--e-max 0.5**, then verify each
+stage3 JSON is schema v2 / norm=density / ∫=1 and commit. Scope confirmed with owner:
+the 21 leaves that have BOTH an analysis_indices dir AND an xrd dir — 11_bTa(5),
+16_bW(4), 17_PPt(12). 15_bPt excluded (no per-leaf xrd); 17_PPt/0_plus5cell/0_PPt_4x4_20P
+excluded (xrd_out but no analysis_indices). Owner wants regenerated outputs committed
+too. Runner stays 2.12.0 (the .sh is not versioned).
