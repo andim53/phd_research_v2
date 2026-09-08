@@ -35,6 +35,107 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #11 — Stage-3 probability density P(E): how it is computed from the state density g(E) (LaTeX derivation)
+
+**Date:** 2026-09-09
+
+**Goal:** Write down, in LaTeX notation, exactly how the Stage-3 "probability
+density" `P(E)` is calculated from the state density `g(E)` in
+`2_analysist/run_analysis_indices.py`. This is a *derivation reference* — no code
+changes. Everything below maps 1:1 onto the current code
+(`__version__ = "2.12.0"`): read `_probability_data` (runner `:750`),
+`_boltzmann_density` (`:739`), `calculate_boltzmann_probs` (`:724`) and the
+stage-3 self-describing `description` (`:294`). There is **no literal `gE`
+variable** in the project — the density of states is the **Gaussian-KDE state
+density `rho(E)`** described below.
+
+### 0. Inputs and energy normalisation
+
+The input is the set of DFT-relaxed structures kept from the seed DBs
+(`iteration >= --start-iter`, default 10). Every structure has the same
+`N = num_atoms` atoms in the fixed supercell. With raw total energies `{E_i}`
+and global minimum `E_min = min_i E_i`, define the **relative per-atom energy**
+
+$$e_i \;=\; \frac{E_i - E_{\min}}{N}\qquad\text{(eV/atom)}\qquad i=1,\dots,n,$$
+
+computed in code as `rel = (energies - energies.min()) / num_atoms`
+(runner `:761`). This is the energy coordinate used throughout Stage 3 (and the
+plot x-axis label is `E_i - E_glob` (eV/atom), `E_LABEL` at `:108`).
+
+### 1. State density g(E) — the Gaussian-KDE over the sample
+
+The state (configuration) density is **not** read from a `gE` file: it is the
+kernel-density estimate of the observed sample `{e_i}`,
+
+$$g(e) \;=\; \frac{1}{n\,b}\sum_{i=1}^{n} K\!\left(\frac{e - e_i}{b}\right),
+\qquad K(u)=\frac{1}{\sqrt{2\pi}}\,e^{-u^{2}/2}\ \text{(Gaussian kernel)},$$
+
+which is `rho = scipy.stats.gaussian_kde(rel, bw_method=h)` evaluated at `e`
+(runner `:762`). The bandwidth `b` follows Scott's rule by default; a scalar
+`--h` flag multiplies the Scott bandwidth (so `b = h\cdot b_\text{scott}`).
+Units of `g` are (config./eV-atom). A tiny floor `+1e-15` is added before any
+evaluation to avoid a zero density (`:743`).
+
+### 2. Boltzmann weight
+
+For a temperature `T` and a chosen reference `E_ref = min_i e_i` (which is `0`,
+because `rel` is already relative to its own min; set at `:764`), the thermal
+weight is
+
+$$w_T(e) \;=\; \exp\!\left(-\frac{e - E_{\mathrm{ref}}}{k_B T}\right),
+\qquad k_B = 8.6173\times10^{-5}\ \text{eV/K}.$$
+
+### 3. Probability density P(E) — default "density" mode (∫P dE = 1)
+
+On a dense grid `{E_k}_{k=1}^{500} = \texttt{np.linspace}(e_{lo},\,e_{hi},\,500)`
+(`:777`; `e_{lo}=-0.1` when `--e-max` is set else `0`; `e_{hi}=\texttt{e-max}`
+or `rel.max()+0.05`), the unnormalised measure is `g(E)\,w_T(E)` and the
+normalisation is its **trapezoid integral** over the grid:
+
+$$P_T(e) \;=\;
+\frac{g(e)\,w_T(e)}{\displaystyle \int_{e_{lo}}^{e_{hi}} g(e')\,w_T(e')\,\mathrm{d}e'}
+\;=\;
+\frac{g(e)\,\exp\!\left(-\dfrac{e-E_{\mathrm{ref}}}{k_B T}\right)}
+{\displaystyle \int_{e_{lo}}^{e_{hi}} g(e')\,\exp\!\left(-\dfrac{e'-E_{\mathrm{ref}}}{k_B T}\right)\mathrm{d}e'}.$$
+
+This is exactly `_boltzmann_density` (`:739`): `num = rho*w`, `norm =
+trapezoid(num, egrid)`, `return num/norm`. Because `norm` is the trapezoid
+integral of the numerator, the resulting curve satisfies
+
+$$\int_{e_{lo}}^{e_{hi}} P_T(e)\,\mathrm{d}e \;=\; 1 \qquad\text{per temperature }T.$$
+
+So `P_T` is a genuine probability **density** on the plotted window; its peak can
+exceed `1` when the window is narrow. It is plotted as a smooth curve per `T`
+(`:804`). The temperature list is `TEMPS = [298.15, 348.60, 447.875, 547.15,
+646.425]` K (`:112`).
+
+### 4. Legacy "peak" mode (--peak-norm, scatter)
+
+With the flag, the computation is instead done only at the *observed* energies
+`{e_i}` and rescaled so the global peak equals 1 (`calculate_boltzmann_probs`,
+`:724`):
+
+$$P_i \;=\; \frac{g(e_i)\,w_T(e_i)}{\displaystyle\sum_{j} g(e_j)\,w_T(e_j)}
+\qquad\longrightarrow\qquad \frac{P_i}{\max_j P_j}
+\qquad\text{(peak $=1$),}$$
+
+with `dE_i = e_i - E_ref`. This is a *relative likelihood* (not a density) and is
+not comparable across `T` since every temperature touches `1`. Plotted as a
+scatter (`:807`).
+
+### 5. How to verify
+
+1. In any leaf `analysis_indices/`, open `stage3_probability.json` and confirm
+   `data.norm == "density"` and each `series[].probs` trapezoid-integrates to
+   ~1 over `data.series[].egrid`.
+2. `description.method` (schema v2) restates the formula inline — check it
+   matches the notation above.
+3. Recompute by hand for one `T`: `rho = gaussian_kde(rel, bw_method=0.05)`,
+   `P = rho(egrid)*exp(-egrid/kB/T)` / `trapezoid(...)` and compare with the JSON
+   `probs` array.
+
+---
+
 ## INSTR #10 — Regenerate all analysis_indices (JSONs + PNGs) with the ∫P dE=1 density default and `--h 0.05`, via a new material-grouped script (11_bTa, 16_bW, 17_PPt)
 
 **Date:** 2026-09-08

@@ -722,3 +722,17 @@ the 21 leaves that have BOTH an analysis_indices dir AND an xrd dir — 11_bTa(5
 16_bW(4), 17_PPt(12). 15_bPt excluded (no per-leaf xrd); 17_PPt/0_plus5cell/0_PPt_4x4_20P
 excluded (xrd_out but no analysis_indices). Owner wants regenerated outputs committed
 too. Runner stays 2.12.0 (the .sh is not versioned).
+
+## 2026-09-09 — INSTR #11 prepended (LaTeX derivation of Stage-3 P(E) from g(E); no code change)
+Owner asked to "write down how the probability density is calculated from the gE, in LaTeX notation."
+Clarified (2 questions, one call): confirmed gE = the Gaussian-KDE state density rho(E) computed in
+run_analysis_indices.py Stage-3 (not a separate WL/histogram gE file — none exists in the project), and
+the write-up location = INSTRUCTION.md as an owner-facing block.
+Prepared and prepended **INSTR #11** to INSTRUCTION.md (newest-first, above INSTR #10). The block is a pure
+derivation reference (no code change), mapping each formula onto the runner source: relative per-atom energy
+e_i=(E_i-E_min)/N (:761); state density g(e) = scipy gaussian_kde over {e_i} with Scott/default or --h-scaled
+bandwidth (:762); Boltzmann weight w_T(e)=exp(-(e-E_ref)/k_B T), k_B=8.6173e-5 eV/K, E_ref=rel.min()=0 (:764);
+default density mode P_T(e) = g·w_T / trapezoid(g·w_T, egrid) over a 500-pt grid, giving ∫P dE=1 (:739,777);
+legacy --peak-norm P_i = g_i·w_i/Z then /max (peak=1), scatter (:724). Includes a 5-step verify section
+(checking data.norm="density", series[].probs area ~1, recompute-by-hand against the JSON). No source code or
+runner version touched (runner stays 2.12.0).
