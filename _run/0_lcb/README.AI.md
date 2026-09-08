@@ -23,6 +23,89 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
   XRD crystallinity stage; `gpaw_env` on HPC (activated in batch scripts). Base
   `python3` has **no** AGOX/ASE/GPAW/pymatgen.
 
+## 1b. Project mechanism — whole-pipeline overview (read this first)
+
+This project is a **DFT-relaxed structure database → plots/JSONs** analysis
+pipeline. The core idea: AGOX `GPR+LCB` (Gaussian-process regression + Lower
+Confidence Bound) searches generate thousands of candidate atomic structures
+stored in per-seed AGOX SQLite databases; this project's scripts turn those
+structures into **interpretable figures** (energy landscape, structural
+diversity, configurational statistics) and **self-describing JSON** so both
+humans and AI agents can analyze them.
+
+**The data flow in one line:**
+`seed_*/1_db/db_*.db` → (load) → `run_analysis_indices.py` 3-stage analysis →
+PNGs (`progression`, `conf_space`, `binding_probability`) + per-stage JSONs
+→ (optional) XRD crystallinity via a **two-env bridge** (ASE→CIF→pymatgen).
+
+**Key architectural facts a new agent must know:**
+
+- **One runner analyses one leaf.** A *leaf* is a dataset dir directly holding
+  `seed_*/1_db/db_*.db` (e.g. `11_bTa/8_fxg_1b`). `run_analysis_indices.py`
+  globs those DBs, loads every structure with AGOX `Database`, and runs a 3-stage
+  pipeline producing 3 PNGs + 3 stage JSONs. Point `--dataset` at ONE leaf;
+  loop over leaves for a family. Current version **v2.11.0**.
+
+- **Two conda envs are mandatory and split the toolchain:**
+  - `agox_v2` (`/home/think/miniconda3/envs/agox_v2/bin/python`): AGOX + ASE +
+    GPAW + numpy/scipy/matplotlib. Runs the analysis runner, the novelty filter
+    (needs AGOX `Fingerprint`), and XRD Stage-1 extraction (writes CIFs). **No
+    pymatgen.**
+  - `pymat_xrd` (`/home/think/miniconda3/envs/pymat_xrd/bin/python`): pymatgen +
+    XRD + numpy/scipy/matplotlib. Runs XRD Stage-2 simulation (needs pymatgen
+    `XRDCalculator`). **No ASE/AGOX.**
+  - The bridge: structures are written to **CIF files on disk** from `agox_v2`,
+    then read back by pymatgen in `pymat_xrd`. Never run an XRD-simulation step
+    under `agox_v2`, and never run the analysis runner under `pymat_xrd`.
+
+- **The 3-stage analysis runner** (`run_analysis_indices.py`, the canonical
+  project-agnostic tool):
+  1. **Stage 1** — per-seed "best-so-far" progression plot (energy vs evaluated
+     candidate index), plus seed-0 window-minimum bullets + a global ground-state
+     star, and `.xsf` exports. Uses the FULL raw structure set (never filtered).
+  2. **Stage 2** — `conf_space.png`: a two-panel figure. Left = Gaussian-KDE
+     **state density** (config./eV) over per-atom relative energy; right = PCA
+     scatter where each structure is projected onto PC1 of its AGOX
+     **Fingerprint** descriptor matrix. Drawn by the dependency
+     `scripts/plot_structure_landscape.py` (v1.2.0).
+  3. **Stage 3** — `binding_probability_vs_temperature.png`: Boltzmann-weighted
+     state occupation `P(E) ∝ ρ(E)·exp(−ΔE/kT)/Z` over several temperatures
+     (KDE density × Boltzmann factor), rescaled so peak = 1.
+
+- **Two analysis-time controls (both optional, both off by default):**
+  - `--novelty-dist <float>` — a structural-novelty filter applied to Stages 2/3
+    only (Stage 1 stays raw). Greedy, lowest-energy-first dedup: keep a structure
+    iff its **raw Euclidean AGOX-Fingerprint distance** to every already-kept
+    structure is strictly > the threshold. Removes near-duplicate relaxations,
+    giving variety without double counting.
+  - `--h <factor>` (dest `kde_bw`) — scalar multiplier on scipy's Scott rule for
+    the Gaussian KDE in **both** Stage 2 (state density) and Stage 3
+    (probability). `<1` = sharper/narrower, `>1` = broader/smoother, absent =
+    Scott default.
+
+- **Everything that can be plotted is also saved as JSON.** The runner writes
+  `stage1_progression.json`, `stage2_landscape.json`, `stage3_probability.json`;
+  the XRD scripts write `xrd_plots.json`. Every JSON embeds a top-level
+  `description` block (schema, kind, dataset/family, method, units, per-field
+  legend) so a downstream AI can interpret it without the working tree. The plot
+  payload lives under its original keys (`data` for stages, pattern/CI arrays for
+  XRD), so `--from-json <dir> --outdir <out>` re-draws the PNGs from JSON with no
+  DB/CIF re-load.
+
+- **XRD crystallinity is a separate two-stage sub-pipeline** (see §2c) that
+  simulates powder XRD from the relaxed structures and measures crystallinity:
+  Stage 1 (agox_v2) extracts/bins structures into CIFs + a `manifest.json`;
+  Stage 2 (pymat_xrd) simulates XRD per structure (pymatgen `XRDCalculator`,
+  Cu Kα, `scaled=False` true intensity, Gaussian-broadened), averages per energy
+  window or per dopant concentration, and computes crystallinity indices
+  (peak-fraction + integrated).
+
+- **Git discipline** (AGENTS.md §5): always stage explicit `_run/0_lcb/...`
+  pathspecs, never `git add -A` (the project lives inside the parent `research`
+  repo). Regenerable outputs (`*.png`, `*.db`, `*.xsf`, `*.log`, run dirs) are
+  gitignored; **code + docs are tracked**. (One caveat — some
+  `analysis_indices/*.json` files are historically tracked in git, see §5.)
+
 ## 2. File layout
 
 ```
@@ -37,11 +120,11 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 ├── PROMPTS.md           # future-work prompt log (+ shared grammar notes)
 ├── .gitignore           # project-level ignores (regenerable outputs)
 ├── 2_analysist/          # analysed/intermediate results + family analysis code
-│   ├── run_analysis_indices.py   # family analysis runner (v2.9.0, project-agnostic)
+│   ├── run_analysis_indices.py   # family analysis runner (v2.11.0, project-agnostic)
 │   ├── scripts/                  # runner deps + XRD stage
-│   │   ├── plot_structure_landscape.py   # Stage-2 landscape (v1.1.0)
+│   │   ├── plot_structure_landscape.py   # Stage-2 landscape (v1.2.0)
 │   │   ├── xrd_extract_structures.py     # XRD Stage 1 (v1.0.0, agox_v2)
-│   │   └── xrd_simulate_crystallinity.py # XRD Stage 2 (v1.1.0, pymat_xrd)
+│   │   └── xrd_simulate_crystallinity.py # XRD Stage 2 (v1.4.3, pymat_xrd)
 │   ├── json_export/                # JSON (re)generation driver scripts
 │   │   ├── extract_all_analysis_json.sh     # run all 25 analysis leaves with --json
 │   │   ├── regenerate_analysis_json.sh      # per-leaf analysis regenerate + json
@@ -82,7 +165,7 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
 
 ### 2b. `run_analysis_indices.py` — family analysis runner (project-agnostic)
 
-- **`__version__ = "2.9.0"`.** A **project-agnostic** analysis runner that globs
+- **`__version__ = "2.11.0"`.** A **project-agnostic** analysis runner that globs
   `seed_*/1_db/db_*.db` and reads the atom count from each structure, so it runs
   on **any** interstitial-alloy family under `2_analysist/` — `11_bTa` (5 leaves),
   `15_bPt` (4), `16_bW` (4), `17_PPt` (12) = **25 leaves total**. It is NOT
@@ -91,14 +174,25 @@ human-facing `README.md`. **Read `AGENTS.md` first** for the operating rules.
   stdlib/numpy/scipy/matplotlib). Compile-gate under `agox_v2` (LSP/Pyright false
   positives on AGOX/ASE imports are expected — judge by `py_compile`).
 - **3-stage pipeline** (CLI `--dataset --outdir [--e-max --normalize-density
-  --start-iter --json-dir --from-json]`):
+  --start-iter --novelty-dist --h --json-dir --from-json]`):
   1. **Stage 1** — per-seed best-so-far progression plot
      (`progression_plots/progression_seed_split_0.png`) + bullet/xsf exports of
-     low-energy window minima + global ground state.
+     low-energy window minima + global ground state. Uses the **full raw set**.
   2. **Stage 2** — PCA landscape + per-atom KDE state density
      (`conf_space.png`, via `plot_structure_landscape.py`).
   3. **Stage 3** — Boltzmann probability vs temperature
      (`binding_probability_vs_temperature.png`).
+- **`--novelty-dist <float>` (v2.10.0, INSTR #6):** structural-novelty filter
+  applied to **Stages 2/3 only** (Stage 1 progression stays raw). After all
+  seeds load, structures are deduplicated greedily lowest-energy-first by their
+  **raw Euclidean AGOX-Fingerprint distance**: a structure is kept iff its min
+  distance to every already-kept structure is strictly `> threshold`. Off by
+  default (`None` = no filtering, byte-identical behavior).
+- **`--h <factor>` (dest `kde_bw`, v2.11.0, INSTR #7):** scalar multiplier on
+  scipy's Scott rule for the Gaussian KDE in **both** Stage 2 (state density,
+  threaded through `plot_structure_landscape.py`) and Stage 3 (probability).
+  `<1` sharper/narrower, `>1` broader/smoother, absent = Scott default. The
+  Stage-2 value is stored in `params.kde_bw` so `--from-json` replots re-apply it.
 - **JSON data emission (v2.3.0):** each stage's plotted data is dumped to a JSON
   AND the PNG is drawn. Add `--json-dir <DIR>` (default `<outdir>/analysis_json`);
   writes `stage1_progression.json`, `stage2_landscape.json`,
@@ -285,6 +379,12 @@ Batch scripts use `gpaw_env` and the `#PJM` scheduler. Launch with
 - **`.xsf` side output is DB-only:** Stage-1 window-minima + ground-state `.xsf`
   are written during a live run (need the DB); a `--from-json` replot redraws the
   PNG but cannot regenerate the `.xsf` structures.
+- **Tracked `analysis_indices/*.json`:** some `stage*.json` files are
+  **historically tracked in git** (committed before the current "regenerable =
+  gitignored" convention settled). Re-running analysis modifies them, which shows
+  up as `M` in `git status`. Decide whether to commit the regenerated JSON (data)
+  or restore them (`git checkout`) — they are regenerable outputs, not source. Do
+  not let a blanket `git add -A` sweep them into a code commit.
 
 ## 6. Provenance
 
@@ -301,4 +401,17 @@ Batch scripts use `gpaw_env` and the `#PJM` scheduler. Launch with
   Sep 2026) placed under `2_analysist/` and documented in README.AI on 2026-09-06.
   They share the project-agnostic runner layout and are tracked for their code
   (main.py, job `*.sh`, `scripts/`); DB/xsf/out data stays gitignored.
+- **Self-describing JSON (`description` block)** added 2026-09-08 (v2.9.0 /
+  xrd_simulate 1.4.3 / xrd_groundstate_compare 2.1.2): every emitted JSON embeds
+  a top-level `description` map so an AI can interpret it standalone.
+- **XRD figure presentation recolor** (INSTR #3/#4, 2026-09-08): `xrd_simulate_crystallinity.py`
+  switched from viridis to **tab10 solid color-only** (lw 1.8, no dash/dot line
+  styles).
+- **`--figsize` flag** (INSTR #5, 2026-09-08): `xrd_groundstate_compare.py` gained
+  `--figsize 'W,H'` for the concentration overlay figure.
+- **`--novelty-dist` filter** (INSTR #6, v2.10.0, 2026-09-08): structural-novelty
+  dedup for Stages 2/3 by raw Euclidean Fingerprint distance.
+- **`--h` KDE bandwidth flag** (INSTR #7, v2.11.0 + plot_structure_landscape 1.2.0,
+  2026-09-08): scalar bandwidth multiplier for the Stage 2 + Stage 3 KDE.
+- **`1_runs/` reproduce + all-systems commands** added to TUTORIAL 2026-09-08.
 - Scaffold (this doc set) created 2026-08-31 under the AI-Agent Project Workflow.
