@@ -35,6 +35,335 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #9 — Add a Stage-3 flag for a true continuous probability density (∫ P dE = 1); make it the default, with `--peak-norm` to reproduce the old peak=1 figure, and forward `--h` into Stage 3
+
+**Date:** 2026-09-08
+
+**Goal:** In `2_analysist/run_analysis_indices.py` (currently v2.11.0), change the
+Stage-3 Boltzmann output (`binding_probability_vs_temperature.png` +
+`stage3_probability.json`) so that **by default** it plots a *true continuous
+probability density* normalized so **∫ P dE = 1** over the plotted energy window
+(smooth curve per temperature, auto-scaled y-axis). Keep the old behaviour
+reachable via a new `--peak-norm` flag (per-structure scatter scaled to peak = 1,
+y in [0, 1.05]) so existing figures stay reproducible. While touching the Stage-3
+plumbing, **also forward the existing `--h` (KDE bandwidth) into Stage 3** — it is
+wired for it (`step3_probability`/`_probability_data` accept `kde_bw`) but `main()`
+never passes it, so Stage 3 currently ignores `--h`.
+
+The `∫ P dE = 1` normalization is done as a **continuous** trapezoid integral over
+a dense energy grid:
+
+```python
+P(E) = rho(E) * exp(-(E - E_min) / k_B T) / trapezoid( rho(E) * exp(...), E_grid )
+```
+
+This is sample-spacing independent (unlike the MrAfi/`tmp` script's discrete
+trapezoid over the observed points, which double-normalizes and depends on the
+arbitrary spacing of your structures). It is the definition a reviewer means by a
+Boltzmann-weighted probability density, and it makes hot-vs-cold curves genuinely
+comparable (all carry total area 1).
+
+**Environment python:** `/home/think/miniconda3/envs/agox_v2/bin/python`
+(AGOX 3.10.2 + ASE + GPAW). Base `python3` has none of these.
+
+---
+
+### 1. Add the `trapezoid` import
+
+File: `2_analysist/run_analysis_indices.py`, the import block (current line 72).
+Find:
+
+```python
+from scipy.stats import gaussian_kde
+```
+
+Add the line directly below it:
+
+```python
+from scipy.integrate import trapezoid
+```
+
+---
+
+### 2. Replace the whole Stage-3 function block
+
+In the same file, select **everything from the `def calculate_boltzmann_probs(`
+line through the end of `step3_probability`** — i.e. the current v2.11.0 block at
+approximately lines 685-752, which runs:
+
+```python
+def calculate_boltzmann_probs(energies, kde_model, T):
+    ...
+def _probability_data(structures, energies, e_max=None, kde_bw=None):
+    ...
+def _plot_probability_from_data(data, outdir):
+    ...
+def step3_probability(structures, energies, outdir, e_max=None, json_dir=None,
+                      dataset=None, kde_bw=None):
+    ...
+    return _plot_probability_from_data(data, outdir)
+```
+
+(the block ends right before the `# ---` banner above the `replot_from_json`
+function). Replace that entire selection with:
+
+```python
+def calculate_boltzmann_probs(energies, kde_model, T):
+    """Legacy per-structure Boltzmann likelihood scaled so peak = 1.
+
+    Pi = rho(E)*exp(-dE/kbT)/Z, then /max. Used only under --peak-norm
+    (scatter over the observed energy points)."""
+    kb = 8.6173e-5  # eV/K
+    rho_i = kde_model.evaluate(energies) + 1e-15
+    relative_e = energies - np.min(energies)
+    weights = np.exp(-relative_e / (kb * T))
+    numerator = rho_i * weights
+    Z = np.sum(numerator)
+    probs = numerator / Z
+    return probs / probs.max()
+
+
+def _boltzmann_density(kde, E_ref, T, egrid):
+    """Continuous Boltzmann density P(E) = rho*w / trapezoid(rho*w, E) on a grid,
+    so the trapezoid area under P over the grid equals 1 (integral P dE = 1)."""
+    kb = 8.6173e-5  # eV/K
+    rho = kde.evaluate(egrid) + 1e-15
+    w = np.exp(-(egrid - E_ref) / (kb * T))
+    num = rho * w
+    norm = trapezoid(num, egrid)
+    return num / norm
+
+
+def _probability_data(structures, energies, e_max=None, kde_bw=None,
+                      peak_norm=False):
+    """Return the Stage-3 plotting data (rel energies/grid, per-T P, temps,
+    colors, axis windows, normalization mode) as a JSON-safe dict.
+
+    peak_norm=False (DEFAULT): true continuous probability density, each T
+    normalized so integral P dE = 1 over the plotted window (smooth curve;
+    ylim auto-scales, peak can exceed 1).
+    peak_norm=True: legacy per-structure likelihood scaled so peak = 1
+    (scatter; ylim [0, 1.05])."""
+    num_atoms = len(structures[0])
+    rel = (energies - energies.min()) / num_atoms
+    kde = gaussian_kde(rel, bw_method=kde_bw)
+    e_lim = (-0.1, e_max) if e_max is not None else (0.0, float(rel.max()) + 0.05)
+    E_ref = float(rel.min())
+    series = []
+    if peak_norm:
+        # legacy scatter (peak = 1) — exactly the pre-2.12.0 behaviour
+        for T, color in zip(TEMPS, COLORS_PLASMA):
+            series.append({
+                "T": T, "color": color, "rel": rel.tolist(),
+                "probs": calculate_boltzmann_probs(rel, kde, T).tolist(),
+                "norm": "peak",
+            })
+        ylim = [0.0, 1.05]
+    else:
+        # default: continuous density, integral P dE = 1 over the plotted window
+        egrid = np.linspace(e_lim[0], e_lim[1], 500)
+        for T, color in zip(TEMPS, COLORS_PLASMA):
+            Pgrid = _boltzmann_density(kde, E_ref, T, egrid)
+            series.append({
+                "T": T, "color": color, "egrid": egrid.tolist(),
+                "probs": Pgrid.tolist(), "norm": "density",
+            })
+        top = max(max(s["probs"]) for s in series) * 1.05
+        ylim = [0.0, top]
+    return {
+        "num_atoms": num_atoms,
+        "series": series,
+        "e_max": e_max,
+        "norm": "peak" if peak_norm else "density",
+        "xlim": list(e_lim),
+        "ylim": ylim,
+    }
+
+
+def _plot_probability_from_data(data, outdir):
+    """Draw the Stage-3 Boltzmann P(T) PNG from a data dict (live run or JSON)."""
+    print("\n[STAGE 3] Boltzmann probability analysis")
+    norm = data.get("norm", "peak")  # legacy JSONs (no 'norm') = peak scatter
+    fig, ax = plt.subplots(figsize=(4, 3), dpi=120)
+    for s in data["series"]:
+        if norm == "density" and "egrid" in s:
+            ax.plot(s["egrid"], s["probs"], color=s["color"], linewidth=1.5,
+                    label=f"{s['T']} K")
+        else:
+            ax.scatter(s["rel"], s["probs"], color=s["color"], s=15, alpha=0.5,
+                       edgecolors="none", label=f"{s['T']} K")
+    ax.set_xlabel(E_LABEL)
+    ax.set_ylabel("Probability Density P(E)\n(\u222b P dE = 1)"
+                  if norm == "density" else "Probability P(E)")
+    ax.legend(frameon=False, loc="upper right")
+    ax.set_ylim(*data["ylim"])
+    ax.set_xlim(*data["xlim"])
+    plt.tight_layout()
+
+    out_path = os.path.join(outdir, "binding_probability_vs_temperature.png")
+    os.makedirs(outdir, exist_ok=True)
+    plt.savefig(out_path, dpi=300)
+    plt.close(fig)
+    print(f"  -> probability plot saved to {out_path}")
+    return out_path
+
+
+def step3_probability(structures, energies, outdir, e_max=None, json_dir=None,
+                      dataset=None, kde_bw=None, peak_norm=False):
+    """Stage 3: emit JSON (if json_dir), then draw the Boltzmann P(T) PNG."""
+    data = _probability_data(structures, energies, e_max=e_max, kde_bw=kde_bw,
+                             peak_norm=peak_norm)
+    if json_dir:
+        n_atoms, formula = _num_atoms_formula(structures)
+        _write_stage_json(json_dir, 3, data,
+                          description=_stage_description(3, dataset,
+                                                         n_atoms, formula))
+    return _plot_probability_from_data(data, outdir)
+```
+
+> **Why the block stays backward-compatible on replot:** a Stage-3 JSON written
+> *before* this change has no `"norm"` key, so `_plot_probability_from_data`
+> defaults `norm` to `"peak"` and draws the old scatter. Only newly emitted JSONs
+> carry `"norm": "density"` and the `egrid` arrays.
+
+---
+
+### 3. Add the `--peak-norm` CLI flag
+
+Still in `run_analysis_indices.py`, find the existing `--h` argument block:
+
+```python
+    parser.add_argument("--h", dest="kde_bw", type=float, default=None,
+                        help="Gaussian-KDE bandwidth as a scalar multiplier on "
+                             "Scott's rule for Stages 2 & 3: <1 = sharper/"
+                             "narrower density & probability curves, >1 = broader/"
+                             "smoother, 1 or omitted = Scott default "
+                             "(gaussian_kde(bw_method=...)). Default: None.")
+```
+
+Immediately below it, add:
+
+```python
+    parser.add_argument("--peak-norm", action="store_true",
+                        help="(Stage 3 only) use the legacy peak-normalized "
+                             "Boltzmann likelihood (per-structure scatter, peak "
+                             "= 1) instead of the default continuous probability "
+                             "density normalized so integral P dE = 1 (smooth "
+                             "curve). Default: off (integral=1 density).")
+```
+
+---
+
+### 4. Forward `--h` and pass `--peak-norm` in `main()`
+
+Find the Stage-3 call in `main()`:
+
+```python
+    step3_probability(structures, energies, args.outdir, e_max=args.e_max,
+                      json_dir=json_dir, dataset=args.dataset)
+```
+
+Replace it with:
+
+```python
+    step3_probability(structures, energies, args.outdir, e_max=args.e_max,
+                      json_dir=json_dir, dataset=args.dataset,
+                      kde_bw=args.kde_bw, peak_norm=args.peak_norm)
+```
+
+This is the fix that makes `--h` actually reach Stage 3 (it now flows into
+`gaussian_kde(rel, bw_method=kde_bw)` in `_probability_data`).
+
+---
+
+### 5. Bump the version and the module docstring (optional but recommended)
+
+- `run_analysis_indices.py`, line ~56: change `__version__ = "2.11.0"` to
+  `__version__ = "2.12.0"` (behavior/API change → minor bump).
+- In the module docstring, update the Stage-3 line (~line 25):
+  `Stage 3 — Boltzmann probability (per-atom KDE + Pi = rho*exp(-dE/kT)/Z), vs T.`
+  → note that by default it is a continuous density with integral P dE = 1 and
+  that `--peak-norm` reverts to the legacy peak = 1 likelihood.
+- Update the `run_analysis_indices.py` row in `VERSIONS.md` (2.11.0 → 2.12.0) and
+  append a `LOG.md` entry (see Step 7).
+
+---
+
+### 6. Smoke test (into a scratch outdir, so no tracked outputs are touched)
+
+Run Stage-3 in the new default (density) mode on one 11_bTa leaf. Use a fresh
+`--outdir` under `/tmp` — do **not** write into the leaf's tracked
+`analysis_indices/`:
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+
+# new default: integral P dE = 1 density (curve)
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
+  --dataset 11_bTa/7_fxg_0b --outdir /tmp/instr9_density \
+  --e-max 0.5 --h 0.05
+
+# legacy reproduction: peak = 1 scatter
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
+  --dataset 11_bTa/7_fxg_0b --outdir /tmp/instr9_peak \
+  --e-max 0.5 --h 0.05 --peak-norm
+
+# replot from the emitted JSON must reproduce the density figure
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
+  --outdir /tmp/instr9_density_replot --from-json /tmp/instr9_density/analysis_json
+```
+
+**Verify (expected outputs):**
+
+1. `/tmp/instr9_density/binding_probability_vs_temperature.png` shows **smooth
+   curves** per temperature; the y-axis upper limit is **auto-scaled and can be
+   > 1** (a narrow ∫ = 1 density peaks above 1) — this is the intended change.
+2. `/tmp/instr9_density/analysis_json/stage3_probability.json` has top-level
+   `"norm": "density"` and each series holds `egrid` + `probs` (500 points). Sanity
+   check that each series integrates to 1:
+   ```python
+   import json, numpy as np
+   d = json.load(open("/tmp/instr9_density/analysis_json/stage3_probability.json"))
+   data = d["data"] if "data" in d else d          # depends on emitter layout
+   for s in data["series"]:
+       a = np.trapezoid(s["probs"], s["egrid"])
+       print(f"{s['T']} K  area = {a:.6f}")          # expect ~1.0000 for each
+   ```
+   (If the emitter nests under a different key, inspect the JSON first with
+   `python -c "import json;print(json.load(open('...')).keys())"` and adjust.)
+3. `/tmp/instr9_peak/binding_probability_vs_temperature.png` reproduces the **old**
+   scatter look: peaks touch 1, y-axis is `[0, 1.05]`, JSON has `"norm": "peak"`.
+4. The `--from-json` replot re-draws the density figure identically (JSON-driven).
+5. Confirm `--h 0.05` now actually sharpens the Stage-3 density (compare the same
+   leaf with and without `--h`; without the old wiring this had no Stage-3 effect).
+
+> **Committed-output caveat:** because the ∫ = 1 density is the *new default*,
+> the meaning of every previously committed `binding_probability_vs_temperature.png`
+> and `stage3_probability.json` (peak = 1) is now the *opt-in* legacy form. If you
+> want those tracked outputs to reflect the new default, re-run each family without
+> `--peak-norm` and commit the regenerated figures/JSONs. To keep a historical
+> figure reproducible as-is, note which run used `--peak-norm`.
+
+---
+
+### 7. Version, log, commit
+
+- Bump `VERSIONS.md` for `run_analysis_indices.py` (2.11.0 → 2.12.0).
+- Append a `LOG.md` entry describing the change (old → new).
+- Commit under the explicit `_run/0_lcb` pathspec:
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb
+git add _run/0_lcb/2_analysist/run_analysis_indices.py \
+        _run/0_lcb/VERSIONS.md _run/0_lcb/LOG.md
+git commit -m "feat(0_lcb): Stage-3 continuous probability density (∫P dE=1) as default + --peak-norm opt-out; forward --h into Stage 3 (runner 2.12.0)"
+```
+
+Do **not** commit the `/tmp` smoke outputs (they are outside the repo and
+regenerable). This INSTR #9 edit to `INSTRUCTION.md` is tracked separately below.
+
+---
+
 ## INSTR #8 — Reproduce the 11_bTa analysis (leaves 7/8/9/11) with `--e-max 0.5` and `--h 0.05`, then plot the 3 graphs from JSON
 
 **Date:** 2026-09-08

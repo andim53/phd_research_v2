@@ -679,3 +679,15 @@ first (runner v2.3.0, plot_structure_landscape v1.1.0, xrd_extract v1.0.0, xrd_s
   - §6 provenance: added description-block, INSTR #3/#4 recolor, #5 figsize,
     #6 novelty, #7 kde_bw, TUTORIAL all-systems commands.
 - Committed README.AI.md + this LOG entry only.
+
+## 2026-09-08 — INSTR #9 prepended (owner how-to, no code change)
+Prepared and prepended **INSTR #9** to INSTRUCTION.md (runner `run_analysis_indices.py`
+still v2.11.0 — code untouched). It instructs the owner to: (1) add a Stage-3
+continuous probability-density mode normalized so ∫ P dE = 1 (dense-grid trapezoid,
+sample-spacing-independent — vs the tmp/MrAfi discrete double-normalized trapezoid),
+make it the DEFAULT, add a `--peak-norm` opt-out reproducing the old peak=1 scatter,
+and (2) fix the latent bug where `--h` (kde_bw) was wired into Stage 3 but never
+passed by `main()`. Decision basis confirmed with owner: option B (continuous grid
+density), ∫=1 as default, curve rendering + auto ylim, forward `--h`. Smoke-test
+commands + verify steps included (scratch outdir under /tmp; do not touch tracked
+analysis_indices).
