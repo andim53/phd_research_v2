@@ -22,7 +22,10 @@ The 3-stage pipeline:
             and .xsf export of the low-energy window minima + global ground state.
   Stage 2 — Landscape analysis & evaluation (scripts/plot_structure_landscape.py):
             PCA landscape (Fingerprint PC1) + per-atom KDE state density.
-  Stage 3 — Boltzmann probability (per-atom KDE + Pi = rho*exp(-dE/kT)/Z), vs T.
+  Stage 3 — Boltzmann probability density (default: continuous P(E) with
+            integral P dE = 1 over the plotted window, built from a per-atom KDE
+            + Pi ~ rho*exp(-dE/kT)/Z on a dense grid; --peak-norm reverts to the
+            legacy per-structure peak=1 likelihood), vs T.
 
 Produces, under <outdir>:
   progression_plots/progression_seed_split_0.png   (Stage 1 best-so-far progression)
@@ -53,7 +56,7 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.11.0"
+__version__ = "2.12.0"
 
 import argparse
 import glob
@@ -70,6 +73,7 @@ from agox.databases import Database
 from agox.models.descriptors.fingerprint import Fingerprint
 from ase.io import write as ase_write
 from scipy.stats import gaussian_kde
+from scipy.integrate import trapezoid
 
 # --- paths: make the self-contained scripts/ importable ----------------------
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -288,21 +292,56 @@ def _stage_description(stage: int, dataset: str, num_atoms, formula) -> dict:
             },
         })
     elif stage == 3:
+        # Self-describing, mode-aware legend so an AI can interpret the density
+        # JSON (or legacy peak JSON) standalone. 'norm' tells which payload this is.
+        series_legend = (
+            "one entry per temperature T. In 'density' mode (default): "
+            "egrid = uniform rel-energy/atom grid over [xlim] (500 points), "
+            "probs = continuous Boltzmann probability density P(E) on that grid, "
+            "normalized so its trapezoid area over the grid equals 1 "
+            "(integral P dE = 1 over the plotted window); because the window is "
+            "~0.5-1.6 eV wide, the P(E) values are NOT bounded by 1 (a narrow "
+            "∫=1 density peaks well above 1) - interpret probs as a density "
+            "(1/eV-atom scale), not a per-structure probability. In 'peak' mode "
+            "(--peak-norm): rel = observed per-structure rel energy/atom, probs = "
+            "P_i = rho_i*exp(-dE_i/kB*T)/Z rescaled so the global peak = 1 "
+            "(relative likelihood only - NOT comparable across T, since every T "
+            "touches 1)."
+        )
+        method = (
+            "P(E) built from rho(E) = scipy gaussian_kde density of the per-atom "
+            "relative energies rel = (E_i - E_min)/N (N = num_atoms, E_min = global "
+            "min; kb = 8.6173e-5 eV/K). Density mode: "
+            "P(E) = rho(E)*exp(-(E-E_ref)/kB*T) / trapezoid( rho(E)*exp(...), egrid ), "
+            "E_ref = rel.min(), integrated on egrid -> integral P dE = 1 per T. "
+            "Peak mode: P_i = rho_i*exp(-dE_i/kB*T)/Z, Z = sum_i(rho_i*w_i), then "
+            "/max. kB = 8.6173e-5 eV/K (Boltzmann). A low-energy spike at small T "
+            "reflects sparse sampling of the high-energy tail, not a resolved state."
+        )
         base.update({
-            "kind": "AGOX Stage-3 Boltzmann probability vs temperature data "
-                    "(binding_probability_vs_temperature.png)",
-            "schema": "0_lcb_analysis_stage3/v1",
+            "kind": "AGOX Stage-3 Boltzmann probability density vs temperature "
+                    "data (binding_probability_vs_temperature.png)",
+            "schema": "0_lcb_analysis_stage3/v2",
+            "method": method,
+            "normalization": (
+                "mode carried in data.norm: 'density' (∫P dE = 1, default) or "
+                "'peak' (peak = 1, --peak-norm). Replotted as a smooth curve in "
+                "density mode, as a scatter in peak mode."
+            ),
             "fields": {
                 "num_atoms": "atoms in the fixed supercell",
-                "series": "one entry per temperature T: rel = rel energy/atom "
-                          "grid, probs = normalized P(E) where "
-                          "P_i = rho_i*exp(-dE_i/kB*T)/Z with rho = gaussian_kde "
-                          "density of rel, kB = 8.6173e-5 eV/K, rescaled so the "
-                          "global peak = 1; color = hex",
+                "n_structures": "number of DFT-relaxed structures analysed "
+                                "(= len(data.series[].rel) in peak mode)",
+                "series": series_legend,
                 "series[].T": "temperature in Kelvin",
-                "e_max": "energy-axis upper limit (eV/atom)",
-                "xlim": "(lo, hi) x-axis limits = rel-energy/atom range",
-                "ylim": "[0, 1.05] normalized-probability axis",
+                "series[].color": "hex colour used for that temperature's curve",
+                "series[].norm": "per-series normalization tag: 'density' or 'peak'",
+                "data.norm": "top-level normalization mode of this payload "
+                             "(schema v2 always sets it)",
+                "e_max": "energy-axis upper limit (eV/atom); None = auto to rel.max()",
+                "xlim": "(lo, hi) x-axis limits = rel-energy/atom window, in eV/atom",
+                "ylim": "[0, top] y-axis limits. Density mode: top auto-scaled (can "
+                        "exceed 1); peak mode: [0, 1.05]",
             },
         })
     return base
@@ -683,7 +722,10 @@ def step2_landscape(structures, energies, outdir, e_max=None,
 # Stage 3 — Boltzmann probability vs temperature
 # ---------------------------------------------------------------------------
 def calculate_boltzmann_probs(energies, kde_model, T):
-    """Normalized Pi = rho(E)*exp(-dE/kbT)/Z, then scaled so peak = 1."""
+    """Legacy per-structure Boltzmann likelihood scaled so peak = 1.
+
+    Pi = rho(E)*exp(-dE/kbT)/Z, then /max. Used only under --peak-norm
+    (scatter over the observed energy points)."""
     kb = 8.6173e-5  # eV/K
     rho_i = kde_model.evaluate(energies) + 1e-15
     relative_e = energies - np.min(energies)
@@ -694,39 +736,79 @@ def calculate_boltzmann_probs(energies, kde_model, T):
     return probs / probs.max()
 
 
-def _probability_data(structures, energies, e_max=None, kde_bw=None):
-    """Return the Stage-3 plotting data (relative energies, KDE rel grid, per-T
-    probabilities, temps, colors, axis windows) as a JSON-safe dict."""
+def _boltzmann_density(kde, E_ref, T, egrid):
+    """Continuous Boltzmann density P(E) = rho*w / trapezoid(rho*w, E) on a grid,
+    so the trapezoid area under P over the grid equals 1 (integral P dE = 1)."""
+    kb = 8.6173e-5  # eV/K
+    rho = kde.evaluate(egrid) + 1e-15
+    w = np.exp(-(egrid - E_ref) / (kb * T))
+    num = rho * w
+    norm = trapezoid(num, egrid)
+    return num / norm
+
+
+def _probability_data(structures, energies, e_max=None, kde_bw=None,
+                      peak_norm=False):
+    """Return the Stage-3 plotting data (rel energies/grid, per-T P, temps,
+    colors, axis windows, normalization mode) as a JSON-safe dict.
+
+    peak_norm=False (DEFAULT): true continuous probability density, each T
+    normalized so integral P dE = 1 over the plotted window (smooth curve;
+    ylim auto-scales, peak can exceed 1).
+    peak_norm=True: legacy per-structure likelihood scaled so peak = 1
+    (scatter; ylim [0, 1.05])."""
     num_atoms = len(structures[0])
     rel = (energies - energies.min()) / num_atoms
     kde = gaussian_kde(rel, bw_method=kde_bw)
-    series = []
-    for T, color in zip(TEMPS, COLORS_PLASMA):
-        series.append({
-            "T": T,
-            "color": color,
-            "rel": rel.tolist(),
-            "probs": calculate_boltzmann_probs(rel, kde, T).tolist(),
-        })
     e_lim = (-0.1, e_max) if e_max is not None else (0.0, float(rel.max()) + 0.05)
+    E_ref = float(rel.min())
+    series = []
+    if peak_norm:
+        # legacy scatter (peak = 1) — exactly the pre-2.12.0 behaviour
+        for T, color in zip(TEMPS, COLORS_PLASMA):
+            series.append({
+                "T": T, "color": color, "rel": rel.tolist(),
+                "probs": calculate_boltzmann_probs(rel, kde, T).tolist(),
+                "norm": "peak",
+            })
+        ylim = [0.0, 1.05]
+    else:
+        # default: continuous density, integral P dE = 1 over the plotted window
+        egrid = np.linspace(e_lim[0], e_lim[1], 500)
+        for T, color in zip(TEMPS, COLORS_PLASMA):
+            Pgrid = _boltzmann_density(kde, E_ref, T, egrid)
+            series.append({
+                "T": T, "color": color, "egrid": egrid.tolist(),
+                "probs": Pgrid.tolist(), "norm": "density",
+            })
+        top = max(max(s["probs"]) for s in series) * 1.05
+        ylim = [0.0, top]
     return {
         "num_atoms": num_atoms,
+        "n_structures": len(rel),
         "series": series,
         "e_max": e_max,
+        "norm": "peak" if peak_norm else "density",
         "xlim": list(e_lim),
-        "ylim": [0.0, 1.05],
+        "ylim": ylim,
     }
 
 
 def _plot_probability_from_data(data, outdir):
     """Draw the Stage-3 Boltzmann P(T) PNG from a data dict (live run or JSON)."""
     print("\n[STAGE 3] Boltzmann probability analysis")
+    norm = data.get("norm", "peak")  # legacy JSONs (no 'norm') = peak scatter
     fig, ax = plt.subplots(figsize=(4, 3), dpi=120)
     for s in data["series"]:
-        ax.scatter(s["rel"], s["probs"], color=s["color"], s=15, alpha=0.5,
-                   edgecolors="none", label=f"{s['T']} K")
+        if norm == "density" and "egrid" in s:
+            ax.plot(s["egrid"], s["probs"], color=s["color"], linewidth=1.5,
+                    label=f"{s['T']} K")
+        else:
+            ax.scatter(s["rel"], s["probs"], color=s["color"], s=15, alpha=0.5,
+                       edgecolors="none", label=f"{s['T']} K")
     ax.set_xlabel(E_LABEL)
-    ax.set_ylabel("Probability P(E)")
+    ax.set_ylabel("Probability Density P(E)\n(\u222b P dE = 1)"
+                  if norm == "density" else "Probability P(E)")
     ax.legend(frameon=False, loc="upper right")
     ax.set_ylim(*data["ylim"])
     ax.set_xlim(*data["xlim"])
@@ -741,9 +823,10 @@ def _plot_probability_from_data(data, outdir):
 
 
 def step3_probability(structures, energies, outdir, e_max=None, json_dir=None,
-                      dataset=None, kde_bw=None):
+                      dataset=None, kde_bw=None, peak_norm=False):
     """Stage 3: emit JSON (if json_dir), then draw the Boltzmann P(T) PNG."""
-    data = _probability_data(structures, energies, e_max=e_max, kde_bw=kde_bw)
+    data = _probability_data(structures, energies, e_max=e_max, kde_bw=kde_bw,
+                             peak_norm=peak_norm)
     if json_dir:
         n_atoms, formula = _num_atoms_formula(structures)
         _write_stage_json(json_dir, 3, data,
@@ -817,6 +900,12 @@ def main():
                              "narrower density & probability curves, >1 = broader/"
                              "smoother, 1 or omitted = Scott default "
                              "(gaussian_kde(bw_method=...)). Default: None.")
+    parser.add_argument("--peak-norm", action="store_true",
+                        help="(Stage 3 only) use the legacy peak-normalized "
+                             "Boltzmann likelihood (per-structure scatter, peak "
+                             "= 1) instead of the default continuous probability "
+                             "density normalized so integral P dE = 1 (smooth "
+                             "curve). Default: off (integral=1 density).")
     parser.add_argument("--seeds", default=None,
                         help="(Stage 1 progression only) restrict the plotted curves "
                              "to these seed indices, e.g. '0-4' or '0,1,5'. Applies to "
@@ -904,7 +993,8 @@ def main():
                     e_max=args.e_max, normalize_density=args.normalize_density,
                     json_dir=json_dir, dataset=args.dataset, kde_bw=args.kde_bw)
     step3_probability(structures, energies, args.outdir, e_max=args.e_max,
-                      json_dir=json_dir, dataset=args.dataset)
+                      json_dir=json_dir, dataset=args.dataset,
+                      kde_bw=args.kde_bw, peak_norm=args.peak_norm)
 
     print(f"\nDONE. Outputs under: {os.path.abspath(args.outdir)}")
     print(f"JSON data under: {os.path.abspath(json_dir)}")

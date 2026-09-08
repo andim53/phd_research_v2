@@ -57,3 +57,4 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.10.0 | `--novelty-dist` structural-novelty filter for Stages 2/3 (INSTR #6) |
 | `2_analysist/run_analysis_indices.py` | 2.11.0 | `--h` Gaussian-KDE bandwidth flag (kde_bw) for Stages 2/3 (INSTR #7) |
 | `2_analysist/scripts/plot_structure_landscape.py` | 1.2.0 | `kde_bw` param threaded through Stage-2 landscape density KDE (INSTR #7) |
+| `2_analysist/run_analysis_indices.py` | 2.12.0 | Stage-3 continuous probability density (∫P dE=1) as DEFAULT + `--peak-norm` legacy opt-out; `--h` now forwarded into Stage 3; Stage-3 JSON self-describing description upgraded to schema v2 (mode/norm/n_structures/method/dual-mode field legend) |

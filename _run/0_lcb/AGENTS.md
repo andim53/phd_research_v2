@@ -113,6 +113,20 @@ No task is complete until all three are present and consistent with the work don
   not in the project root.
 - **Every analysis dir ships a `DISCUSSION.md`** stating the exact running command +
   parameters and discussing results grounded in the actual numbers.
+- **New analysis code must be written in two steps.** When adding or extending any
+  analysis that computes quantities an AI is expected to read or plot, structure it
+  so that: **Step 1** — a data/emitter function computes the results and writes a
+  **self-describing JSON** whose payload embeds enough context for a downstream AI
+  to interpret it *standalone* (no working tree): provenance (dataset/family,
+  origin), units, the exact method/formula used, a per-field legend
+  (`description`), plus the raw arrays it will plot (e.g. an energy grid + the
+  plotted curve); **Step 2** — a *separate* plot/reader function **reads that JSON
+  and draws the graph from it** (JSON = single source of truth). Follow the existing
+  Stage-3 pattern (`_probability_data` emits → `_plot_probability_from_data` reads;
+  `--from-json` replots without any DB reload). Prefer this over a function that
+  computes and plots from in-memory arrays alone, so figures always reflect the
+  persisted, self-describing data. Applies to all **new** analysis code; existing
+  functions are not force-refactored unless the task touches them.
 
 ## 4. Environment (invariant)
 

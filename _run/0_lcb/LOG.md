@@ -691,3 +691,22 @@ passed by `main()`. Decision basis confirmed with owner: option B (continuous gr
 density), ∫=1 as default, curve rendering + auto ylim, forward `--h`. Smoke-test
 commands + verify steps included (scratch outdir under /tmp; do not touch tracked
 analysis_indices).
+
+## 2026-09-08 — Stage-3 density JSON made self-describing (schema v2) + AGENTS.md two-step rule
+Applied on top of the owner's uncommitted INSTR #9 code (runner → v2.12.0, density default
++ --peak-norm + --h forwarding). Changes this session:
+- `_probability_data`: added `n_structures` to the Stage-3 payload (both modes).
+- `_stage_description` Stage-3 branch rewritten to schema `0_lcb_analysis_stage3/v2`:
+  mode-aware legend (density vs peak), explicit `method` (gaussian_kde rel, E_ref,
+  trapezoid ∫=1 density / Z peak), `normalization`, and a full per-field legend
+  (num_atoms, n_structures, series egrid/rel/probs/norm, data.norm, e_max, xlim, ylim)
+  plus an interpretive note that ∫=1 densities exceed 1 and low-T spikes reflect sparse
+  tail sampling. Legacy v1 JSONs (no `norm`) still replot (defaults to peak scatter).
+- Module docstring Stage-3 line updated to describe the density default.
+- AGENTS.md §3a: added project convention that NEW analysis code follows a two-step
+  split — (1) a data/emitter fn writes a self-describing JSON (provenance, units,
+  method, field legend, raw arrays), (2) a separate plot/reader fn reads that JSON and
+  draws from it (JSON = single source of truth); existing fns not force-refactored.
+Verified by real run on 11_bTa/7_fxg_0b (--e-max 0.5): density JSON area=1.0000 per T,
+peak≈56 (>1, correct); peak JSON norm=peak, probs max=1.0; --from-json replots both a
+density JSON and a legacy v1 JSON correctly. Scratch outputs under /tmp removed.
