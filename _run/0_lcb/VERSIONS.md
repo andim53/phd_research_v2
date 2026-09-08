@@ -53,3 +53,7 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.9.0 | self-describing `description` block embedded in each stage JSON |
 | `2_analysist/scripts/xrd_simulate_crystallinity.py` | 1.4.3 | self-describing `description` block embedded in xrd_plots.json |
 | `2_analysist/scripts/xrd_groundstate_compare.py` | 2.1.2 | `--figsize 'W,H'` overlay size flag (INSTR#5) + self-describing `description` block in xrd_plots.json |
+
+| `2_analysist/run_analysis_indices.py` | 2.10.0 | `--novelty-dist` structural-novelty filter for Stages 2/3 (INSTR #6) |
+| `2_analysist/run_analysis_indices.py` | 2.11.0 | `--h` Gaussian-KDE bandwidth flag (kde_bw) for Stages 2/3 (INSTR #7) |
+| `2_analysist/scripts/plot_structure_landscape.py` | 1.2.0 | `kde_bw` param threaded through Stage-2 landscape density KDE (INSTR #7) |

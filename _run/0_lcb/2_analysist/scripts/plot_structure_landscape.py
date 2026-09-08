@@ -1,6 +1,6 @@
 
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 from typing import List, Optional
 import matplotlib.colors as mcolors
@@ -55,6 +55,7 @@ def plot_structure_landscape(
 
     # Normalization for the state-density panel
     normalize_density=False,  # if True, scale density x-axis to [0, 1]
+    kde_bw=None,              # Gaussian-KDE bandwidth (bw_method scalar); None = Scott default
 
     # Custom label for the state-density (x-axis on the density panel)
     density_x_label='State Density\n(config./eV)',
@@ -233,7 +234,7 @@ def plot_structure_landscape(
 
     for idx, (name, data_array) in enumerate(energy_datasets.items()):
         if len(data_array) > 1:
-            kde = gaussian_kde(data_array)
+            kde = gaussian_kde(data_array, bw_method=kde_bw)
             density = kde.evaluate(energy_grid)
             total_density += density
             density_curves.append((name, density, sampled_colors[idx]))

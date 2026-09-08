@@ -53,7 +53,7 @@ Run from /home/think/Desktop/research/_run/0_lcb/2_analysist with the agox_v2 co
 
 from __future__ import annotations
 
-__version__ = "2.9.0"
+__version__ = "2.11.0"
 
 import argparse
 import glob
@@ -371,6 +371,37 @@ def load_all_seeds_by_seed(dataset_dir: str, start_iter: int = 10):
     return seed_data, all_structs, np.asarray(all_energies, dtype=float)
 
 
+def _filter_novel_structures(structures, energies, threshold):
+    """Return (kept_structs, kept_energies) of structurally distinct structures.
+
+    Greedy, lowest-energy-first dedup by RAW Euclidean Fingerprint (Oganov)
+    distance: keep a structure iff its min distance to every already-kept
+    structure is strictly > threshold. Mirrors
+    _run/9_novelFilter/novel_filter/filter.py:filter_novel and the
+    NoveltyLCBAcquisitor novelty measure. Threshold is in raw descriptor units
+    (NOT row-normalised); distinct minima are typically ~1-6 apart, near-duplicate
+    relaxations much closer.
+    """
+    fp = Fingerprint.from_atoms(structures[0])
+    feats = np.vstack([fp.create_features(s).ravel() for s in structures])
+    order = np.argsort(energies, kind="stable")   # lowest energy first
+    keep_idx, kept_feats = [], []
+    for i in order:
+        f = feats[i]
+        if kept_feats:
+            dmin = float(np.linalg.norm(np.vstack(kept_feats) - f, axis=1).min())
+            if dmin <= threshold:
+                continue
+        else:
+            dmin = float("inf")
+        keep_idx.append(int(i)); kept_feats.append(f)
+    keep_idx = np.asarray(keep_idx, dtype=int)
+    print(f"[novelty] threshold={threshold:.4f}: kept {len(keep_idx)}/"
+          f"{len(structures)} novel structures "
+          f"(removed {len(structures) - len(keep_idx)} near-duplicates)")
+    return ([structures[i] for i in keep_idx],
+            np.asarray([energies[i] for i in keep_idx]))
+
 # ---------------------------------------------------------------------------
 # Stage 1 — Best-so-far progression plot (per-seed)
 # ---------------------------------------------------------------------------
@@ -556,7 +587,7 @@ def step1_progression(dataset_dir, outdir, start_iter=10, e_max=None,
 # ---------------------------------------------------------------------------
 # Stage 2 — Landscape analysis (PCA + state density)
 # ---------------------------------------------------------------------------
-def _landscape_data(structures, energies, e_max=None, normalize_density=False):
+def _landscape_data(structures, energies, e_max=None, normalize_density=False, kde_bw=None):
     """Return the Stage-2 plot inputs (PCA X_eigen, rel energies, e_limit, and the
     fixed kwargs passed to plot_structure_landscape) as a JSON-safe dict."""
     num_atoms = len(structures[0])
@@ -588,6 +619,7 @@ def _landscape_data(structures, energies, e_max=None, normalize_density=False):
             "cbar_pad": 0.02, "z_limit": [5.85, 0, 5], "black_seed_zero": True,
             "s": 15, "plot_z_vs_e": False, "animate_scatter": False,
             "plot_density_only": False,
+            "kde_bw": kde_bw,
         },
     }
 
@@ -618,6 +650,7 @@ def _plot_landscape_from_data(data, outdir):
         s=p["s"], normalize_density=data["normalize_density"],
         density_x_label=data["density_x_label"],
         plot_z_vs_e=p["plot_z_vs_e"], return_data=True,
+        kde_bw=p.get("kde_bw"),
     )
     if isinstance(result, dict):
         arrays = result
@@ -630,10 +663,10 @@ def _plot_landscape_from_data(data, outdir):
 
 
 def step2_landscape(structures, energies, outdir, e_max=None,
-                    normalize_density=False, json_dir=None, dataset=None):
+                    normalize_density=False, json_dir=None, dataset=None, kde_bw=None):
     """Stage 2: draw conf_space.png AND capture its plotted arrays into JSON."""
     data = _landscape_data(structures, energies, e_max=e_max,
-                           normalize_density=normalize_density)
+                           normalize_density=normalize_density, kde_bw=kde_bw)
     arrays = _plot_landscape_from_data(data, outdir)
     # fold the computed curve arrays into the JSON payload (literal dump of the plot)
     if arrays:
@@ -661,12 +694,12 @@ def calculate_boltzmann_probs(energies, kde_model, T):
     return probs / probs.max()
 
 
-def _probability_data(structures, energies, e_max=None):
+def _probability_data(structures, energies, e_max=None, kde_bw=None):
     """Return the Stage-3 plotting data (relative energies, KDE rel grid, per-T
     probabilities, temps, colors, axis windows) as a JSON-safe dict."""
     num_atoms = len(structures[0])
     rel = (energies - energies.min()) / num_atoms
-    kde = gaussian_kde(rel)
+    kde = gaussian_kde(rel, bw_method=kde_bw)
     series = []
     for T, color in zip(TEMPS, COLORS_PLASMA):
         series.append({
@@ -708,9 +741,9 @@ def _plot_probability_from_data(data, outdir):
 
 
 def step3_probability(structures, energies, outdir, e_max=None, json_dir=None,
-                      dataset=None):
+                      dataset=None, kde_bw=None):
     """Stage 3: emit JSON (if json_dir), then draw the Boltzmann P(T) PNG."""
-    data = _probability_data(structures, energies, e_max=e_max)
+    data = _probability_data(structures, energies, e_max=e_max, kde_bw=kde_bw)
     if json_dir:
         n_atoms, formula = _num_atoms_formula(structures)
         _write_stage_json(json_dir, 3, data,
@@ -769,6 +802,21 @@ def main():
                         help="keep only structures with AGOX iteration >= this value "
                              "(inclusive), mirroring process_database.py's start_iter. "
                              "Default 10.")
+    parser.add_argument("--novelty-dist", type=float, default=None,
+                        help="activate a structural-novelty filter for Stages 2/3 "
+                             "only: deduplicate structures by raw Euclidean "
+                             "Fingerprint distance, keeping a structure iff its "
+                             "min distance to all already-kept (lower-energy) "
+                             "structures is strictly > this value (raw descriptor "
+                             "units). Larger = fewer, more diverse structures. "
+                             "Stage 1 progression always uses the full raw set. "
+                             "Default: None (filter off).")
+    parser.add_argument("--h", dest="kde_bw", type=float, default=None,
+                        help="Gaussian-KDE bandwidth as a scalar multiplier on "
+                             "Scott's rule for Stages 2 & 3: <1 = sharper/"
+                             "narrower density & probability curves, >1 = broader/"
+                             "smoother, 1 or omitted = Scott default "
+                             "(gaussian_kde(bw_method=...)). Default: None.")
     parser.add_argument("--seeds", default=None,
                         help="(Stage 1 progression only) restrict the plotted curves "
                              "to these seed indices, e.g. '0-4' or '0,1,5'. Applies to "
@@ -837,14 +885,24 @@ def main():
           f"(iteration >= {args.start_iter})")
 
     os.makedirs(args.outdir, exist_ok=True)
+    # Stage 1 always uses the full raw set (per-seed best-so-far progression).
     step1_progression(args.dataset, args.outdir, start_iter=args.start_iter,
                       e_max=args.e_max, json_dir=json_dir, seeds=seeds,
                       xlabel=args.xlabel, x_max=args.x_max,
                       show_bullets=not args.no_bullets,
                       show_gs_star=not args.no_gs_star)
+
+    # Optional novelty filter -> Stages 2 & 3 use only structurally distinct
+    # structures (raw Euclidean Fingerprint distance > --novelty-dist).
+    if args.novelty_dist is not None:
+        structures, energies = _filter_novel_structures(structures, energies,
+                                                        args.novelty_dist)
+        print(f"[novelty] Stages 2/3 now analyse {len(structures)} novel "
+              f"structures")
+
     step2_landscape(structures, energies, args.outdir,
                     e_max=args.e_max, normalize_density=args.normalize_density,
-                    json_dir=json_dir, dataset=args.dataset)
+                    json_dir=json_dir, dataset=args.dataset, kde_bw=args.kde_bw)
     step3_probability(structures, energies, args.outdir, e_max=args.e_max,
                       json_dir=json_dir, dataset=args.dataset)
 
