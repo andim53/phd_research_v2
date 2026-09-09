@@ -35,6 +35,58 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #14 — Run the temperature-dependent XRD for all 17_PPt 10P–30P leaves in one command (Stage 1 + Stage 2 loop)
+
+**Date:** 2026-09-09
+
+**Goal:** Produce `xrd_by_temperature.png` (+ self-describing `xrd_temperature.json`) at
+`--figsize 6,3` for the **9 leaves** of the three 17_PPt cells at **10P, 20P, 30P**, in a
+**single one-line command**. Because none of these leaves have an `xrd_tdep/` dir yet, the
+one-liner runs **Stage 1 first** (write CIFs + `manifest.json` via `xrd_extract_structures.py`
+in agox_v2), then **Stage 2** (`xrd_simulate_temperature.py` in pymat_xrd). No source-code
+change: `xrd_simulate_temperature.py` v1.1.0 already supports `--figsize`.
+
+**The 9 leaves (10P–30P only):**
+- `17_PPt/1_plus0cell/` → `1_10P`, `2_20P`, `3_30P`
+- `17_PPt/2_plus3cell/` → `1_10P`, `2_20P`, `3_30P`
+- `17_PPt/0_plus5cell/` → `4_3x3_10p` (lowercase `p`), `1_3x3_20P`, `2_3x3_30P`
+
+> **`4_3x3_10p` note:** its DBs live under `seed_2/` and `end/` (not the usual multiple
+> `seed_*/`), so `xrd_extract_structures.py` (glob `seed_*/1_db/db_*.db`) will load only the
+> `seed_2` subset. That is valid and fine for a first pass; if you want every structure from
+> `end/` too, extend Stage 1's glob for that leaf.
+
+### The one-liner (run from `2_analysist/`)
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist && for L in 17_PPt/1_plus0cell/{1_10P,2_20P,3_30P} 17_PPt/2_plus3cell/{1_10P,2_20P,3_30P} 17_PPt/0_plus5cell/{4_3x3_10p,1_3x3_20P,2_3x3_30P}; do /home/think/miniconda3/envs/agox_v2/bin/python scripts/xrd_extract_structures.py --dataset "$L" --outdir "$L/xrd_tdep" --e-max 0.5 --max-per-window 100000 && /home/think/miniconda3/envs/pymat_xrd/bin/python scripts/xrd_simulate_temperature.py --manifest "$L/xrd_tdep/manifest.json" --outdir "$L/xrd_tdep" --json --figsize 6,3; done
+```
+
+Per leaf it runs exactly your Stage-2 template (`--manifest …/xrd_tdep/manifest.json`,
+`--outdir …/xrd_tdep`, `--json`, `--figsize 6,3`), but only after that leaf's `manifest.json`
+is written by Stage 1 (`&&` chains them, so a Stage-1 failure skips that leaf's Stage 2).
+
+### What each leaf should produce
+
+- `…/xrd_tdep/manifest.json` + `…/xrd_tdep/windows/*/seed_*_sNNNN.cif` (Stage 1)
+- `…/xrd_tdep/xrd_by_temperature.png` — 5 solid tab10 curves, `figsize 6,3` (Stage 2)
+- `…/xrd_tdep/xrd_temperature.json` — self-describing, schema `0_lcb_xrd_simulate_temperature/v1`
+
+### Verify
+
+1. The loop prints, per leaf, the Stage-1 per-window `[lo,hi): n_total -> n_sampled` lines
+   then Stage-2 `T=… K <E>(T)=… eV/atom` lines (5 of them, `<E>` rising with `T`).
+2. Confirm 9 leaves were processed: `find 17_PPt -name xrd_temperature.json | wc -l` → `9`.
+3. Open any `xrd_by_temperature.png` and check it is 6×3 in and has the 5-curve overlay.
+4. Confirm `4_3x3_10p` produced a pattern (its smaller seed set means fewer structures but
+   the run must still complete).
+
+> If you only want to re-render figures from already-existing manifests (no Stage 1), run just
+> the Stage-2 loop (the `&&` Stage-1 half omitted); but as of today no 17_PPt `xrd_tdep`
+> manifest exists, so the full one-liner above is the correct starting point.
+
+---
+
 ## INSTR #13 — Add a `--figsize` flag to `xrd_simulate_temperature.py`
 
 **Date:** 2026-09-09

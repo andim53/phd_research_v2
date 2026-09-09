@@ -767,4 +767,15 @@ parsed into a float tuple; forwarded `figsize=args.figsize` at the call site. Ve
 INSTRUCTION.md (owner-facing: the 4 changed spots, run commands with/without the flag, 3-step verify). Committed script +
 VERSIONS.md + INSTRUCTION.md + LOG.md together (script now exists, so this time code+version+docs travel as one commit).
 
+## 2026-09-09 — INSTR #14 prepended (one-liner: temp-dependent XRD for all 17_PPt 10P–30P leaves)
+Owner asked for an instruction + a one-line command to run the temp-dependent XRD (xrd_simulate_temperature.py,
+--json --figsize 6,3) for 17_PPt leaves at 10P-30P across 1_plus0cell, 2_plus3cell, 0_plus5cell.
+Verified the 9 target leaves (1_plus0cell/{1_10P,2_20P,3_30P}, 2_plus3cell/{1_10P,2_20P,3_30P},
+0_plus5cell/{4_3x3_10p,1_3x3_20P,2_3x3_30P}) each have seed DBs but NO xrd_tdep/ manifest yet, so the one-liner
+must run Stage 1 (xrd_extract_structures.py, agox_v2) before Stage 2 or --manifest 404s. Flagged that
+4_3x3_10p has DBs only under seed_2/ + end/ (glob matches just seed_2 -> smaller set). No code change (script v1.1.0
+already has --figsize); prepended INSTR #14 with the single one-line `for L in …; do $PY_A … && $PY_X … --figsize 6,3; done`
+loop + per-leaf outputs + verify (find count -> 9). Committed INSTRUCTION.md + LOG.md only (doc-only).
+
+
 
