@@ -758,3 +758,13 @@ for both; and a 4-step verify section. No source code was created or versioned y
 from the INSTR; VERSIONS row (xrd_simulate_temperature.py 1.0.0) comes when the file exists. INSTRUCTION.md +
 LOG.md only, committed.
 
+## 2026-09-09 — INSTR #13: added `--figsize` flag to xrd_simulate_temperature.py (v1.0.0 → 1.1.0)
+Owner asked to edit the actual `xrd_simulate_temperature.py` to add a flag controlling figure size, and make an instruction.
+Edit (mirrors the existing `--figsize 'W,H'` convention in xrd_groundstate_compare.py, INSTR #5): bumped __version__ to 1.1.0;
+`plot_from_data(data, outdir, figsize=(8,4.5))` now unwraps (w,h) for plt.subplots; added `--figsize` argparse flag (default "8,4.5")
+parsed into a float tuple; forwarded `figsize=args.figsize` at the call site. Verified: pymat_xrd ast.parse OK and `--help` lists
+`--figsize FIGSIZE`. VERSIONS.md gained the 1.0.0 (new, INSTR #12) and 1.1.0 (figsize, INSTR #13) rows. Prepended INSTR #13 to
+INSTRUCTION.md (owner-facing: the 4 changed spots, run commands with/without the flag, 3-step verify). Committed script +
+VERSIONS.md + INSTRUCTION.md + LOG.md together (script now exists, so this time code+version+docs travel as one commit).
+
+

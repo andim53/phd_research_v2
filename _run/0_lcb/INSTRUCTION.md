@@ -35,6 +35,65 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #13 — Add a `--figsize` flag to `xrd_simulate_temperature.py`
+
+**Date:** 2026-09-09
+
+**Goal:** Let you control the size of the temperature-dependent-XRD figure
+(`xrd_by_temperature.png`) from the command line, via a `--figsize 'W,H'` flag
+in inches, matching the same convention already used by
+`xrd_groundstate_compare.py` (INSTR #5). This edit is **already applied and
+committed** to `2_analysist/scripts/xrd_simulate_temperature.py`
+(`__version__ = "1.1.0"`); the block below documents the change and the
+verification so you can reproduce or extend it.
+
+### 1. What changed (4 spots in `scripts/xrd_simulate_temperature.py`)
+
+1. **Version** — `__version__ = "1.1.0"` (line 3).
+2. **`plot_from_data` signature** — now takes `figsize=(8, 4.5)` and unwraps it:
+   ```python
+   def plot_from_data(data, outdir, figsize=(8, 4.5)):
+       leaf = data["leaf"]
+       w, h = figsize
+       fig, ax = plt.subplots(figsize=(w, h))
+   ```
+   (so the hardcoded `(8, 4.5)` is replaced by `(w, h)`).
+3. **Argparse** — new flag before `args = parser.parse_args()`:
+   ```python
+   parser.add_argument("--figsize", default="8,4.5",
+                       help="figure size 'W,H' in inches (default 8,4.5)")
+   args = parser.parse_args()
+   args.figsize = tuple(float(x) for x in args.figsize.split(","))
+   ```
+4. **Call site** — `plot_from_data(data, args.outdir, figsize=args.figsize)`.
+
+### 2. Run (pymat_xrd env)
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+
+# default size (8 x 4.5 in)
+$PY_X scripts/xrd_simulate_temperature.py \
+  --manifest 11_bTa/10_fxg_5b/xrd_tdep/manifest.json \
+  --outdir 11_bTa/10_fxg_5b/xrd_tdep --json
+
+# custom size, e.g. 12 x 5 inches
+$PY_X scripts/xrd_simulate_temperature.py \
+  --manifest 11_bTa/10_fxg_5b/xrd_tdep/manifest.json \
+  --outdir 11_bTa/10_fxg_5b/xrd_tdep --json --figsize 12,5
+```
+
+### 3. Verify
+
+1. `--help` shows `--figsize FIGSIZE   figure size 'W,H' in inches (default 8,4.5)`.
+2. Rerun with two different sizes; each `xrd_by_temperature.png` re-draws at the
+   requested `(W, H)` (check the pixel dimensions or open the file) while the
+   data, curves, and `xrd_temperature.json` are unchanged.
+3. Default (no flag) still produces the 8×4.5 figure as before.
+
+---
+
 ## INSTR #12 — Temperature-dependent XRD: Boltzmann thermal-ensemble-average pattern per T, built from the Stage-3 probability-density energy coordinate
 
 **Date:** 2026-09-09

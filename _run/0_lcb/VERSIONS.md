@@ -58,3 +58,6 @@ old→new in `LOG.md`.
 | `2_analysist/run_analysis_indices.py` | 2.11.0 | `--h` Gaussian-KDE bandwidth flag (kde_bw) for Stages 2/3 (INSTR #7) |
 | `2_analysist/scripts/plot_structure_landscape.py` | 1.2.0 | `kde_bw` param threaded through Stage-2 landscape density KDE (INSTR #7) |
 | `2_analysist/run_analysis_indices.py` | 2.12.0 | Stage-3 continuous probability density (∫P dE=1) as DEFAULT + `--peak-norm` legacy opt-out; `--h` now forwarded into Stage 3; Stage-3 JSON self-describing description upgraded to schema v2 (mode/norm/n_structures/method/dual-mode field legend) |
+
+| `2_analysist/scripts/xrd_simulate_temperature.py` | 1.0.0 | new: temperature-dependent XRD, Boltzmann thermal-ensemble average (INSTR #12) |
+| `2_analysist/scripts/xrd_simulate_temperature.py` | 1.1.0 | `--figsize 'W,H'` figure-size flag on xrd_by_temperature.png (INSTR #13) |
