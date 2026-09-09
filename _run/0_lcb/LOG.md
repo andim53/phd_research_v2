@@ -736,3 +736,25 @@ default density mode P_T(e) = g·w_T / trapezoid(g·w_T, egrid) over a 500-pt gr
 legacy --peak-norm P_i = g_i·w_i/Z then /max (peak=1), scatter (:724). Includes a 5-step verify section
 (checking data.norm="density", series[].probs area ~1, recompute-by-hand against the JSON). No source code or
 runner version touched (runner stays 2.12.0).
+
+## 2026-09-09 — INSTR #12 prepended (temperature-dependent XRD, Boltzmann thermal-ensemble average; no code change)
+Owner asked to build a temperature-dependent XRD code that uses the Stage-3 probability-density data,
+filter the DB structures per temperature, and XRD them; and to prepare an INSTRUCTION block including commands
+to extract the temp-dependent XRD for bTa 10b and bW 10b.
+Clarified (4 questions, one call): (1) method — owner chose the **Boltzmann thermal-ensemble average**
+I(2θ;T)=Σ w_i(T) I_i / Σ w_i(T), w_i=exp(−ΔE_i/k_B T) over every sampled structure (agent flagged that a pure
+P_T(E) peak/mode filter sits at the ground state for all T, so it gives ~no T-dependence); (2) leaf correction —
+bTa 10b = **11_bTa/10_fxg_5b** (NOT 11_p_Ta10b as first guessed), bW 10b = 16_bW/4_p_w10b; (3) uniform full
+env-bridge pipeline (read DBs directly for BOTH leaves) chosen over reusing 11_p_Ta10b's xrd_out; (4) reuse the
+5 Stage-3 temps [298.15,348.60,447.875,547.15,646.425] K, one overlaid curve per T per leaf (x=2θ, solid tab10).
+Prepared and prepended **INSTR #12** to INSTRUCTION.md (newest-first, above INSTR #11). The block: defines the
+thermal-average formula (ΔE_i = per-atom rel energy, SAME coordinate as Stage-3 P_T); embeds the full source of
+a new pymat_xrd script **2_analysist/scripts/xrd_simulate_temperature.py** (v1.0.0) that reads a Stage-1 manifest
+(CIFs + rel_energies), computes each structure's Cu-Kα powder XRD once, forms the Boltzmann average per T,
+prints <E>(T) per T, and (with --json) emits a self-describing xrd_temperature.json; instructs reuse of the
+existing agox_v2 xrd_extract_structures.py (large --max-per-window so every kept structure is written) into a
+fresh <leaf>/xrd_tdep/ (existing xrd_out/ untouched) for both 10_fxg_5b and 4_p_w10b; then runs the new Stage-2
+for both; and a 4-step verify section. No source code was created or versioned yet — the owner creates the script
+from the INSTR; VERSIONS row (xrd_simulate_temperature.py 1.0.0) comes when the file exists. INSTRUCTION.md +
+LOG.md only, committed.
+

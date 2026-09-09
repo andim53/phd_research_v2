@@ -35,6 +35,388 @@ write the how-to — not to perform the task.
 
 ---
 
+## INSTR #12 — Temperature-dependent XRD: Boltzmann thermal-ensemble-average pattern per T, built from the Stage-3 probability-density energy coordinate
+
+**Date:** 2026-09-09
+
+**Goal:** Build and run a new analysis that produces a **temperature-dependent
+simulated powder XRD** for a fixed-composition AGOX leaf. The method is the
+canonical configurational thermal (Boltzmann) average: each DFT-relaxed structure
+contributes its own XRD weighted by its thermal population at temperature `T`,
+
+$$I(2\theta;\,T) \;=\; \frac{\displaystyle\sum_{i}\,w_i(T)\;I_i(2\theta)}
+{\displaystyle\sum_{i}\,w_i(T)},
+\qquad w_i(T)=\exp\!\Big(-\frac{\Delta E_i}{k_B T}\Big),
+\qquad k_B = 8.6173\times10^{-5}\ \text{eV/K},$$
+
+where `\Delta E_i` is the **per-atom relative energy** `(E_i - E_glob)/N` — the
+*same* energy coordinate used by the Stage-3 probability density `P_T(E)` (see
+INSTR #11) and recorded in each Stage-1 manifest's `rel_energies`. At low `T` the
+ground-state (crystalline) population dominates and the pattern is sharp; as `T`
+rises the higher-energy (more disordered) configurations gain weight and the
+average pattern broadens / peaks drop.
+
+> **Why not "pick the highest-probability energy"?** A pure Boltzmann factor
+> decays monotonically with energy, so the peak of `P_T(E)` sits at the ground
+> state for *every* `T` — a mode-filter gives ~no `T`-dependence. The ensemble
+> average above is the physically meaningful temperature dependence. (Confirmed
+> with the owner on 2026-09-09.)
+>
+> **Leaf correction (owner, 2026-09-09):** the Ta target is `11_bTa/10_fxg_5b`
+> (run-10 leaf), **not** `11_p_Ta10b`. W target is `16_bW/4_p_w10b`. Both leaves
+> have `seed_*/1_db/db_*.db` and a density-mode `stage3_probability.json`
+> (`10_fxg_5b`: 59 atoms, 1486 structs; `4_p_w10b`: 60 atoms, 546 structs).
+> `16_bW/4_p_w10b` has **no** existing XRD output, so the whole env-bridge
+> (Stage 1 CIF-writing) must run there first.
+
+Because AGOX (agox_v2) and pymatgen (pymat_xrd) live in **separate conda envs**,
+the work is two stages exactly like the existing per-window XRD pipeline
+(`xrd_extract_structures.py` → `xrd_simulate_crystallinity.py`):
+
+- **Stage 1 (reuse, unchanged, agox_v2):** `xrd_extract_structures.py` loads the
+  leaf DBs, computes `(E-E_glob)/N`, bins into energy windows up to `--e-max`,
+  and writes one CIF per sampled structure + a `manifest.json` holding each
+  window's `cifs` list and matching `rel_energies`. **Run with a large
+  `--max-per-window` so every kept structure is written** (the thermal average
+  should not be starved of high-energy members).
+- **Stage 2 (NEW, pymat_xrd):** `xrd_simulate_temperature.py` (below) reads the
+  manifest, computes each sampled structure's powder XRD once, then forms the
+  Boltzmann average at the five Stage-3 temperatures
+  `[298.15, 348.60, 447.875, 547.15, 646.425]` K. Outputs
+  `xrd_by_temperature.png` (overlay, one **solid tab10** curve per `T`, no
+  dash/dot styles) and (with `--json`) a self-describing `xrd_temperature.json`.
+
+**Environment pythons:**
+- Stage 1 (CIF writing): `/home/think/miniconda3/envs/agox_v2/bin/python`
+- Stage 2 (XRD): `/home/think/miniconda3/envs/pymat_xrd/bin/python`
+
+**Two target leaves (per-leaf output in `<leaf>/xrd_tdep/` so the existing
+per-window `xrd_out/` is untouched):**
+- `2_analysist/11_bTa/10_fxg_5b`
+- `2_analysist/16_bW/4_p_w10b`
+
+---
+
+### 1. Create the new Stage-2 script
+
+In `2_analysist/scripts/` create `xrd_simulate_temperature.py` with exactly this
+content (module `__version__ = "1.0.0"`):
+
+```python
+#!/usr/bin/env python3
+"""Stage 2 (temperature-dependent XRD) — Boltzmann thermal-ensemble average.
+
+Runs in the pymat_xrd env (pymatgen + numpy/scipy/matplotlib, NO ase/AGOX).
+Reads a Stage-1 manifest.json (windows -> per-sampled-structure CIF paths +
+rel_energies, written by xrd_extract_structures.py under agox_v2). For every
+sampled structure it computes one powder-XRD pattern, then forms the canonical
+configurational thermal (Boltzmann) average
+
+    I(2theta; T) = sum_i w_i(T) * I_i(2theta) / sum_i w_i(T),
+    w_i(T) = exp( -DeltaE_i / (kB * T) ),  DeltaE_i = rel_energies[i] (eV/atom)
+
+at each temperature T. kB = 8.6173e-5 eV/K. DeltaE_i is the per-atom relative
+energy (E_i - E_glob)/N -- the SAME coordinate as the Stage-3 probability density
+P_T(E), so the T list here matches the one used there. At low T the near-ground
+(crystalline) population dominates (sharp pattern); as T rises the higher-energy
+(disordered) configurations gain weight and the average broadens / peaks drop.
+
+Prints per T the population-weighted mean relative energy
+    <E>(T) = sum_i w_i*DeltaE_i / sum_i w_i  (eV/atom)
+as a rising-disorder diagnostic.
+
+Writes, under --outdir:
+  xrd_by_temperature.png : overlaid thermal-average patterns, one SOLID tab10
+                           curve per T (x = 2theta)
+  xrd_temperature.json   : with --json, a self-describing payload (schema v1)
+
+Usage (pymat_xrd):
+  PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+  $PY_X xrd_simulate_temperature.py --manifest <leaf>/xrd_tdep/manifest.json \
+        --outdir <leaf>/xrd_tdep [--json]
+"""
+from __future__ import annotations
+
+__version__ = "1.0.0"
+
+import argparse
+import json
+import os
+
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+from pymatgen.analysis.diffraction.xrd import XRDCalculator
+from pymatgen.core import Structure
+
+plt.rcParams.update({
+    "font.size": 12, "font.family": "serif",
+    "axes.linewidth": 1.0, "axes.edgecolor": "black",
+    "figure.autolayout": True, "figure.dpi": 300,
+})
+
+TT_MIN_DEFAULT, TT_MAX_DEFAULT = 10.0, 90.0
+TT_STEP = 0.02          # 2theta grid step (deg)
+BROADEN_SIGMA = 0.15    # deg Gaussian broadening per reflection (instrument)
+KB = 8.6173e-5          # eV/K (Boltzmann)
+TEMPS_DEFAULT = [298.15, 348.60, 447.875, 547.15, 646.425]  # matches Stage-3 TEMPS
+E_LABEL = r"$\Delta E$ (eV/atom)"
+
+
+def xrd_temperature_description(leaf, composition, temps, e_max):
+    """Self-describing 'description' embedded in xrd_temperature.json."""
+    return {
+        "kind": "Temperature-dependent simulated powder XRD of one fixed-"
+                "composition AGOX leaf via a Boltzmann thermal-ensemble average",
+        "schema": "0_lcb_xrd_simulate_temperature/v1",
+        "leaf": leaf,
+        "composition": composition,
+        "e_max": e_max,
+        "method": (
+            "For every sampled DFT-relaxed structure read from the Stage-1 "
+            "manifest, pymatgen XRDCalculator (Cu K-alpha, scaled=False true "
+            "relative intensity) on a 2theta grid of step 0.02 deg, each "
+            "reflection Gaussian-broadened with sigma 0.15 deg. Thermal pattern "
+            "at T: I(2T;T) = sum_i w_i(T)*I_i(2T) / sum_i w_i(T), with "
+            "w_i(T)=exp(-DeltaE_i/(kB*T)), DeltaE_i = per-atom relative energy "
+            "(E_i-E_glob)/N from the manifest rel_energies, kB=8.6173e-5 eV/K."
+        ),
+        "energy_units": "rel_energies and mean_rel are eV/atom",
+        "units": {
+            "grid": "two-theta angle in degrees",
+            "intensity": "true relative diffracted intensity (a.u.), weighted "
+                         "mean over the sampled ensemble at that T (comparable "
+                         "across T: not rescaled to max=1)",
+            "T": "temperature in Kelvin",
+            "mean_rel": "population-weighted mean relative energy <E>(T) in eV/atom",
+        },
+        "fields": {
+            "series": "one entry per T: T (K), grid = 2theta (deg), "
+                      "intensity = Boltzmann-averaged pattern at T, mean_rel = "
+                      "population-weighted mean relative energy (eV/atom), "
+                      "n = number of sampled structures contributing",
+            "num_sampled": "total sampled structures read from the manifest",
+            "e_max": "relative-energy cutoff (eV/atom) applied upstream "
+                     "(xrd_extract_structures --e-max)",
+        },
+    }
+
+
+def load_calc():
+    return XRDCalculator(wavelength="CuKa")
+
+
+def structure_pattern(calc, cif_path, manifest_dir, tt_min, tt_max, grid):
+    """Return the Gaussian-broadened intensity array of one CIF on ``grid``."""
+    full = cif_path if os.path.isabs(cif_path) else os.path.join(manifest_dir, cif_path)
+    struct = Structure.from_file(full)
+    pat = calc.get_pattern(struct, two_theta_range=(tt_min, tt_max), scaled=False)
+    inten = np.zeros_like(grid)
+    for x, y in zip(pat.x, pat.y):
+        gi = int(round((x - tt_min) / TT_STEP))
+        if 0 <= gi < len(grid):
+            inten[gi] += y
+    from scipy.ndimage import gaussian_filter1d
+    return gaussian_filter1d(inten, sigma=BROADEN_SIGMA / TT_STEP)
+
+
+def collect_from_manifest(manifest_path, tt_min, tt_max):
+    """Flatten every window's sampled (cif, rel_energy) pairs; compute XRD once."""
+    with open(manifest_path) as f:
+        man = json.load(f)
+    man_dir = os.path.dirname(os.path.abspath(manifest_path))
+    grid = np.arange(tt_min, tt_max + TT_STEP, TT_STEP)
+    calc = load_calc()
+    rel_energies, patterns = [], []
+    for w in man["windows"]:
+        for cif, relE in zip(w.get("cifs", []), w.get("rel_energies", [])):
+            patterns.append(structure_pattern(calc, cif, man_dir, tt_min, tt_max, grid))
+            rel_energies.append(relE)
+    if not patterns:
+        raise SystemExit("manifest has no sampled structures")
+    return man, grid, np.asarray(rel_energies), patterns
+
+
+def thermal_average(rel_energies, patterns, T):
+    """I(T) = sum_i w_i(T)*I_i / sum_i w_i(T); also returns <E>(T) and w sum."""
+    w = np.exp(-rel_energies / (KB * T))
+    Z = w.sum()
+    num = np.zeros_like(patterns[0])
+    for wi, pi in zip(w, patterns):
+        num += wi * pi
+    mean_rel = float((w * rel_energies).sum() / Z) if Z > 0 else float("nan")
+    return num / Z, mean_rel, len(w)
+
+
+def plot_from_data(data, outdir):
+    """Draw xrd_by_temperature.png from a plots-data dict (overlay per T)."""
+    leaf = data["leaf"]
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    tab10 = plt.get_cmap("tab10")
+    for i, s in enumerate(data["series"]):
+        ax.plot(s["grid"], s["intensity"], lw=1.8,
+                color=tab10(i % tab10.N), label=f"{s['T']:g} K")
+    ax.set_xlabel(r"2$\theta$ (deg)"); ax.set_ylabel("Intensity (a.u.)")
+    ax.set_title(f"{leaf} — temperature-dependent XRD (Boltzmann average)")
+    ax.legend(title="T", fontsize=9, ncol=2, loc="upper right")
+    ax.set_xlim(data["xlim"])
+    fig.savefig(os.path.join(outdir, "xrd_by_temperature.png"))
+    plt.close(fig)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Stage 2 (pymat_xrd): temperature-dependent powder XRD via "
+                    "Boltzmann thermal-ensemble average over a leaf's sampled "
+                    "structures (reads a Stage-1 manifest).")
+    parser.add_argument("--manifest", required=True,
+                        help="path to Stage-1 manifest.json (xrd_extract_structures.py)")
+    parser.add_argument("--outdir", required=True)
+    parser.add_argument("--2theta-min", type=float, default=TT_MIN_DEFAULT)
+    parser.add_argument("--2theta-max", type=float, default=TT_MAX_DEFAULT)
+    parser.add_argument("--temps", type=float, nargs="*", default=None,
+                        help="temperatures in K; default matches Stage-3 TEMPS "
+                             f"{TEMPS_DEFAULT}")
+    parser.add_argument("--json", action="store_true",
+                        help="also write xrd_temperature.json (self-describing)")
+    args = parser.parse_args()
+
+    temps = list(args.temps) if args.temps else list(TEMPS_DEFAULT)
+    os.makedirs(args.outdir, exist_ok=True)
+    man, grid, rel_energies, patterns = collect_from_manifest(
+        args.manifest, getattr(args, "2theta_min"), getattr(args, "2theta_max"))
+    leaf = man["leaf"]
+    composition = man.get("composition", {})
+    e_max = man.get("e_max")
+
+    print("=" * 70)
+    print("XRD Stage 2 (pymat_xrd) — temperature-dependent XRD (Boltzmann average)")
+    print(f"leaf: {leaf}  comp={composition}  n_sampled={len(patterns)}")
+    print(f"T(K): {temps}")
+    print("=" * 70)
+
+    series = []
+    for T in temps:
+        iten, mean_rel, n = thermal_average(rel_energies, patterns, T)
+        series.append({"T": T,
+                       "grid": grid.tolist(),
+                       "intensity": iten.tolist(),
+                       "mean_rel": mean_rel,
+                       "n": n})
+        print(f"  T={T:8.3f} K   <E>(T)={mean_rel:+.4f} eV/atom   (n={n})")
+
+    data = {"leaf": leaf, "composition": composition,
+            "e_max": e_max, "num_sampled": len(patterns),
+            "xlim": [getattr(args, "2theta_min"), getattr(args, "2theta_max")],
+            "series": series}
+    plot_from_data(data, args.outdir)
+
+    if args.json:
+        out = dict(data)
+        out["description"] = xrd_temperature_description(leaf, composition,
+                                                         temps, e_max)
+        jp = os.path.join(args.outdir, "xrd_temperature.json")
+        with open(jp, "w") as f:
+            json.dump(out, f, indent=1)
+        print(f"  -> xrd_temperature.json written to {jp}")
+
+    print(f"\nDONE. figures under {os.path.abspath(args.outdir)}")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*(Tips: the file must be chmod +x only if you want to execute it directly; the
+commands below invoke it via the pymat_xrd interpreter so no shebang chmod is
+needed.)*
+
+---
+
+### 2. Run Stage 1 (CIF writing) for both leaves
+
+From `2_analysist/`, run the **existing** `xrd_extract_structures.py` in
+**agox_v2**. Output goes to a fresh `<leaf>/xrd_tdep/` dir. Use a large
+`--max-per-window` so every kept structure is written (the thermal average must
+not be starved of high-energy members); `--e-max 0.5` drops bad/unrelaxed
+outliers the same way the Stage-3 plots do.
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+PY_A=/home/think/miniconda3/envs/agox_v2/bin/python
+
+$PY_A scripts/xrd_extract_structures.py \
+  --dataset 11_bTa/10_fxg_5b --outdir 11_bTa/10_fxg_5b/xrd_tdep \
+  --e-max 0.5 --max-per-window 100000 --bin-width 0.1
+
+$PY_A scripts/xrd_extract_structures.py \
+  --dataset 16_bW/4_p_w10b --outdir 16_bW/4_p_w10b/xrd_tdep \
+  --e-max 0.5 --max-per-window 100000 --bin-width 0.1
+```
+
+Expected: each leaf prints `relE/atom: min … max`, drops any structures above
+`0.5 eV/atom`, then per-window `[lo,hi): n_total -> n_sampled` (n_sampled should
+equal n_total since the cap is huge), and finishes with `DONE. manifest ->
+…/xrd_tdep/manifest.json`. `xrd_tdep/windows/*/seed_*_sNNNN.cif` files are
+written.
+
+---
+
+### 3. Run Stage 2 (temperature-dependent XRD) for both leaves
+
+From the same `2_analysist/` dir, run the **new** `xrd_simulate_temperature.py`
+in **pymat_xrd**, one leaf at a time, with `--json` so the self-describing
+payload is emitted:
+
+```bash
+cd /home/think/Desktop/research/_run/0_lcb/2_analysist
+PY_X=/home/think/miniconda3/envs/pymat_xrd/bin/python
+
+$PY_X scripts/xrd_simulate_temperature.py \
+  --manifest 11_bTa/10_fxg_5b/xrd_tdep/manifest.json \
+  --outdir 11_bTa/10_fxg_5b/xrd_tdep --json
+
+$PY_X scripts/xrd_simulate_temperature.py \
+  --manifest 16_bW/4_p_w10b/xrd_tdep/manifest.json \
+  --outdir 16_bW/4_p_w10b/xrd_tdep --json
+```
+
+Expected per leaf:
+- stdout prints one line per T, e.g. `T=298.150 K <E>(T)=+0.000x eV/atom` … and
+  `T=646.425 K <E>(T)=+0.0xxx eV/atom`, with the mean rising monotonically with
+  `T` (disorder increasing). If `<E>` is flat, the leaf's sampled energy spread
+  is too small or Stage 1 capped the high-energy tail — check `n_sampled` equals
+  the DB structure count.
+- `xrd_by_temperature.png` shows 5 solid tab10 curves overlaid on `x=2theta`;
+  the low-T (dark purple) curve is sharpest, high-T (orange) curves broader /
+  lower peaks (peak broadening, not full amorphization).
+- `xrd_temperature.json` present with `description.schema ==
+  "0_lcb_xrd_simulate_temperature/v1"`, `data.series[*].intensity` and `mean_rel`
+  matching the printed `<E>(T)`.
+
+---
+
+### 4. Verify (grounded in real output)
+
+1. `grep -c "seed_" 11_bTa/10_fxg_5b/xrd_tdep/manifest.json` CIF references match
+   the DB structure count for that leaf (1486 for `10_fxg_5b` above `e_max`;
+   fewer if some were dropped). Confirm `n_sampled == n_total` per window.
+2. Recompute one temperature by hand from the JSON: pick `T`, `w =
+   np.exp(-relE/(8.6173e-5*T))`, `I = sum(w*I_i)/sum(w)` and check against
+   `series[i].intensity` (spot-check a few 2theta bins).
+3. Visually confirm low `T` (298.15 K) is the sharpest and high `T`
+   (646.425 K) is the broadest in `xrd_by_temperature.png`; `<E>(T)` printed
+   rising confirms the thermal population is spreading to higher energy.
+4. Update `VERSIONS.md` (new row:
+   `xrd_simulate_temperature.py` `1.0.0` — new: temperature-dependent XRD,
+   Boltzmann thermal-ensemble average) and add a `LOG.md` entry. Commit the two
+   source/version files; `xrd_tdep/` (CIFs, PNG, JSON) is a regenerable artifact
+   and is gitignored, so do not commit it.
+
+---
+
 ## INSTR #11 — Stage-3 probability density P(E): how it is computed from the state density g(E) (LaTeX derivation)
 
 **Date:** 2026-09-09
