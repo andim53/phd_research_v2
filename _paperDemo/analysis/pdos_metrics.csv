@@ -1,0 +1,3 @@
+case,dZ,d_band_centre_eV,d_band_width_eV,Fe_dz2_integral,O_pz_integral,spin_polarization,DOS_at_E_F
+FLAT,ΔZ = 0.000 Å,-0.2294,1.4171,31.7136,43.8799,5.8050,103.9621
+ISLAND,ΔZ = 3.652 Å,0.6013,1.3139,33.8763,42.3738,4.3695,78.0885
