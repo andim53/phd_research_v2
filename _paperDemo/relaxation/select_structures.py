@@ -47,7 +47,10 @@ def delta_z(atoms):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--min-iteration', type=int, default=10)
-    ap.add_argument('--max-force', type=float, default=0.5, help='keep max|F| < this (eV/A)')
+    ap.add_argument('--force-percentile', type=float, default=5.0,
+                    help='keep the lowest-force N%% of each system (per-system percentile)')
+    ap.add_argument('--max-force', type=float, default=None,
+                    help='optional absolute max|F| cutoff (eV/A); overrides percentile if set')
     ap.add_argument('--desc-tol', type=float, default=0.2,
                     help='min fingerprint-feature distance between kept structures')
     ap.add_argument('--outdir', default='relaxation/selected')
@@ -64,12 +67,23 @@ def main():
                 if it is None or it < args.min_iteration:
                     continue
                 fmax = float(np.linalg.norm(c.get_forces(), axis=1).max())
-                if fmax >= args.max_force:
-                    continue
                 recs.append({'E': float(c.get_potential_energy()), 'seed': seed,
                              'iter': int(it), 'fmax': fmax, 'atoms': c.copy()})
         if not recs:
-            print(f"{system}: no structures with max|F| < {args.max_force}")
+            print(f"{system}: no structures")
+            continue
+
+        # ---- force filter ----
+        all_fmax = np.array([r['fmax'] for r in recs])
+        if args.max_force is not None:
+            cutoff = args.max_force
+            rule = f"max|F| < {cutoff} (absolute)"
+        else:
+            cutoff = float(np.percentile(all_fmax, args.force_percentile))
+            rule = f"lowest {args.force_percentile}% by max|F| (cutoff = {cutoff:.3f})"
+        recs = [r for r in recs if r['fmax'] < cutoff]
+        if not recs:
+            print(f"{system}: no structures pass [{rule}]")
             continue
 
         # descriptor for dedup (built from the substrate template of a representative)
@@ -102,7 +116,8 @@ def main():
                 'n_atoms': len(a), 'n_template': len(tinds),
                 'template_indices': ';'.join(map(str, tinds)),
             })
-        print(f"{system}: {len(recs)} low-force -> {len(kept)} distinct kept")
+        print(f"{system}: {len(recs)} pass [{rule}] -> {len(kept)} distinct kept "
+              f"(desc-tol={args.desc_tol})")
 
     os.makedirs(args.outdir, exist_ok=True)
     cols = ['system','file','seed','iteration','E_total','dE_per_atom','max_force','dZ',
