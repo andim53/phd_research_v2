@@ -1,0 +1,5 @@
+case,group,n_Fe,d_band_centre_eV,d_band_width_eV,integral,spin_polarization
+FLAT,all,25,-0.2294,1.4171,31.7136,-0.1521
+ISLAND,interface (bottom),8,0.4682,1.5463,10.8460,-0.0341
+ISLAND,top,8,0.5885,1.1975,11.0284,-0.0172
+ISLAND,all,25,0.6013,1.3139,33.8763,-0.0830

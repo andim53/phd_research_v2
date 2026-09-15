@@ -93,11 +93,41 @@ Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
   electronic structure on those (non-converged) geometries. `[VERIFY]` any quantitative
   claim on re-relaxed geometries.
 
+### Site-resolved PDOS: interface Fe vs top Fe (test of the coupling hypothesis)
+
+Motivation: test whether the island's **interface** Fe (in contact with MgO) look
+"flat-like" (more Fe–O hybridised) while its **top** Fe look bulk-like. Fe grouped by z
+from the XSF; island split into bottom-8 (interface) vs top-8 by z.
+
+| Group | n_Fe | d-band centre | d-band width |
+|-------|------|---------------|--------------|
+| FLAT (monolayer, all Fe at interface) | 25 | **−0.229 eV** | 1.417 |
+| ISLAND: interface (bottom 8) | 8 | **+0.468 eV** | 1.546 |
+| ISLAND: top (8) | 8 | **+0.589 eV** | 1.197 |
+| ISLAND: all | 25 | +0.601 eV | 1.314 |
+
+**Result: the hypothesis is NOT confirmed — it is refined.** The island's *interface* Fe
+(d-centre +0.468 eV) is **NOT flat-like**; it sits far above the flat monolayer (−0.229 eV).
+Within the island there is only a small interface→top gradient (0.47 → 0.59 eV, ~0.12 eV).
+So the strong Fe–O hybridisation of the flat layer is **not** a per-interface-atom effect
+that the island preserves at its contact layer — it is a property of the **whole monolayer
+being in registry with the O sublattice** (all 25 Fe in a single plane at z = 12.30 Å),
+which maximises Fe–O contact per Fe. Islanding disrupts this coupling for essentially *all*
+Fe atoms, most strongly for the top layer.
+
+**Refined picture of the island origin:** the flat monolayer is uniquely strongly Fe–O
+coupled (d-centre −0.23 eV) precisely because every Fe is registry-locked to the oxide.
+That registry costs 3.77% lattice strain, and the island relieves the strain by abandoning
+the registry — dropping the coupling for all Fe (d-centre → ~+0.5–0.6 eV, bulk-like).
+The energy gain (island lower by ~14 eV/cell from the search) is therefore dominated by
+**strain relief / Fe cohesion**, not by any interfacial re-hybridisation benefit.
+
 ## Figures
 - `figures/pes_four_systems.png` — 2×2 PES maps (dE/N vs ΔZ).
 - `figures/flat_state_summary.png` — flat-basin vs lowest-energy comparison (2×2 design).
 - `figures/flat_vs_ground_preview.png` — side views, flat vs lowest-energy (4 systems).
 - `figures/pdos_flat_vs_island.png` — PDOS (total / Fe-dz2 / O-pz) flat vs island.
+- `figures/pdos_sites.png` — Fe site-resolved PDOS (flat monolayer vs island interface/top).
 - `figures/wetting_metrics.png` — 4-panel wetting-metric boxplot (SUPERSEDED, early analysis).
 - `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
 - `analysis/flat_structures/{system}_ground_min.xsf` — inspectable lowest-energy structures.
