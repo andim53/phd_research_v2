@@ -22,17 +22,24 @@ select_structures.py   ->  selected/{system}/*.xyz + selected/manifest.csv
 
 ```bash
 /home/think/miniconda3/envs/agox_v2/bin/python relaxation/select_structures.py \
-    --min-iteration 10 --max-force 0.5 --desc-tol 0.2
+    --min-iteration 10 --force-percentile 5 --desc-tol 0.2
 ```
 
 - **iteration >= 10**: relax starts at iteration 10 in the search.
-- **max|F| < 0.5 eV/Å**: keep only structures already fairly well relaxed.
+- **force filter**: keep the **lowest `--force-percentile`% of each system** by max|F|
+  (default 5%). A per-system percentile is used because the systems' force levels differ —
+  an absolute cutoff (e.g. 0.5 eV/Å) selects nothing (best structures have max|F| ≈ 0.75–1.11).
+  An absolute `--max-force` cutoff can be given instead (overrides the percentile).
 - **distinctness**: greedy de-duplication by AGOX `Fingerprint` feature distance — scan
-  lowest-energy first, keep a structure only if it is `> desc-tol` from every kept one.
+  lowest-energy first, keep a structure only if it is `> --desc-tol` (default 0.2) from
+  every kept one.
 - No cap on the number kept; all low-force distinct structures are written.
 
 Output: `selected/{system}/{system}_NNN.xyz` + `selected/manifest.csv`
 (columns include `template_indices`, the frozen substrate, and `dZ`, `dE_per_atom`).
+
+Example outcome (percentile 5, desc-tol 0.2): femgo 53, febmgo 28, fecomgo 18,
+fecobmgo 17 → **116 structures**, covering both the flat (ΔZ ≤ 1) and island basins.
 
 ## 2. Re-relax (HPC)
 
