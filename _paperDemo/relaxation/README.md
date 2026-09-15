@@ -1,0 +1,62 @@
+# relaxation/ — DFT re-relaxation of search structures
+
+The AGOX search structures are **not DFT-converged**: candidates are relaxed by the GPR
+surrogate (`ParallelRelaxPostprocess`, 100 steps, `start_relax=10`) and then evaluated
+with only **1 GPAW step** (`fmax=0.05, steps=1`), leaving residual forces of ~1–2 eV/Å.
+This pipeline re-relaxes selected structures properly so that the flat-basin / island
+picture can be stated on converged minima.
+
+## Pipeline
+
+```
+select_structures.py   ->  selected/{system}/*.xyz + selected/manifest.csv
+        |
+        v
+   job_relax.sh  (pjsub on HPC, gpaw_env)
+        |
+        v
+   relax.py            ->  relaxed/{system}/*_relaxed.xyz + relaxed/relax_results.csv
+```
+
+## 1. Select structures
+
+```bash
+/home/think/miniconda3/envs/agox_v2/bin/python relaxation/select_structures.py \
+    --min-iteration 10 --max-force 0.5 --desc-tol 0.2
+```
+
+- **iteration >= 10**: relax starts at iteration 10 in the search.
+- **max|F| < 0.5 eV/Å**: keep only structures already fairly well relaxed.
+- **distinctness**: greedy de-duplication by AGOX `Fingerprint` feature distance — scan
+  lowest-energy first, keep a structure only if it is `> desc-tol` from every kept one.
+- No cap on the number kept; all low-force distinct structures are written.
+
+Output: `selected/{system}/{system}_NNN.xyz` + `selected/manifest.csv`
+(columns include `template_indices`, the frozen substrate, and `dZ`, `dE_per_atom`).
+
+## 2. Re-relax (HPC)
+
+```bash
+pjsub relaxation/job_relax.sh
+```
+
+or directly:
+
+```bash
+python relaxation/relax.py --manifest relaxation/selected/manifest.csv --fmax 0.05
+```
+
+GPAW settings match the search runs: LCAO/`dzp`, PBE, `kpts=(1,1,1)`, Fermi-Dirac 0.05 eV,
+`spinpol`, `hund`, `symmetry='off'`. The substrate (`template_indices`) is frozen
+(`FixAtoms`); the metal film relaxes. ASE `BFGS` to `fmax = 0.05 eV/Å`.
+
+Crash-safe: already-relaxed structures are skipped on re-run (`relax_results.csv`).
+
+Output: `relaxed/{system}/{base}_relaxed.xyz` (+`.traj`), `_gpaw.txt`, `_opt.log`, and
+`relaxed/relax_results.csv` (E_initial, E_final, max_force_final, n_steps, converged).
+
+## After relaxation
+
+Recompute the ΔZ / dE-per-atom basin analysis on the **relaxed** set and update
+`experiment_log.md` / `paper_status.md`. Only then can flat-vs-island energies, and any
+metastability claim, rest on converged DFT minima.
