@@ -19,10 +19,11 @@ TBD — format-agnostic (no venue selected).
 ## Systems (4)
 femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo Fe-Co-B/MgO (4)
 
-## Method study (rattle strength)
+## Supplementary Material: rattle-strength study
 Additional femgo-scheme runs varying rattle strength: baseline 1.5/2.3 (`femgo`, 14 seeds),
 reduced-0.5 (1.0/1.8, `param_ratt05`, 4 seeds), reduced-1.0 (0.5/1.3, `param_ratt1`, 5 seeds).
-For the paper's methods section (validates the biased-exploration scheme).
+Deliverable: `figures/rattle_analysis.png` + `analysis/rattle_summary.csv`.
+Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not main-text.
 
 ## Claim → evidence (Phase B)
 | Claim | Evidence | Metric & value | Verified? |

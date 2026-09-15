@@ -135,7 +135,11 @@ for all Fe (d-centre → ~+0.5–0.6 eV, bulk-like). The island's energy gain (~
 from the search) is therefore dominated by **strain relief / Fe cohesion**, not by any
 interfacial re-hybridisation.
 
-## Method study: impact of rattle strength (biased-exploration robustness)
+## Supplementary Material: impact of rattle strength (biased-exploration robustness)
+
+**Status: SUPPLEMENTARY (SI) — not a main-text methods section.** This validates the
+biased-exploration scheme that the main results rest on, but it is reported as supporting
+material rather than in the main narrative.
 
 The search is a **custom, biased-exploration scheme**: GOFEE (GPR surrogate + LCB) seeded
 from a **flat Fe** reference, with `HeteroStructRandomize` + `RattleGenerator` controlling
@@ -181,7 +185,7 @@ breadth.
 - `figures/pdos_flat_vs_island.png` — PDOS (total / Fe-dz2 / O-pz) flat vs island.
 - `figures/pdos_sites.png` — Fe site-resolved PDOS, bottom-8/top-8 split (SUPERSEDED by interface_analysis).
 - `figures/interface_registry_topview.png` — top view: Fe atop O on the MgO(001) lattice.
-- `figures/rattle_analysis.png` — rattle-strength methods figure (convergence / per-seed best / ΔZ / diversity).
+- `figures/rattle_analysis.png` — **[SI]** rattle-strength analysis (convergence / per-seed best / ΔZ / diversity).
 - `figures/wetting_metrics.png` — 4-panel wetting-metric boxplot (SUPERSEDED, early analysis).
 - `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
 - `analysis/flat_structures/{system}_ground_min.xsf` — inspectable lowest-energy structures.
