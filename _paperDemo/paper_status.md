@@ -22,12 +22,23 @@ femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo
 ## Claim → evidence (Phase B)
 | Claim | Evidence | Metric & value | Verified? |
 |-------|----------|----------------|-----------|
-| Ground state is an island (all 4) | analysis/pes_structures.csv | global-min ΔZ 2.75–3.77 Å | yes |
-| B lowers flat-state energy in Fe host | analysis/pes_structures.csv | 0.1888 → 0.1493 eV/atom | yes |
-| B lowers flat-state energy in Fe-Co host | analysis/pes_structures.csv | 0.1941 → 0.1494 eV/atom | yes |
+| Lowest-energy structure found is an island (all 4) | analysis/pes_structures.csv | ΔZ 2.75–3.77 Å at lowest energy | yes |
+| Flat config is a distinct, higher-energy basin | analysis/pes_structures.csv | flat-basin dE/N > 0 (0.149–0.194) | yes |
+| B lowers flat-basin energy in Fe host | analysis/pes_structures.csv | 0.1888 → 0.1493 eV/atom | yes |
+| B lowers flat-basin energy in Fe-Co host | analysis/pes_structures.csv | 0.1941 → 0.1494 eV/atom | yes |
 | Co alone has little effect | analysis/pes_structures.csv | 0.1888 → 0.1941 eV/atom (+0.005) | yes |
 | B increases flat fraction (both hosts) | analysis/pes_structures.csv | 0.165→0.208; 0.214→0.242 | yes |
 | B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 | yes |
+
+**NOT claimed:** that the flat state is *metastable* (needs convergence + Hessian + barrier).
+The structures are **not DFT-converged** (surrogate relaxation + 1 GPAW step; residual
+forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
+
+## Relaxation caveat
+- Candidates are relaxed by the **GPR surrogate** (100 steps, start_relax=10), then
+  evaluated with **1 GPAW step** (`fmax=0.05, steps=1`). Residual max |F| = 1.0–2.4 eV/Å.
+- "Lowest-energy"/"basin" = lowest DFT energy *found*, not a converged minimum.
+- Planned fix: full DFT re-relaxation of low-force distinct structures (`relaxation/`).
 
 ## Citations (Phase D)
 - 0 fetched yet. Needed: CoFeB/MgO MTJ references (PMA, B diffusion, interface flatness),

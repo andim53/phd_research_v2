@@ -10,7 +10,7 @@ colors = {'Mg':'#1f9e4f','O':'#d33','Fe':'#1f6fd0','Co':'#7b3fbf','B':'#e08a1e'}
 
 fig, axes = plt.subplots(4, 2, figsize=(13, 14))
 for i, (system, lab) in enumerate(SYSTEMS):
-    for j, (suffix, tag) in enumerate([('flat_min','flat (wet)'), ('ground_min','ground state (island)')]):
+    for j, (suffix, tag) in enumerate([('flat_min','flat basin'), ('ground_min','lowest-energy (island)')]):
         ax = axes[i, j]
         a = read(f'analysis/flat_structures/{system}_{suffix}.xsf')
         sym = np.array(a.get_chemical_symbols()); pos = a.get_positions()

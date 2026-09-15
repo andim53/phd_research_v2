@@ -1,9 +1,12 @@
-"""Export FLAT-basin minimum AND ground-state (global minimum) structures to XSF.
+"""Export FLAT-basin minimum AND lowest-energy (island) structures to XSF.
 
 Reproduces the selection in pes_analysis.py (iteration >= 10, global min = 0 eV/atom,
 flat = dZ <= flat-dZ cutoff) and writes, per system:
   - {system}_flat_min.xsf   : lowest-energy FLAT structure (dZ <= flat-dZ)
-  - {system}_ground_min.xsf : lowest-energy structure overall (the ground state / island)
+  - {system}_ground_min.xsf : lowest-energy structure found overall (island-like)
+
+NOTE: these structures are NOT DFT-converged (residual forces ~1-2 eV/A); see the
+relaxation caveat in experiment_log.md and the `relaxation/` pipeline.
 
 Usage:
   /home/think/miniconda3/envs/agox_v2/bin/python scripts/export_flat_xsf.py \

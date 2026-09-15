@@ -44,23 +44,35 @@ Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
 → **B lowers the flat-state relative energy robustly in both hosts; Co alone barely moves it.**
 
 ## Interpretation
-- The ground state is an **island** in all four systems (global-min ΔZ ≈ 2.8–3.8 Å);
-  flat film is metastable — consistent with the biased search seeded from a flat layer.
-- **B brings the flat wetting state closer to the ground state in both hosts** (≈ −0.04 eV/atom).
+- The lowest-energy structure found is an **island** in all four systems (ΔZ ≈ 2.8–3.8 Å);
+  the **flat configuration is a distinct, higher-energy structural basin** (not proven
+  metastable — see caveat below) — consistent with the biased search seeded from a flat layer.
+- **B brings the flat wetting state closer to the lowest-energy state in both hosts**
+  (≈ −0.04 eV/atom).
 - **B increases the flat fraction** sampled in both hosts (0.165→0.208; 0.214→0.242).
 - **B does not bond to MgO** (B stays in the film).
 - **Co alone** has little effect on the flat-state energy.
 
+**Language note:** the flat state is described as a "higher-energy flat basin" /
+"lowest-energy state", NOT as "metastable". Metastability is not established (see caveats).
+
 ## Figures
 - `figures/pes_four_systems.png` — 2×2 PES maps (dE/N vs ΔZ).
-- `figures/flat_state_summary.png` — flat-basin ground-state comparison (2×2 design).
-- `figures/flat_structures_preview.png` — side views of flat-basin minima (4 systems).
-- `analysis/flat_structures/*_flat_min.xsf` — inspectable flat structures.
+- `figures/flat_state_summary.png` — flat-basin vs lowest-energy comparison (2×2 design).
+- `figures/flat_vs_ground_preview.png` — side views, flat vs lowest-energy (4 systems).
+- `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
+- `analysis/flat_structures/{system}_ground_min.xsf` — inspectable lowest-energy structures.
 
 ## Caveats
+- **Relaxation is NOT DFT-converged.** Candidates are relaxed by the **GPR surrogate**
+  (ParallelRelaxPostprocess, 100 steps, start_relax=10) and then evaluated with only
+  **1 GPAW step** (`optimizer_run_kwargs={"fmax": 0.05, "steps": 1}`). The exported
+  structures carry residual DFT forces of ~1–2 eV/Å (max |F| 1.0–2.4 eV/Å) — they are
+  **not** at DFT local minima. "Lowest-energy state"/"basin" therefore mean "lowest DFT
+  energy found", not a converged minimum. Establishing true minima/metastability needs a
+  full DFT re-relaxation (see `relaxation/`).
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold (valley visually distinct).
 - Seed counts differ (femgo 13, febmgo 7, fecomgo 5, fecobmgo 4); Co systems have fewer samples.
 - febmgo/fecobmgo full energy ranges contain unphysical high-energy hits; excluded by the
   iteration filter + per-system global-min normalization.
 - kpts=(1,1,1), single-layer slabs: qualitative/trend-level results only.
-- Global minima are best-found by the (biased) search, not guaranteed true global minima.
