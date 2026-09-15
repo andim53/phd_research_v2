@@ -1,7 +1,9 @@
-"""Export the FLAT-basin minimum structure(s) to XSF for inspection.
+"""Export FLAT-basin minimum AND ground-state (global minimum) structures to XSF.
 
 Reproduces the selection in pes_analysis.py (iteration >= 10, global min = 0 eV/atom,
-flat = dZ <= flat-dZ cutoff) and writes the lowest-energy FLAT structure per system.
+flat = dZ <= flat-dZ cutoff) and writes, per system:
+  - {system}_flat_min.xsf   : lowest-energy FLAT structure (dZ <= flat-dZ)
+  - {system}_ground_min.xsf : lowest-energy structure overall (the ground state / island)
 
 Usage:
   /home/think/miniconda3/envs/agox_v2/bin/python scripts/export_flat_xsf.py \
@@ -48,20 +50,27 @@ def main():
                     continue
                 recs.append((float(c.get_potential_energy()), delta_z(c), seed, int(it), c))
         gmin = min(r[0] for r in recs)
-        # flat structures, pick lowest relative energy
+
+        # --- ground state (global minimum) ---
+        E_g, dZ_g, seed_g, it_g, atoms_g = min(recs, key=lambda r: r[0])
+        out_g = f"{args.outdir}/{system}_ground_min.xsf"
+        write(out_g, atoms_g)
+        print(f"{system}: GROUND  {out_g}")
+        print(f"   seed={seed_g} iter={it_g}  dZ={dZ_g:.3f} A  dE/N=0.0000 eV/atom  "
+              f"n={len(atoms_g)}  E={E_g:.2f} eV  ({atoms_g.get_chemical_formula()})")
+
+        # --- flat-basin minimum ---
         flat = [r for r in recs if r[1] <= args.flat_dZ]
         if not flat:
-            print(f"{system}: no flat structures at dZ <= {args.flat_dZ}")
+            print(f"   (no flat structures at dZ <= {args.flat_dZ})")
             continue
-        flat.sort(key=lambda r: r[0])
-        E, dZ, seed, it, atoms = flat[0]
-        dE = (E - gmin) / len(atoms)
-        out = f"{args.outdir}/{system}_flat_min.xsf"
-        write(out, atoms)
-        print(f"{system}: wrote {out}")
-        print(f"   seed={seed} iteration={it}  dZ={dZ:.3f} A  dE/N={dE:.4f} eV/atom  "
-              f"n_atoms={len(atoms)}  E={E:.2f} eV")
-        print(f"   composition: {atoms.get_chemical_formula()}")
+        E_f, dZ_f, seed_f, it_f, atoms_f = min(flat, key=lambda r: r[0])
+        dE_f = (E_f - gmin) / len(atoms_f)
+        out_f = f"{args.outdir}/{system}_flat_min.xsf"
+        write(out_f, atoms_f)
+        print(f"{system}: FLAT    {out_f}")
+        print(f"   seed={seed_f} iter={it_f}  dZ={dZ_f:.3f} A  dE/N={dE_f:.4f} eV/atom  "
+              f"n={len(atoms_f)}  E={E_f:.2f} eV  ({atoms_f.get_chemical_formula()})")
 
 
 if __name__ == '__main__':
