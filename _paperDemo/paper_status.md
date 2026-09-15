@@ -29,6 +29,13 @@ femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo
 | Co alone has little effect | analysis/pes_structures.csv | 0.1888 → 0.1941 eV/atom (+0.005) | yes |
 | B increases flat fraction (both hosts) | analysis/pes_structures.csv | 0.165→0.208; 0.214→0.242 | yes |
 | B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 | yes |
+| Island origin: reduced Fe–O hybridization | analysis/pdos_metrics.csv | d-band centre −0.23→+0.60 eV; O-pz 43.9→42.4 | yes |
+| Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
+
+**PDOS data (femgo only):** flat reference (`dos_seed_4.csv`, ΔZ=0.000) vs island GS
+(`dos_seed_3.csv`, ΔZ=3.652); matched projections (Fe-dz2, O-pz), E vs E_F.
+**DEFERRED:** the Fe-B PDOS comparison (`data/dos_febmgo_gs/`) — its projections (full d/p)
+don't match the femgo set (dz2/pz), so it is not yet analysable side-by-side.
 
 **NOT claimed:** that the flat state is *metastable* (needs convergence + Hessian + barrier).
 The structures are **not DFT-converged** (surrogate relaxation + 1 GPAW step; residual

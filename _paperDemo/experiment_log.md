@@ -56,10 +56,49 @@ Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
 **Language note:** the flat state is described as a "higher-energy flat basin" /
 "lowest-energy state", NOT as "metastable". Metastability is not established (see caveats).
 
+## PDOS: origin of island formation (flat vs island)
+
+**Data** (femgo DOS runs, same orbital projections → directly comparable):
+- FLAT reference: `data/dos_femgo_flatngs/dos_seed_4.csv` (4.xsf, ΔZ = 0.000 Å)
+- ISLAND ground state: `data/dos_femgo_flatngs/dos_seed_3.csv` (3.xsf, ΔZ = 3.652 Å)
+- GPAW LCAO/dzp, PBE, kpts (12,12,1), npts 2000, width 0.15 eV, Fermi-shifted.
+- Projections: Fe `dz2` (l=2, m=2), O `pz` (l=1, m=0), per atom.
+
+**Metrics** (analysis/pdos_metrics.csv; d-band moments over [-5, +3] eV around E_F):
+| Quantity | FLAT | ISLAND | Δ (island − flat) |
+|----------|------|--------|-------------------|
+| d-band centre | −0.229 eV | +0.601 eV | **+0.83 eV (up)** |
+| d-band width | 1.417 eV | 1.314 eV | −0.10 (narrower) |
+| Fe-dz2 integral | 31.71 | 33.88 | +2.16 (more filled) |
+| O-pz integral | 43.88 | 42.37 | −1.51 (less O-p) |
+| spin polarization | 5.81 | 4.37 | −1.44 (less magnetic) |
+| DOS at E_F | 104.0 | 78.1 | −25.9 (−25%) |
+
+**Interpretation (origin of the island):**
+- Going flat → island, the **Fe d-band centre rises by +0.83 eV** and the **O-pz weight
+  drops** — i.e. **Fe–O hybridization is REDUCED** in the island. The flat layer, held in
+  registry with MgO (3.77% lattice strain), has more Fe–O orbital mixing (lower d-centre,
+  higher O-p involvement); the island relaxes away from that coupling toward more bulk-like,
+  more metallic Fe-d character.
+- The **d-band narrows** slightly and **Fe-dz2 occupation increases** — consistent with a
+  more localized, bulk-like Fe-d manifold in the island.
+- **Spin polarization falls** (5.81 → 4.37) and **DOS(E_F) drops ~25%** — the flat layer
+  is the more magnetically/electronically "hot" configuration (higher DOS at E_F), while
+  the island is electronically quieter.
+- Net picture: the flat layer is strained and strongly coupled to MgO; the island relieves
+  that coupling. The electronic fingerprint is a **d-band-centre upshift + reduced O-p
+  hybridization + weakened spin polarization** on going flat → island.
+- **Caveat:** DOS alone gives no total energy — the energy ordering (island lower by
+  ~14 eV/cell) comes from the AGOX search energies, and this PDOS is a single-point
+  electronic structure on those (non-converged) geometries. `[VERIFY]` any quantitative
+  claim on re-relaxed geometries.
+
 ## Figures
 - `figures/pes_four_systems.png` — 2×2 PES maps (dE/N vs ΔZ).
 - `figures/flat_state_summary.png` — flat-basin vs lowest-energy comparison (2×2 design).
 - `figures/flat_vs_ground_preview.png` — side views, flat vs lowest-energy (4 systems).
+- `figures/pdos_flat_vs_island.png` — PDOS (total / Fe-dz2 / O-pz) flat vs island.
+- `figures/wetting_metrics.png` — 4-panel wetting-metric boxplot (SUPERSEDED, early analysis).
 - `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
 - `analysis/flat_structures/{system}_ground_min.xsf` — inspectable lowest-energy structures.
 
