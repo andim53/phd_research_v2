@@ -19,6 +19,11 @@ TBD — format-agnostic (no venue selected).
 ## Systems (4)
 femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo Fe-Co-B/MgO (4)
 
+## Method study (rattle strength)
+Additional femgo-scheme runs varying rattle strength: baseline 1.5/2.3 (`femgo`, 14 seeds),
+reduced-0.5 (1.0/1.8, `param_ratt05`, 4 seeds), reduced-1.0 (0.5/1.3, `param_ratt1`, 5 seeds).
+For the paper's methods section (validates the biased-exploration scheme).
+
 ## Claim → evidence (Phase B)
 | Claim | Evidence | Metric & value | Verified? |
 |-------|----------|----------------|-----------|
@@ -33,6 +38,8 @@ femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo
 | Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
 | Island origin is strain relief, not interfacial re-hybridisation | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23) | yes — refines the picture |
 | Fe sits directly atop O at the interface | analysis/interface_analysis.csv | 25/25 flat, 9/9 island atop O; 0 atop Mg | yes |
+| Rattle strength matters: reducing it degrades the search | analysis/rattle_summary.csv | per-seed best 0.050 → 0.27–0.29 eV/atom | yes |
+| Reduced rattle under-samples the flat basin | analysis/rattle_summary.csv | flat fraction 0.181 → 0.030/0.015 | yes |
 
 **PDOS data (femgo only):** flat reference (`dos_seed_4.csv`, ΔZ=0.000) vs island GS
 (`dos_seed_3.csv`, ΔZ=3.652); matched projections (Fe-dz2, O-pz), E vs E_F.

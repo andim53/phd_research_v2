@@ -42,10 +42,14 @@ hosts (MTJ / CoFeB relevance)
 
 ## Data & scope
 
-- Raw data lives in `data/` (AGOX/**GOFEE** structure-search databases), four systems:
-  `femgo` (Fe/MgO), `febmgo` (Fe-B/MgO), `fecomgo` (Fe-Co/MgO), `fecobmgo` (Fe-Co-B/MgO).
-  This directory is large (~190 MB) and is **not** part of paper commits — commit only
-  analysis scripts, the scaffold, and draft files.
+- Raw data lives in `data/` (AGOX/**GOFEE** structure-search databases):
+  - **Four main systems:** `femgo` (Fe/MgO), `febmgo` (Fe-B/MgO), `fecomgo` (Fe-Co/MgO),
+    `fecobmgo` (Fe-Co-B/MgO).
+  - **Rattle-strength study** (same femgo scheme): `param_ratt05` (rattle −0.5),
+    `param_ratt1` (rattle −1.0).
+  - **DOS/PDOS:** `dos_femgo_flatngs` (Fe flat + island), `dos_febmgo_gs` (Fe-B ground state).
+  This directory is large and is **not** part of paper commits — commit only analysis
+  scripts, the scaffold, and draft files.
 - The runs are GOFEE (GPR surrogate + LCB): a **biased** exploration seeded from a
   reference **flat** metal layer. Only structures with **iteration >= 10** are used
   (relaxation starts at iteration 10).
