@@ -56,7 +56,11 @@ Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
 **Language note:** the flat state is described as a "higher-energy flat basin" /
 "lowest-energy state", NOT as "metastable". Metastability is not established (see caveats).
 
-## PDOS: origin of island formation (flat vs island)
+## Supplementary Material: PDOS — origin of island formation (flat vs island)
+
+**Status: SUPPLEMENTARY (SI).** The electronic-structure analysis of the flat→island
+transition, reported as supporting material (also the site-resolved / registry subsection
+below).
 
 **Data** (femgo DOS runs, same orbital projections → directly comparable):
 - FLAT reference: `data/dos_femgo_flatngs/dos_seed_4.csv` (4.xsf, ΔZ = 0.000 Å)
@@ -93,7 +97,7 @@ Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
   electronic structure on those (non-converged) geometries. `[VERIFY]` any quantitative
   claim on re-relaxed geometries.
 
-### Interface Fe: true contact group + Fe-on-O registry
+### [SI] Interface Fe: true contact group + Fe-on-O registry
 
 Grouping corrected from the earlier arbitrary bottom-8/top-8 split to a **geometric
 interface criterion**: interface Fe = Fe with a **nearest O within 2.8 Å** (actually in
@@ -182,9 +186,9 @@ breadth.
 - `figures/pes_four_systems.png` — 2×2 PES maps (dE/N vs ΔZ).
 - `figures/flat_state_summary.png` — flat-basin vs lowest-energy comparison (2×2 design).
 - `figures/flat_vs_ground_preview.png` — side views, flat vs lowest-energy (4 systems).
-- `figures/pdos_flat_vs_island.png` — PDOS (total / Fe-dz2 / O-pz) flat vs island.
-- `figures/pdos_sites.png` — Fe site-resolved PDOS, bottom-8/top-8 split (SUPERSEDED by interface_analysis).
-- `figures/interface_registry_topview.png` — top view: Fe atop O on the MgO(001) lattice.
+- `figures/pdos_flat_vs_island.png` — **[SI]** PDOS (total / Fe-dz2 / O-pz) flat vs island.
+- `figures/pdos_sites.png` — **[SI]** Fe site-resolved PDOS, bottom-8/top-8 split (SUPERSEDED by interface_analysis).
+- `figures/interface_registry_topview.png` — **[SI]** top view: Fe atop O on the MgO(001) lattice.
 - `figures/rattle_analysis.png` — **[SI]** rattle-strength analysis (convergence / per-seed best / ΔZ / diversity).
 - `figures/wetting_metrics.png` — 4-panel wetting-metric boxplot (SUPERSEDED, early analysis).
 - `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
