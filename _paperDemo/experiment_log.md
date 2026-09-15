@@ -1,58 +1,66 @@
-# Experiment Log — Wetting of Fe on MgO vs Fe-B/MgO (PES / flat-vs-island)
+# Experiment Log — Metal-film wetting on MgO: Fe vs Fe-Co, with/without B (MTJ)
 
 ## Contribution (one sentence — DRAFT, pending scientist confirmation)
-Boron insertion lowers the relative energy of the flat Fe wetting state on MgO,
-bringing it closer to the island ground state — i.e. B promotes flat-Fe wetting
-character, relevant to interface flatness in MTJ stacks.
+Boron consistently lowers the relative energy of the flat metal-film wetting state on
+MgO — by ~0.04 eV/atom — in both a pure-Fe host and a Fe-Co host, while Co alone has
+little effect. B therefore promotes flat-film wetting character independently of the
+host metal, relevant to interface flatness in CoFeB/MgO MTJ stacks.
 
-## Context (search method — important for interpretation)
-- Runs are AGOX/**GOFEE** global optimization (GPR surrogate + LCB acquisition):
-  a **biased exploration**, not unbiased sampling.
-- The search **starts from a reference FLAT Fe layer** (HeteroStructRandomize,
-  `generate_pristine=False`), so the database samples a mixture of basins.
-- Relaxation starts at **iteration 10**; only structures with **iteration >= 10** are
-  used (iterations 1–9 are pre-relaxation placements, excluded).
+## Context (search method)
+- Runs are AGOX/**GOFEE** global optimization (GPR surrogate + LCB): a **biased**
+  exploration seeded from a reference **flat** metal layer.
+- Relaxation starts at **iteration 10**; only structures with **iteration >= 10** are used.
 
-## Data
-- `data/femgo/` — Fe25Mg25O25 on MgO(001), 13 seeds. `data/febmgo/` — B3Fe25Mg25O25, 7 seeds.
-- After the iteration>=10 filter: femgo n=1180, febmgo n=543.
-- Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
+## Data (four systems)
+| System | Composition | n (iter>=10) | seeds | cell z (Å) |
+|--------|-------------|--------------|-------|-----------|
+| femgo | Fe25Mg25O25 | 1180 | 13 | 20 |
+| febmgo | B3Fe25Mg25O25 | 543 | 7 | 20 |
+| fecomgo | Co7Fe18Mg25O25 | 355 | 5 | 41.5 |
+| fecobmgo | B2Co7Fe18Mg25O25 | 330 | 4 | 41.5 |
+
+Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
 
 ## Metrics
-- **dZ (flatness)** = z(Fe_max) − z(Fe_min) over all Fe atoms [Å]. dZ≈0 = flat Fe
-  interface (good wetting); dZ large = island / 3D Fe clustering (dewetting).
+- **ΔZ (flatness)** = z(metal_max) − z(metal_min) over ALL metal film atoms (Fe+Co)
+  [Å]. ΔZ≈0 = flat film (wet); ΔZ large = island / 3D clustering (dewet).
 - **dE/N (PES coordinate)** = (E_i − E_globalmin)/N_atoms [eV/atom], global min = 0,
-  computed **per system** over the iteration>=10 set.
+  per system over the iteration>=10 set.
 - **B_contact_frac** = fraction of B with an O within 2.6 Å.
 
-## Key results
-| Quantity | Fe/MgO | Fe-B/MgO |
-|----------|--------|----------|
-| n (iteration>=10) | 1180 | 543 |
-| global-min ΔZ (Å) | 3.65 | 3.77 |
-| mean ΔZ (Å) | 2.66 | 2.25 |
-| flat fraction (ΔZ≤1.0 Å) | 0.165 | 0.208 |
-| **flat-basin min dE/N (eV/atom)** | **0.1888** | **0.1493** |
-| flat-basin min ΔZ (Å) | 0.90 | 0.33 |
+## Key results (flat = ΔZ ≤ 1.0 Å)
+| System | global-min ΔZ | mean ΔZ | flat frac | **flat-basin min dE/N** |
+|--------|---------------|---------|-----------|--------------------------|
+| Fe/MgO | 3.65 Å | 2.66 | 0.165 | **0.1888 eV/atom** |
+| Fe-B/MgO | 3.77 Å | 2.25 | 0.208 | **0.1493 eV/atom** |
+| Fe-Co/MgO | 2.75 Å | 2.01 | 0.214 | **0.1941 eV/atom** |
+| Fe-Co-B/MgO | 3.45 Å | 2.03 | 0.242 | **0.1494 eV/atom** |
+
+## 2×2 analysis (B effect × Co effect)
+- **B effect, Fe host**: 0.1888 → 0.1493 (−0.040 eV/atom)
+- **B effect, Fe-Co host**: 0.1941 → 0.1494 (−0.045 eV/atom)
+- **Co effect, without B**: 0.1888 → 0.1941 (+0.005 eV/atom) — small
+- **Co effect, with B**: 0.1493 → 0.1494 (+0.000 eV/atom) — negligible
+→ **B lowers the flat-state relative energy robustly in both hosts; Co alone barely moves it.**
 
 ## Interpretation
-- **The ground state is an ISLAND in both systems** (global min at ΔZ ≈ 3.7 Å), not flat.
-  Flat Fe is a metastable state — consistent with the biased search starting from flat Fe.
-- **B lowers the flat-basin relative energy**: 0.1888 → 0.1493 eV/atom (a drop of
-  ~0.04 eV/atom). B brings the flat wetting state **closer to the ground state**.
-- **B increases the flat fraction** of sampled structures (0.165 → 0.208).
-- **B does not bond to MgO** (B stays in the Fe film; earlier per-structure analysis).
-- Consistent with prior pooled analysis: B's effect is on the Fe layer's flatness/energy
-  landscape, not on direct B–O bonding.
+- The ground state is an **island** in all four systems (global-min ΔZ ≈ 2.8–3.8 Å);
+  flat film is metastable — consistent with the biased search seeded from a flat layer.
+- **B brings the flat wetting state closer to the ground state in both hosts** (≈ −0.04 eV/atom).
+- **B increases the flat fraction** sampled in both hosts (0.165→0.208; 0.214→0.242).
+- **B does not bond to MgO** (B stays in the film).
+- **Co alone** has little effect on the flat-state energy.
 
 ## Figures
-- `figures/pes_flat_island.png` — PES map (dE/N vs ΔZ) per system + flat-basin
-  ground-state comparison bar.
+- `figures/pes_four_systems.png` — 2×2 PES maps (dE/N vs ΔZ).
+- `figures/flat_state_summary.png` — flat-basin ground-state comparison (2×2 design).
+- `figures/flat_structures_preview.png` — side views of flat-basin minima (4 systems).
+- `analysis/flat_structures/*_flat_min.xsf` — inspectable flat structures.
 
 ## Caveats
-- The ΔZ≤1.0 Å "flat" cutoff is a chosen threshold; the flat basin is visibly distinct
-  (sharp peak at ΔZ≈0–0.3) so the separation is robust, but the exact boundary is a choice.
-- febmgo has fewer seeds (7) than femgo (13); its flat-basin value comes from fewer samples.
+- ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold (valley visually distinct).
+- Seed counts differ (femgo 13, febmgo 7, fecomgo 5, fecobmgo 4); Co systems have fewer samples.
+- febmgo/fecobmgo full energy ranges contain unphysical high-energy hits; excluded by the
+  iteration filter + per-system global-min normalization.
 - kpts=(1,1,1), single-layer slabs: qualitative/trend-level results only.
-- Global minima reported are the best found by the (biased) search, not guaranteed true
-  global minima.
+- Global minima are best-found by the (biased) search, not guaranteed true global minima.

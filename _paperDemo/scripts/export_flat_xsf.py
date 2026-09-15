@@ -12,6 +12,9 @@ import numpy as np, glob, os, argparse
 from ase.io import write
 from agox.databases import Database
 
+METAL = ('Fe', 'Co')
+SYSTEMS = ['femgo', 'febmgo', 'fecomgo', 'fecobmgo']
+
 
 def load_rows(dbp):
     db = Database(filename=dbp)
@@ -21,7 +24,8 @@ def load_rows(dbp):
 
 def delta_z(atoms):
     sym = np.array(atoms.get_chemical_symbols())
-    z = atoms.get_positions()[sym == 'Fe', 2]
+    m = np.isin(sym, METAL)
+    z = atoms.get_positions()[m, 2]
     return float(z.max() - z.min()) if len(z) else np.nan
 
 
@@ -33,7 +37,7 @@ def main():
     args = ap.parse_args()
 
     os.makedirs(args.outdir, exist_ok=True)
-    for system in ['femgo', 'febmgo']:
+    for system in SYSTEMS:
         dbs = sorted(glob.glob(f'data/{system}/seed_*/1_db/db_*.db'))
         recs = []
         for dbp in dbs:
