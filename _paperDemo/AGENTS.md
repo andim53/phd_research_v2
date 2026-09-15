@@ -1,6 +1,7 @@
 # AGENTS.md — Governing Rules for AI Agents Working on This Project
 
-**Project:** Impact of Boron insertion on the wetting of Fe on MgO (MTJ device relevance)
+**Project:** Effect of Boron insertion on metal-film wetting on MgO — pure-Fe vs Fe-Co
+hosts (MTJ / CoFeB relevance)
 **Root:** `/home/think/Desktop/research/_paperDemo`
 **Venue:** TBD (format-agnostic)
 **Workflow skill:** `scientific-paper-writing` (Phase 0 → A → B → C → D → E → F → G)
@@ -41,13 +42,22 @@
 
 ## Data & scope
 
-- Raw data lives in `data/` (AGOX structure-search databases): `femgo` (Fe/MgO) and
-  `febmgo` (Fe-B/MgO). This directory is large (~190 MB) and is **not** part of paper
-  commits — commit only analysis scripts, the scaffold, and draft files.
-- The wetting metric is derived from the structure databases (Fe/B distribution at the
-  MgO interface, interface contact, lateral coverage), not from any single pre-existing value.
-- The `febmgo` energy range contains relaxation artifacts / unphysical high-energy
-  structures; window these out before comparing energetics.
+- Raw data lives in `data/` (AGOX/**GOFEE** structure-search databases), four systems:
+  `femgo` (Fe/MgO), `febmgo` (Fe-B/MgO), `fecomgo` (Fe-Co/MgO), `fecobmgo` (Fe-Co-B/MgO).
+  This directory is large (~190 MB) and is **not** part of paper commits — commit only
+  analysis scripts, the scaffold, and draft files.
+- The runs are GOFEE (GPR surrogate + LCB): a **biased** exploration seeded from a
+  reference **flat** metal layer. Only structures with **iteration >= 10** are used
+  (relaxation starts at iteration 10).
+- Flatness metric: **ΔZ = z(metal_max) − z(metal_min)** over all metal film atoms (Fe+Co)
+  [Å]; ΔZ ≈ 0 = flat film (wet), ΔZ large = island (dewet).
+- PES coordinate: **dE/N = (E_i − E_globalmin)/N_atoms** [eV/atom], global min = 0,
+  computed per system over the iteration>=10 set. Flat/island basins split at ΔZ ≤ 1.0 Å.
+- The `febmgo` / `fecobmgo` energy ranges contain relaxation artifacts / unphysical
+  high-energy structures; the iteration filter + per-system global-min normalization
+  window these out.
+- Co systems have fewer seeds (fecomgo 5, fecobmgo 4) than the Fe systems (femgo 13,
+  febmgo 7) — note this when reporting uncertainty.
 
 ## Commit discipline
 
