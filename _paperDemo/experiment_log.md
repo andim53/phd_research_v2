@@ -11,7 +11,9 @@ host metal, relevant to interface flatness in CoFeB/MgO MTJ stacks.
   exploration seeded from a reference **flat** metal layer.
 - Relaxation starts at **iteration 10**; only structures with **iteration >= 10** are used.
 
-## Data (four systems)
+## Data inventory
+
+**Main-text systems (4)** — the wetting / B-effect / Co-effect study:
 | System | Composition | n (iter>=10) | seeds | cell z (Å) |
 |--------|-------------|--------------|-------|-----------|
 | femgo | Fe25Mg25O25 | 1180 | 13 | 20 |
@@ -19,7 +21,19 @@ host metal, relevant to interface flatness in CoFeB/MgO MTJ stacks.
 | fecomgo | Co7Fe18Mg25O25 | 355 | 5 | 41.5 |
 | fecobmgo | B2Co7Fe18Mg25O25 | 330 | 4 | 41.5 |
 
-Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å.
+**Supplementary datasets (all on Fe25Mg25O25 unless noted):**
+| Dataset | What it varies | dirs | status |
+|---------|----------------|------|--------|
+| DOS/PDOS | electronic structure, flat vs island (+ Fe-B GS) | `dos_femgo_flatngs`, `dos_febmgo_gs` | SI |
+| Rattle strength | rattle −0.5 / −1.0 vs baseline 1.5/2.3 | `param_ratt05`, `param_ratt1` | SI |
+| Kappa (LCB) | kappa = 1 / 3 / 4 vs baseline 2 | `femgo_kappa/{1_k1,0_k3,2_k4}` | SI |
+| Dipole correction | `dipolelayer: xy` on/off | `femgo_dip` | SI |
+
+Note: SI analyses use the fuller `femgo` set including `stop_16` (n=1207, 14 seeds); the
+main-text PES table above uses the 13 `seed_*` dirs (n=1180). Both consistent within their study.
+
+Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å. Data loaders must skip scratch
+`trash/` dbs and filter to the target composition (see `femgo_kappa` Fe9Mg9O9 contamination).
 
 ## Metrics
 - **ΔZ (flatness)** = z(metal_max) − z(metal_min) over ALL metal film atoms (Fe+Co)

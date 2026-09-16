@@ -16,6 +16,27 @@ hosts (MTJ / CoFeB relevance)
 - **LaTeX is only the final formatting container** (`paper.tex`), produced after all
   sections are approved. Never draft directly in LaTeX.
 
+## Paper scope (what goes where)
+
+- **Main text:** the PES / wetting study across the four systems — island ground state,
+  the B effect on the flat-film energy (~−0.04 eV/atom, both hosts), Co's negligible effect,
+  and B not bonding to MgO.
+- **Supplementary Material (SI):** everything mechanistic / methodological:
+  - PDOS origin-of-island analysis (d-band shift, spin polarisation) + interface registry
+  - Method-parameter sensitivity (rattle strength, LCB kappa, dipole correction)
+- SI figures are flagged `[SI]` in `experiment_log.md`; SI claims are prefixed `[SI]` in
+  `paper_status.md`. Keep this split when drafting.
+
+## Known limitations (MUST NOT be overstated)
+
+- **Structures are NOT DFT-converged.** Candidates are relaxed by the GPR surrogate
+  (`ParallelRelaxPostprocess`, 100 steps, `start_relax=10`) then evaluated with **1 GPAW
+  step** (`fmax=0.05, steps=1`); residual forces are ~1–2 eV/Å. "Lowest energy"/"basin"
+  mean "lowest DFT energy *found*", not a converged minimum.
+- **Do NOT claim the flat state is "metastable"** — that needs full relaxation + Hessian +
+  a barrier. Describe it as a "higher-energy flat basin".
+- Re-relaxation pipeline exists at `relaxation/` (116 structures selected) but has NOT run.
+
 ## Citations
 
 - Never hallucinate references. Fetch and verify BibTeX programmatically (DOI content
