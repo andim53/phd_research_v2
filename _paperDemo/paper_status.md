@@ -19,10 +19,15 @@ TBD — format-agnostic (no venue selected).
 ## Systems (4)
 femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo Fe-Co-B/MgO (4)
 
-## Supplementary Material: rattle-strength study
-Additional femgo-scheme runs varying rattle strength: baseline 1.5/2.3 (`femgo`, 14 seeds),
-reduced-0.5 (1.0/1.8, `param_ratt05`, 4 seeds), reduced-1.0 (0.5/1.3, `param_ratt1`, 5 seeds).
-Deliverable: `figures/rattle_analysis.png` + `analysis/rattle_summary.csv`.
+## Supplementary Material: Method-parameter sensitivity
+One SI study covering three method parameters of the biased-exploration scheme, all on
+Fe₂₅Mg₂₅O₂₅ with a common `femgo` baseline (rattle 1.5/2.3, kappa=2, no dipole):
+- **Rattle:** `param_ratt05` (1.0/1.8), `param_ratt1` (0.5/1.3)
+- **Kappa (LCB):** `femgo_kappa/1_k1`, `0_k3`, `2_k4`
+- **Dipole:** `femgo_dip` (`dipolelayer: xy`)
+
+Deliverables: `figures/method_sensitivity_{rattle,kappa,dipole}.png`,
+`analysis/method_sensitivity.csv`.
 Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not main-text.
 
 ## Claim → evidence (Phase B)
@@ -39,8 +44,10 @@ Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not 
 | **[SI]** Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
 | **[SI]** Island origin is strain relief, not interfacial re-hybridisation | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23) | yes — refines the picture |
 | **[SI]** Fe sits directly atop O at the interface | analysis/interface_analysis.csv | 25/25 flat, 9/9 island atop O; 0 atop Mg | yes |
-| **[SI]** Rattle strength matters: reducing it degrades the search | analysis/rattle_summary.csv | per-seed best 0.050 → 0.27–0.29 eV/atom | yes |
-| **[SI]** Reduced rattle under-samples the flat basin | analysis/rattle_summary.csv | flat fraction 0.181 → 0.030/0.015 | yes |
+| **[SI]** Rattle strength matters: reducing it degrades the search | analysis/method_sensitivity.csv | per-seed best 0.050 → 0.27–0.29 eV/atom | yes |
+| **[SI]** Reduced rattle under-samples the flat basin | analysis/method_sensitivity.csv | flat fraction 0.181 → 0.030/0.015 | yes |
+| **[SI]** Result robust to kappa (LCB) | analysis/method_sensitivity.csv | per-seed best 0.039–0.056 eV/atom across k=1–4 | yes |
+| **[SI]** Result robust to the dipole correction | analysis/method_sensitivity.csv | per-seed best 0.050 → 0.056 eV/atom (ns) | yes (outcome-level) |
 
 **Supplementary Material — PDOS (femgo only):** flat reference (`dos_seed_4.csv`, ΔZ=0.000)
 vs island GS (`dos_seed_3.csv`, ΔZ=3.652); matched projections (Fe-dz2, O-pz), E vs E_F.

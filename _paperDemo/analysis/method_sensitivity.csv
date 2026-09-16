@@ -1,0 +1,10 @@
+family,setting,n_structures,n_seeds,per_seed_best_dE_at_mean,per_seed_best_dE_at_sd,flat_fraction,fingerprint_diversity
+rattle,baseline (1.5/2.3),1207,14,0.05030,0.05454,0.181,2.515
+rattle,reduced-0.5 (1.0/1.8),264,4,0.29017,0.05659,0.030,3.706
+rattle,reduced-1.0 (0.5/1.3),388,5,0.27399,0.12427,0.015,4.331
+kappa,kappa=2 (baseline),1207,14,0.05030,0.05454,0.181,2.515
+kappa,kappa=1,1456,16,0.03947,0.02371,0.182,2.362
+kappa,kappa=3,917,11,0.05497,0.06620,0.159,2.676
+kappa,kappa=4,792,10,0.05633,0.07486,0.134,2.669
+dipole,no dipole (baseline),1207,14,0.05030,0.05454,0.181,2.515
+dipole,dipole xy,1004,12,0.05628,0.06589,0.160,2.632

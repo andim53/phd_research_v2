@@ -47,7 +47,11 @@ hosts (MTJ / CoFeB relevance)
     `fecobmgo` (Fe-Co-B/MgO).
   - **Rattle-strength study** (same femgo scheme): `param_ratt05` (rattle −0.5),
     `param_ratt1` (rattle −1.0).
+  - **Method-parameter study:** `femgo_kappa/{1_k1,0_k3,2_k4}` (LCB kappa = 1/3/4),
+    `femgo_dip` (dipole correction, `dipolelayer: xy`).
   - **DOS/PDOS:** `dos_femgo_flatngs` (Fe flat + island), `dos_febmgo_gs` (Fe-B ground state).
+  Loaders must **skip scratch `trash/` dbs** and filter to the target composition — the
+  `femgo_kappa` dirs contain a `trash/` db with 41 Fe9Mg9O9 structures.
   This directory is large and is **not** part of paper commits — commit only analysis
   scripts, the scaffold, and draft files.
 - The runs are GOFEE (GPR surrogate + LCB): a **biased** exploration seeded from a

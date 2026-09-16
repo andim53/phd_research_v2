@@ -139,48 +139,72 @@ for all Fe (d-centre → ~+0.5–0.6 eV, bulk-like). The island's energy gain (~
 from the search) is therefore dominated by **strain relief / Fe cohesion**, not by any
 interfacial re-hybridisation.
 
-## Supplementary Material: impact of rattle strength (biased-exploration robustness)
+## Supplementary Material: Method-parameter sensitivity
 
-**Status: SUPPLEMENTARY (SI) — not a main-text methods section.** This validates the
-biased-exploration scheme that the main results rest on, but it is reported as supporting
-material rather than in the main narrative.
+**Status: SUPPLEMENTARY (SI).** The search is a **custom, biased-exploration scheme**:
+GOFEE (GPR surrogate + LCB) seeded from a **flat Fe** reference, with
+`HeteroStructRandomize` + `RattleGenerator` controlling the perturbation. This SI varies
+**three method parameters** on the same Fe₂₅Mg₂₅O₂₅ system and checks whether the method's
+conclusion (island ground state; ~0.05 eV/atom per-seed reach; flat/island basin picture)
+**survives** the parameter choice, and which setting performs best.
 
-The search is a **custom, biased-exploration scheme**: GOFEE (GPR surrogate + LCB) seeded
-from a **flat Fe** reference, with `HeteroStructRandomize` + `RattleGenerator` controlling
-the perturbation. This study varies the **rattle strength** on the same Fe₂₅Mg₂₅O₂₅ system:
+Common baseline for every family: plain `femgo` (rattle 1.5/2.3, kappa=2, no dipole).
+Overall reference minimum: −436.909 eV. Metrics are **per-seed** (seed counts differ).
+Figures: `figures/method_sensitivity_{rattle,kappa,dipole}.png`;
+data: `analysis/method_sensitivity.csv`. Supersedes the earlier standalone rattle figure.
 
-| Run | HeteroStruct rattle | RattleGenerator rattle | seeds | structures (iter≥10) |
-|-----|--------------------|------------------------|-------|----------------------|
-| **baseline** (`data/femgo`) | 1.5 | 2.3 | 14 | 1207 |
-| **reduced-0.5** (`data/param_ratt05`) | 1.0 | 1.8 | 4 | 264 |
-| **reduced-1.0** (`data/param_ratt1`) | 0.5 | 1.3 | 5 | 388 |
+### SI-1. Rattle strength
 
-Metrics (fair, per-seed since seed counts differ; reference = overall minimum −436.909 eV):
+| Setting | HeteroStruct / Rattle | seeds | per-seed best ΔE/atom | flat fraction | diversity |
+|---------|----------------------|-------|-----------------------|---------------|-----------|
+| baseline (`femgo`) | 1.5 / 2.3 | 14 | **0.050 ± 0.055** | **0.181** | 2.52 |
+| reduced-0.5 (`param_ratt05`) | 1.0 / 1.8 | 4 | 0.290 ± 0.057 | 0.030 | 3.71 |
+| reduced-1.0 (`param_ratt1`) | 0.5 / 1.3 | 5 | 0.274 ± 0.124 | 0.015 | 4.33 |
 
-| Setting | per-seed best ΔE/atom (mean ± sd) | flat fraction (ΔZ≤1) | fingerprint diversity |
-|---------|-----------------------------------|----------------------|-----------------------|
-| baseline (1.5/2.3) | **0.050 ± 0.055** | **0.181** | 2.52 |
-| reduced-0.5 (1.0/1.8) | 0.290 ± 0.057 | 0.030 | 3.71 |
-| reduced-1.0 (0.5/1.3) | 0.274 ± 0.124 | 0.015 | 4.33 |
+- **Reducing rattle degrades the search ~5×** (0.050 → 0.27–0.29 eV/atom per seed). The
+  baseline rattle is important for escaping into the low-energy basin; **more, not less,
+  perturbation is needed** here.
+- Reduced rattle **under-samples the flat basin** (0.181 → 0.030 → 0.015).
+- Diversity moves the opposite way (2.5 → 3.7 → 4.3) only because the baseline population
+  is more *concentrated* (better converged) — not a clean exploration measure.
 
-**Findings:**
-1. **Robustness / optimal rattle:** reducing rattle **degrades** the search. The baseline
-   reaches ~0.05 eV/atom per seed; the reduced-rattle runs stall near ~0.27–0.29 eV/atom —
-   a ~5× worse per-seed best. So the baseline rattle (1.5/2.3) is important for escaping
-   into the low-energy basin; **more, not less, perturbation is needed** for this system.
-2. **Basin sampling:** reduced rattle samples the **flat basin far less** (flat fraction
-   0.181 → 0.030 → 0.015). With weak perturbations the search does not generate the
-   spread-out (flat) configurations, so it under-explores that basin.
-3. **Diversity:** the fingerprint-diversity number moves *the opposite way* (2.5 → 3.7 → 4.3,
-   higher for reduced rattle), but this reflects that the baseline population is **more
-   concentrated** (better converged near the minimum) rather than less exploratory. Not a
-   clean "exploration diversity" measure — report with care.
-4. **Convergence:** see `figures/rattle_analysis.png` panel (a).
+### SI-2. Kappa (LCB acquisition parameter)
 
-**Caveats:** seed counts are unequal (14 vs 4 vs 5); the two reduced runs have fewer
-structures; the rattle sweep explores only *lower* rattle (no higher-rattle variant);
-"diversity" is inversely correlated with convergence and is not interpreted as exploration
-breadth.
+| Setting | kappa | seeds | per-seed best ΔE/atom | flat fraction | diversity |
+|---------|-------|-------|-----------------------|---------------|-----------|
+| baseline | 2 | 14 | 0.050 ± 0.055 | 0.181 | 2.52 |
+| `1_k1` | 1 | 16 | **0.039 ± 0.024** | 0.182 | 2.36 |
+| `0_k3` | 3 | 11 | 0.055 ± 0.066 | 0.159 | 2.68 |
+| `2_k4` | 4 | 10 | 0.056 ± 0.075 | 0.134 | 2.67 |
+
+- **Kappa barely matters.** All settings land within 0.039–0.056 eV/atom — the method's
+  conclusion is **robust** across kappa ∈ {1,2,3,4}.
+- **Best: kappa = 1** (lowest and most consistent per-seed best, 0.039 ± 0.024).
+- Higher kappa (more exploration relative to exploitation) is marginally worse and samples
+  **less of the flat basin** (0.182 → 0.159 → 0.134).
+
+### SI-3. Dipole correction (`poissonsolver={"dipolelayer": "xy"}`)
+
+| Setting | seeds | per-seed best ΔE/atom | flat fraction | diversity |
+|---------|-------|-----------------------|---------------|-----------|
+| no dipole (baseline) | 14 | 0.050 ± 0.055 | 0.181 | 2.52 |
+| dipole xy (`femgo_dip`) | 12 | 0.056 ± 0.066 | 0.160 | 2.63 |
+
+- **Negligible effect** — the dipole correction does not change the outcome (per-seed best
+  0.050 → 0.056, within the seed-to-seed spread; flat fraction 0.181 → 0.160).
+- **Caveat:** the two runs are **separate searches**, so the difference mixes the correction
+  with sampling noise. This is an outcome-level comparison only; isolating the true dipole
+  energy shift would require recomputing the *same* structures with/without the correction.
+
+### SI caveats (all three families)
+
+- Seed counts unequal (rattle 14/4/5; kappa 14/16/11/10; dipole 14/12).
+- The rattle sweep explores only *lower* rattle (no higher-rattle variant).
+- "Diversity" (mean pairwise AGOX-Fingerprint distance) is **inversely correlated with
+  convergence** and is not interpreted as exploration breadth.
+- Kappa dirs contain a scratch `trash/` db with 41 Fe₉Mg₉O₉ structures — **excluded** in the
+  loader (`load_setting` skips `trash/` and filters to Fe₂₅Mg₂₅O₂₅). The rattle/dipole dirs
+  are clean.
 
 ## Figures
 - `figures/pes_four_systems.png` — 2×2 PES maps (dE/N vs ΔZ).
@@ -189,7 +213,10 @@ breadth.
 - `figures/pdos_flat_vs_island.png` — **[SI]** PDOS (total / Fe-dz2 / O-pz) flat vs island.
 - `figures/pdos_sites.png` — **[SI]** Fe site-resolved PDOS, bottom-8/top-8 split (SUPERSEDED by interface_analysis).
 - `figures/interface_registry_topview.png` — **[SI]** top view: Fe atop O on the MgO(001) lattice.
-- `figures/rattle_analysis.png` — **[SI]** rattle-strength analysis (convergence / per-seed best / ΔZ / diversity).
+- `figures/method_sensitivity_rattle.png` — **[SI]** rattle-strength sensitivity (4 panels).
+- `figures/method_sensitivity_kappa.png` — **[SI]** kappa (LCB) sensitivity (4 panels).
+- `figures/method_sensitivity_dipole.png` — **[SI]** dipole-correction sensitivity (4 panels).
+- `figures/rattle_analysis.png` — **[SI]** superseded by the method_sensitivity figures.
 - `figures/wetting_metrics.png` — 4-panel wetting-metric boxplot (SUPERSEDED, early analysis).
 - `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
 - `analysis/flat_structures/{system}_ground_min.xsf` — inspectable lowest-energy structures.
