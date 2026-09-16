@@ -1,10 +1,13 @@
 # paper_status.md — handoff / resume state
 
-## Contribution (one sentence) — UNCONFIRMED (pending scientist review)
+## Contribution (one sentence) — CONFIRMED (signed off 2026-09-16)
 Boron consistently lowers the relative energy of the flat metal-film wetting state on MgO
 (~0.04 eV/atom) in both a pure-Fe host and a Fe-Co host, while Co alone has little effect —
 i.e. B promotes flat-film wetting independently of the host metal, relevant to interface
 flatness in CoFeB/MgO MTJ stacks.
+
+**Claim list frozen:** `CLAIMS.md` v1 (signed off 2026-09-16). Do not add/drop claims
+without bumping to v2.
 
 ## Target venue / format
 TBD — format-agnostic (no venue selected).
@@ -70,7 +73,7 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
   wetting/PES references.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [ ] sections/01_methods.md  (next)
+- [~] sections/01_methods.md  (DRAFTED — awaiting scientist review)
 - [ ] sections/02_results.md
 - [ ] sections/03_discussion.md
 - [ ] sections/04_introduction.md
@@ -79,6 +82,7 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - [ ] E2: port all approved sections → paper.tex
 
 ## Open decisions / next step
-- [ ] SCIENTIST: confirm or revise the contribution sentence (Phase A).
-- [ ] Confirm ΔZ flat-cutoff (1.0 Å) and iteration>=10 filter.
-- NEXT: after Phase A confirmation → draft sections/01_methods.md, present for review.
+- [x] SCIENTIST: contribution sentence approved (2026-09-16).
+- [x] Claim list frozen (`CLAIMS.md` v1).
+- NEXT: scientist reviews `sections/01_methods.md`; on approval → draft `sections/02_results.md`.
+- Citations still 0 — placeholder `\cite{}` keys in 01_methods.md need fetching (Phase D).

@@ -83,10 +83,10 @@ paired caveats. Numbers below are frozen to the cited source files.
 
 ## Sign-off
 
-- [ ] **MT-1 … MT-7 approved** (main text) — scientist
-- [ ] **SI-1 … SI-7 approved** (supplementary) — scientist
-- [ ] **Exclusions confirmed** — scientist
-- [ ] Contribution sentence approved
+- [x] **MT-1 … MT-7 approved** (main text) — scientist (2026-09-16)
+- [x] **SI-1 … SI-7 approved** (supplementary) — scientist (2026-09-16)
+- [x] **Exclusions confirmed** — scientist (2026-09-16)
+- [x] Contribution sentence approved (2026-09-16)
 
-**Once signed off, this list is frozen for drafting.** Any new result/claim requires an
-explicit update to this file (bump to v2) before it enters a section.
+**Status: SIGNED OFF (2026-09-16).** This list is frozen for drafting. Any new result or
+claim requires an explicit update to this file (bump to v2) before it enters a section.
