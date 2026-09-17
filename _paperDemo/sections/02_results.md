@@ -19,7 +19,7 @@ Fig. 1 (relative energy per atom vs film flatness ΔZ).
 
 In every model the global minimum sits at ΔZ ≈ 2.8–3.8 Å (a clustered island), while the
 flat basin (ΔZ ≤ 1.0 Å) lies 0.15–0.19 eV/atom above it. The flat film is therefore a
-**metastable-like, higher-energy configuration**, not the ground state — consistent with
+**higher-energy configuration**, not the ground state — consistent with
 the biased search being seeded from a flat reference layer (Methods §1.2).
 
 ## 2.2 Boron lowers the flat-state energy
