@@ -454,4 +454,25 @@ outside that window 102 of 543 Fe-B structures do have a B–O contact.
 removed, MT-8 tagged in §2.1, MT-4 stated as a trend in §2.2, §2.3 wording left in place;
 header now cites CLAIMS v3. `03_discussion.md` header now cites CLAIMS v3.
 
+## 01_methods.md v3 RE-APPROVED (2026-09-17)
+
+The scientist's second round of edits to `sections/01_methods.md` (committed as `52ff713` and
+`34a8cd8`) is **approved as v3**:
+
+- §1.1 — dropped the `pbc = [True, True, False]` flag and the matched MgO lattice constant
+  (`a_MgO/√2 = 2.978 Å`) from the lattice-mismatch sentence. **Review note recorded and
+  accepted:** the 3.77 % strain remains in the text while one of the two lattice constants it
+  derives from is now absent; the scientist elected to keep it that way, since the value is
+  recorded in `data/<system>/<replica>/0_result/latt_log.md` (`strain=3.77%`).
+- §1.3 — removed the `dzp` code from "double-zeta polarised basis, `dzp`" → "double-zeta
+  polarised basis".
+- §1.6 — "A full re-relaxation of representative structures is prepared for this purpose" →
+  "**is necessary** for this purpose". This now agrees with §3.5 (edited the same way earlier)
+  and is the more honest reading: `relaxation/` holds 116 selected structures but has never
+  been run.
+
+**Status: `01_methods.md` is APPROVED (v3) and is the only fully approved section.**
+`02_results.md` (reconstructed v2) awaits re-approval and `03_discussion.md` (v3) awaits its
+first review.
+
 

@@ -80,10 +80,14 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
   (MTJ context) — fetch before the LaTeX port.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [~] sections/01_methods.md  (APPROVED 2026-09-16; REVISED v3 2026-09-17 — needs re-approval)
+- [x] sections/01_methods.md  (REVISED v3 2026-09-17; **RE-APPROVED as v3, 2026-09-17**)
       v3: §1.2 exploration schedule stated per model (Fe-Co uses a third, species-permutation
       generator); mermaid made generator-count-agnostic; "Bias" paragraph states the
       reference-layer composition per model; seed count 7 → 6. No claim changed.
+      Scientist edits folded in: §1.1 drops the `pbc` flag and the matched MgO lattice
+      constant (the 3.77 % strain stays — recorded in `data/*/*/0_result/latt_log.md`);
+      §1.3 drops the `dzp` code from the basis description; §1.6 "is prepared for" →
+      "is necessary for", now consistent with §3.5.
 - [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
       v2: reorganized by PHASE under the revised core framing —
       §2.1 the two-phase landscape (both phases populated; island is the ground state
@@ -172,7 +176,7 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
 - [x] Claim list frozen (`CLAIMS.md` — now v3, 2026-09-17).
-- [x] sections/01_methods.md approved (2026-09-16).
+- [x] sections/01_methods.md approved (2026-09-16) — revised to v3 and **re-approved 2026-09-17**.
 - [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17, awaiting re-approval.
 - NEXT: scientist reviews `sections/03_discussion.md` (v3); on approval → draft `sections/04_introduction.md`.
 - RESOLVED 2026-09-17 (review of 03 v2): the §3.2 confusion-principle sentence had claimed the

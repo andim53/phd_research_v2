@@ -69,9 +69,9 @@ hosts (MTJ / CoFeB relevance)
 - **Phase D: PARTIAL** — 6 citations verified in `references.bib` (agox2020, gofee2017,
   oganov2011, gpaw2014, pbe1996, greer1993). MTJ/PMA refs (cofebmgo_mtj, cofebmgo_pma,
   b_diffusion_mtj) still UNVERIFIED in 03_discussion.md.
-- **Phase E: IN PROGRESS** — `01_methods.md` APPROVED, `02_results.md` APPROVED,
-  `03_discussion.md` drafted v2 (awaiting review). Block-and-wait: do NOT draft
-  `04_introduction.md` until 03 is approved.
+- **Phase E: IN PROGRESS** — `01_methods.md` **v3 APPROVED (2026-09-17)**, `02_results.md`
+  RECONSTRUCTED v2 and awaiting re-approval, `03_discussion.md` v3 awaiting review.
+  Block-and-wait: do NOT draft `04_introduction.md` until 03 is approved.
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 
