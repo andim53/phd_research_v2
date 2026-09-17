@@ -1890,3 +1890,31 @@ reconciled with the draft's §1/§2/§3 at the LaTeX port.
 `SI.md` v10). `paper_status.md` — B1 rewritten (all approved), B2/B3 checked, **B4 added** (SI), the
 drafting table and Approvals note updated, C7/E3/E4/E5 marked accepted, and "Next step" rewritten
 around the open `05`/`06` gate. `AGENTS.md` — Phase E block updated. Bibliography unchanged.
+
+## 2026-09-18 — `05_conclusion.md` v1 drafted
+
+First draft of the Conclusion, written after Methods, Results, Discussion, Introduction and the SI
+were approved and the gate reopened for `05`/`06`.
+
+**Structure (three paragraphs, ~335 words).** (1) Findings: a biased, surrogate-driven search mapped
+the wetting of the metal film on MgO(001) into its two growth modes for the same Fe host with and
+without boron; the island is the ground state in both models (the flat film a distinct basin,
+0.1888 / 0.1493 eV/atom above it), and boron lowers the flat–island separation by 0.040 eV/atom
+(21 %), p = 0.0444 exact over the 19 searches, without displacing the island, acting inside the film.
+(2) Why it matters: the direction the confusion principle predicts \cite{greer1993}, and the
+requirement for MgO-based tunnel junctions (a flat, coherent metal film on the barrier; dewetting at
+monolayer coverage is a live fabrication constraint). (3) Scope and future work: trend-level within a
+fixed lattice model on non-converged structures → converged re-relaxation is the natural next step;
+and whether boron's role is element-specific or shared by any added species is not resolved by a
+single host (the no-third-element-control bound, Discussion §3.4).
+
+**Consistency.** Mirrors the frozen contribution sentence (CLAIMS v11) and the approved Results/
+Discussion; uses the exact p = 0.0444 (not the stale 0.045 in the un-re-signed contribution sentence).
+No claim outside the frozen list; no code identifiers, paths or process history; cites only
+`greer1993`. Final-manuscript section V, matching the Introduction's roadmap ("We summarize our work
+in Sec. V").
+
+**Doc sync.** `paper_status.md` — drafting table gains the `05_conclusion.md` v1 row (and the
+`06_abstract.md` row is now alone), a new **B5** review item, the Approvals note and "Next step"
+updated. `AGENTS.md` — Phase E gains the `05` entry. Bibliography unchanged; no orphans.
+

@@ -147,7 +147,8 @@ drafting or revising anything. Summary as of 2026-09-18:
   key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
   `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
   `torelli2009` are closed access and cited from verified abstracts only.
-- **Phase E: IN PROGRESS — all six drafted sections APPROVED 2026-09-18; `05`/`06` not yet drafted.**
+- **Phase E: IN PROGRESS — sections 01–04 + SI APPROVED 2026-09-18; `05_conclusion.md` v1 drafted
+  and awaiting review (B5); `06_abstract.md` not yet drafted.**
   - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**.
   - `02_results.md` **v6** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
@@ -166,8 +167,11 @@ drafting or revising anything. Summary as of 2026-09-18:
     (SI-10); v8 added §S6 (SI-11, QUALIFIED/weak); v9 removed the SI-6 dipole caveat; v10 removed all
     remaining caveats from the section text (the caveats stay authoritative in `CLAIMS.md` paired
     caveats + Limitations and `paper_status.md`).
-  - `05`/`06` **not yet drafted** — next steps are `05_conclusion.md` → `06_abstract.md`, then the
-    `paper.tex` port; no LaTeX until all six sections are approved.
+  - `05_conclusion.md` **v1** — **DRAFTED, awaiting review (B5).** Final-manuscript section V. Three
+    paragraphs: findings → why it matters (confusion principle, MTJ relevance) → scope and future
+    work; mirrors the frozen contribution sentence and the approved Results/Discussion; cites
+    `greer1993`; no new claim. `06_abstract.md` **not yet drafted** — next after `05` is approved,
+    then the `paper.tex` port; no LaTeX until all six sections are approved.
   - **Editing an approved section voids its approval** and requires re-review — that is how the
     earlier `01_methods.md` v3 approval was lost.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on

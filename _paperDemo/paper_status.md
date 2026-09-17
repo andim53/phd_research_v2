@@ -127,6 +127,11 @@ end, so a fresh session does not re-open them.
       pass, is approved as it stands. Note recorded: the SI now reads more definitively than the
       frozen claims support; the removed caveats stay authoritative in `CLAIMS.md` (paired caveats +
       Limitations) and `paper_status.md` should the scientist wish to restore any at a later pass.
+- [ ] **B5 · Review `05_conclusion.md` v1 — DRAFTED 2026-09-18, awaiting review.** The newly drafted
+      gate for `06_abstract.md`. Three paragraphs: findings → why it matters (confusion principle,
+      MTJ relevance) → scope and future work. Mirrors the frozen contribution sentence and the
+      approved Results/Discussion; cites `greer1993`; no new claim. Once approved, the next section
+      is `06_abstract.md`, then the LaTeX port.
 
 **C. Wording and framing**
 
@@ -286,15 +291,16 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v10** | **APPROVED 2026-09-18** (B4). v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); v10 removed all remaining caveats from the section text at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. Full list of what was removed: see the note in this file and `experiment_log.md`. No number or claim changed. |
 | `04_introduction.md` | **v11** | **APPROVED 2026-09-18** (B2). v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing is accepted by this approval (**C7**). |
-| `05_conclusion.md`, `06_abstract.md` | — | Not started. |
+| `05_conclusion.md` | **v1** | **DRAFTED 2026-09-18 — awaiting review.** Mirrors the frozen contribution sentence and the approved Results/Discussion; three paragraphs (findings → why it matters / confusion principle + MTJ relevance → scope and future work). Final-manuscript section V (matches the Introduction's roadmap). Cites `greer1993`. No new claim. |
+| `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
 **Approvals (2026-09-18).** All six drafted sections are approved: `01_methods.md` v6 and
 `03_discussion.md` v5 approved as-is earlier the same day; `02_results.md` v6, `04_introduction.md`
 v11 and `SI.md` v10 approved together by the scientist (B2/B3/B4). Each carries its approval in the
 head block of its file. Editing an approved section voids its approval and requires re-review (this
-is how the v3/v4 Methods approval was lost). `05_conclusion.md` and `06_abstract.md` are the only
-sections not yet drafted.
+is how the v3/v4 Methods approval was lost). `05_conclusion.md` is drafted (v1) and awaiting review;
+`06_abstract.md` is not yet drafted.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
@@ -651,13 +657,11 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**The block-and-wait gate is clear — all six drafted sections are approved.** `01_methods.md` v6 and
-`03_discussion.md` v5 were approved earlier on 2026-09-18; `02_results.md` v6, `04_introduction.md`
-v11 and `SI.md` v10 were approved together by the scientist (B2/B3/B4), which also resolved the
-embedded items **C7** (confusion-principle framing accepted), **E3/E4/E5** (references accepted) and
-the SI-6 dipole decision. The next drafting steps are **`05_conclusion.md` → `06_abstract.md`**, then
-the `paper.tex` port. No LaTeX before all six sections are approved — `05` and `06` are the only ones
-left.
+**`05_conclusion.md` v1 is drafted and awaiting review (item B5).** The block-and-wait gate is
+otherwise clear: `01_methods.md` v6, `03_discussion.md` v5, `02_results.md` v6, `04_introduction.md`
+v11 and `SI.md` v10 are all approved, and `05` is the newly drafted gate for `06_abstract.md`. Once
+`05` is approved, the order is `06_abstract.md` → the `paper.tex` port; no LaTeX before all six
+sections are approved.
 
 **Two things still need the scientist before/around the port:**
 - **A1/A2 — the claims sign-off** is not covered by the section approvals: `CLAIMS.md`'s contribution
