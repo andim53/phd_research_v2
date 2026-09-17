@@ -81,44 +81,93 @@ host alone) vs 0.0480 (all four systems)** for the same 19 numbers. Fixed:
 **Verified:** the Fe-host p is identical in scope and with `--all-systems`
 (`analysis/ensemble_stats.json` records `perm_method` per comparison).
 
-## OPEN — decisions for the scientist
+## OPEN — decisions for the scientist (one consolidated checklist, 2026-09-18)
 
-- [ ] **Re-sign the contribution sentence** (rewritten in v9; the old one claimed host
+**This is the single index of everything awaiting the scientist.** Consolidated 2026-09-18 from this
+file's former OPEN list, `CLAIMS.md` → OPEN + sign-off checklist, and `figures/INSTRUCTION.md` →
+open questions. The detail for each item stays where it is recorded (named per item); this list is
+what to work through. Nothing here is blocked on agent work. Items decided already are listed at the
+end, so a fresh session does not re-open them.
+
+**A. Sign-off on the frozen claims (`CLAIMS.md` v11)**
+
+- [ ] **A1 · Accept the significance test as it stands (v8 + v9).** MT-3 is **p = 0.0444, exact**;
+      the value moved 0.005 → 0.045 → 0.0444 across the three versions. v8 replaced two independent
+      permutations with one split (+1); v9 replaced the Monte-Carlo draw with exact enumeration
+      because the p moved with the RNG stream. Both revisions should be consciously accepted.
+- [ ] **A2 · Re-sign the contribution sentence** (rewritten in v9; the old one claimed host
       independence). `CLAIMS.md` → Contribution.
-- [ ] **Application framing.** `03_discussion.md` §3.3 no longer names CoFeB — it says "MgO-based
-      tunnel junctions" — because the paper studies Fe/MgO only. Keep it general, or restore a
-      CoFeB-specific sentence with a genuine reference?
-- [ ] **Accept the exact significance test (v9).** The p-value moved 0.005 → 0.045 → 0.0444 across
-      the three versions of the test; the last step removed a genuine scope-dependence. Same
-      category of decision as v8's test fix, which is still formally open.
-- [ ] **The lost third-element control.** With the Co host archived, nothing separates "boron does
-      this" from "an added element does this". Recorded as a scope bound in `01_methods.md` §1.6
+- [ ] **A3 · SI-9 and SI-10** — the iteration-budget and lattice-constraint studies, both boron-free
+      by design (CLAIMS v10). Numbers: "SI-9 / SI-10" below.
+- [ ] **A4 · SI-11** — the inverted stack, MgO on Fe (§S6), as a **QUALIFIED/weak** claim: the
+      searches do not converge at the 100-iteration budget. Detail: "SI-11 / §S6" below. Running the
+      inverted stack to convergence is what would make it a clean result.
+
+**B. Section approvals — the block-and-wait gate**
+
+- [ ] **B1 · Review the four drafted sections: `01_methods.md` v6, `02_results.md` v4,
+      `03_discussion.md` v5, `SI.md` v8. No section is approved** — the one Methods approval was
+      voided by the re-scope and the code-stripping edit, so nothing survives. **03 is the gate for
+      `04_introduction.md`**; `05_conclusion.md` / `06_abstract.md` are not started, and there is no
+      LaTeX port until all six are approved.
+
+**C. Wording and framing**
+
+- [ ] **C1 · How to word the convergence bound in the sections.** The caveat held since v4 ("the
+      searches are still improving at iteration 100") is answered with numbers by SI-9 and written
+      into the CLAIMS Limitations. Options: (a) one sentence in §1.6 plus a pointer to §S4; (b) also
+      a sentence in §3.4; (c) leave the sections and rely on the SI.
+- [ ] **C2 · Application framing.** `03_discussion.md` **§3.3** ("Implications for MTJ stacks") no
+      longer names CoFeB — it says "MgO-based tunnel junctions", because the paper studies Fe/MgO
+      only. Keep it general, or restore a CoFeB-specific sentence with a genuine reference? Either
+      way, no Co *host* is discussed.
+- [ ] **C3 · The lost third-element control.** With the Co host archived, nothing separates "boron
+      does this" from "an added element does this". Recorded as a scope bound in `01_methods.md` §1.6
       and `03_discussion.md` §3.4. A second, chemically different addition in the same host would
       be needed — not planned.
-- [ ] **Review the three re-scoped sections** — `01_methods.md` v5, `02_results.md` v4,
-      `03_discussion.md` v5. **No section is approved.** 03 is still the gate for `04_introduction.md`
-      (not drafted; `05_conclusion`, `06_abstract` also not started; no LaTeX until all approve).
-- [ ] **Main-text figures are cited by no section** — see "Float numbering" below. `figures/INSTRUCTION.md`
-      lists the open figure-design questions, including the two-system redesign of
-      `flat_state_summary.png` (it was a B × Co 2×2).
-- [ ] **SI-9 and SI-10 need sign-off** (the iteration-budget and lattice-constraint studies, both
-      boron-free by design — CLAIMS v10). See "SI-9 / SI-10" below for the numbers.
-- [ ] **SI-11 needs sign-off — it is a QUALIFIED/weak claim, not a clean one** (the inverted stack,
-      MgO on Fe; a ground-state comparison). See "SI-11 / §S6" below. If it is wanted as a real
-      result, the inverted stack must be run to convergence.
-- [ ] **How to word the convergence bound in the sections.** The caveat held since v4 ("the searches
-      are still improving at iteration 100") is now answered with numbers by SI-9 and written into
-      the CLAIMS Limitations. Whether §1.6 and §3.4 should state it (with a pointer to §S4), and in
-      what form, is the scientist's call — options: (a) one sentence in §1.6; (b) also a sentence in
-      §3.4; (c) leave the sections and rely on the SI.
-- [ ] **Full texts of three islanding references.** `fahsold2000`, `reitinger2007` and `torelli2009`
-      are cited from **verified abstracts**; all three are closed access and no institutional copy is
-      in `papers/`. The Urano PDF carries a *"Downloaded from journals.jps.jp by 三重大学"* watermark,
-      i.e. the scientist has institutional access — adding these PDFs would close this.
-- [ ] **Bulk-Fe reference, if wanted.** §3.1 no longer calls the island d-band centre "bulk-like"
-      because no bulk-Fe reference calculation exists in the repo.
-- [ ] **Motif analysis (MT-8) has no SI section.** The dangling pointer was removed from Results
-      §2.1 (v9) rather than adding an S4. Draft S4 later if the motif analysis is wanted in print.
+- [ ] **C4 · Bulk-Fe reference, if wanted.** §3.1 no longer calls the island d-band centre
+      "bulk-like" because no bulk-Fe reference calculation exists in the repo.
+- [ ] **C5 · Motif analysis (MT-8) has no SI section.** The dangling pointer was removed from
+      Results §2.1 (v9) rather than adding an S4. Draft one later if it is wanted in print.
+- [ ] **C6 · The `<!-- DRAFT vN -->` comment at the head of each section** is the last version
+      reference inside a section file (it is stripped at the port). Move it here, or leave it?
+
+**D. Figures** — detail and reasoning: `figures/INSTRUCTION.md` → open questions
+
+- [ ] **D1 · Figure numbering and citation.** The main-text figures are cited by no section — the
+      Results prose describes the landscape without pointing at `pes_2_systems.png`,
+      `flat_state_summary.png` or `flat_vs_ground_preview.png`, and Tables 3–4 are likewise never
+      called out. Assign Figure 2 (§2.1), Figure 3 (§2.2), possibly Figure 4, and wire the call-outs.
+- [ ] **D2 · `flat_state_summary.png` redesign** — the figure most in need of it: is a two-bar chart
+      still right with one host, or should it become a two-panel (flat / island) comparison or a
+      ΔE/N-shift plot showing the per-replica spread? The headline −0.040 eV/atom is currently a
+      bracket label.
+- [ ] **D3 · `pes_2_systems.png` layout** — 1×2 side by side, or stacked vertically for a
+      single-column layout? Does the flat-window (ΔZ ≤ 1.0 Å) shading stay?
+- [ ] **D4 · `iteration_budget.png`** — add the pooled per-arm curve to panel (c), and thin the 17
+      per-run lines in (a)/(b) (e.g. median ± range per arm)?
+- [ ] **D5 · `mgo_on_fe.png`** — add the two ground-state structures as an inset?
+- [ ] **D6 · `lattice_constraint.png`** — should the f = 0 reference (currently the leftmost point)
+      be a distinct marker, and the a_Fe difference (2.866 vs 2.87019 Å) be annotated on the axis?
+
+**E. References and access**
+
+- [ ] **E1 · Full texts of three islanding references.** `fahsold2000`, `reitinger2007` and
+      `torelli2009` are cited from **verified abstracts**; all three are closed access and no
+      institutional copy is in `papers/`. The Urano PDF carries a *"Downloaded from journals.jps.jp
+      by 三重大学"* watermark, i.e. the scientist has institutional access — adding these PDFs would
+      close this.
+- [ ] **E2 · Stale `.bib` keys.** `agox2020` / `gofee2017` carry year 2022 in the `.bib` while the
+      keys are surname+year. Left as-is so far because the sections cite them.
+
+**Decided — not open** (listed so they are not re-opened): the Fe-host-only scope (v9); the PES
+panels' shared energy range, anchored to the Fe/MgO ceiling, with 25 Fe-B points off-scale by
+decision (2026-09-18); the f = 0 and f = 0.5 constraint arms out of the paper; a_MgO = 4.212 Å as the
+experimental reference; SI-8 signed off 2026-09-17; the Co-host archive.
+
+**Not a decision, but the largest open work item:** the relaxation pipeline (`relaxation/`, 81
+Fe-host structures selected, re-relaxation **not** run). It is the only path that removes the
+"structures are not DFT-converged, residual forces 1–2 eV/Å" caveat.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
 
@@ -476,7 +525,6 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 ## Next step
 
 Nothing here is blocked on agent work except the drafts themselves. The paper is ready for the
-scientist to review `01_methods.md` v6, `02_results.md` v4, `03_discussion.md` v5 and `SI.md` v7
-(which now carries §S4 and §S5) — 03 is the gate for `04_introduction.md`. The two new SI claims
-(SI-9, SI-10) and the wording of the convergence bound in the sections are the open items that
-follow from v10.
+scientist to review `01_methods.md` v6, `02_results.md` v4, `03_discussion.md` v5 and `SI.md` **v8**
+(which now carries §S4, §S5 and §S6) — 03 is the gate for `04_introduction.md`. The consolidated
+decision checklist is the OPEN section above; it is the one place to work from.

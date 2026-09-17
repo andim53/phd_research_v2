@@ -1356,3 +1356,30 @@ annotated as superseded for the PES maps) and `paper_status.md` (float-table not
 redesign, PES 1×2 vs stacked, the mgo_on_fe inset) are unchanged; the three main-text sections still
 await review, and `04_introduction.md` / `05_conclusion.md` / `06_abstract.md` are not drafted.
 
+## 2026-09-18 — the open decisions consolidated into one checklist; three stale cross-references fixed
+
+Asked what was waiting on the scientist, the answer was scattered across three files with no single
+index: `paper_status.md` → OPEN (12 prose items), `CLAIMS.md` → OPEN + the sign-off checklist (4
+items), `figures/INSTRUCTION.md` → open questions (7 items), with overlap and no shared numbering.
+`paper_status.md` → OPEN is now **one consolidated checklist** of **19 items in five groups** —
+A1–A4 claim sign-offs, B1 the section-approval gate, C1–C6 wording and framing, D1–D6 figures,
+E1–E2 references and access — each item naming where its detail lives. Nothing was deleted: the
+detail stays in `CLAIMS.md` and `figures/INSTRUCTION.md`, which now both point at the checklist
+(`CLAIMS.md` maps its claim-level items to A1–A4 / C1–C3; `figures/INSTRUCTION.md` maps its questions
+to D1–D6). The section closes with a "decided — not open" list (Fe-host scope, the PES shared energy
+range and its 25 off-scale Fe-B points, the constraint arms, a_MgO = 4.212 Å, SI-8, the Co archive)
+so a fresh session does not re-open settled questions, and flags the un-run `relaxation/` pipeline as
+the largest open *work* item rather than a decision.
+
+**Three stale cross-references found and fixed while doing it:**
+
+- `paper_status.md` → "Next step" still read `SI.md` **v7**; the SI is at **v8** (it carries §S6 now).
+- `paper_status.md` → the section-review item named `01_methods.md` **v5**; the file is at **v6**
+  (confirmed from each section's own head comment: 01 v6, 02 v4, 03 v5, SI v8).
+- `CLAIMS.md` → the sign-off checklist located the application framing in **§3.4**; that discussion is
+  **§3.3 "Implications for MTJ stacks"** — §3.4 is the Limitations section, renumbered from §3.5 in
+  the v5 re-scope. The item now names §3.3 and reads "keep general or cut", matching the actual
+  section, which says "MgO-based tunnel junctions" and names no CoFeB.
+
+No claim, number, section or figure changed: documentation only.
+

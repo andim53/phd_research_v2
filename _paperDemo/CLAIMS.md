@@ -12,7 +12,8 @@ no longer in scope. Archive: `_archive/cofe/README.md`; raw data under `data/_ar
 ## OPEN — awaiting scientist sign-off (2026-09-17)
 
 Items that are **not** settled. They are listed here so a fresh session does not treat the frozen
-list as fully accepted.
+list as fully accepted. **The single index of all open decisions is `paper_status.md` → OPEN**
+(consolidated 2026-09-18, items A1–E2); the claim-level items below are A1–A4 and C1–C3 there.
 
 1. **Acceptance of the significance test as it now stands (v8 + v9).** The test has been revised
    twice: v8 replaced two independent permutations of the pooled minima with one split (+1
@@ -777,8 +778,8 @@ claims to MT/SI and do not change the frozen list.
 - [ ] **v10: the wording of the convergence bound in §1.6 / §3.4** — awaiting the scientist
       (OPEN item 5)
 - [ ] **v9: the rewritten contribution sentence** — awaiting the scientist's re-sign-off
-- [ ] **v9: application framing** — `03_discussion.md` §3.4's "CoFeB/MgO stack used in devices":
-      keep the application discussion generic ("MgO-based magnetic tunnel junctions") or cut it?
+- [ ] **v9: application framing** — `03_discussion.md` §3.3 "Implications for MTJ stacks": keep the
+      application discussion generic ("MgO-based magnetic tunnel junctions") or cut it?
 - [ ] **Acceptance of the permutation-test fix (v8)** — still open, now reduced to MT-3 alone
 
 **Status: FROZEN (v11, 2026-09-17), scope Fe/MgO + Fe-B/MgO.** This list is frozen for drafting. Any

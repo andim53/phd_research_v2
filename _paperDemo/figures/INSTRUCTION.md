@@ -79,6 +79,9 @@ eV/atom.
 
 ## Open questions for the scientist
 
+> These are the figure-level decisions of the consolidated checklist in `paper_status.md` → OPEN
+> (items **D1–D6**, 2026-09-18). Detail and reasoning stay here; the checklist is the index.
+
 - [ ] **`flat_state_summary.png`:** with one host, is a two-bar chart still the right figure, or
       should it become e.g. a two-panel (flat / island) comparison, or a ΔE/N-shift plot with the
       per-replica spread shown? The B effect (−0.040 eV/atom) is the paper's headline number and
