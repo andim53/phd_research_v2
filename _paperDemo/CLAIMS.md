@@ -1,28 +1,102 @@
-# CLAIMS.md — FROZEN claim list (v8)
+# CLAIMS.md — FROZEN claim list (v9)
 
-**Status: FROZEN (v8, 2026-09-17).** Supersedes v7, v6, v5, v4, v3, v2 and v1.
+**Status: FROZEN (v9, 2026-09-17).** Supersedes v8, v7, v6, v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
+
+**Scope of the paper (v9): the Fe host only — Fe/MgO and Fe-B/MgO.** The Fe-Co/MgO and Fe-Co-B/MgO
+models are **archived out of scope** (see "ARCHIVED — out of scope" below). No section may cite
+them. The Co-containing numbers that v8 carried in MT-4, MT-5, MT-7, MT-8 and the combined 2×2
+statement are **withdrawn from the paper, not from the record** — the measurements stand, they are
+no longer in scope. Archive: `_archive/cofe/README.md`; raw data under `data/_archive/`.
 
 ## OPEN — awaiting scientist sign-off (2026-09-17)
 
 Items that are **not** settled. They are listed here so a fresh session does not treat the frozen
 list as fully accepted.
 
-1. **MT-4's status.** Left flagged **CHALLENGED**, but v8 re-characterised it as **under-powered
-   rather than absent** (p = 0.092 at 4 vs 3 completed searches; median shift +0.048 eV/atom; 92 %
-   same-sign; the test's floor for that pair is p = 0.029). Keep the flag, or re-word as an
-   under-powered trend? Settling it requires more **completed** Fe-Co-B searches, not more analysis.
-2. **Acceptance of the permutation-test fix (v8).** The test drew two independent permutations of the
-   pooled minima instead of one split, inflating significance; corrected. This changed published
-   statistics (MT-3 0.005 → 0.045, MT-4 0.74 → 0.092, MT-5 0.73 → 0.245) and should be consciously
-   accepted rather than inherited.
-3. **STRAIN CONVENTION DIFFERS BETWEEN THE MODEL PAIRS — bears directly on MT-3/MT-4/MT-5.** Fe and
-   Fe-B sit on `a_Fe = 2.87019 Å` (film unstrained, **substrate** compressed 3.6 %); Fe-Co and
-   Fe-Co-B sit on `a_MgO/√2 = 2.97833 Å` (substrate at bulk, **film stretched 4.9 %**). The 2×2
-   cross-host comparison therefore confounds boron with the strain convention, and Methods §1.1 /
-   Discussion §3.1 currently describe one convention for all four models. No number, cell or claim
-   was changed for this. Evidence and options: `experiment_log.md`, "Dropped runs: iteration at
-   which each stops"; summary in `paper_status.md` → "Open decisions".
+1. **Acceptance of the permutation-test fix (v8).** The test drew two independent permutations of the
+   pooled minima instead of one split, inflating significance; corrected in v8. Of the three
+   comparisons it moved, only one survives in scope (**MT-3: 0.005 → 0.045**); the other two
+   (MT-4 0.74 → 0.092, MT-5 0.73 → 0.245) went to the archived Co host. The fix should still be
+   consciously accepted rather than inherited.
+2. **NEW v9 — the third-element control is gone.** The Co models are what let the paper say the
+   driver is *boron* rather than *any added element*. Fe vs Fe-B alone cannot separate "boron does
+   this" from "an added element does this". Recorded as a stated scope bound in the Limitations.
+   The scientist confirmed the Greer wording stays on the boron-only argument (see
+   "Discussion-only interpretations").
+3. **NEW v9 — application framing.** The CoFeB/MgO stack is the device-relevant system, while the
+   paper now studies Fe/MgO only. `03_discussion.md` §3.4 currently mentions "the CoFeB/MgO stack
+   used in devices"; whether the application framing stays general ("MgO-based magnetic tunnel
+   junctions") or is cut outright needs the scientist's call. Either way, no Co *host* is discussed.
+
+## RESOLVED by v9 (items held open in v8)
+
+- **Strain convention across the model pairs — RESOLVED BY SCOPE.** Fe and Fe-B both sit on
+  `a_Fe = 2.87019 Å` (`interpolation_factor` 0); the +4.9 % film-stretched convention belonged to
+  the archived Fe-Co pair only. The cross-pair confound that threatened MT-3/MT-4/MT-5 no longer
+  exists inside the paper's scope. The **absolute** convention — substrate compressed 3.6 %,
+  film unstrained, the inverse of the experimental stack — remains a stated limitation (below).
+- **MT-4's status — RESOLVED BY ARCHIVING.** It was flagged CHALLENGED and re-characterised in v8 as
+  under-powered at 4 vs 3 completed searches (p = 0.092, floor 0.029). It is archived with its host;
+  the resolution limit it ran into does not apply to any surviving comparison (MT-3's 13 vs 6 admits
+  27 132 partitions, floor p = 3.7×10⁻⁵).
+
+## v9 changelog (2026-09-17) — the Co host is archived; the paper becomes Fe/MgO vs Fe-B/MgO
+
+Scientist's instruction: *"archive the current CoFe host results, considering it has so many
+problem. For now, write the main and supplementary based on the Fe host, with and without B."*
+Executed as a scope restriction plus a contribution rewrite — **no measurement was retracted**.
+
+### 1. What left the paper
+
+**MT-4** (B lowers the flat-state energy in the Fe-Co host) and **MT-5** (Co alone has little
+effect) are archived, together with the combined 2×2 statement they formed with MT-3. Their
+evidence was real, so the reason for archiving is not refutation — it is three defects that
+made the pair unusable as the paper's second host:
+
+1. **Strain confound.** Fe-Co and Fe-Co-B sat on `a_MgO/√2 = 2.97833 Å` (film stretched 4.9 %)
+   while Fe and Fe-B sat on `a_Fe = 2.87019 Å` (substrate compressed 3.6 %). The cross-host
+   comparison therefore varied boron and the strain convention together.
+2. **Under-powered.** 4 vs 3 completed searches admit only 35 partitions of the pooled replicate
+   minima, so the Fe-Co-host boron effect could not reach p < 0.029 however the data fell
+   (v8: p = 0.092, median shift +0.048 eV/atom, 92 % same-sign — under-powered, not absent).
+3. **Unmatched exploration operator.** `data/fecomgo/main.py:75,172–175` adds a third
+   `PermutationGenerator` to the schedule used by the other three models, so the Co host is not a
+   clean counterfactual either.
+
+### 2. What the scope restriction changes inside the surviving claims
+
+- **Contribution sentence rewritten** — no host independence, no Co, no CoFeB alloying claim.
+- **MT-1** now covers two systems: global-min ΔZ = 3.65 (Fe) / 3.77 Å (Fe-B).
+- **MT-3 unchanged in value and untouched by the archive, and now on firmer statistical ground:**
+  0.1888 → 0.1493 eV/atom (−0.040), p = 0.045 at 13 vs 6 completed searches, against a permutation
+  floor of 3.7×10⁻⁵ (27 132 partitions) instead of the 4-vs-3 floor of 0.029 that limited v8.
+- **MT-7 evidence halved** — windowed Fe-B only: 1 of 72 structures in-window, max contact
+  fraction 0.33, 101 of the remaining 471 outside. The Fe-Co-B half (1 of 21; max 0.5; 25 of 252;
+  "20 of the 21 from one search") and its two-completed-search caveat are archived with it.
+- **MT-8 counts shrink** — flat 2 / 2 motifs, island 2 / 2 (was 2/2/4/2 and 2/2/3/1); within-set
+  fingerprint distance 0.41–0.44 × the branch random-pair scale (was 0.37–0.71). The paired
+  caveat is unchanged.
+- **SI-1 … SI-8 are untouched.** Every SI section was already Fe/MgO-only — §S1 and §S3 run on the
+  `femgo` baseline, §S2 on `dos_femgo_flatngs` + `analysis/interface_analysis.csv`. No SI number,
+  figure or claim moves. `sections/SI.md` contains zero references to the Co host.
+- **Scope of the search-replica rule** — `run_selection.py` still governs (`femgo/stop_16` 37 it,
+  `febmgo/seed_6` empty), and the two Co exclusions (`fecomgo/seed_4` 10 it, `fecobmgo/seed_3`
+  73 it) move out of the paper's Methods list into the archive record.
+
+### 3. What this costs, stated plainly
+
+The paper loses its generality claim ("independent of the host metal") and its only third-element
+control: Fe vs Fe-B cannot distinguish "boron does this" from "an added element does this". This is
+recorded as a limitation, and the Greer framing is kept on the boron-only argument (scientist's
+decision) rather than on an element-count contrast that is no longer measurable here.
+
+### 4. MT-6 stays withdrawn, with one reason reworded
+
+Its **secondary** v2 reason — `data/fecomgo/main.py`'s third generator breaking operator matching —
+no longer applies, since the Co host is out of scope and Fe/Fe-B share their schedule. The
+**primary** reason stands and is sufficient: a flat-basin *fraction* from a deliberately biased
+exploration is a sampling weight, not a physical population. MT-6 remains withdrawn.
 
 ## v8 changelog (2026-09-17) — completed searches only, and a mis-implemented significance test
 
@@ -231,10 +305,14 @@ paired caveats. Numbers below are frozen to the cited source files.
 
 ## Contribution (one sentence)
 
-> **Boron insertion lowers the relative energy of the flat metal-film wetting state on
-> MgO by ~0.04 eV/atom in both a pure-Fe and a Fe-Co host, while Co alone has little
-> effect — i.e. B promotes flat-film wetting independently of the host metal, relevant
-> to interface flatness in CoFeB/MgO MTJ stacks.**
+> **Boron insertion lowers the relative energy of the flat metal-film wetting state of Fe on
+> MgO(001) by ~0.04 eV/atom (0.1888 → 0.1493 eV/atom, two-sided permutation p = 0.045 over
+> 13 vs 6 completed searches), moving the flat, well-wetting configuration closer to the island
+> ground state without displacing it — relevant to interface flatness in MgO-based magnetic
+> tunnel junction stacks.**
+
+*Rewritten in v9: the v8 sentence claimed host independence and rested on the archived Co host.
+This version needs the scientist's re-sign-off.*
 
 ---
 
@@ -242,20 +320,21 @@ paired caveats. Numbers below are frozen to the cited source files.
 
 | ID | Claim | Exact value | Source | Confidence |
 |----|-------|-------------|--------|-----------|
-| **MT-1** | The lowest-energy structure found is an **island** (not flat) in all four systems | global-min ΔZ = 3.65 / 3.77 / 2.75 / 3.45 Å (Fe / Fe-B / Fe-Co / Fe-Co-B) | `analysis/pes_structures.csv` | strong |
-| **MT-2** | The **flat configuration is a distinct, higher-energy basin** (not the ground state) | flat-basin min dE/N > 0 in every system (0.149–0.194 eV/atom) | `analysis/pes_structures.csv` | strong |
-| **MT-3** | **B lowers the flat-state energy in the pure-Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (two-sided permutation p = 0.045 at 13 vs 6 completed searches; the earlier 0.005 came from a mis-implemented test — see v8) |
-| **MT-4** | **B lowers the flat-state energy in the Fe-Co host** | 0.1941 → 0.1494 eV/atom (−0.045) | `analysis/pes_structures.csv` | **CHALLENGED — NOT RESOLVED, and under-powered rather than absent** (two-sided permutation p = 0.092 at 4 vs 3 completed searches; median shift +0.048 eV/atom, 92 % same-sign). The test's own resolution floor for 4 vs 3 is 0.029, so it cannot reach significance on this data. The earlier p = 0.74 came from a mis-implemented test on a dataset that included unfinished searches; that figure overstated the absence of an effect. **Whether this claim stays flagged CHALLENGED or is re-worded is a scientist decision** — see v8 |
-| **MT-5** | **Co alone has little effect** on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005) | `analysis/pes_structures.csv` | moderate (two-sided permutation p = 0.245 at 13 vs 4 completed searches — consistent with no resolvable effect, but weaker support for the null than the previously reported p = 0.73) |
+| **MT-1** | The lowest-energy structure found is an **island** (not flat) in both systems | global-min ΔZ = 3.65 Å (Fe) / 3.77 Å (Fe-B) | `analysis/pes_structures.csv` | strong |
+| **MT-2** | The **flat configuration is a distinct, higher-energy basin** (not the ground state) | flat-basin min dE/N > 0 in both systems (0.1888 Fe / 0.1493 eV/atom Fe-B) | `analysis/pes_structures.csv` | strong |
+| **MT-3** | **B lowers the flat-state energy in the Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (two-sided permutation p = 0.045 at 13 vs 6 completed searches; permutation floor 3.7×10⁻⁵ over 27 132 partitions, so the test is not resolution-limited here. The earlier 0.005 came from a mis-implemented test — see v8) |
+| ~~MT-4~~ | ~~B lowers the flat-state energy in the Fe-Co host~~ | **ARCHIVED in v9** with the Co host — see "ARCHIVED — out of scope" | — | — |
+| ~~MT-5~~ | ~~Co alone has little effect on the flat-state energy~~ | **ARCHIVED in v9** with the Co host — see "ARCHIVED — out of scope" | — | — |
 | ~~MT-6~~ | ~~B increases the fraction of flat-basin structures sampled~~ | **WITHDRAWN in v2** — see changelog | — | — |
-| **MT-7** | **B does not bond to the MgO interface** (stays in the metal film) | B_contact_frac ≈ 0 in the low-energy window dE/N ≤ 0.05 eV/atom (1 of 72 Fe-B, 1 of 21 Fe-Co-B; max contact fraction 0.33 / 0.5). Outside the window 101 of the remaining 471 Fe-B and 25 of the remaining 252 Fe-Co-B structures *do* have a B–O contact, so the claim is window-restricted, not global. Window defined by `scripts/wetting_metrics.py --e-window-per-atom 0.05`. **Weak-support caveat:** the 21 Fe-Co-B window structures come from only 2 completed searches (20 from one of them) | `analysis/pes_structures.csv` | moderate (windowed, and dominated by one search in Fe-Co-B) |
-| **MT-8** | The low-energy structures of each branch form a **small set of recurring motifs** rather than one repeated structure; ΔZ is **continuous**, with no discrete island heights | Island branch spans ΔZ ≈ 1–6 Å (no quantisation); low-energy sets split into 1–4 single-linkage motifs (flat 2/2/4/2, island 2/2/3/1 per system); within-set fingerprint distance is 0.37–0.71 × the branch's random-pair scale; Fe/MgO's 5 lowest flat structures (from 5 independent searches) fall into 2 motifs, 4 in the dominant one | `analysis/ensemble_stats.json` | moderate — see paired caveat |
+| **MT-7** | **B does not bond to the MgO interface** (stays in the metal film) | B_contact_frac ≈ 0 in the low-energy window dE/N ≤ 0.05 eV/atom (**1 of 72** Fe-B structures; max contact fraction **0.33**). Outside the window **101 of the remaining 471** Fe-B structures *do* have a B–O contact, so the claim is window-restricted, not global. Window defined by `scripts/wetting_metrics.py --e-window-per-atom 0.05` | `analysis/pes_structures.csv` | moderate (windowed) |
+| **MT-8** | The low-energy structures of each branch form a **small set of recurring motifs** rather than one repeated structure; ΔZ is **continuous**, with no discrete island heights | Island branch spans ΔZ ≈ 1–6 Å (no quantisation); low-energy sets split into a small number of single-linkage motifs (**flat 2 / 2, island 2 / 2**); within-set fingerprint distance is **0.41–0.44 ×** the branch's random-pair scale; Fe/MgO's 5 lowest flat structures (from 5 independent searches) fall into 2 motifs, 4 in the dominant one | `analysis/ensemble_stats.json` | moderate — see paired caveat |
 
-**Combined 2×2 statement (MT-3/4/5):** B effect −0.040 (Fe) and −0.045 (Fe-Co); Co effect
-+0.005 (no B) — B is the dominant lever, Co is not.
-**Note:** MT-6 (flat-basin sampling fraction) is withdrawn in v2. The flat-basin *fraction*
-may still be reported as a descriptive attribute of the sampled database, but not as a
-physical result and not as a cross-system comparison.
+**The v8 combined 2×2 statement (MT-3/4/5) is withdrawn in v9** — two of its three legs belong to
+the archived Co host. What remains is a single B effect in one host (MT-3, −0.040 eV/atom).
+**Note:** MT-6 (flat-basin sampling fraction) is withdrawn in v2, on the primary ground that a
+sampling weight from a biased exploration is not a physical population. Its secondary v2 reason —
+an unmatched exploration operator in `data/fecomgo` — no longer applies inside the v9 scope, since
+Fe and Fe-B share their generator schedule; the primary reason stands on its own.
 
 **Paired caveat for MT-8 (must travel with the claim).** The motif test uses the AGOX global
 `Fingerprint` (radial + angular distribution functions) computed on the whole template + film
@@ -299,13 +378,52 @@ remains a *method-quality* claim on Fe/MgO only.
 
 | Excluded claim | Why |
 |----------------|-----|
-| **B increases the fraction of flat-basin structures sampled** (withdrawn MT-6, v2) | Not a physical result: the flat fraction is a *weight* of a **biased** exploration. Cross-system comparison additionally requires a fixed exploration operator, which does not hold — Fe-Co alone uses a three-generator schedule including a `PermutationGenerator` (`data/fecomgo/main.py:75,172–175`), and the flat reference differs in kind across systems. Reportable only as a descriptive attribute of the sampled database. |
+| **B increases the fraction of flat-basin structures sampled** (withdrawn MT-6, v2) | Not a physical result: the flat fraction is a *weight* of a **biased** exploration, so a cross-system comparison of weights is not admissible — the primary reason, and sufficient on its own. *(v9 note: the secondary v2 reason — that the Fe-Co operator differed, `data/fecomgo/main.py:75,172–175`, and that the flat references differ in kind — no longer applies inside the v9 scope, where Fe and Fe-B share one generator schedule and one flat reference construction. The withdrawal is unchanged.)* Reportable only as a descriptive attribute of the sampled database. |
 | The flat state is **"metastable"** | Not established — needs converged relaxation + Hessian + a barrier. Use "higher-energy flat basin". |
 | B **lowers the Fe–O contact fraction** | Not significant under the per-atom window (p=0.106). |
 | B **shrinks the lateral Fe coverage** | Dropped out under the per-atom window (p=0.967); was only significant under the loose absolute window. |
 | The **Fe-B PDOS comparison** | Deferred — the Fe-B PDOS uses full d/p projections, mismatched with the femgo dz2/pz set. |
 | **Quantitative energy ordering** beyond ~trend level | Structures are not DFT-converged (see limitations). |
 | The dipole comparison as **isolating** the dipole energy shift | The two runs are separate searches; outcome-level only. |
+
+---
+
+## ARCHIVED — out of scope (v9)
+
+The Fe-Co/MgO and Fe-Co-B/MgO models are **out of the paper's scope**. This is not a refutation:
+the measurements below are valid as measured and are kept here so the record survives the scope
+change. Machine-readable copy of these numbers: `_archive/cofe/cofe_evidence.json`; narrative and
+evidence trail: `_archive/cofe/README.md`; raw data: `data/_archive/fecomgo/`, `data/_archive/fecobmgo/`.
+
+**Archived claims (were MT-4 and MT-5 in v8), with their frozen values:**
+
+| was | claim | value as measured | source | why archived |
+|---|---|---|---|---|
+| MT-4 | B lowers the flat-state energy in the Fe-Co host | 0.1941 → 0.1494 eV/atom (−0.045); two-sided permutation **p = 0.092** at 4 vs 3 completed searches; median shift +0.048 eV/atom; 92 % same-sign | `analysis/pes_structures.csv`, `analysis/ensemble_stats.json` → `effects/B_in_FeCo_host` | strain confound + under-powered (floor 0.029) + unmatched generator schedule |
+| MT-5 | Co alone has little effect on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005); p = 0.245 at 13 vs 4 completed searches | `analysis/pes_structures.csv`, `analysis/ensemble_stats.json` → `effects/Co_alone` | rests on the archived Fe-Co model; the "little effect" null is not re-established here |
+
+**Combined 2×2 statement (v8, withdrawn):** B effect −0.040 (Fe) and −0.045 (Fe-Co); Co effect
++0.005 (no B) — B the dominant lever, Co not.
+
+**Also archived with them:** the Fe-Co-B half of MT-7's evidence (1 of 21 windowed structures, max
+contact fraction 0.5, 25 of the remaining 252 outside the window, and its "20 of 21 from one
+search / only 2 completed searches" caveat); the four-system motif counts of MT-8 (the v8 range
+0.37–0.71 × random-pair scale, which the Co systems drove); the excluded runs `fecomgo/seed_4`
+(stopped at iteration 10) and `fecobmgo/seed_3` (stopped at 73) as *paper* Methods content — they
+remain excluded by `run_selection.py` wherever the scripts are still asked to compute those
+systems; and the v8 permutation-resolution limitation (4 vs 3 → 35 partitions → floor p = 0.029),
+which no surviving comparison runs into.
+
+**Why the host is not a clean counterfactual.** Three independent defects, any one of which would
+warrant the restriction: (1) **strain convention** — the Co pair sat on `a_MgO/√2 = 2.97833 Å`
+(film stretched 4.9 %) while the Fe pair sat on `a_Fe = 2.87019 Å` (substrate compressed 3.6 %),
+so boron and the strain convention varied together; (2) **statistical power** — 4 vs 3 completed
+searches cannot reach p < 0.029; (3) **exploration operator** — `data/fecomgo/main.py:75,172–175`
+adds a third `PermutationGenerator` to the schedule the other three models share.
+
+**To revive the Co host** (for the separate study): re-run both Co models at `interpolation_factor`
+0 so all four share `a_Fe`, to a full 100-iteration budget, on the two-generator schedule — then
+the 2×2 can be restored as written in v8, with MT-4/MT-5 reinstated from this block.
 
 ---
 
@@ -321,11 +439,13 @@ remains a *method-quality* claim on Fe/MgO only.
   descriptive attributes of the sampled database only.
 - **The island being the ground state despite the flat bias is a positive control** (MT-1):
   every search started from a flat reference layer and was perturbed only at small scale in
-  the early phases, yet converged on an island in all four models.
-- Metrics: **ΔZ** = z(metal_max) − z(metal_min) over Fe+Co [Å]; **dE/N** = (E − E_globalmin)/N
+  the early phases, yet converged on an island in both models.
+- Metrics: **ΔZ** = z(metal_max) − z(metal_min) over the film's **Fe** atoms [Å] (boron is not
+  part of the flatness metric — `pes_analysis.METAL = ('Fe','Co')`); **dE/N** = (E − E_globalmin)/N
   [eV/atom] per system, global min = 0; flat/island split at ΔZ ≤ 1.0 Å.
 - Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å (main search).
-- Systems: Fe/MgO, Fe-B/MgO, Fe-Co/MgO, Fe-Co-B/MgO.
+- **Systems (v9): Fe/MgO and Fe-B/MgO only** — 13 and 6 completed searches, 1723 structures.
+  Fe-Co/MgO and Fe-Co-B/MgO are archived (see "ARCHIVED — out of scope").
 
 ## Limitations (must appear with the claims)
 
@@ -334,10 +454,10 @@ remains a *method-quality* claim on Fe/MgO only.
 - **Only completed searches are used (v8).** A search counts only if it reached the full 100-iteration
   budget; the rule lives in `scripts/run_selection.py` and is imported by every analysis script. It
   is applied from the **iteration number in the database, not the directory name**, because a
-  `seed_*` directory can stop early. Excluded here: `femgo/stop_16` (37 it), `febmgo/seed_6`
-  (no data), `fecomgo/seed_4` (10 it), `fecobmgo/seed_3` (73 it), plus the unfinished runs inside
-  the sensitivity families. Unequal completed-search counts across systems (**13 / 6 / 4 / 3**) and
-  across parameter settings.
+  `seed_*` directory can stop early. Excluded inside the v9 scope: `femgo/stop_16` (37 it) and
+  `febmgo/seed_6` (no data); in the archived Co host, `fecomgo/seed_4` (10 it) and `fecobmgo/seed_3`
+  (73 it). Plus the unfinished runs inside the sensitivity families. The two systems have unequal
+  completed-search counts (**13 vs 6**), as do the parameter settings.
 - **Lattice model (v5):** both phases are built on a **bcc** Fe lattice, but experiment reports
   **bct** Fe on MgO(001) below ≈10 Å \cite{urano1988}; the island branch (ΔZ ≈ 1–6 Å) lies in
   that regime. The comparison is a trend within a fixed lattice model.
@@ -355,16 +475,18 @@ remains a *method-quality* claim on Fe/MgO only.
   oxygen directly above the metal sites, so the flat film's registry follows from the
   construction as well as agreeing with the measured LEED I–V registry \cite{urano1988}. It is a
   consistency check, not an independent prediction by the search.
-- **Search-level tests are resolution-limited (v8).** The permutation test partitions the pooled
-  per-search flat minima, so with *a* vs *b* searches only C(a+b, a) partitions exist. For the
-  Fe-Co vs Fe-Co-B pair (4 vs 3) that is 35 partitions, i.e. a floor of p = 0.029: **the Fe-Co-host
-  boron effect cannot reach significance on this data however it falls.** Reported p-values are
-  therefore lower bounds on what further searches could establish, and MT-4 is under-powered
-  rather than refuted. `analysis/ensemble_stats.json` records `perm_n_partitions` and
-  `perm_resolution` for every comparison.
+- **The single search-level test in scope is not resolution-limited (v9).** The permutation test
+  partitions the pooled per-search flat minima, so with *a* vs *b* searches only C(a+b, a) partitions
+  exist. MT-3's 13 vs 6 admits **27 132** partitions, a floor of p = 3.7×10⁻⁵ — far below the
+  reported p = 0.045, so the test is genuinely informative here. (The 4-vs-3 floor of p = 0.029 that
+  limited v8's MT-4 went to the archive with the Co host.) `analysis/ensemble_stats.json` records
+  `perm_n_partitions` and `perm_resolution` for every comparison.
 - **The permutation test was mis-implemented before v8** (two independent permutations instead of
   one split), which widened the null and inflated significance (e.g. MT-3 read p = 0.005 instead of
   p = 0.045). Fixed in v8.
+- **No third-element control (v9).** The paper compares one host with and without boron. The
+  archived Co models were what allowed a "boron rather than any added element" reading; within the
+  present scope, an effect of the added element as such cannot be separated from an effect of boron.
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold.
 - kpts = (1,1,1), single-layer slabs → qualitative/trend-level.
 - **Sensitivity families contain unfinished searches (v7; superseded by the v8 rule):** several
@@ -386,14 +508,14 @@ claims to MT/SI and do not change the frozen list.
 - **Greer confusion principle** \cite{greer1993}: the flat/disordered configuration is
   claimed to be stabilised by added elements, in the spirit of the confusion principle
   (more elements frustrate crystallisation and favour the disordered configuration).
-  **Data bound (added 2026-09-17; Discussion-only wording, no MT/SI claim changed):** the
-  supported driver is the *presence of boron*, not the element count. Adding Co alone
-  raises the flat-basin energy (MT-5, 0.1888 → 0.1941 eV/atom), and the two two-element
-  systems differ more from each other (Fe-B 0.1493 vs Fe-Co 0.1941) than Fe-Co does from
-  three-element Fe-Co-B (0.1494). The principle is retained as acting through the added
-  metalloid, not through complexity counting. Honest bound retained: even the boron-bearing
-  models keep the island as ground state, so the principle stabilises but does not fully
-  suppress the ordered configuration in these models.
+  **Data bound (added 2026-09-17, rewritten v9; Discussion-only wording, no MT/SI claim changed):**
+  the supported driver is the *presence of boron* — the principle is retained as acting through the
+  added metalloid rather than through element counting. **The element-count contrast that v8 used
+  here (Co alone raises the flat-basin energy; Fe-B and Fe-Co differ more from each other than
+  Fe-Co does from Fe-Co-B) is withdrawn with the archived Co host, and the scientist elected to keep
+  the boron-only wording rather than restate it as an untested bound.** Honest bound retained: even
+  the boron-bearing model keeps the island as the ground state, so the principle stabilises but does
+  not fully suppress the ordered configuration in these models.
 - **Phase-separation wording (added 2026-09-17, v3).** Boron is described as changing the
   **flat–island separation**, not as stabilising the flat phase or destabilising the island
   individually. Because each model is referenced to its own lowest energy, a reduced
@@ -411,7 +533,8 @@ claims to MT/SI and do not change the frozen list.
 
 ## Sign-off
 
-- [x] **MT-1 … MT-5, MT-7 approved** (main text) — scientist (2026-09-16)
+- [x] **MT-1 … MT-5, MT-7 approved** (main text) — scientist (2026-09-16). *Superseded in part by
+      v9: MT-4 and MT-5 were archived with the Co host on 2026-09-17.*
 - [x] **SI-1 … SI-7 approved** (supplementary) — scientist (2026-09-16)
 - [x] **Exclusions confirmed** — scientist (2026-09-16)
 - [x] Contribution sentence approved (2026-09-16)
@@ -425,9 +548,20 @@ claims to MT/SI and do not change the frozen list.
 - [x] **SI-8: performance of the biased exploration** (v4, 2026-09-17) — scientist
 - [x] **v5: bcc/bct lattice-model limitation, basis-set limitation, experimental-correspondence
       framing, six verified Fe/MgO references** (2026-09-17) — scientist
+- [x] **v9: the Co host is archived out of scope and MT-4/MT-5 with it; the paper is Fe/MgO vs
+      Fe-B/MgO** (2026-09-17) — scientist
+- [x] **v9: Greer wording stays on the boron-only argument** (no element-count contrast) — scientist
+- [x] **v9: no Co sentence anywhere in the manuscript; the Co host is not discussed** — scientist
+- [x] **v9: archive mechanics** — raw data to `data/_archive/`, records to `_archive/cofe/`;
+      analysis scripts keep their four-system capability but default to the Fe-host scope — scientist
+- [x] **v9: no new searches run; the two-system paper is written from existing data** — scientist
+- [ ] **v9: the rewritten contribution sentence** — awaiting the scientist's re-sign-off
+- [ ] **v9: application framing** — `03_discussion.md` §3.4's "CoFeB/MgO stack used in devices":
+      keep the application discussion generic ("MgO-based magnetic tunnel junctions") or cut it?
+- [ ] **Acceptance of the permutation-test fix (v8)** — still open, now reduced to MT-3 alone
 
-**Status: FROZEN (v5, 2026-09-17).** This list is frozen for drafting. Any new result or claim
-requires an explicit update to this file before it enters a section.
+**Status: FROZEN (v9, 2026-09-17), scope Fe/MgO + Fe-B/MgO.** This list is frozen for drafting. Any
+new result or claim requires an explicit update to this file before it enters a section.
 **Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
 v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle ·
 v4 (2026-09-17) SI-8 added · v5 (2026-09-17) lattice-model + basis-set limitations,
@@ -439,4 +573,8 @@ the method-sensitivity families; SI-5/6/7 evidence cells restated on an equal-it
 statistic; "kappa = 1 is best" retracted; rattle factor 5× → 7× · v8 (2026-09-17) completed
 searches only, project-wide (run_selection.py); a mis-implemented permutation test fixed;
 MT-3/MT-4/MT-5 p-values 0.045 / 0.092 / 0.245; MT-7 and MT-8 evidence updated; MT-4 character
-changed from refuted to under-powered (status flag left for the scientist).
+changed from refuted to under-powered (status flag left for the scientist) · v9 (2026-09-17) the Co
+host archived out of scope and MT-4/MT-5 with it, plus the combined 2×2 statement and the Fe-Co-B
+halves of MT-7/MT-8; contribution rewritten host-independently-free; SI unaffected (already
+Fe/MgO-only); third-element-control scope bound added; v8's permutation-resolution limitation and
+strain-convention confound both resolved by the scope restriction; MT-6's secondary reason reworded.
