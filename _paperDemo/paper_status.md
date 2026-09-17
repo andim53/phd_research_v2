@@ -69,8 +69,10 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - Planned fix: full DFT re-relaxation of low-force distinct structures (`relaxation/`).
 
 ## Citations (Phase D)
-- 0 fetched yet. Needed: CoFeB/MgO MTJ references (PMA, B diffusion, interface flatness),
-  wetting/PES references.
+- 5 verified & in `references.bib` (methods section): agox2020, gofee2017, oganov2011,
+  gpaw2014, pbe1996. All `\cite{}` keys in 01_methods.md resolve.
+- Still needed: CoFeB/MgO MTJ references (PMA, B diffusion, interface flatness), wetting/PES
+  references (for intro/discussion).
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
 - [~] sections/01_methods.md  (DRAFTED — awaiting scientist review)

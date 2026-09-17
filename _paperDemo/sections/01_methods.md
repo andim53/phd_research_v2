@@ -1,7 +1,8 @@
 # 01 — Methods
 
-<!-- DRAFT v1 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v1 (signed off). Citations are placeholders — none fetched yet. -->
+<!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v1 (signed off). Citations verified and in references.bib
+     (Phase D done for this section). -->
 
 ## 1.1 Interface models
 
