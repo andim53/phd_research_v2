@@ -1801,3 +1801,15 @@ appear in the achievement sentence). No number or claim changed; `CLAIMS.md` not
 **Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v10. `AGENTS.md` — Phase E
 entry to v10. Bibliography unchanged. (The section's DRAFT marker, which had gone stale at v8, was
 brought to v10.)
+
+## 2026-09-18 — `04_introduction.md` v11: the scientist's edit (drop "amorphous-like")
+
+The scientist edited the reasoning paragraph: "the flat, amorphous-like configuration" is now simply
+"the flat configuration". The amorphous-like label is one CLAIMS assigns to the Discussion as an
+interpretive framing (the flat film read as the disordered/amorphous-like configuration), so removing
+it from the Introduction is consistent with keeping that reading out of the front matter. The sentence
+still contrasts the single flat geometry with the island as a family of many local minima, which is
+what motivates the biased exploration. The line was re-wrapped (the edit left it split). No number or
+claim changed; `CLAIMS.md` not bumped. Version marker and DRAFT comment bumped to v11; `paper_status.md`
+(B2, drafting table, Next step) + `AGENTS.md` (Phase E) synced. Bibliography unchanged.
+

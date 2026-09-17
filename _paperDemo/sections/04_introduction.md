@@ -1,4 +1,8 @@
 # 04 — Introduction
+     v11 (2026-09-18): the scientist's edit — in the reasoning paragraph, "the flat, amorphous-like
+     configuration" is now simply "the flat configuration", dropping the amorphous-like label (which
+     CLAIMS assigns to the Discussion as an interpretive framing). Line re-wrapped. No number or
+     claim changed.
      v10 (2026-09-18): a reasoning paragraph added between the Greer/boron paragraph and the
      "In this work, ..." passage, motivating the method: testing the confusion-principle question is
      not a single-calculation problem (the island is a family of many local minima, so one structure
@@ -53,7 +57,7 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v10 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v11 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      As of v8 this section carries no numbers: the detailed findings (flat-basin minima, the shift,
      the p-value) live in Results §2. The motivation cites the growth/islanding literature and the
@@ -121,8 +125,8 @@ the three-dimensional, ordered-like one, it suggests that boron should lower the
 configuration relative to the island.
 Whether it does so, and by how much, is a question for calculation.
 
-Testing this idea directly is not a single-calculation question. The flat, amorphous-like
-configuration is one well-defined structure, but the ordered island it competes with is not: the
+Testing this idea directly is not a single-calculation question. The flat configuration is one
+well-defined structure, but the ordered island it competes with is not: the
 dewetted film comprises a large family of distinct structures with many local minima, so no one
 geometry can represent it, and the two phases cannot be compared by relaxing a single candidate of
 each. The confusion-principle question — whether an added element lowers the disordered configuration
