@@ -10,9 +10,11 @@ Scope (v9): the paper studies the Fe host only, Fe/MgO and Fe-B/MgO, so this wri
 grid, the summary and the file name grow accordingly.
 
 NOTE — figure design is the scientist's call.  The mechanical scope changes made here (panel
-count, output file name, data-driven y-limits so nothing is clipped) are recorded with the open
-styling questions in `figures/INSTRUCTION.md`; do not restyle this script without reading it.
+count, output file name, the shared energy range anchored to the boron-free reference) are recorded
+with the open styling questions in `figures/INSTRUCTION.md`; do not restyle this script without
+reading it.
 """
+__version__ = '1.2.0'
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np, csv, os, sys
@@ -44,6 +46,14 @@ def get(system):
 
 
 # ---- Figure 1: one PES map per system ----
+# One energy range for every panel, anchored to the BORON-FREE Fe/MgO model (the reference), so the
+# two systems are read on a single scale.  This is a deliberate ceiling, not a data-driven union:
+# the Fe-B/MgO searches reach much higher dE/N (up to 2.15 eV/atom), and drawing the reference on
+# that union range would compress the flat-island region that the figure is about.  Structures above
+# the ceiling are therefore NOT shown in the Fe-B panel; their number is printed below so it stays
+# on the record.  (Scientist's decision, 2026-09-18.)
+REFERENCE = SYSTEMS[0][0]
+Y_LIM = (-0.01, max(0.5, 1.05 * float(get(REFERENCE)[1].max())))
 n = len(SYSTEMS)
 ncols = min(2, n)
 nrows = int(np.ceil(n / ncols))
@@ -64,11 +74,17 @@ for ax, (system, lab) in zip(axes.ravel(), SYSTEMS):
     ax.set_xlabel(r'$\Delta Z$ = z(metal$_{max}$) - z(metal$_{min}$)  (Å)', fontsize=11)
     ax.set_ylabel(r'$\Delta E/N$  (eV/atom)', fontsize=11)
     ax.set_title(f'{lab}  (n={len(dZ)})', fontsize=12, fontweight='bold')
-    ax.set_ylim(-0.01, max(0.5, 1.05 * float(dE.max())))
+    ax.set_ylim(*Y_LIM)
     ax.legend(fontsize=8, loc='upper right')
     ax.grid(alpha=0.25, lw=0.5)
 for ax in axes.ravel()[n:]:                            # hide any unused panel
     ax.axis('off')
+for system, lab in SYSTEMS:                            # what the shared ceiling hides
+    dE = get(system)[1]
+    k = int((dE > Y_LIM[1]).sum())
+    if k:
+        print(f'  {lab}: {k} of {len(dE)} points ({100 * k / len(dE):.1f} %) above the shared '
+              f'{Y_LIM[1]:.3f} eV/atom ceiling — not shown in the panel')
 fig.suptitle('PES map of metal-film wetting on MgO: flat vs island states\n'
              '(AGOX/GOFEE, iterations \u2265 10, global min = 0 eV/atom, ΔZ over the film metal)',
              fontsize=13, fontweight='bold')

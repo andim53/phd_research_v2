@@ -42,9 +42,40 @@ the look of the figures, so they are listed for review.
 3. **y-limits are now data-driven** (`max(0.5, 1.05·max ΔE)`) instead of a fixed `(0, 0.5)`. The
    fixed frame clipped real structures: Fe-B has flat-basin points up to 0.726 eV/atom, over 45 %
    above the old ceiling. Revert to a fixed frame only if that clipping was intentional.
+   *(Superseded for the PES maps on 2026-09-18 — they now share one range anchored to the boron-free
+   reference, which clips the Fe-B tail by decision. See "Changed 2026-09-18" below. The
+   `flat_state_summary.png` bar frame is still per-figure data-driven.)*
 4. **Axis/figure wording:** "ΔZ over Fe+Co" → "ΔZ over the film metal" (the metric is
    `pes_analysis.METAL = ('Fe','Co')`, so boron never entered it).
 5. **`flat_vs_ground_preview.png`** now renders one row per system in scope (2, not 4).
+
+## Changed 2026-09-18 (two corrections requested by the scientist)
+
+Neither is a restyle: one is a shared axis scale, the other is a placement bug.
+
+1. **`pes_2_systems.png` — one energy range on both panels, anchored to the boron-free reference.**
+   The panels were each framed on their own data, so the Fe/MgO panel spanned 0–0.64 eV/atom while
+   the Fe-B/MgO panel spanned 0–2.26: side by side, the same ΔE/N meant two different things. Both
+   panels now use the Fe/MgO range, **(−0.01, 0.636) eV/atom**. This is a *deliberate ceiling*, not
+   the union of the data: Fe-B/MgO reaches 2.149 eV/atom, and framing the reference on that union
+   squashes the flat-island region the figure exists to show.
+   - **Consequence, by decision: 25 of the 543 Fe-B/MgO points (4.6 %, 2 of them inside the flat
+     window) lie above the ceiling and are not drawn.** `plot_pes_figure.py` prints that count on
+     every run so it stays on the record; it is not annotated on the figure.
+   - The reference panel is the first system in `SYSTEMS_IN_SCOPE` (`femgo`), so `--all-systems`
+     keeps the same rule.
+2. **`mgo_on_fe.png` — the two branch labels were outside the figure.** The labels were drawn with
+   `transform=ax2.get_yaxis_transform()`, whose **y is in data units, not axes fractions**, so
+   "flat film lower" at `y=1.0` was placed at 1.0 eV/atom — with the panel's range at
+   (−0.026, 0.199) that is ≈0.8 eV/atom, i.e. ~4.6 panel-heights above the top edge, off the
+   figure. Both labels now use `transAxes` and sit at the midpoint of the region each one names
+   (island band / flat-film band), in the right margin just outside the panel. Verified by
+   comparing rendered text boxes against the axes box.
+
+Both scripts keep their version bump convention (`plot_pes_figure.py` 1.2.0, `mgo_on_fe.py` 2.0.1);
+no number in any analysis result moved — the regenerated `analysis/mgo_on_fe.json` differs from the
+previous one in its `version` field only, and the flat-basin minima are unchanged at 0.1888 / 0.1493
+eV/atom.
 
 ## Open questions for the scientist
 

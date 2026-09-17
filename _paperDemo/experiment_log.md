@@ -1312,3 +1312,47 @@ experimental lattice constants and cite both. The main-text model keeps its *com
 2.87019 Å (a recorded caveat: the sweep's f = 0 endpoint is a reference, not identical to the main
 text). All 15 `\cite{}` keys in `sections/` resolve against `references.bib`; none orphaned.
 
+## 2026-09-18 — figure corrections: one shared PES energy range; the mgo_on_fe branch labels
+
+Two corrections requested by the scientist. Neither changes a number, a claim or a section; both are
+figure-level.
+
+**1. `pes_2_systems.png` — a common energy range on both panels.** Each panel had been framed on its
+own data, so the Fe/MgO panel spanned 0–0.64 eV/atom while the Fe-B/MgO panel spanned 0–2.26; side
+by side, a given ΔE/N meant two different things. Asked which common range to use, the scientist
+chose the **Fe/MgO ceiling** (option: "shared range = Fe/MgO's ceiling"), so both panels are now
+**(−0.01, 0.636) eV/atom**, the boron-free model being the reference. This is a deliberate ceiling
+rather than the union of the data: the union (2.256) would have squashed the flat–island region the
+figure exists to show.
+
+- **Consequence, accepted:** 25 of the 543 Fe-B/MgO points (**4.6 %**, 2 of them inside the flat
+  window) lie above the ceiling and are not drawn. `scripts/plot_pes_figure.py` prints the count on
+  every run, and `paper_status.md` records it against the float table, so the truncation is on the
+  record without being annotated on the figure. No analysis, table or claim value is affected.
+- The reference is the first system in `SYSTEMS_IN_SCOPE` (`femgo`), so `--all-systems` keeps the
+  same rule.
+
+**2. `mgo_on_fe.png` — the branch labels sat outside the figure.** "island lower" / "flat film
+lower" were drawn with `transform=ax2.get_yaxis_transform()`, whose **y coordinate is in data units,
+not axes fractions**. At `y=1.0` that put "flat film lower" at 1.0 eV/atom, while panel (b)'s range
+is (−0.026, 0.199) — about 0.8 eV/atom, roughly 4.6 panel-heights above the top edge, hence the
+report that it floated above the top-right corner. Both labels now use `transAxes` and sit at the
+midpoint of the band each one names, in the right margin just outside the panel.
+
+**Verification.** Both scripts pass `py_compile` under `agox_v2` and were re-run. Checked at the
+matplotlib level rather than by eye: the two PES panels report identical `ylim` = (−0.0100, 0.6359),
+and the two branch labels' rendered text boxes fall inside panel (b)'s axes box vertically. The
+regenerated `analysis/mgo_on_fe.json` differs from the previous one in its `version` field alone
+(2.0.0 → 2.0.1) — the ground state (0.386 Å, flat film), the flat-vs-island separations (+0.1888 /
+−0.0161 eV/atom) and the run-set spreads all reproduce exactly, so the frozen CLAIMS v11 numbers
+stand.
+
+**Recorded in:** `figures/INSTRUCTION.md` (a new "Changed 2026-09-18" section; item 3 of the v9 list
+annotated as superseded for the PES maps) and `paper_status.md` (float-table note, "Changed
+2026-09-18"), so this is not an undisclosed body of work. Script versions: `plot_pes_figure.py`
+1.2.0, `mgo_on_fe.py` 2.0.1.
+
+**Still open:** the figure-design questions in `figures/INSTRUCTION.md` (the `flat_state_summary.png`
+redesign, PES 1×2 vs stacked, the mgo_on_fe inset) are unchanged; the three main-text sections still
+await review, and `04_introduction.md` / `05_conclusion.md` / `06_abstract.md` are not drafted.
+

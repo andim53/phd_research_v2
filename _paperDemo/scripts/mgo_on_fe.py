@@ -33,7 +33,7 @@ from agox.databases import Database
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from run_selection import select_completed  # noqa: E402
 
-VERSION = '2.0.0'
+VERSION = '2.0.1'
 FORMULA = 'Fe25Mg25O25'
 MIN_ITER = 10
 FLAT_DZ = 1.0
@@ -221,9 +221,15 @@ def main():
     axes[1].set_title('(b) Which branch is the ground state', fontweight='bold')
     axes[1].grid(axis='y', alpha=0.25, lw=0.5)
     ax2 = axes[1].twinx(); ax2.set_ylim(axes[1].get_ylim()); ax2.set_yticks([])
-    ax2.text(1.02, 0.0, 'island lower', transform=ax2.get_yaxis_transform(), fontsize=8.5,
+    # Branch labels in the right margin.  BOTH coordinates are axes fractions: an earlier version
+    # used get_yaxis_transform(), whose y is in DATA units, so 'flat film lower' was drawn at
+    # y = 1.0 eV/atom - far above a panel whose range is about [-0.02, 0.2] - and floated off the
+    # top-right corner of the figure.  Each label sits at the midpoint of the region it names.
+    _ylo, _yhi = axes[1].get_ylim()
+    _f0 = (0.0 - _ylo) / (_yhi - _ylo)          # the zero line, as an axes fraction
+    ax2.text(1.02, 0.5 * _f0, 'island lower', transform=ax2.transAxes, fontsize=8.5,
              color='0.35', va='center')
-    ax2.text(1.02, 1.0, 'flat film lower', transform=ax2.get_yaxis_transform(), fontsize=8.5,
+    ax2.text(1.02, 0.5 * (1.0 + _f0), 'flat film lower', transform=ax2.transAxes, fontsize=8.5,
              color='0.35', va='center')
 
     fig.suptitle('Ground-state comparison: the deposited film, Fe-on-MgO vs the inverted stack',

@@ -184,6 +184,13 @@ are manuscript text, the mapping from each float to the file that produces it li
 `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` are **not** to be used (superseded by
 Table S2). This is the only place the code-level names are recorded, by design.
 
+**PES panel truncation (2026-09-18, by decision).** `figures/pes_2_systems.png` draws both panels on
+one energy range anchored to the boron-free Fe/MgO model, (−0.01, 0.636) eV/atom, so that a given
+ΔE/N means the same thing in either panel. The Fe-B/MgO searches reach 2.149 eV/atom, so **25 of the
+543 Fe-B/MgO structures (4.6 %, 2 of them inside the flat window) are above the ceiling and are not
+drawn**. This is a figure property only — no analysis, claim or table value is affected. Recorded
+with the reasoning in `figures/INSTRUCTION.md`.
+
 ⚠ **The main-text figures are cited by no section.** `figures/pes_2_systems.png` (PES maps),
 `figures/flat_state_summary.png` (flat-basin comparison) and `figures/flat_vs_ground_preview.png`
 (side views) exist and are regenerated against the v9 data, but Results §2.1/§2.2 describes the
