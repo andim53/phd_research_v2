@@ -167,11 +167,12 @@ drafting or revising anything. Summary as of 2026-09-18:
     (SI-10); v8 added §S6 (SI-11, QUALIFIED/weak); v9 removed the SI-6 dipole caveat; v10 removed all
     remaining caveats from the section text (the caveats stay authoritative in `CLAIMS.md` paired
     caveats + Limitations and `paper_status.md`).
-  - `05_conclusion.md` **v1** — **DRAFTED, awaiting review (B5).** Final-manuscript section V. Three
-    paragraphs: findings → why it matters (confusion principle, MTJ relevance) → scope and future
-    work; mirrors the frozen contribution sentence and the approved Results/Discussion; cites
-    `greer1993`; no new claim. `06_abstract.md` **not yet drafted** — next after `05` is approved,
-    then the `paper.tex` port; no LaTeX until all six sections are approved.
+  - `05_conclusion.md` **v2** — **DRAFTED, awaiting review (B5).** Final-manuscript section V. v1 was
+      three paragraphs (findings → why it matters → scope and future work); **v2 removed the third
+      paragraph** (scope/future-work) at the scientist's instruction, so the conclusion now ends on the
+      MTJ-relevance paragraph. Mirrors the frozen contribution sentence and the approved
+      Results/Discussion; cites `greer1993`; no new claim. `06_abstract.md` **not yet drafted** — next
+      after `05` is approved, then the `paper.tex` port; no LaTeX until all six sections are approved.
   - **Editing an approved section voids its approval** and requires re-review — that is how the
     earlier `01_methods.md` v3 approval was lost.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on

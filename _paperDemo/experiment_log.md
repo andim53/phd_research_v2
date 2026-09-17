@@ -1918,3 +1918,11 @@ in Sec. V").
 `06_abstract.md` row is now alone), a new **B5** review item, the Approvals note and "Next step"
 updated. `AGENTS.md` — Phase E gains the `05` entry. Bibliography unchanged; no orphans.
 
+## 2026-09-18 — `05_conclusion.md` v2: third paragraph removed
+
+At the scientist's instruction, the third paragraph of the Conclusion (scope and future work —
+trend-level / non-converged structures, converged re-relaxation as the next step, and the
+no-third-element-control bound) was removed. The conclusion now ends on the MTJ-relevance paragraph
+(confusion principle + flat-film requirement for MgO-based tunnel junctions). No number or claim
+changed; `CLAIMS.md` not bumped. Version marker and DRAFT comment to v2; `paper_status.md` (B5, the
+drafting-table row, Next step) and `AGENTS.md` (Phase E) synced. Bibliography unchanged.

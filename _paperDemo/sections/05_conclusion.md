@@ -1,9 +1,12 @@
 # 05 — Conclusion
+     v2 (2026-09-18): the third paragraph (scope and future work — trend-level / non-converged
+     structures, re-relaxation, the no-third-element-control bound) is removed at the scientist's
+     instruction. The conclusion now ends on the MTJ-relevance paragraph. No number or claim changed.
      v1 (2026-09-18): first draft, written after Methods, Results, Discussion, Introduction and the
      SI were approved. Mirrors the frozen contribution sentence of the claim list (CLAIMS v11) and
      the approved Results/Discussion; uses the exact p = 0.0444. No claim outside the frozen list.
 
-<!-- DRAFT v1 · section 05 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v2 · section 05 of the manuscript (markdown-first, pre-LaTeX)
      Final-manuscript section V (Conclusion), matching the Introduction's roadmap ("We summarize our
      work in Sec. V").
      Grounded in CLAIMS.md v11 and the approved Results/Discussion. No code identifiers, paths or
@@ -33,8 +36,3 @@ junctions, whose performance depends on a flat, coherent metal film on the barri
 tendency to dewet into islands at monolayer coverage, and the control of interface flatness that
 modern junction fabrication demands, make the energetic balance between these two configurations a
 quantity worth knowing.
-
-The comparison is a trend obtained within a fixed lattice model on structures that are not fully
-converged minima; converged re-relaxation of the representative structures is the natural next step.
-Whether the stabilising role is specific to boron or shared by any added species is not resolved by a
-single host and would require a second, chemically different addition.
