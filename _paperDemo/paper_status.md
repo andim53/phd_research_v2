@@ -51,16 +51,23 @@ Key numbers: pre-relaxation (i = 1–9) descends only 12 % of the total (0.494 �
 i = 57, 0.005 at i = 72; **the global minimum is first found at i = 77**; only 10 / 13 searches
 end within 0.05 eV/atom and 4 / 13 within 0.02 (median final best 0.040).
 
-⚠ **NOT YET IN CLAIMS.** This is a new SI claim; it needs a **CLAIMS v4** bump with an `SI-8`
-entry before it can be considered approved. Candidate wording in the claim table below.
+⚠ **CLAIM drafted, AWAITING SIGN-OFF:** `SI-8` has been added to **`CLAIMS.md` v4 (draft)** —
+*"the onset of relaxation is the pivot of the biased search: the pre-relaxation iterations
+provide almost no ranking information, and roughly half the total descent occurs at the first
+relaxed iteration."* v3 remains frozen; v4 becomes the frozen list once SI-8 is signed off.
+A paired caveat travels with it (Fe/MgO only; quantities describe the search scheme, not any
+individual structure).
 
-⚠ **New limitation raised by this analysis (needs the scientist's decision).** The searches are
-**still improving at iteration 100** — the best-known energy falls to the last few iterations
-and the global minimum only appears at i = 77. The per-model reference energies in the main text
-are therefore *not converged with respect to search length*, so every relative energy (MT-2,
-MT-3, MT-4, MT-5) carries a systematic uncertainty that the replica-level statistics of §2.2 do
-not capture. Options: state it as a limitation; extend the runs; or leave it implicit in the
-§1.6 non-convergence caveat.
+**§S1 is centred on the relaxation-onset step.** Per the scientist's decision, the "how early /
+how late" framing was dropped entirely — the section is organised as: pre-relaxation plateau →
+the onset step (the pivot) → the long refinement sequence → disagreement between searches. The
+facts are all still reported (including the global minimum first being reached at i = 77), but
+they no longer carry an early/late narrative.
+
+⚠ **Held for review (not written into CLAIMS v4):** the searches are still improving at
+iteration 100, so the per-model reference energies are not converged with respect to search
+length. The scientist elected to discuss this at review rather than to add it to the
+limitations now.
 
 ## Claim → evidence (Phase B)
 | Claim | Evidence | Metric & value | Verified? |
@@ -73,7 +80,7 @@ not capture. Options: state it as a limitation; extend the runs; or leave it imp
 | ~~B increases flat fraction (both hosts)~~ | — | **WITHDRAWN (MT-6, CLAIMS v2)** — biased-exploration weight, and the exploration operator is not matched across systems | — |
 | B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 in window dE/N ≤ 0.05 eV/atom (1/72 Fe-B; 1/21 Fe-Co-B) | yes (windowed) |
 | Low-energy structures of each branch form a few recurring motifs; ΔZ continuous | analysis/ensemble_stats.json | 1–3 motifs per branch; within-set distance 0.32–0.72 × random-pair scale | yes (descriptor-limited — paired caveat in CLAIMS) |
-| **[SI] [PENDING — needs CLAIMS v4]** Biased exploration performance in finding the global minimum | analysis/exploration_performance.json | 49 % of the descent at relaxation onset (i=10); global min at i=77; 10/13 searches within 0.05 eV/atom | analysis done, claim NOT yet approved |
+| **[SI] Signature: relaxation onset pivots the search** | analysis/exploration_performance.json | 49 % of the descent at i=10; global min at i=77; 10/13 within 0.05 eV/atom | analysis done; **SI-8 in CLAIMS v4 awaiting sign-off** |
 | **[SI]** Island origin: reduced Fe–O hybridization | analysis/pdos_metrics.csv | d-band centre −0.23→+0.60 eV; O-pz 43.9→42.4 | yes |
 | **[SI]** Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
 | **[SI]** Island origin is strain relief, not interfacial re-hybridisation | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23) | yes — refines the picture |

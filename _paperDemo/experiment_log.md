@@ -527,4 +527,20 @@ therefore carries a systematic uncertainty that the replica-level statistics do 
 so the figure was validated numerically (monotonicity of all running-best curves, pooled curve
 reaching 0 at i = 77, plotted ranges vs axis limits) rather than by eye. It needs a human look.
 
+### Follow-up (same day): §S1 reframed, SI-8 drafted
+
+- **§S1 reframed around the relaxation-onset step**, per the scientist's decision. The "how early
+  / how late" angle was dropped entirely; the section now runs pre-relaxation plateau → the onset
+  step (the pivot) → the long refinement sequence → disagreement between searches. All facts are
+  still reported (including the global minimum first reached at i = 77) but without an early/late
+  narrative.
+- **`SI-8` added to `CLAIMS.md` v4 (draft), awaiting sign-off.** Claim: *the onset of relaxation
+  is the pivot of the biased search — the pre-relaxation iterations provide almost no ranking
+  information, and roughly half the total descent occurs at the first relaxed iteration.* Paired
+  caveat: Fe/MgO only; the quantities describe the search scheme, not any individual structure.
+  v3 remains frozen; v4 becomes the frozen list once SI-8 is signed off.
+- **Convergence-with-search-length limitation: HELD.** The scientist elected to discuss at review
+  rather than write it into the limitations now; recorded in CLAIMS v4's changelog as explicitly
+  not yet reflected.
+
 

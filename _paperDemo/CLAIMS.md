@@ -1,7 +1,22 @@
-# CLAIMS.md — FROZEN claim list (v3)
+# CLAIMS.md — FROZEN claim list (v4 DRAFT)
 
-**Status: FROZEN (v3, 2026-09-17).** Supersedes v2 and v1.
+**Status: v4 DRAFT (2026-09-17) — the v3 content remains frozen; only the new `SI-8` entry
+awaits sign-off.** Supersedes v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
+
+## v4 changelog (2026-09-17)
+
+- **SI-8 ADDED (pending sign-off)** — performance of the biased exploration in finding the
+  global minimum, Fe/MgO only, all iterations. The claim is centred on the **onset of
+  relaxation as the pivot of the search**, not on how early or late the minimum appears.
+  Source `analysis/exploration_performance.json`; figure
+  `figures/exploration_performance_femgo.png`; drafted as §S1 of `sections/SI.md`.
+- Nothing else changes: MT-1 … MT-5, MT-7, MT-8 and SI-1 … SI-7 are unchanged from v3; MT-6
+  remains withdrawn (v2); MT-4 remains flagged CHALLENGED pending more searches (v3).
+- **Not yet reflected in v4 (held for review):** the searches are still improving at
+  iteration 100, so the per-model reference energies are not converged with respect to search
+  length. The scientist elected to discuss this at review rather than to write it into the
+  limitations now.
 
 ## v3 changelog (2026-09-17)
 
@@ -91,6 +106,12 @@ number of distinct structures.
 | **SI-5** | The result is **robust to the LCB kappa** | per-seed best 0.039–0.056 eV/atom across kappa ∈ {1,2,3,4} | `analysis/method_sensitivity.csv` | strong |
 | **SI-6** | The result is **robust to the dipole correction** | per-seed best 0.050 → 0.056 eV/atom (within seed spread) | `analysis/method_sensitivity.csv` | weak (outcome-level only) |
 | **SI-7** | **Reducing the rattle strength degrades the search ~5×** and under-samples the flat basin | per-seed best 0.050 → 0.27–0.29 eV/atom; flat fraction 0.181 → 0.030/0.015 | `analysis/method_sensitivity.csv` | strong |
+| **SI-8** *(pending sign-off, v4)* | **The onset of relaxation is the pivot of the biased search**: the pre-relaxation iterations provide almost no ranking information, and roughly half the total descent occurs at the first relaxed iteration | best-known ΔE/N: 0.494 (i=1) → 0.435 (i=9; 12 % of the descent) → **0.250 (i=10; 49 %)**; per-search drop across the onset median 0.165 (range 0.084–0.233) eV/atom; 84 % of the descent by i=30, 94 % by i=50; global minimum first reached at i=77; 10 of 13 searches end within 0.05 eV/atom of it, 4 within 0.02 | `analysis/exploration_performance.json` | strong (Fe/MgO only) |
+
+**Paired caveat for SI-8 (must travel with the claim).** Fe/MgO only, and the quantities are
+properties of the *search scheme*, not of any individual structure: the energies are single GPAW
+steps on surrogate-relaxed candidates (residual forces ~1–2 eV/Å), the search is biased (seeded
+from a flat reference layer), and iteration is an AGOX counter rather than a computational cost.
 
 **Note on SI-7 (v2):** SI-7 still uses the flat fraction, and deliberately so. Unlike
 withdrawn MT-6, it compares **one system against itself under a changed method parameter**
@@ -182,8 +203,11 @@ claims to MT/SI and do not change the frozen list.
 - [x] **Method & scope: exploration-density principle + positive-control framing** (v3,
       2026-09-17) — scientist
 - [x] **Discussion-only: phase-separation wording** (v3, 2026-09-17) — scientist
+- [ ] **SI-8: performance of the biased exploration** (v4, 2026-09-17) — **AWAITING SIGN-OFF**
 
-**Status: FROZEN (v3, 2026-09-17).** This list is frozen for drafting. Any new result or
-claim requires an explicit update to this file before it enters a section.
+**Status: v4 DRAFT (2026-09-17).** v3 remains frozen; the only outstanding item is SI-8. Once
+signed off, v4 becomes the frozen list. Any further new result or claim requires another
+explicit update to this file.
 **Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
-v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle.
+v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle ·
+v4 (2026-09-17) SI-8 added, pending sign-off.
