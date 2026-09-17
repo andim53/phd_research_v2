@@ -1683,3 +1683,26 @@ terms in the body; every number unchanged from the frozen Results; `CLAIMS.md` n
 **Doc sync.** `paper_status.md` — B2 and the drafting table to v5, "Next step" updated.
 `AGENTS.md` — Phase E entry to v5. Bibliography unchanged.
 
+## 2026-09-18 — `04_introduction.md` v6: the full, step-by-step story restored
+
+The scientist preferred the fuller introduction to the lean v5 hook, and asked for the revert to be
+understood clearly. **v6 restores the v1–v4 step-by-step story** — motivation, the recent fabrication
+advances, the wetting gap, why boron, the phase-controlled / GOFEE-with-LCB method, the result, the
+closing contribution — **while keeping the two v5 refinements**:
+
+- **"enumerate" → "calculated"** throughout the body: the exact statistic is now "the p-value ...
+  calculated over all 27 132 possible reshufflings rather than sampled", and the island-PES point is
+  "an exhaustive calculation of its potential-energy surface is not the goal" / "we therefore do not
+  attempt one".
+- **"In this work, we ..."** opens the what-we-do passage ("In this work, we address it by comparing
+  the energies of the two configurations for a single host, with and without an added metalloid.").
+
+v5 (the lean hook) is retained in the changelog only; the section body is back to the full narrative
+(~1530 words). No number or claim changed; `CLAIMS.md` not bumped; bibliography unchanged.
+
+**Verification.** No orphans, all `\cite{}` keys resolve; the body contains no occurrence of
+"enumerate"/"enumerat" in any form; no backticks, paths, identifiers or Co-host terms.
+
+**Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v6. `AGENTS.md` — Phase E
+entry to v6. No bibliography change.
+
