@@ -1,4 +1,13 @@
 # 04 — Introduction
+     v8 (2026-09-18): the what-we-do passage is rewritten in the example style — one achievement
+     sentence ("In this work, by implementing a surrogate-driven active-learning search with a
+     deliberately biased exploration strategy, we categorize the potential-energy surface ... and
+     quantify how the added element shifts the relative energy of the flat mode") followed by a
+     roadmap paragraph ("This paper is organized as follows. In Sec. II ... Sec. III ... Sec. IV ...
+     Sec. V."). The redundant method/model/findings detail that repeated Methods §1 and Results §2 is
+     removed; the detailed findings (island ground state, the 0.040 eV/atom shift, the p-value) now
+     live in Results §2, and the closing contribution sentence belongs to the Conclusion. No claim or
+     number removed from the frozen list; `CLAIMS.md` not bumped.
      v7 (2026-09-18): the GOFEE passage is merged into the what-we-do paragraph and trimmed — the
      method is now a single clause ("a surrogate-driven global optimisation") and the emphasis is on
      why the lower confidence bound is effective for a *biased* exploration (the search is seeded
@@ -34,11 +43,12 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v7 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v8 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
-     Every number here is one already frozen in the approved Results: the two flat-basin minima,
-     the shift between them, the island spans, the boron–oxygen window count and the exact
-     search-level statistic. Nothing is introduced that is not in the frozen claim list.
+     As of v8 this section carries no numbers: the detailed findings (flat-basin minima, the shift,
+     the p-value) live in Results §2. The motivation cites the growth/islanding literature and the
+     recent fabrication trend; the achievement sentence and roadmap point to the sections. No claim
+     is introduced that is not in the frozen list.
      Citation keys for this section: parkin2004, djayaprawira2005, ikeda2008 (device);
      scheike2023, solano2022, ichinose2025, ghemes2024 (recent fabrication trend);
      gofee2017, hamamoto2023 (the GOFEE/LCB method choice). -->
@@ -101,52 +111,14 @@ two-dimensional, disordered-like configuration and the island the three-dimensio
 one, it suggests that boron should lower the energy of the flat configuration relative to the island.
 Whether it does so, and by how much, is a question for calculation.
 
-In this work, we address it by comparing the energies of the two configurations for a single host,
-with and without an added metalloid. The phase-controlled design follows from the nature of the two
-configurations themselves: the flat film is a single, well-defined geometry, whereas the dewetted
-family is not a single structure but a continuous range of cluster sizes and heights, so an
-exhaustive calculation of its potential-energy surface is not the goal. We therefore do not attempt
-one; instead the search is designed to resolve the two phases that the wetting question is about —
-the flat, well-wetting film and the dewetted island — and to compare their relative energies under a
-controlled change of composition. This search is a surrogate-driven global optimisation
-\cite{gofee2017,hamamoto2023} whose acquisition rule, the lower confidence bound, LCB = E − κσ,
-selects candidates by trading their predicted energy E against their predicted uncertainty σ. That
-rule is precisely what makes a biased exploration effective: although the search is deliberately
-seeded from the flat reference film, the bound keeps favouring low-energy regions while continuing
-to probe regions not yet sampled, so it is not confined to the flat configuration and can still be
-guided toward the lower island ground state. Each model is run from a number of independent random
-seeds.
+In this work, by implementing a surrogate-driven active-learning search with a deliberately biased
+exploration strategy \cite{gofee2017,hamamoto2023}, we categorize the potential-energy surface of Fe
+on MgO(001) into its two growth modes — the flat, well-wetting film and the dewetted island — for the
+same host with and without added boron, and quantify how the added element shifts the relative energy
+of the flat mode.
 
-The two models are a single Fe layer on a single MgO(001) layer, about one monolayer thick — 25 metal
-atoms on a 5 × 5 substrate cell — built on the computed Fe lattice constant with the substrate
-compressed to match it; the second model differs only by three boron atoms in the film, so that the
-comparison isolates the added species. The sampled landscape is read as a map of the two phases —
-film flatness against relative energy — and the electronic-structure origin of what the search finds,
-together with the sensitivity of the result to the search's method parameters and to the lattice
-constraint, is reported in the Supplementary Material. The structures compared are not converged
-minima, and the comparison is a trend obtained within a fixed lattice model; the bounds this places on
-the interpretation are set out with the methods.
-
-Both models answer the question of which configuration is preferred in the same way. The
-lowest-energy structure found is an island in each, with a vertical span of about 3.7 Å — a result
-that runs against the direction of the search's bias, since every search began from a flat reference
-film and was perturbed only at small scale from it in its early iterations. The flat film is
-nevertheless a distinct basin of the landscape rather than the high-span tail of a single minimum,
-lying 0.1888 eV/atom above the island for Fe/MgO and 0.1493 eV/atom above it for Fe-B/MgO. Adding
-boron therefore lowers the relative energy of the flat, wetting configuration by 0.040 eV/atom, a
-21 % reduction of the flat–island separation. A search-level two-sided permutation test quantifies
-the confidence in this shift. Each of the 19 independent searches contributes its own lowest
-flat-state energy — 13 from the boron-free model and 6 from the boron-containing one — and the test
-asks how often a random reshuffling of those 19 values into two groups of 13 and 6 would, by chance
-alone, produce a shift at least as large as the one observed. The answer is p = 0.0444: if boron had
-no effect, a shift this large would still appear by chance in about 4.4 % of reshufflings. The test
-is exact, calculated over all 27 132 possible reshufflings rather than sampled, so it is significant
-at the 5 % level and its resolution floor is p = 3.7 × 10⁻⁵ — the conclusion is not an artefact of
-too few searches. The effect is not interfacial: within the low-energy window, only one of the 72
-boron-containing structures has a boron–oxygen contact, so boron acts inside the metal film. What
-boron does not do is displace the island as the ground state: the ordered, three-dimensional
-configuration remains the more stable of the two in both models.
-
-Boron insertion lowers the relative energy of the flat metal-film wetting state of Fe on MgO(001),
-moving the flat, well-wetting configuration closer to the island ground state without displacing it —
-relevant to interface flatness in MgO-based magnetic tunnel junction stacks.
+This paper is organized as follows. In Sec. II, we present the active-learning search, the two
+interface models, and the metrics used to separate the two growth modes. In Sec. III, we first
+establish the two-phase landscape and the island ground state, and then report the effect of boron on
+the flat–island separation. In Sec. IV, we discuss the origin of the island ground state and the role
+of the added element. We summarize our work in Sec. V.

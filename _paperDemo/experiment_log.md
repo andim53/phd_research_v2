@@ -1727,3 +1727,38 @@ no backticks/Co-host terms; body ~1420 words.
 **Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v7. `AGENTS.md` — Phase E
 entry to v7. Bibliography unchanged.
 
+## 2026-09-18 — `04_introduction.md` v8: the what-we-do passage in the example style (achievement + roadmap)
+
+The scientist judged the "In this work, we ..." block redundant (it re-explained the method, the
+models and the findings already given in Methods §1 / Results §2) and supplied an example of the
+preferred manner: one achievement sentence ("In this work, by implementing ... we ... enabling ...")
+followed by a roadmap ("This paper is organized as follows. In Sec. II ..."). The scientist asked me
+to clarify that intent and confirmed three decisions:
+
+- **Content stays within the frozen claims.** The example's "partition function sampling /
+  temperature-dependent probability of each growth motif" framing contradicts `CLAIMS.md` (an
+  *exploration* density, not a thermodynamic DoS; basin weights are not physical; MT-6 withdrawn), so
+  the achievement sentence was written neutrally — "we categorize the potential-energy surface of Fe
+  on MgO(001) into its two growth modes ... and quantify how the added element shifts the relative
+  energy of the flat mode" — no probabilities, no thermodynamic quantities.
+- **Section numbering.** The roadmap uses final-manuscript order — **II = Methods, III = Results,
+  IV = Discussion, V = Conclusion** — not the draft's internal §1/§2/§3 (drafting-file order). This
+  must be reconciled at the LaTeX port (recorded).
+- **Method mention.** GOFEE stays as a single clause ("a surrogate-driven active-learning search with
+  a deliberately biased exploration strategy"); the LCB equation and the model description are dropped
+  from the introduction and remain in Methods §1.
+
+**What v8 does.** The verbose ¶5a (phase-controlled + GOFEE/LCB), ¶5c (models/map/SI/caveat), ¶6
+(findings + p-value) and ¶7 (closing contribution sentence) are replaced by two short paragraphs: the
+achievement sentence and the roadmap. The detailed findings (island ground state, 0.040 eV/atom shift,
+p = 0.0444) now live only in Results §2, and the closing contribution sentence belongs to the
+Conclusion. Body falls to ~840 words. No number was removed from the frozen list — the numbers simply
+stopped being restated in the introduction — so `CLAIMS.md` is not bumped.
+
+**Verification.** No orphans, all `\cite{}` keys resolve; no backticks, paths, identifiers or Co-host
+terms in the body; `gofee2017` / `hamamoto2023` remain cited (in the achievement sentence).
+
+**Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v8, with a note that the
+roadmap's final-manuscript numbering must be reconciled at the port. `AGENTS.md` — Phase E entry to
+v8. Bibliography unchanged.
+
