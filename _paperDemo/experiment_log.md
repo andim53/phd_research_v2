@@ -1022,3 +1022,78 @@ Its status flag is **left for the scientist** — not changed here.
 
 Probes added earlier and still used here: `probe_stop16_bias.py`, `probe_family_seeds.py`,
 `probe_truncation_effect.py`, `probe_truncated_seed_effect.py`.
+
+## Dropped runs: iteration at which each stops; strain-convention split found (2026-09-17)
+
+**Scientist's question:** *"the dropped CoFeB, in what iterations does it stop."*
+
+### Answer
+
+| dropped run | last recorded iteration | structures | at the analysis floor (it >= 10) |
+|---|---|---|---|
+| **`fecobmgo/seed_3`** (the CoFe-B one) | **73** | 66, one per iteration over 1-73 | **57** |
+| `fecomgo/seed_4` | **10** | 10 | **1** |
+| `femgo/stop_16` | 37 | 36 | 27 |
+| `febmgo/seed_6` | no data | 0 | 0 |
+
+`fecobmgo/seed_3` has 7 iteration numbers absent inside its 1-73 range (38, 44, 47, 54, 55, 62, 64).
+Those gaps are **not** evidence of anything: completed runs have gaps too (`femgo/seed_12` 3 gaps,
+`febmgo/seed_3` 3, `fecomgo/seed_0` 10). The truncation is purely that the maximum iteration is 73,
+27 short of the budget. Neither dropped run directory retains a crash or timeout log — only
+`0_result/latt_log.md` and the database — so the local record does not say *why* they stopped.
+
+The CoFe-B truncation is the consequential one: 57 structures against 1 for the Fe-Co one.
+
+### Finding (from reading those latt_logs): the four models are NOT on the same cell
+
+`fecobmgo/seed_3/0_result/latt_log.md` records `strain=4.90%`, not the 3.77% the paper states.
+It is not a typo. The build files carry an explicit strain switch, with the comment
+*"Control Strain / 0.0 = Fe lattice / 1.0 = Fe stretch to fit MgO"*:
+
+    a_custom = a_own + interpolation_factor * (a_mgo_matched - a_own)
+
+| model | own lattice constant | `interpolation_factor` | actual cell in-plane | strained component |
+|---|---|---|---|---|
+| Fe/MgO | `a_fe = 2.870190` (`femgo/main.py:41`) | absent (== 0) | **2.87000** | substrate compressed 3.6 %; film unstrained |
+| Fe-B/MgO | same | **0** (`febmgo/main.py:48`) | **2.87019** | substrate compressed 3.6 %; film unstrained |
+| Fe-Co/MgO | `a_fe = 2.839177` (`fecomgo/main.py:38`) | **1** (`:53`) | **2.97833** | **film stretched 4.9 %**; substrate at bulk |
+| Fe-Co-B/MgO | `a_feco = 2.839177` (`fecobmgo/main.py:41`) | **1** (`:56`) | **2.97833** | **film stretched 4.9 %**; substrate at bulk |
+
+Verified against the cells actually stored in the databases (not only the logs):
+`femgo` cell a = 14.35000 (= 5 x 2.870), `febmgo` 14.35095 (= 5 x 2.87019),
+`fecomgo` and `fecobmgo` 14.89167 (= 5 x 2.978334 = 5 x a_MgO/sqrt2).
+
+So the Co-containing models put the mismatch on the **film** (stretched 4.9 %) with the substrate at
+bulk, and the Fe models put it on the **substrate** (compressed 3.6 %) with the film unstrained.
+`data/latt_conc/` already contains a strain sweep along this axis
+(`0_latt_0` = 0.0, `1_latt_1` = 0.5, `2_latt_075`, `3_latt_025`, `4_latt_100` = 1).
+
+### Consequences if the paper is left as-is
+
+1. **Methods S1.1** states one convention for all four models ("the MgO in-plane parameter is forced
+   to 2.870 A ... the mismatch is accommodated by the substrate, not by the film"). True for Fe and
+   Fe-B; the reverse holds for Fe-Co and Fe-Co-B.
+2. **Discussion S3.1** says "the Fe film sits at its own equilibrium lattice constant and is not
+   strained in-plane, so there is no film strain for the island to relieve". Unstrained applies only
+   to the Fe models; the Co models have 4.9 % film strain available to relieve.
+3. **The 2x2 comparison** (MT-3/MT-4/MT-5) compares the Fe host at 3.77 % mismatch with the strain on
+   the *substrate* against the Co host at 4.90 % with the strain on the *film*. The central
+   cross-host claim ("boron acts the same in both hosts") therefore confounds boron with the strain
+   convention.
+
+### Status
+
+**No section, CLAIMS entry, table or figure was changed.** This is a claims-level decision and was
+put to the scientist, whose answer did not come back; it is recorded here and in `paper_status.md`
+as OPEN so it cannot be lost. Options put to the scientist: (a) state both conventions explicitly
+plus a Table 1 column and treat the convention as a stated confound; (b) re-run the two Co models at
+`interpolation_factor = 0` so the series is uniform (needs HPC; invalidates the Co numbers);
+(c) restrict the cross-host claim until unified; (d) record only.
+
+### Non-issue checked and cleared
+
+`dist_z_fe2o = 0.5  #2.3` appears in all four `main.py` files and looks like a contradiction of
+Methods S1.3. It is a *different* quantity: it is passed as `hetero_slab_dist` to
+`HeteroStructRandomize` (the initial deposition-slab offset), whereas the Fe-O construction distance
+is `build_mgo_stack(dist_fe2o=2.3)` (`femgo/scripts/build_mgo_stack.py:6`), which `main.py` calls
+without overriding. S1.3's claim stands. The naming is a trap for future readers.

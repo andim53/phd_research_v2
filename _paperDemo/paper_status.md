@@ -66,6 +66,17 @@ significance (0.74 → 0.008), fixing the test lowered it again (0.008 → 0.092
 
 ### OPEN — decisions for the scientist
 
+- **STRAIN CONVENTION DIFFERS BETWEEN THE MODEL PAIRS (found 2026-09-17, verified).** The Fe and Fe-B
+  models sit on `a_Fe = 2.87019 Å` (film unstrained, **substrate** compressed 3.6 %), while the Fe-Co
+  and Fe-Co-B models sit on `a_MgO/√2 = 2.97833 Å` (substrate at bulk, **film stretched 4.9 %**) —
+  `interpolation_factor` = 0 vs 1 in the build files, confirmed against the cells stored in the
+  databases. Methods §1.1 and Discussion §3.1 currently state one convention for all four models, and
+  the 2×2 cross-host comparison confounds boron with the strain convention. `data/latt_conc/` already
+  holds a sweep along this axis. **Nothing changed** — options put to the scientist: (a) state both
+  conventions + Table 1 column + stated confound; (b) re-run the two Co models at factor 0 (needs
+  HPC, invalidates the Co numbers); (c) restrict the cross-host claim until unified; (d) record only.
+  Full evidence in `experiment_log.md`, "Dropped runs: iteration at which each stops".
+
 - **MT-4's status.** It is still flagged CHALLENGED, but the character has changed: p = 0.092 with a
   +0.048 eV/atom median shift and 92 % same-sign replicates is **under-powered, not absent**, and
   the test cannot reach significance on 4 vs 3 searches. Re-wording or un-flagging it is **not**
