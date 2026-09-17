@@ -1706,3 +1706,24 @@ v5 (the lean hook) is retained in the changelog only; the section body is back t
 **Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v6. `AGENTS.md` — Phase E
 entry to v6. No bibliography change.
 
+## 2026-09-18 — `04_introduction.md` v7: GOFEE passage merged and trimmed
+
+The scientist judged the GOFEE explanation too detailed and asked for it to be combined into the
+what-we-do paragraph, with the method minimised and the emphasis placed on why the lower confidence
+bound is effective for a *biased* exploration.
+
+**What v7 does.** The phase-controlled paragraph and the GOFEE paragraph are merged into one. GOFEE is
+now a single clause — "a surrogate-driven global optimisation \cite{gofee2017,hamamoto2023}" — and the
+LCB (LCB = E − κσ) is kept only to make the biased-exploration point: seeded from the flat reference
+film, the bound keeps favouring low-energy regions while continuing to probe unsampled regions, so the
+search is not confined to the flat configuration and can still be guided toward the lower island. The
+detailed GOFEE mechanics (the Gaussian-process surrogate trained on the fly, κ = 2) are gone from the
+introduction; they remain in Methods §1.2.
+
+**Unchanged.** The two v5 refinements ("enumerate" → "calculated"; "In this work, we ..."), the
+plain-terms p-value meaning, the closing contribution sentence, all numbers and citations. No orphan,
+no backticks/Co-host terms; body ~1420 words.
+
+**Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v7. `AGENTS.md` — Phase E
+entry to v7. Bibliography unchanged.
+

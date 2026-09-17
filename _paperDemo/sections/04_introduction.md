@@ -1,4 +1,10 @@
 # 04 — Introduction
+     v7 (2026-09-18): the GOFEE passage is merged into the what-we-do paragraph and trimmed — the
+     method is now a single clause ("a surrogate-driven global optimisation") and the emphasis is on
+     why the lower confidence bound is effective for a *biased* exploration (the search is seeded
+     from the flat reference, yet the LCB keeps favouring low-energy and unsampled regions, so it can
+     still reach the island). The GOFEE mechanics (surrogate-driven search, LCB acquisition, κ = 2)
+     remain in Methods §1.2. No number or claim changed.
      v6 (2026-09-18): reverted to the full, step-by-step story (the v1–v4 style, addressing recent
      advances), per the scientist's preference, keeping the two refinements from v5: "enumerate" is
      replaced by "calculated" throughout (the exact statistic is "calculated over all 27 132 possible
@@ -28,7 +34,7 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v6 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v7 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      Every number here is one already frozen in the approved Results: the two flat-basin minima,
      the shift between them, the island spans, the boron–oxygen window count and the exact
@@ -97,26 +103,19 @@ Whether it does so, and by how much, is a question for calculation.
 
 In this work, we address it by comparing the energies of the two configurations for a single host,
 with and without an added metalloid. The phase-controlled design follows from the nature of the two
-configurations themselves. The flat film is a single, well-defined geometry, but the dewetted family
-is not a single structure: it spans a continuous range of cluster sizes and heights rather than one
-low-energy geometry, so an exhaustive calculation of its potential-energy surface is not the goal. We
-therefore do not attempt one; instead the search is designed to resolve the two phases that the
-wetting question is about — the flat, well-wetting film and the dewetted island — and to compare
-their relative energies under a controlled change of composition.
-
-We realise this with GOFEE, global optimisation with first-principles energy expressions
-\cite{gofee2017}, a surrogate-driven global search in which a Gaussian-process model of the energy
-landscape, trained on the fly from single-point DFT energies, decides which candidate structures are
-worth evaluating with the full calculation \cite{hamamoto2023}. The selection rule is the lower
-confidence bound, LCB(r) = E(r) − κσ(r): a candidate r is chosen by minimising its predicted energy
-E(r) penalised by its predicted uncertainty σ(r), with κ a fixed constant (κ = 2 here). The two
-terms pull in opposite directions — E(r) favours regions already found to be low in energy, while
-the −κσ(r) term favours regions not yet sampled — so the bound keeps probing the uncertain parts of
-the landscape even after a low basin has been located. That is what lets the search be seeded from a
-flat reference film and still reach the island: the flat basin is populated from the outset, but the
-acquisition continues to explore the territory where a genuinely lower configuration may lie, so the
-search is guided toward the global minimum rather than confined to the reference configuration. Each
-model is run from a number of independent random seeds.
+configurations themselves: the flat film is a single, well-defined geometry, whereas the dewetted
+family is not a single structure but a continuous range of cluster sizes and heights, so an
+exhaustive calculation of its potential-energy surface is not the goal. We therefore do not attempt
+one; instead the search is designed to resolve the two phases that the wetting question is about —
+the flat, well-wetting film and the dewetted island — and to compare their relative energies under a
+controlled change of composition. This search is a surrogate-driven global optimisation
+\cite{gofee2017,hamamoto2023} whose acquisition rule, the lower confidence bound, LCB = E − κσ,
+selects candidates by trading their predicted energy E against their predicted uncertainty σ. That
+rule is precisely what makes a biased exploration effective: although the search is deliberately
+seeded from the flat reference film, the bound keeps favouring low-energy regions while continuing
+to probe regions not yet sampled, so it is not confined to the flat configuration and can still be
+guided toward the lower island ground state. Each model is run from a number of independent random
+seeds.
 
 The two models are a single Fe layer on a single MgO(001) layer, about one monolayer thick — 25 metal
 atoms on a 5 × 5 substrate cell — built on the computed Fe lattice constant with the substrate

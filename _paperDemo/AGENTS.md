@@ -157,15 +157,17 @@ drafting or revising anything. Summary as of 2026-09-18:
     authorised the p-explanation edit) → **awaiting re-approval (B3)**.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains →
     **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; **the gate is now open.**
-  - `04_introduction.md` **v6** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
+  - `04_introduction.md` **v7** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
     floats. v1 closed on the frozen contribution sentence; v2 added the recent MTJ-fabrication trend;
     v3 added the phase-controlled / GOFEE-with-LCB justification; v4 explained the p-value in plain
-    terms; v5 was a lean hook-style rewrite; **v6 restores the full step-by-step story** (v1–v4 style)
-    at the scientist's preference, keeping the two v5 refinements ("enumerate" → "calculated"; "In
-    this work, we ..."). Cites device-side, fabrication-side and GOFEE/LCB keys; the device material
-    is referred to generically and no Co host is discussed. Items for the scientist, recorded in
-    `paper_status.md`: **C7** (confusion-principle framing), **E3** (three device references), **E4**
-    (four recent-fabrication references) and **E5** (the GOFEE/LCB reference) — each accept or drop.
+    terms; v5 was a lean hook-style rewrite; **v6 restored the full step-by-step story** (keeping
+    "enumerate" → "calculated" and "In this work, we ..."); **v7 merged the GOFEE passage into the
+    what-we-do paragraph and trimmed it**, so the method is one clause and the emphasis is why the
+    lower confidence bound is effective for a biased exploration. Cites device-side, fabrication-side
+    and GOFEE/LCB keys; the device material is referred to generically and no Co host is discussed.
+    Items for the scientist, recorded in `paper_status.md`: **C7** (confusion-principle framing),
+    **E3** (three device references), **E4** (four recent-fabrication references) and **E5** (the
+    GOFEE/LCB reference) — each accept or drop.
   - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
       budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
       MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. **Awaiting review.**
