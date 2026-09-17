@@ -13,3 +13,15 @@
 !_archive/cofe/**.json
 !_archive/cofe/**.py
 !_archive/cofe/**.png
+
+# LaTeX build artifacts (E2 port). The sources (paper.tex, SI.tex, latex/*.tex) and the compiled
+# PDFs are tracked, as with the other generated-but-record artifacts (figures/*.png, analysis/*.csv);
+# only the intermediate files are ignored.
+*.aux
+*.blg
+*.bbl
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.log

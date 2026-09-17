@@ -1961,3 +1961,42 @@ six sections are now approved** — `01_methods.md` v6, `02_results.md` v6, `03_
 `04_introduction.md` v11, `SI.md` v10, `05_conclusion.md` v2, `06_abstract.md` v1. The markdown-first
 phase is complete; the next step is the `paper.tex` port (E2). Bibliography unchanged.
 
+## 2026-09-18 — E2: LaTeX port, first compile (`paper.tex` + `SI.tex`)
+
+**Setup.** No LaTeX toolchain was present on the machine, so **tectonic 0.17.0** was installed to
+`~/.local/bin/tectonic` (single static binary, downloads packages on demand). The port uses the
+skill's venue-agnostic standalone preamble (`article`, twocolumn, `natbib`, `siunitx`, `booktabs`,
+`graphicx`, `tikz`) because the target journal is not yet fixed.
+
+**Files created.**
+- `paper.tex` — main manuscript: title block, Abstract, `\input`s of the six sections, bibliography.
+- `latex/abstract.tex`, `latex/introduction.tex`, `latex/methods.tex`, `latex/results.tex`,
+  `latex/discussion.tex`, `latex/conclusion.tex` — the six approved sections, one file each.
+- `SI.tex` — supplementary document, sections S1–S6, its own `S`-numbering, own bibliography.
+- Compiled outputs: `paper.pdf` (11 pp), `SI.pdf` (7 pp).
+
+**Port decisions.**
+- **Markdown → LaTeX:** pipe tables → `booktabs`; `**bold**` → `\textbf{}`; bullet lists →
+  `itemize`; unicodes (ΔZ, κ, ≤, ≈, ±, −, ×, Å, √, Γ, ⟨⟩, superscripts) → LaTeX macros/math.
+- **Cross-references:** the markdown `§1.x/§2.x/§3.x` (and roadmap's II/III/IV/V) were converted to
+  `\label`/`\ref` pairs, so the draft's internal numbering now resolves automatically. Main-text
+  §-refs to the SI are written as “Sec. S3 of the Supplementary Material” (separate document).
+- **Figure 1** (the mermaid flowchart, no raster source) was re-drawn **as TikZ** inside
+  `latex/methods.tex` — vector, self-contained, no mermaid/chromium dependency.
+- **Figures 2–3** reference `figures/pes_2_systems.png` and `figures/flat_state_summary.png`; the
+  nine SI figures reference their `figures/*.png` (S1–S9 mapping verified against the captions).
+- **Citations:** `\cite{}` keys carried over byte-for-byte; `\bibliographystyle{unsrtnat}` +
+  `\bibliography{references}`. All keys resolve (no `??` in either PDF).
+
+**Compile result.** Both PDFs build with **no errors**; remaining warnings are underfull/overfull
+hboxes only. The wide tables were moved to `table*` (full width) with `\small`/`\footnotesize` to
+clear the initial severe overfulls (Table 3 was 210 pt over in-column). Section counts confirmed by
+text extraction: Fig. 1–3, Tables 1–4 (main); Fig. S1–S9, Tables S1–S6 (SI); sections 1–5 + S1–S6.
+
+**Open.** `[TITLE]` and the author block are placeholders — the scientist has not fixed the title;
+the target-venue class is not chosen (swap it in without touching content or keys). `.gitignore`
+gained the LaTeX build-artifact rules (`*.aux/.blg/.bbl/.out/.fls/.sync*`), while the sources and the
+compiled PDFs stay tracked.
+
+**Doc sync.** `paper_status.md` — drafting-table E2 row + "Next step". `AGENTS.md` — Phase E / E2
+entry. Bibliography unchanged.

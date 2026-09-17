@@ -147,7 +147,7 @@ drafting or revising anything. Summary as of 2026-09-18:
   key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
   `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
   `torelli2009` are closed access and cited from verified abstracts only.
-- **Phase E: DONE — all six sections APPROVED 2026-09-18; next is the `paper.tex` port (E2).**
+- **Phase E: DONE — all six sections APPROVED 2026-09-18; the LaTeX port (E2) is DONE (first compile).**
   - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**.
   - `02_results.md` **v6** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
@@ -167,14 +167,22 @@ drafting or revising anything. Summary as of 2026-09-18:
     remaining caveats from the section text (the caveats stay authoritative in `CLAIMS.md` paired
     caveats + Limitations and `paper_status.md`).
   - `05_conclusion.md` **v2** — **APPROVED 2026-09-18** (B5). Final-manuscript section V. v1 was
-        three paragraphs (findings → why it matters → scope and future work); v2 removed the third
-        paragraph (scope/future-work) at the scientist's instruction, so the conclusion ends on the
-        MTJ-relevance paragraph. Mirrors the frozen contribution sentence and the approved
-        Results/Discussion; cites `greer1993`; no new claim. `06_abstract.md` **v1** — **APPROVED
-                2026-09-18** (B6). Final-manuscript Abstract, written last as a summary of the finished
-                argument; ~165 words; mirrors the frozen contribution sentence and the approved sections; uses
-                the exact p = 0.0444; no citations, no code identifiers, no claim outside the frozen list.
-                **All six sections are approved — the `paper.tex` port (E2) can begin.**
+    three paragraphs (findings → why it matters → scope and future work); v2 removed the third
+    paragraph (scope/future-work), so the conclusion ends on the MTJ-relevance paragraph. Mirrors
+    the frozen contribution sentence; cites `greer1993`; no new claim.
+  - `06_abstract.md` **v1** — **APPROVED 2026-09-18** (B6). Final-manuscript Abstract, ~165 words;
+    written last as a summary of the finished argument; mirrors the frozen contribution sentence;
+    no citations, no code identifiers, no claim outside the frozen list.
+  - **E2 port to LaTeX — DONE 2026-09-18 (first compile).** All six sections ported in final order:
+    `paper.tex` (Abstract, I Introduction, II Methods, III Results, IV Discussion, V Conclusion)
+    `\input`s `latex/abstract.tex`, `latex/introduction.tex`, `latex/methods.tex`,
+    `latex/results.tex`, `latex/discussion.tex`, `latex/conclusion.tex`; the Supplementary is the
+    separate `SI.tex` (S1–S6). Compiled with **tectonic 0.17.0** → `paper.pdf` (11 pp) and `SI.pdf`
+    (7 pp), no errors. Markdown pipe tables → `booktabs`; the wide tables use `table*`; the mermaid
+    flowchart of Fig. 1 is re-drawn as TikZ; `\cite{}` keys carried over byte-for-byte (all resolve);
+    unicodes → LaTeX macros. **Open:** `[TITLE]`/`[AUTHOR]` are placeholders and the venue class is
+    not fixed (uses the skill's standalone preamble — swap in the journal class when the venue is
+    chosen; the content and keys need no change).
   - **Editing an approved section voids its approval** and requires re-review — that is how the
     earlier `01_methods.md` v3 approval was lost.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on

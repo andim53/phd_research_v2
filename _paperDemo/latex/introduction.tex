@@ -1,0 +1,87 @@
+% Ported from sections/04_introduction.md (v11, APPROVED 2026-09-18).
+% Continuous prose, no subsections. Final-manuscript Sec.~I.
+\section{Introduction}
+\label{sec:intro}
+
+MgO-based magnetic tunnel junctions reach very large tunnel magnetoresistance at room temperature
+when the barrier is crystalline and the metal electrodes are matched to it in-plane
+\cite{yuasa2004,parkin2004}. The transport calculations that account for the effect were carried out
+for an ideal Fe$|$MgO$|$Fe(001) interface, in which a flat metal layer sits directly above the
+substrate oxygen \cite{butler2001}. Achieving those values in practice is a question of realising
+that interface closely enough: the high magnetoresistance is obtained when the barrier is
+(001)-oriented and the metal film flat and continuous \cite{yuasa2004}, and the barrier's
+orientation and stress relaxation are themselves sensitive to how the metal is deposited and
+annealed \cite{djayaprawira2005,ikeda2008}. The structural quality of the metal/oxide interface is
+therefore part of the specification of the device rather than an incidental detail.
+
+Two recent trends in junction fabrication have only sharpened that point. The first is the push on
+the tunnel magnetoresistance itself: after a decade of stagnation at the 604\,\% reported in 2008
+for junctions with boron-alloy electrodes \cite{ikeda2008}, epitaxial junctions now reach a record
+631\,\% at room temperature (1143\,\% at 10~K), and the gain comes explicitly from the
+interface---from tuning the crystallographic orientation and the oxygen content of the MgO barrier
+through ultrathin metal insertions at the metal/oxide boundary \cite{scheike2023}. The second is the
+move to perpendicularly magnetised junctions for dense, non-volatile memory, in which the
+metal/oxide interface is itself a functional layer: the Fe/MgO interface carries a large
+perpendicular surface anisotropy, whose strength is traced to the hybridisation of interfacial iron
+and oxygen states \cite{solano2022}, and sub-nanometre metal films grown on the barrier are
+engineered for the perpendicular anisotropy and the low magnetic damping that low-power switching
+requires \cite{ichinose2025}. Both trends converge on the same requirement---a metal film that is
+flat, epitaxial and well-wetting on the crystalline barrier---and, in practice, on layer-by-layer
+control of the roughness and thickness of each film in the stack \cite{ghemes2024}.
+
+The flat, lattice-matched film assumed in such interface models is not, however, the configuration
+that a metal film necessarily adopts when it is deposited on MgO(001). At the monolayer coverages
+relevant to a thin electrode, growth experiments find the film dewetting into three-dimensional
+islands: He-atom scattering records three-dimensional island growth of Fe on MgO(001) at room
+temperature, suppressed only when the film is deposited at 140~K \cite{fahsold2000}; scanning
+tunnelling microscopy combined with X-ray magnetic circular dichroism finds sub-nanometre Fe growing
+three-dimensionally, with a two-dimensional growth mode reported only above about 6.5 monolayers
+\cite{torelli2009}; and grazing-incidence small-angle X-ray scattering on five monolayers likewise
+identifies Volmer--Weber growth with spherical islands \cite{reitinger2007}. A flat, pseudomorphic
+monolayer is obtained instead by slow deposition onto a cleaved, oxygen-annealed crystal
+\cite{urano1988}. The islanding tendency survives even into the most controlled modern fabrication:
+grain-to-grain epitaxial growth of a sub-nanometre ferromagnetic layer on a polycrystalline
+MgO(001) barrier on 300\,mm wafers must be performed at cryogenic temperature (100~K), because
+room-temperature deposition lets the metal nucleate as islands and break the film's continuity
+\cite{ichinose2025}. Two structural outcomes thus compete at this coverage---a flat, well-wetting
+film and a dewetted island---and the growth experiments constrain their kinetics rather than their
+relative energies, while interface models assume the flat geometry by construction. What is missing
+is a comparison of the two configurations' energies for one and the same interface, and an answer to
+how that comparison responds to a change in the film's composition.
+
+The composition is not arbitrary. The metal electrodes of the highest-magnetoresistance MgO
+junctions are boron-bearing and amorphous as deposited, which is also the condition under which the
+MgO barrier grows (001)-textured \cite{djayaprawira2005}. Boron is a glass-forming addition, and
+added species are in general understood to stabilise disordered configurations at the expense of
+crystalline ones, in the core of the confusion principle of metallic-glass formation
+\cite{greer1993}. Applied to this interface, where the flat film is the two-dimensional,
+disordered-like configuration and the island the three-dimensional, ordered-like one, it suggests
+that boron should lower the energy of the flat configuration relative to the island. Whether it does
+so, and by how much, is a question for calculation.
+
+Testing this idea directly is not a single-calculation question. The flat configuration is one
+well-defined structure, but the ordered island it competes with is not: the dewetted film comprises
+a large family of distinct structures with many local minima, so no one geometry can represent it,
+and the two phases cannot be compared by relaxing a single candidate of each.
+The confusion-principle question---whether an added element lowers the disordered configuration
+relative to the ordered one---is therefore about the landscape as a whole, and one that is expensive
+to answer, because exploring it with density-functional theory alone would require evaluating far too
+many structures. Two features of the problem make it tractable. First, the question is specifically
+about two phases---the flat, well-wetting film and the dewetted island---so rather than surveying
+every configuration we restrict the exploration to these two targets, a deliberately biased
+strategy. Second, because the search must still sample many candidates to populate both phases, we
+guide it with a surrogate model, so that the expensive density-functional evaluations are spent only
+where they are most informative.
+
+In this work, by implementing a surrogate-driven active-learning search with a deliberately biased
+exploration strategy \cite{gofee2017,hamamoto2023}, we categorize the potential-energy surface of Fe
+on MgO(001) into its two growth modes---the flat, well-wetting film and the dewetted island---for
+the same host with and without added boron, and quantify how the added element shifts the relative
+energy of the flat mode.
+
+This paper is organized as follows. In Sec.~\ref{sec:methods}, we present the active-learning
+search, the two interface models, and the metrics used to separate the two growth modes. In
+Sec.~\ref{sec:results}, we first establish the two-phase landscape and the island ground state, and
+then report the effect of boron on the flat--island separation. In Sec.~\ref{sec:discussion}, we
+discuss the origin of the island ground state and the role of the added element. We summarize our
+work in Sec.~\ref{sec:conclusion}.

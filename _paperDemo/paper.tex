@@ -1,0 +1,68 @@
+% =====================================================================================
+%  paper.tex — Fe/MgO wetting paper, ported from the approved markdown sections (E2).
+%
+%  Source of truth (all APPROVED 2026-09-18):
+%     sections/06_abstract.md  ->  abstract.tex
+%     sections/04_introduction.md -> introduction.tex
+%     sections/01_methods.md   ->  methods.tex
+%     sections/02_results.md   ->  results.tex
+%     sections/03_discussion.md -> discussion.tex
+%     sections/05_conclusion.md -> conclusion.tex
+%     sections/SI.md           ->  SI.tex   (separate supplementary document)
+%
+%  Port rules (AGENTS.md, Phase E2):
+%    * \cite{} keys are carried over byte-for-byte from the markdown; no re-keying.
+%    * Markdown pipe tables -> booktabs tabular; **bold** -> \textbf{}.
+%    * Unicodes (ΔZ, eV/atom, κ, ≥, ×, −) -> LaTeX macros/math.
+%    * The mermaid flowchart of Fig. 1 is re-drawn as TikZ.
+%    * Figures 2 and 3 reference figures/*.png (300 dpi, produced by scripts/).
+%
+%  Standalone (venue-agnostic) preamble: swap in the target journal's class when the
+%  venue is fixed — the \cite keys and content need no change.
+%
+%  NOTE: [TITLE] and the author block are placeholders — not yet fixed by the scientist.
+%  NOTE: the markdown §1/§2/§3 numbering maps onto the final-manuscript II/III/IV
+%        numbering used by the Introduction's roadmap.
+% =====================================================================================
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,shapes.geometric}
+\usepackage{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+
+\graphicspath{{figures/}}
+
+% Recurring shorthand.
+\newcommand{\dZ}{\ensuremath{\Delta Z}}
+\newcommand{\dEN}{\ensuremath{\Delta E/N}}
+\newcommand{\eVA}{\ensuremath{\text{eV/atom}}}
+\newcommand{\evpa}{\ensuremath{\text{eV/atom}}}
+
+\title{[TITLE]\\[0.4em]
+  \large Effect of boron insertion on metal-film wetting of Fe on MgO}
+\author{[AUTHOR]}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{latex/abstract}
+\end{abstract}
+
+\input{latex/introduction}
+\input{latex/methods}
+\input{latex/results}
+\input{latex/discussion}
+\input{latex/conclusion}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

@@ -299,7 +299,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `04_introduction.md` | **v11** | **APPROVED 2026-09-18** (B2). v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing is accepted by this approval (**C7**). |
 | `05_conclusion.md` | **v2** | **APPROVED 2026-09-18** (B5). v1 was the first draft (three paragraphs); v2 removed the third paragraph (scope and future work) at the scientist's instruction, so the conclusion ends on the MTJ-relevance paragraph. Final-manuscript section V (matches the Introduction's roadmap). Cites `greer1993`. No new claim. |
 | `06_abstract.md` | **v1** | **APPROVED 2026-09-18** (B6). Written last, as a summary of the finished argument. ~165 words; mirrors the frozen contribution sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations, no code identifiers, no claim outside the frozen list. Final-manuscript Abstract (first element of the paper). |
-| E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
+| E2 port to `paper.tex` | **v1** | **DONE 2026-09-18 (first compile).** All six approved sections ported to LaTeX in final-manuscript order — `paper.tex` (Abstract, I Introduction, II Methods, III Results, IV Discussion, V Conclusion) + `latex/*.tex` + `SI.tex` (Supplementary, S1–S6). Compiled with **tectonic 0.17.0** → `paper.pdf` (11 pp) and `SI.pdf` (7 pp), no errors. Floats: Figure 1 (misc UML/TikZ redrawn), Figures 2–3 (PNG), Tables 1–4; SI Figures S1–S9, Tables S1–S6. `\cite{}` keys carried over byte-for-byte; all resolve. **Open:** title and author block are placeholders (`[TITLE]`/`[AUTHOR]`); venue class not yet fixed (uses the skill's standalone preamble). |
 
 **Approvals (2026-09-18).** All six sections are approved: `01_methods.md` v6 and `03_discussion.md`
 v5 approved as-is earlier the same day; `02_results.md` v6, `04_introduction.md` v11, `SI.md` v10,
@@ -663,12 +663,11 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`06_abstract.md` v1 is APPROVED (B6) — all six sections are approved.** The markdown-first phase
-is complete: `01_methods.md` v6, `03_discussion.md` v5, `02_results.md` v6, `04_introduction.md` v11,
-`SI.md` v10, `05_conclusion.md` v2 and `06_abstract.md` v1 are all approved. The next step is the
-**`paper.tex` port (E2)** — convert the approved sections into a single LaTeX manuscript in final
-order (Abstract, Introduction, Methods, Results, Discussion, Conclusion), place figures, and compile
-a first `paper.pdf`.
+**The `paper.tex` port (E2) is DONE — first compile complete.** All six approved sections are in
+LaTeX (`paper.tex` + `latex/*.tex` + `SI.tex`), compiled with tectonic 0.17.0 to `paper.pdf` (11 pp)
+and `SI.pdf` (7 pp), no errors. The markdown-first phase is complete. **Next:** the scientist reviews
+the compiled PDFs; the title/author block and the target-venue class are still open; then Phase F
+(self-review, claim verification) and Phase G (submission prep).
 
 **Two things still need the scientist before/around the port:**
 - **A1/A2 — the claims sign-off** is not covered by the section approvals: `CLAIMS.md`'s contribution

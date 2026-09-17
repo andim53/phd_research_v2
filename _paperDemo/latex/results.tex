@@ -1,0 +1,210 @@
+% Ported from sections/02_results.md (v6, APPROVED 2026-09-18).
+% Final-manuscript Sec.~III. Floats: Table 3, Table 4, Figure 2, Figure 3.
+\section{Results}
+\label{sec:results}
+
+\subsection{The two-phase landscape of the metal film on MgO}
+\label{sec:landscape}
+
+Our target is the wetting of the metal film on MgO(001). The property that distinguishes a wetting
+from a dewetting film is its flatness, measured by the vertical span of the film,
+$\dZ = z(\text{metal})_\text{max} - z(\text{metal})_\text{min}$ over the film's metal atoms (Fe);
+$\dZ \approx 0$ is a flat, wetting film and large $\dZ$ a three-dimensional island. We therefore
+designed the search to return a \textbf{map of this two-phase landscape}: a GOFEE global optimisation
+(Sec.~\ref{sec:bias}) \textbf{seeded from a flat reference layer}, so that the flat basin is
+populated from the outset and any lower-lying basin the search finds is populated alongside it. The
+result is a sampled distribution over $\dZ$ and energy---an \emph{exploration} density, not a
+thermodynamic density of states. Because the sampling is deliberately biased, we use it only for
+unweighted structural and energetic comparisons; the number of structures in a basin is a descriptive
+attribute of the sampled database, not a physical population.
+
+Across the two models the search returns 1723 structures spanning $\dZ$ from 0.001 to 5.57~\AA,
+with both phases populated in each (Table~\ref{tab:phases}). Fig.~\ref{fig:landscape} draws that
+landscape: every structure is placed at its own vertical span and at its energy above the model's
+lowest, so the figure is the map the search was designed to produce rather than a selection of
+representative structures. The points form a continuous band that descends from the flat window into
+an island minimum near $\dZ = 3.7$~\AA{} in both models, and the two panels share one energy scale,
+so a given height means the same relative energy in either.
+
+\begin{table*}[t]
+\small
+\caption{\label{tab:phases}The two phases in each model ($\dZ \le 1.0$~\AA{} $=$ flat/wetting;
+$\dZ > 1.0$~\AA{} $=$ island).}
+\begin{tabular}{lccccc}
+\toprule
+Model & Structures & Island & Flat & Global-min $\dZ$ (\AA) & Flat-basin min $dE/N$ (\eVA) \\
+\midrule
+Fe/MgO   & 1180 & 985 & 195 & 3.65 & 0.1888 \\
+Fe-B/MgO & 543  & 430 & 113 & 3.77 & 0.1493 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{pes_2_systems.png}
+\caption{\label{fig:landscape}The sampled two-phase landscape of the metal film on MgO. Each point is
+one structure from the Fe/MgO (left) and Fe-B/MgO (right) searches, plotted as its relative energy
+$dE/N$ above the model's own lowest energy against the vertical span of the film, $\dZ$. The shaded
+band is the flat window ($\dZ \le 1.0$~\AA); the star marks the model's lowest-energy structure and
+the diamond the best member of its flat basin. Both panels use the same energy scale.}
+\end{figure}
+
+\textbf{The island is the ground state in both models, despite the flat bias.} The lowest-energy
+structure found is an island in each model, with its global minimum at $\dZ = 3.65$~\AA{} (Fe/MgO)
+and 3.77~\AA{} (Fe-B/MgO) (Table~\ref{tab:phases}, column 5)---a three-dimensional cluster rather
+than a flat film. This result is \emph{against} the direction of the bias: every search was seeded
+from a flat reference layer and, in the early phases, perturbed only at small scale from it, so the
+flat configuration had a systematic head start. The search nevertheless left the flat basin and
+converged on an island in both models. The flat-wetting state is therefore not an artefact of how the
+initial structures were built---it is genuinely higher in energy than the island. (MT-1)
+
+\textbf{The flat configuration is a distinct, higher-energy basin.} Taking for each model the
+lowest-energy structure with $\dZ \le 1.0$~\AA{} isolates the flat basin's best member. In both
+models it lies above the global minimum---by 0.1888~\eVA{} for Fe/MgO and 0.1493~\eVA{} for
+Fe-B/MgO (Table~\ref{tab:phases}, column 6). The flat film is thus a separate basin of the
+landscape, not merely the high-$\dZ$ tail of a single minimum. (MT-2)
+
+\textbf{The branches are families, not single structures.} The $\dZ$ values are continuous rather
+than grouped into discrete island heights: in each model the island branch spans $\dZ \approx
+1$--$5.6$~\AA{} with a median of 3.02~\AA{} (Fe/MgO) and 2.58~\AA{} (Fe-B/MgO), and the flat branch
+spans the whole window below 1~\AA. The low-energy members of each branch are likewise not a single
+repeated structure: comparing the lowest-energy structures of each branch by their radial/angular
+fingerprint shows that each branch's low-energy set splits into \textbf{two} distinct structural
+motifs, and that a motif recurs across independent searches---for Fe/MgO, the five lowest flat
+structures come from five different searches and fall into two motifs, four of them in the dominant
+one. (MT-8)
+The fingerprint is computed on the whole template-plus-film structure, so the fixed MgO template
+compresses the pair distances and the motif count is a \textbf{lower bound} on the structural
+diversity present; a film-resolved descriptor would be sharper. Pairwise distances within the
+low-energy set of a branch are 0.41--0.44 of that branch's random-pair distance scale, i.e.\ the
+low-energy structures are consistently more compact than the branch as a whole. The count is also
+limited by how many searches contribute to the low-energy set: the Fe-B/MgO flat set within
+0.02~\eVA{} of its minimum comes from two searches and its island set from three, so those counts
+rest on fewer independent searches than the corresponding Fe/MgO numbers (five and four).
+
+\textbf{Experimental correspondence.} The films in this study are about \textbf{one monolayer thick
+on average}---25 metal atoms per 25 substrate sites in the $5\times5$ cell, the boron-containing film
+carrying three additional boron atoms---and that is the regime in which the growth mode of Fe on
+MgO(001) has been characterised experimentally. At room temperature the observed growth is
+three-dimensional: He-atom scattering shows \textbf{3D metal island growth} of Fe on MgO(001), with
+quantified island densities, sizes and shapes, suppressed only when the film is deposited at low
+temperature (140~K), where a monolayer almost completely covers the substrate \cite{fahsold2000};
+scanning tunnelling microscopy finds that \textbf{sub-nanometre Fe grows three-dimensionally} on MgO,
+with island coalescence between 3.5 and 6.5 monolayers and a two-dimensional growth mode reported
+only above $\approx$6.5 monolayers \cite{torelli2009}; and grazing-incidence small-angle X-ray
+scattering on five monolayers evaporated at room temperature likewise identifies \textbf{Volmer--Weber
+growth} with spherical islands \cite{reitinger2007}. A flat, continuous film is obtained instead by
+low-temperature deposition \cite{fahsold2000} or by slow deposition onto a cleaved, oxygen-annealed
+crystal, where the first monolayer grows pseudomorphically and layer by layer \cite{urano1988}. Our
+two basins therefore map onto the two outcomes that are experimentally accessible \textbf{at this
+coverage}---the flat basin onto the pseudomorphic monolayer and the island basin onto the 3D
+clusters---and the energy ordering we find places the flat, wetting configuration above the island.
+This is a consistency check rather than a prediction: the observed growth mode is also set by
+kinetics, so the correspondence is between structural configurations, not between energies. Because
+the growth mode turns two-dimensional only above $\approx$6.5 monolayers \cite{torelli2009}, the
+comparison is specific to the monolayer regime and should not be extrapolated to thick films.
+
+\subsection{The flat (wetting) phase with and without boron}
+\label{sec:flat}
+
+With the two phases established, we compare how adding boron to the Fe film shifts the flat basin.
+Table~\ref{tab:flatbasin} gives the flat-basin minimum $dE/N$ for the two models, i.e.\ the same host
+with and without the metalloid, and Fig.~\ref{fig:flat} places the two values side by side with the
+change between them marked.
+
+\begin{table}[t]
+\small
+\caption{\label{tab:flatbasin}Flat-basin minimum $dE/N$ (\eVA) for the same Fe host with and
+without boron.}
+\begin{tabular}{lcc}
+\toprule
+Film & Flat-basin min $dE/N$ (\eVA) & B effect \\
+\midrule
+Fe   & 0.1888 & --- \\
+Fe-B & 0.1493 & \textbf{$-0.040$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{flat_state_summary.png}
+\caption{\label{fig:flat}Flat-basin minimum relative energy for the same Fe host with and without
+boron. A bar is the lowest energy found among the structures of the flat window ($\dZ \le 1.0$~\AA),
+in \eVA{} above the model's own lowest energy, and the bracket gives the shift produced by boron.}
+\end{figure}
+
+\textbf{Boron lowers the flat-state energy.} Adding boron lowers the flat basin's best member by
+0.040~\eVA---from 0.1888 to 0.1493~\eVA---a 21\,\% reduction of the flat--island separation. (MT-3)
+The effect is measured across 13 independent Fe/MgO searches and 6 independent Fe-B/MgO searches; its
+search-level significance is given in the uncertainty paragraph below.
+
+\textbf{Boron does not bond to the MgO interface.} Restricting to the low-energy window
+($dE/N \le 0.05$~\eVA), only 1 of the 72 Fe-B/MgO structures in that window has any boron atom within
+2.6~\AA{} of an oxygen of the substrate; the maximum boron--oxygen contact fraction in the window is
+0.33. Outside the window the picture is different---101 of the 471 remaining Fe-B/MgO structures do
+have a boron--oxygen contact---which is why the statement is restricted to the low-energy window
+rather than made over all sampled structures. Boron therefore remains inside the metal film rather
+than wetting the oxide, so its effect on the flat phase is film-internal rather than a change in
+interfacial bonding. (MT-7)
+
+\textbf{Uncertainty from the choice of search.} Each model was searched from several independent
+random seeds (13 completed searches for Fe/MgO, 6 for Fe-B/MgO), and structures from one search are
+correlated with each other, so the independent unit is the search, not the structure. Taking each
+search's own flat-basin minimum, the per-search minimum falls from 0.2171~\eVA{} without boron to
+0.1882~\eVA{} with it on average (medians 0.2185 and 0.1834), a \textbf{median} shift of
+0.0351~\eVA{} with 94\,\% of resampled replicates agreeing in sign---the effect is not carried by a
+single favourable search, and the best-structure difference of Table~\ref{tab:flatbasin}
+($-0.040$~\eVA) is the extreme of the same distribution rather than a lone outlier. A two-sided
+permutation test over the 19 searches gives \textbf{$p = 0.0444$}, significant at the 5\,\% level. In
+words, $p$ is the probability that a random reshuffling of the 19 per-search minima into two groups
+of 13 and 6 would, by chance alone, produce a shift in the flat-state energy at least as large as the
+one observed---so $p = 0.0444$ means such a shift arises by chance in only about 4.4\,\% of
+reshufflings, i.e.\ the observed lowering of the flat state is unlikely to be a chance outcome of
+which searches happened to contain boron. The test is an \textbf{exact enumeration of all 27\,132
+partitions} of the pooled search minima, so this value is exact for the data and its resolution floor
+is $p = 3.7\times10^{-5}$---more than three orders of magnitude below the value reported, i.e.\ the
+conclusion is not an artefact of too few searches.
+
+\subsection{The island (dewetting) phase and the separation between phases}
+\label{sec:island}
+
+Adding boron leaves the \emph{island} phase qualitatively similar. In both models the lowest-energy
+structure is an island---at $\dZ = 3.65$~\AA{} (Fe/MgO) and 3.77~\AA{} (Fe-B/MgO)
+(Table~\ref{tab:phases})---and the island branch spans the same broad range of heights in both
+($\dZ \approx 1$--$5.6$~\AA, median 3.02~\AA{} without boron and 2.58~\AA{} with it). Boron does not
+change what the dewetted state looks like; it changes how far above it the flat, wetting state sits.
+
+Because each model is referenced to its own lowest energy, the quantity that compares the two phases
+is the \textbf{separation between them}---the flat-basin minimum of Table~\ref{tab:flatbasin}---and
+that separation is what boron reduces. The present data do not resolve \emph{how} boron reduces it: a
+lower flat-basin energy could equally arise from stabilising the flat phase or from destabilising the
+island, and distinguishing the two would require the island phase to be referenced to an absolute
+(rather than per-model) energy scale, or a converged treatment of both basins. We therefore state the
+effect as a change in the flat--island separation, not as the stabilisation of either phase
+individually.
+
+\subsection{Summary of the results}
+\label{sec:summary}
+
+\begin{itemize}
+\item The biased GOFEE search, seeded from a flat reference, maps both the flat (wetting) and island
+  (dewetting) phases in both models, over $\dZ = 0.001$--$5.57$~\AA.
+\item \textbf{The island is the ground state in both models} ($\dZ = 3.65$ and 3.77~\AA), even though
+  the search was biased toward the flat configuration---the flat bias did not manufacture the result.
+\item \textbf{The flat configuration is a distinct, higher-energy basin}, 0.1888~\eVA{} above the
+  island for Fe/MgO and 0.1493~\eVA{} for Fe-B/MgO---in both cases a separate basin, not the
+  high-$\dZ$ tail of a single minimum.
+\item \textbf{Boron lowers the flat--island separation by 0.040~\eVA} (13 vs 6 completed searches,
+  exact two-sided permutation $p = 0.0444$).
+\item \textbf{Boron does not bond to the MgO interface}---it stays within the film, so its effect on
+  the flat phase is film-internal.
+\item The low-energy structures of each branch form a \textbf{small set of recurring motifs} rather
+  than one repeated structure, and $\dZ$ is continuous---the two phases are families, and the
+  energetics above are compared unweighted, since the sampled densities are biased and not physical
+  (MT-8).
+\end{itemize}
+
+The mechanistic origin of these trends (electronic structure, interface registry) and the robustness
+of the method to its parameters are presented in the Supplementary Material.
