@@ -1,32 +1,33 @@
-# CLAIMS.md — FROZEN claim list (v5)
+# CLAIMS.md — FROZEN claim list (v6)
 
-**Status: FROZEN (v5, 2026-09-17).** Supersedes v4, v3, v2 and v1.
+**Status: FROZEN (v6, 2026-09-17).** Supersedes v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
 
-## PENDING v6 — decided but deliberately held (2026-09-17)
+## v6 changelog (2026-09-17) — executes the decisions held in the v5 "PENDING v6" block
 
-The scientist has settled the following but asked that the *wording* be held while the model
-description is corrected. The frozen SI/MT text below is therefore **unchanged** until v6.
-
-1. **`SI-3` must be restated.** Its conclusion "island origin is **strain relief**, not
-   interfacial re-hybridisation" loses its object: the simulation cell takes the Fe lattice
-   constant, so the **MgO** carries the strain (compressed 3.6 % relative to bulk) and the
-   **Fe film is not strained in-plane**. The island's gain is to be described as **reduced
-   forced interfacial coupling plus restored metal cohesion**.
-2. **`SI-4` / MT-2 registry framing.** The Fe-atop-O registry is **inherited from the model
-   construction** — `build_mgo_stack` places the substrate oxygen directly above the metal
-   sites (line 33) — not predicted by the search. It must be presented as a *consistency
-   check* (externally supported by the LEED I–V registry of \cite{urano1988}), not as a result.
-3. **New limitation to add.** The strain convention is the inverse of the experimental stack:
-   in a real junction the bulk MgO imposes its lattice on a thin Fe film (~3.8 % mismatch,
-   relieved by interfacial dislocations, \cite{yuasa2004}); here the strain sits on the MgO.
-4. **Not re-run.** The physically inverted case (MgO at its bulk lattice with a strained Fe
-   film) has **not** been calculated, so whether the flat–island separation survives it is
-   unknown. Decision: re-describe against the current runs first.
-5. **Fe–O separation is a construction parameter.** `dist_fe2o = 2.3 Å` is the build input and
-   relaxation preserves it (2.300 Å flat, 2.331 Å island) — so `SI-3`'s "~equal d_Fe–O" is a
-   property of the construction, not a computed result. (Already reflected in Methods §1.3 as
-   of 2026-09-17; the SI-3 text still needs the same treatment in v6.)
+- **`SI-3` RESTATED.** The old conclusion — "island origin is **strain relief**, not interfacial
+  re-hybridisation" — loses its object: the simulation cell takes the Fe lattice constant, so the
+  **MgO** carries the strain (compressed 3.6 % relative to bulk) and the **Fe film is not strained
+  in-plane**. There is no film strain for the island to relieve. The island's gain is now stated as
+  **reduced forced interfacial coupling plus restored metal cohesion**: the registry-locked
+  monolayer spends its bonding on Fe–O contacts while forgoing 3D Fe–Fe coordination, and the
+  island reverses that trade.
+- **`SI-4` REFRAMED.** The Fe-atop-O registry is a property of the **reference construction**
+  (`build_mgo_stack` places the substrate oxygen directly above the metal sites) *and* of the
+  experimentally measured registry — a **consistency check**, not an independent prediction by the
+  search.
+- **`SI-3`'s "~equal d_Fe–O" (2.33 vs 2.30 Å) re-attributed.** It follows from the construction
+  parameter `dist_fe2o = 2.3 Å` surviving relaxation, so it is not evidence about the
+  electronic-structure method. Methods §1.3 already reflects this.
+- **NEW LIMITATION — strain convention is the inverse of experiment.** Here the cell takes the Fe
+  lattice constant and the **substrate** carries the mismatch; in a real junction bulk MgO imposes
+  its lattice on a thin Fe film, which absorbs the strain and relieves it through interfacial
+  dislocations \cite{yuasa2004}. The model does not represent the strained-film situation.
+- **Scope bound:** the physically inverted case (bulk MgO with a strained Fe film) has **not** been
+  calculated; whether the flat–island separation survives it is unknown. Decision: re-describe
+  against the current runs first.
+- MT-1 … MT-5, MT-7, MT-8 and SI-1, SI-2, SI-5 … SI-8 are **unchanged** from v5; MT-6 remains
+  withdrawn (v2); MT-4 remains flagged CHALLENGED (v3).
 
 ## v5 changelog (2026-09-17)
 
@@ -149,12 +150,12 @@ number of distinct structures.
 |----|-------|-------------|--------|-----------|
 | **SI-1** | Islanding **reduces Fe–O hybridisation** | d-band centre −0.229 → +0.601 eV; O-pz ∫ 43.88 → 42.37 | `analysis/pdos_metrics.csv` | strong |
 | **SI-2** | Islanding **weakens magnetism and lowers DOS(E_F)** | spin pol 5.81 → 4.37; DOS(E_F) 104.0 → 78.1 | `analysis/pdos_metrics.csv` | moderate |
-| **SI-3** | The island's **true interface Fe are NOT flat-like** → island origin is **strain relief**, not interfacial re-hybridisation | island interface d-centre +0.51 eV vs flat −0.23 eV (despite ~equal d_Fe-O, 2.33 vs 2.30 Å) | `analysis/interface_analysis.csv` | moderate |
-| **SI-4** | **Fe sits directly atop O** at the interface | 25/25 (flat) and 9/9 (island) atop O; 0 atop Mg (flat offset 0.000 Å) | `analysis/interface_analysis.csv` | strong (structural) |
+| **SI-3** *(restated v6)* | The island's **true interface Fe are NOT flat-like** → the island's gain is **reduced forced interfacial coupling plus restored metal cohesion**, **not** lattice-strain relief | island interface d-centre +0.51 eV vs flat −0.23 eV; registry-locked atoms 25/25 → 9/25. The ~equal d_Fe-O (2.33 vs 2.30 Å) follows from the 2.3 Å construction parameter surviving relaxation, so it is **not** evidence about the method | `analysis/interface_analysis.csv` | moderate |
+| **SI-4** *(reframed v6)* | **Fe sits directly atop O** at the interface — a property of the **reference construction** that agrees with the measured registry: a **consistency check**, not a search prediction | 25/25 (flat) and 9/9 (island) atop O; 0 atop Mg (flat offset 0.000 Å); `build_mgo_stack` places substrate O above the metal sites | `analysis/interface_analysis.csv` | strong (structural) |
 | **SI-5** | The result is **robust to the LCB kappa** | per-seed best 0.039–0.056 eV/atom across kappa ∈ {1,2,3,4} | `analysis/method_sensitivity.csv` | strong |
 | **SI-6** | The result is **robust to the dipole correction** | per-seed best 0.050 → 0.056 eV/atom (within seed spread) | `analysis/method_sensitivity.csv` | weak (outcome-level only) |
 | **SI-7** | **Reducing the rattle strength degrades the search ~5×** and under-samples the flat basin | per-seed best 0.050 → 0.27–0.29 eV/atom; flat fraction 0.181 → 0.030/0.015 | `analysis/method_sensitivity.csv` | strong |
-| **SI-8** *(pending sign-off, v4)* | **The onset of relaxation is the pivot of the biased search**: the pre-relaxation iterations provide almost no ranking information, and roughly half the total descent occurs at the first relaxed iteration | best-known ΔE/N: 0.494 (i=1) → 0.435 (i=9; 12 % of the descent) → **0.250 (i=10; 49 %)**; per-search drop across the onset median 0.165 (range 0.084–0.233) eV/atom; 84 % of the descent by i=30, 94 % by i=50; global minimum first reached at i=77; 10 of 13 searches end within 0.05 eV/atom of it, 4 within 0.02 | `analysis/exploration_performance.json` | strong (Fe/MgO only) |
+| **SI-8** *(v4; signed off 2026-09-17)* | **The onset of relaxation is the pivot of the biased search**: the pre-relaxation iterations provide almost no ranking information, and roughly half the total descent occurs at the first relaxed iteration | best-known ΔE/N: 0.494 (i=1) → 0.435 (i=9; 12 % of the descent) → **0.250 (i=10; 49 %)**; per-search drop across the onset median 0.165 (range 0.084–0.233) eV/atom; 84 % of the descent by i=30, 94 % by i=50; global minimum first reached at i=77; 10 of 13 searches end within 0.05 eV/atom of it, 4 within 0.02 | `analysis/exploration_performance.json` | strong (Fe/MgO only) |
 
 **Paired caveat for SI-8 (must travel with the claim).** Fe/MgO only, and the quantities are
 properties of the *search scheme*, not of any individual structure: the energies are single GPAW
@@ -206,7 +207,7 @@ remains a *method-quality* claim on Fe/MgO only.
 
 - **Structures are NOT DFT-converged** — surrogate relaxation + **1 GPAW step**; residual
   forces ~1–2 eV/Å. "Lowest energy"/"basin" = lowest DFT energy *found*.
-- Unequal seed counts across systems (13 / 7 / 5 / 4) and across parameter settings.
+- Unequal seed counts across systems (13 / 6 / 5 / 4) and across parameter settings.
 - **Lattice model (v5):** both phases are built on a **bcc** Fe lattice, but experiment reports
   **bct** Fe on MgO(001) below ≈10 Å \cite{urano1988}; the island branch (ΔZ ≈ 1–6 Å) lies in
   that regime. The comparison is a trend within a fixed lattice model.
@@ -214,6 +215,16 @@ remains a *method-quality* claim on Fe/MgO only.
   \cite{larsen2009}, which shifts absolute geometric parameters (e.g. the computed Fe–O
   separation, 2.30–2.33 Å, sits at the upper end of the experimental/calculated 2.0–2.3 Å
   range \cite{urano1988,butler2001}). Quantities are compared at fixed settings.
+- **Strain convention is the inverse of the experimental stack (v6):** the simulation cell takes
+  the Fe lattice constant and the **substrate** is compressed to match it (MgO 3.6 % relative to
+  bulk, held fixed), so **the Fe film is unstrained in-plane**. In a real junction the bulk MgO
+  imposes its lattice on a thin Fe film, which absorbs the mismatch and relieves it through
+  interfacial dislocations \cite{yuasa2004}. The model does not represent the strained-film
+  situation, and the physically inverted case has **not** been calculated.
+- **The Fe-atop-O registry is partly inherited (v6):** `build_mgo_stack` places the substrate
+  oxygen directly above the metal sites, so the flat film's registry follows from the
+  construction as well as agreeing with the measured LEED I–V registry \cite{urano1988}. It is a
+  consistency check, not an independent prediction by the search.
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold.
 - kpts = (1,1,1), single-layer slabs → qualitative/trend-level.
 
@@ -275,4 +286,7 @@ requires an explicit update to this file before it enters a section.
 **Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
 v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle ·
 v4 (2026-09-17) SI-8 added · v5 (2026-09-17) lattice-model + basis-set limitations,
-experimental-correspondence framing, six verified Fe/MgO references.
+experimental-correspondence framing, six verified Fe/MgO references · v6 (2026-09-17) SI-3
+restated (strain relief dropped for reduced forced coupling + restored metal cohesion),
+SI-4 reframed as a consistency check, strain-convention limitation added, torelli2009
+added to the experimental-correspondence evidence.

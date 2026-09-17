@@ -55,25 +55,32 @@ hosts (MTJ / CoFeB relevance)
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v3 (2026-09-17; supersedes v2 and v1).** v2 withdrew
+- **The claim list is FROZEN in `CLAIMS.md` v6 (2026-09-17; supersedes v1–v5).** v2 withdrew
   MT-6 (flat-basin sampling fraction — a biased-exploration weight, and the exploration operator
   is not matched across systems: Fe-Co alone uses a third, species-permutation generator). v3
   added MT-8 (each branch's low-energy structures form a few recurring motifs; ΔZ continuous),
   flagged MT-4 as CHALLENGED pending more Fe-Co searches, and recorded the exploration-density
-  principle in Method & scope. Drafting must not introduce claims outside the list, and must not
-  drop the paired caveats. Any new claim requires bumping `CLAIMS.md` to the next version first.
+  principle in Method & scope. v4 added SI-8; v5 added the bcc/bct and basis-set limitations plus
+  the experimental-correspondence framing; **v6 restated SI-3 (the island's gain is reduced forced
+  interfacial coupling + restored metal cohesion, *not* lattice-strain relief — the strain sits on
+  the substrate and the film is unstrained), reframed SI-4 (the Fe-atop-O registry is inherited
+  from the construction and is a consistency check, not a search prediction), and added the
+  inverse-strain-convention limitation.** Drafting must not introduce claims outside the list, and
+  must not drop the paired caveats. Any new claim requires bumping `CLAIMS.md` to the next version
+  first.
 
 ## Drafting status
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
-- **Phase D: DONE for the main text** — 12 citations verified in `references.bib` (agox2020,
+- **Phase D: DONE for the main text** — 13 citations verified in `references.bib` (agox2020,
   gofee2017, oganov2011, gpaw2014, pbe1996, greer1993, urano1988, butler2001, yuasa2004,
-  reitinger2007, fahsold2000, larsen2009). The three MTJ placeholders (cofebmgo_mtj,
+  reitinger2007, fahsold2000, larsen2009, torelli2009). The three MTJ placeholders (cofebmgo_mtj,
   cofebmgo_pma, b_diffusion_mtj) were **withdrawn** and replaced by `yuasa2004`; **no
-  UNVERIFIED placeholders remain**. Open: the full texts of `fahsold2000` and `reitinger2007`
-  are closed access and are cited from verified abstracts only.
-- **Phase E: IN PROGRESS** — `01_methods.md` **APPROVED (2026-09-17, after three revisions)**,
-  `02_results.md` RECONSTRUCTED v2 awaiting re-approval, `03_discussion.md` v3 awaiting review.
+  UNVERIFIED placeholders remain**. Open: the full texts of `fahsold2000`, `reitinger2007` and
+  `torelli2009` are closed access and are cited from verified abstracts only.
+- **Phase E: IN PROGRESS** — `01_methods.md` **APPROVED 2026-09-17 at `c89e1e1` but VOIDED** by a
+  later §1.6 addition (inverse-strain limitation) → v4 awaiting re-approval; `02_results.md`
+  RECONSTRUCTED v2 awaiting re-approval; `03_discussion.md` **v4** awaiting review.
   Block-and-wait: do NOT draft `04_introduction.md` until 03 is approved.
 - **Float numbering:** tables and figures are numbered sequentially in order of appearance
   across the drafted section sequence. Currently Tables 1–3 + Figure 1 (Methods) and Tables 4–5

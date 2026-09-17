@@ -701,41 +701,6 @@ content:
 So `01_methods.md` is approved as it stands, but a fourth revision is likely once items 1–3 are
 settled — worth batching them into a single pass rather than approving again in between.
 
-## Growth mode at 1 ML — checked (2026-09-17)
-
-**Question:** does 1 ML of Fe on MgO(001) grow as an island? **This is our model's coverage** —
-25 metal atoms on 25 substrate sites = 1 ML average — so the answer matters directly.
-
-| Source | Coverage studied | Reported mode |
-|---|---|---|
-| **Fahsold, Pucci & Rieder 2000** (PRB 61, 8475; He-atom scattering) | bare MgO(001) up to beyond complete coverage, 140 ≤ T ≤ 670 K | **3D metal island growth**; island densities, sizes and shapes quantified and a coalescence thickness calculated. *"suppressed at low temperature (140 K) where a monolayer film almost completely covers the substrate"* → **at RT, 1 ML is islands** |
-| **Torelli et al. 2009** (PRB 79, 035408; XMCD + STM) | sub-nm → several ML | *"sub-nanometer Fe grows three-dimensionally on MgO"*; island coalescence between **3.5 and 6.5 ML**; **transition to a 2D growth mode above ≈6.5 ML** |
-| **Reitinger et al. 2007** (JAP 102, 034310; GISAXS) | **5 ML**, RT | **Volmer–Weber** growth, spherical islands |
-| **Urano & Kanaji 1988** (JPSJ 57, 3403) — *local paper* | **1 ML**, RT | **Layer by layer**, pseudomorphic, Fe just above O at ~2.0 Å. **Opposite** to the above |
-| **Butler et al. 2001** (PRB 63, 054416) — *local paper* | monolayer + bilayer, *theory* | Adsorption geometry only (Fe atop O, O–Fe = 2.3 Å); **no growth-mode statement** |
-| **Yuasa et al. 2004** (Nat. Mater. 3, 868) — *local paper* | 1000 Å and 100 Å Fe | Thick films; no 1-ML statement. **Consistent** once the >6.5 ML 2D transition is accounted for |
-
-**Answer:** at room temperature, **yes** — 1 ML Fe on MgO(001) is reported to grow as 3D islands,
-and the growth mode is thickness-dependent with a 3D → 2D transition around 6.5 ML. The local
-Urano paper is the **dissent**, at exactly 1 ML — most plausibly because of its conditions
-(very slow deposition, ~0.2 Å/min, onto a cleaved crystal annealed at 800 °C in O₂), i.e. low
-supersaturation favouring 2D layer growth.
-
-**Consequence for our model, which is favourable:** our two basins correspond to the two
-experimentally accessible outcomes **at 1 ML** — the 3D island (RT growth) and the 2D
-pseudomorphic monolayer (140 K, `fahsold2000`; slow deposition, `urano1988`). The >6.5 ML 2D
-transition also means our result should be framed as **1-ML specific** and not extrapolated to
-thick films — which the existing bct limitation (§1.6) already supports.
-
-**Added to `references.bib`:** `torelli2009` (verified via Crossref). **Now cited** in
-`02_results.md` §2.1's experimental-correspondence paragraph, together with the thickness
-dependence (sub-nanometre 3D growth; coalescence 3.5–6.5 ML; 2D only above ≈6.5 ML), which
-also frames the comparison as **1-ML specific**.
-
-**Butler not cited for the construction geometry** (scientist's decision): it reports no growth
-mode, so its monolayer/bilayer study stays out of the §1.3 discussion; it remains cited in
-`03_discussion.md` §3.1 for the Fe-atop-O registry and the weak interfacial coupling.
-
 ## Model geometry correction — the strain sits on the MgO, not the film (2026-09-17)
 
 Scientist's correction: the cell uses the **Fe-optimised lattice constant**, so **MgO** is the
@@ -778,4 +743,71 @@ with a strained Fe film, which has **not** been calculated).
 registry counts and d-band centres are untouched; this is a re-description, not a recomputation.
 `01_methods.md` is again **awaiting re-approval** because it was edited after approval.
 
+## Growth mode at 1 ML — checked (2026-09-17)
 
+**Question:** does 1 ML of Fe on MgO(001) grow as an island? **This is our model's coverage** —
+25 metal atoms on 25 substrate sites = 1 ML average — so the answer matters directly.
+
+| Source | Coverage studied | Reported mode |
+|---|---|---|
+| **Fahsold, Pucci & Rieder 2000** (PRB 61, 8475; He-atom scattering) | bare MgO(001) up to beyond complete coverage, 140 ≤ T ≤ 670 K | **3D metal island growth**; island densities, sizes and shapes quantified and a coalescence thickness calculated. *"suppressed at low temperature (140 K) where a monolayer film almost completely covers the substrate"* → **at RT, 1 ML is islands** |
+| **Torelli et al. 2009** (PRB 79, 035408; XMCD + STM) | sub-nm → several ML | *"sub-nanometer Fe grows three-dimensionally on MgO"*; island coalescence between **3.5 and 6.5 ML**; **transition to a 2D growth mode above ≈6.5 ML** |
+| **Reitinger et al. 2007** (JAP 102, 034310; GISAXS) | **5 ML**, RT | **Volmer–Weber** growth, spherical islands |
+| **Urano & Kanaji 1988** (JPSJ 57, 3403) — *local paper* | **1 ML**, RT | **Layer by layer**, pseudomorphic, Fe just above O at ~2.0 Å. **Opposite** to the above |
+| **Butler et al. 2001** (PRB 63, 054416) — *local paper* | monolayer + bilayer, *theory* | Adsorption geometry only (Fe atop O, O–Fe = 2.3 Å); **no growth-mode statement** |
+| **Yuasa et al. 2004** (Nat. Mater. 3, 868) — *local paper* | 1000 Å and 100 Å Fe | Thick films; no 1-ML statement. **Consistent** once the >6.5 ML 2D transition is accounted for |
+
+**Answer:** at room temperature, **yes** — 1 ML Fe on MgO(001) is reported to grow as 3D islands,
+and the growth mode is thickness-dependent with a 3D → 2D transition around 6.5 ML. The local
+Urano paper is the **dissent**, at exactly 1 ML — most plausibly because of its conditions
+(very slow deposition, ~0.2 Å/min, onto a cleaved crystal annealed at 800 °C in O₂), i.e. low
+supersaturation favouring 2D layer growth.
+
+**Consequence for our model, which is favourable:** our two basins correspond to the two
+experimentally accessible outcomes **at 1 ML** — the 3D island (RT growth) and the 2D
+pseudomorphic monolayer (140 K, `fahsold2000`; slow deposition, `urano1988`). The >6.5 ML 2D
+transition also means our result should be framed as **1-ML specific** and not extrapolated to
+thick films — which the existing bct limitation (§1.6) already supports.
+
+**Added to `references.bib`:** `torelli2009` (verified via Crossref). **Now cited** in
+`02_results.md` §2.1's experimental-correspondence paragraph, together with the thickness
+dependence (sub-nanometre 3D growth; coalescence 3.5–6.5 ML; 2D only above ≈6.5 ML), which
+also frames the comparison as **1-ML specific**.
+
+**Butler not cited for the construction geometry** (scientist's decision): it reports no growth
+mode, so its monolayer/bilayer study stays out of the §1.3 discussion; it remains cited in
+`03_discussion.md` §3.1 for the Fe-atop-O registry and the weak interfacial coupling.
+
+## v6 — mechanism wording applied, SI registry reframed (2026-09-17)
+
+Scientist: "Update the current results and discussions md, also, update the other md for these
+changes." This executes the decisions held in the v5 "PENDING v6" block.
+
+- `CLAIMS.md` -> **v6 FROZEN**. SI-3 restated (the island's gain is **reduced forced interfacial
+  coupling + restored metal cohesion**, *not* lattice-strain relief); SI-4 reframed as a
+  **construction-inherited consistency check**; the inverse-strain-convention limitation added to
+  the limitations list; the "~equal d_Fe-O" re-attributed to the `dist_fe2o = 2.3 A` construction
+  parameter; `torelli2009` added to the experimental-correspondence evidence; version history
+  updated. MT-6 stays withdrawn; MT-4 stays CHALLENGED.
+- `03_discussion.md` -> **v4**. S3.1 rewritten: the strain sits on the **substrate** and the film is
+  unstrained, so there is no film strain for the island to relieve; the registry wording now notes
+  that it is both the reference construction's registry and the measured one. S3.4 no longer says
+  the flat film is "intrinsically strained". S3.5 extended with the two model-bound limitations
+  (inverse strain convention; bcc vs the experimental bct) and the stale seed count 13/7/5/4
+  corrected to **13/6/5/4**.
+- `02_results.md` S2.1 already carries the 1-ML experimental correspondence with `torelli2009`;
+  header moved to CLAIMS v6. **No numbers in Results change.**
+- `01_methods.md` S1.6 gained the inverse-strain-convention scope note (cross-referencing S3.5) and
+  the header moved to CLAIMS v6. **This edit voids the 2026-09-17 approval** -> `01_methods.md` is
+  DRAFT v4 and again awaits re-approval.
+- `sections/SI.md` header moved to v6; the stale "SI-8 not yet in CLAIMS" note replaced by a
+  requirement that S2, when drafted, carry the v6 reframing (SI-3, SI-4).
+- `paper_status.md` and `AGENTS.md`: CLAIMS v6, **13** verified citations, the "mechanism wording
+  HELD" item closed, and the closed-access caveat extended from fahsold/reitinger to `torelli2009`.
+
+**No numbers change.** dZ, dE/N, flat-basin minima, registry counts and d-band centres are
+untouched; this is a re-description plus a citation addition.
+
+**Ordering note (housekeeping):** the "Growth mode at 1 ML" block was inserted mid-file rather
+than appended; it has been relocated to the end of this log so entries stay chronological in time.
+Content unchanged.

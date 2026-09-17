@@ -6,10 +6,14 @@ Boron consistently lowers the relative energy of the flat metal-film wetting sta
 i.e. B promotes flat-film wetting independently of the host metal, relevant to interface
 flatness in CoFeB/MgO MTJ stacks.
 
-**Claim list frozen:** `CLAIMS.md` **v5** (2026-09-17, FROZEN; supersedes v1–v4). v2 withdrew
+**Claim list frozen:** `CLAIMS.md` **v6** (2026-09-17, FROZEN; supersedes v1–v5). v2 withdrew
 MT-6; v3 added MT-8 and flagged MT-4 CHALLENGED; v4 added SI-8; v5 added the bcc/bct
 lattice-model and basis-set limitations and the experimental-correspondence framing, and
-recorded six newly verified Fe/MgO references. See the CLAIMS changelog.
+recorded six newly verified Fe/MgO references; **v6 executed the decisions previously held as
+"PENDING v6"** — SI-3 restated (island gain = reduced forced interfacial coupling + restored
+metal cohesion, *not* strain relief), SI-4 reframed as a construction-inherited consistency
+check, the inverse-strain-convention limitation added, and `torelli2009` added to the
+experimental-correspondence evidence. See the CLAIMS changelog.
 
 **MTJ placeholder debt is cleared.** All three unverified placeholders (`cofebmgo_mtj`,
 `cofebmgo_pma`, `b_diffusion_mtj`) were removed from §3.3/§3.4 by dropping the CoFeB-specific
@@ -69,7 +73,7 @@ the onset step (the pivot) → the long refinement sequence → disagreement bet
 facts are all still reported (including the global minimum first being reached at i = 77), but
 they no longer carry an early/late narrative.
 
-⚠ **Held for review (not written into CLAIMS v4):** the searches are still improving at
+⚠ **Held for review (not written into CLAIMS, v4–v6):** the searches are still improving at
 iteration 100, so the per-model reference energies are not converged with respect to search
 length. The scientist elected to discuss this at review rather than to add it to the
 limitations now.
@@ -85,11 +89,11 @@ limitations now.
 | ~~B increases flat fraction (both hosts)~~ | — | **WITHDRAWN (MT-6, CLAIMS v2)** — biased-exploration weight, and the exploration operator is not matched across systems | — |
 | B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 in window dE/N ≤ 0.05 eV/atom (1/72 Fe-B; 1/21 Fe-Co-B) | yes (windowed) |
 | Low-energy structures of each branch form a few recurring motifs; ΔZ continuous | analysis/ensemble_stats.json | 1–3 motifs per branch; within-set distance 0.32–0.72 × random-pair scale | yes (descriptor-limited — paired caveat in CLAIMS) |
-| **[SI] Signature: relaxation onset pivots the search** | analysis/exploration_performance.json | 49 % of the descent at i=10; global min at i=77; 10/13 within 0.05 eV/atom | analysis done; **SI-8 in CLAIMS v4 awaiting sign-off** |
+| **[SI] Signature: relaxation onset pivots the search** | analysis/exploration_performance.json | 49 % of the descent at i=10; global min at i=77; 10/13 within 0.05 eV/atom | analysis done; **SI-8 signed off 2026-09-17 (CLAIMS v5)** |
 | **[SI]** Island origin: reduced Fe–O hybridization | analysis/pdos_metrics.csv | d-band centre −0.23→+0.60 eV; O-pz 43.9→42.4 | yes |
 | **[SI]** Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
-| **[SI]** Island origin is strain relief, not interfacial re-hybridisation | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23) | yes — refines the picture |
-| **[SI]** Fe sits directly atop O at the interface | analysis/interface_analysis.csv | 25/25 flat, 9/9 island atop O; 0 atop Mg | yes |
+| **[SI]** Island origin: reduced forced interfacial coupling + restored metal cohesion (**v6** — *not* strain relief) | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23); registry-locked atoms 25/25 → 9/25 | yes — re-described in v6 |
+| **[SI]** Fe sits directly atop O at the interface (**v6**: construction-inherited consistency check) | analysis/interface_analysis.csv | 25/25 flat, 9/9 island atop O; 0 atop Mg; `build_mgo_stack` places substrate O above the metal sites | yes — but not a search prediction |
 | **[SI]** Rattle strength matters: reducing it degrades the search | analysis/method_sensitivity.csv | per-seed best 0.050 → 0.27–0.29 eV/atom | yes |
 | **[SI]** Reduced rattle under-samples the flat basin | analysis/method_sensitivity.csv | flat fraction 0.181 → 0.030/0.015 | yes |
 | **[SI]** Result robust to kappa (LCB) | analysis/method_sensitivity.csv | per-seed best 0.039–0.056 eV/atom across k=1–4 | yes |
@@ -178,11 +182,13 @@ Verified from the construction code and from the stored structures (not inferred
 
 - ✅ **Description fixed (2026-09-17):** `01_methods.md` §1.1 now states the strain direction
   and §1.3 now states the Fe–O separation is a construction parameter.
-- ⏸ **Mechanism wording HELD at the scientist's request.** Dropping "strain relief" for
-  *reduced forced interfacial coupling + restored metal cohesion*, the SI-4 registry
-  reframing, the inverse-convention limitation and the possible inverted re-run are all
-  recorded in **`CLAIMS.md` → "PENDING v6"** and are **not** yet applied to `03_discussion.md`
-  §3.1 or to SI-3/SI-4.
+- ✅ **Mechanism wording APPLIED (CLAIMS v6, 2026-09-17).** "Strain relief" was dropped for
+  *reduced forced interfacial coupling + restored metal cohesion*; `03_discussion.md` §3.1 now
+  states explicitly that the strain sits on the substrate and the film is unstrained, so there
+  is no film strain to relieve. The SI-4 registry reframing is applied to the CLAIMS table and
+  the inverse-convention limitation now appears in §3.5 and Methods §1.6. The physically
+  inverted case (bulk MgO + strained Fe film) remains **not calculated** — recorded as a scope
+  bound, not silently omitted.
 - **No numbers change.** The structures were always built this way; ΔZ, dE/N, flat-basin
   minima, registry counts and d-band centres are unaffected. This is a re-description, not a
   recomputation.
@@ -210,26 +216,28 @@ annealed at 800 °C in O₂; low supersaturation favours 2D). `butler2001` repor
 at all, and is therefore not cited for one.
 
 **Consequence for the paper:** the three supplied papers cannot be cited for island formation.
-The islanding support comes from `fahsold2000` (RT, ≈1 ML) and `reitinger2007` (RT, 5 ML); the
+The islanding support comes from `fahsold2000` (RT, ≈1 ML), `torelli2009` (sub-nanometre, RT;
+3D→2D at ≈6.5 ML) and `reitinger2007` (RT, 5 ML); the
 flat/wetting basin corresponds to the pseudomorphic monolayer obtained by slow deposition
 (`urano1988`) or by low-temperature deposition (`fahsold2000`). This is framed as a
-**correspondence between structural configurations, not between energies** (CLAIMS v5,
-discussion-only), because the experimental growth mode is also kinetically controlled.
+**correspondence between structural configurations, not between energies** (CLAIMS v5, kept in
+v6, discussion-only), because the experimental growth mode is also kinetically controlled.
 
 **Convergence of the literature:** RT deposition → 3D islands; 2D layer-by-layer requires low
 temperature (140 K) or slow deposition on a specially prepared crystal. Urano's layer-by-layer
 result at RT is therefore the outlier in the literature, not ours.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [x] sections/01_methods.md  (**APPROVED 2026-09-17** — third revision)
-      Approved content: §1.1 strain direction (cell = Fe lattice constant; MgO compressed
+- [~] sections/01_methods.md  (**APPROVED 2026-09-17** at `c89e1e1` — third revision;
+      **VOIDED 2026-09-17**: §1.6 extended with the inverse-strain-convention limitation and the
+      header moved to CLAIMS v6 → **DRAFT v4, needs re-approval**)
+      Approved at `c89e1e1`: §1.1 strain direction (cell = Fe lattice constant; MgO compressed
       3.6 % relative to bulk; substrate frozen compressed; film unstrained in-plane), §1.2
       per-model exploration schedule (Fe-Co uses a third, species-permutation generator;
       seed count 7 → 6), §1.3 Fe–O separation as a construction parameter, §1.6 bcc/bct
       lattice-model limitation, and the numbered floats Table 1–3 + Figure 1 with in-text
       citations and unified captions.
-      **Not** included in this approval (see below): the `CLAIMS` v6 items, the inverse-strain
-      limitation in §1.6, and the main-text figures.
+      **Still outside any approval:** the main-text figures, which no section yet cites.
 - [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
       v2: reorganized by PHASE under the revised core framing —
       §2.1 the two-phase landscape (both phases populated; island is the ground state
@@ -242,7 +250,8 @@ result at RT is therefore the outlier in the literature, not ours.
       wording recorded) — see below. The old section's single-lever ordering and its
       "seeded from a flat reference" remark (previously a caveat, now a positive control) are
       gone.
-- [~] sections/03_discussion.md  (REVISED v3 2026-09-17 — awaiting scientist review)
+- [~] sections/03_discussion.md  (REVISED **v4** 2026-09-17 — §3.1 mechanism rewritten per
+      CLAIMS v6, §3.5 extended with the two model-bound limitations; awaiting scientist review)
       v3 changes: §3.2 confusion-principle claim restricted to the B addition (Co alone
       raises the flat energy → element count is not the driver); §3.1 unsupported
       "bulk-like" comparison removed and registry wording made precise (interface atoms
@@ -317,20 +326,24 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
-- [x] Claim list frozen (`CLAIMS.md` — now **v5, FROZEN** 2026-09-17).
-- [x] sections/01_methods.md approved (2026-09-16) — revised three times; **APPROVED 2026-09-17**.
-- [ ] **OPEN — full texts of the two islanding references.** `fahsold2000` (PRB 61, 8475) and
-      `reitinger2007` (JAP 102, 034310) are cited from their **verified abstracts only**; both
-      are closed access (Semantic Scholar `openAccessPdf.status = CLOSED`) and no institutional
-      copy was reachable, so the cited statements have not been checked against the full papers.
+- [x] Claim list frozen (`CLAIMS.md` — now **v6, FROZEN** 2026-09-17).
+- [~] sections/01_methods.md approved 2026-09-16, re-approved 2026-09-17 at `c89e1e1` —
+      **VOIDED**: §1.6 gained the inverse-strain-convention limitation (DRAFT v4) → needs re-approval.
+- [ ] **OPEN — full texts of the islanding references.** `fahsold2000` (PRB 61, 8475),
+      `reitinger2007` (JAP 102, 034310) and `torelli2009` (PRB 79, 035408) are cited from their
+      **verified abstracts** (plus, for Torelli, a quotation of its text retrieved from an indexed
+      copy); all three are closed access and no institutional copy is in `papers/`, so the cited
+      statements have not been checked against the full papers.
       The Urano PDF carries a *"Downloaded from journals.jps.jp by 三重大学"* watermark, i.e. the
-      scientist has institutional access — placing these two PDFs in `papers/` would close this.
-- [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17, awaiting re-approval.
-- NEXT: scientist reviews `sections/03_discussion.md` (v3); on approval → draft `sections/04_introduction.md`.
+      scientist has institutional access — placing these PDFs in `papers/` would close this.
+- [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17
+      (and §2.1 extended with `torelli2009` + the 1-ML thickness dependence), awaiting re-approval.
+- NEXT: scientist reviews `sections/03_discussion.md` (**v4**) and re-approves 01 and 02; on
+  approval → draft `sections/04_introduction.md`.
 - RESOLVED 2026-09-17 (review of 03 v2): the §3.2 confusion-principle sentence had claimed the
   flat energy falls along Fe → FeCo → FeCoB. It does not — Co alone raises it (MT-5). §3.2 is
   now restricted to the B addition, and the CLAIMS discussion-only entry carries the same
-  bound. No MT/SI claim changed; CLAIMS v1 remains frozen.
+  bound. No MT/SI claim changed by that edit; the claim list is now v6.
 - Open for the scientist: §3.1 no longer calls the island d-band centre "+0.5–0.6 eV, bulk-like"
   (unsupported — no bulk Fe d-centre reference exists in the repo). If the bulk comparison is
   wanted, a bulk-Fe reference calculation is needed.

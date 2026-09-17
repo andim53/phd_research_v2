@@ -1,12 +1,16 @@
 # Supplementary Material
 
 <!-- DRAFT v1 · supplementary document (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v3. Planned structure:
+     Grounded in CLAIMS.md v6. Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [documented in experiment_log.md]
        S3  Method-parameter sensitivity (rattle / kappa / dipole) [documented in experiment_log.md]
      SI figures are flagged [SI]; SI claims are prefixed [SI] in paper_status.md.
-     NOTE: the claim in S1 is NEW and is not yet in CLAIMS.md — see the pending SI-8 entry. -->
+     S1's claim is CLAIMS SI-8 (v4; signed off 2026-09-17).
+     S2, when drafted, MUST carry the v6 reframing: the island's gain is reduced forced
+     interfacial coupling plus restored metal cohesion (SI-3 — NOT lattice-strain relief), and
+     the Fe-atop-O registry is inherited from the reference construction and is a consistency
+     check against the measured registry (SI-4), not a search prediction. -->
 
 ## S1 Performance of the biased exploration in finding the global minimum
 

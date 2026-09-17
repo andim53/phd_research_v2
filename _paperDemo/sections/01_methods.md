@@ -1,7 +1,7 @@
 # 01 — Methods
 
 <!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v5. Citations verified and in references.bib
+     Grounded in CLAIMS.md v6. Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
      species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
@@ -202,3 +202,10 @@ below about 10 Å, changing to bcc only above that thickness \cite{urano1988}. T
 spans ΔZ ≈ 1–6 Å, so the structures compared here lie in the thickness regime in which the
 experimental film is not bcc. The flat–island comparison should therefore be read as a trend
 obtained within a fixed lattice model, not as a prediction of absolute structural parameters.
+
+One further property of the model bounds its interpretation: the **strain convention is the
+inverse of the experimental stack**. The simulation cell takes the Fe lattice constant and the
+**substrate** is compressed to match it, so the Fe film is unstrained in-plane, whereas in a real
+junction a thin Fe film on bulk MgO absorbs the mismatch as in-plane strain and relieves it
+through interfacial dislocations. This model therefore does not represent the strained-film
+situation (see §3.5).
