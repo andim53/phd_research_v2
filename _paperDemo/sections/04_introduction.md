@@ -1,4 +1,8 @@
 # 04 — Introduction
+     v9 (2026-09-18): the scientist's edit — the confusion-principle sentence no longer carries the
+     forward pointer "a reading this paper returns to in the Discussion"; the sentence now states the
+     principle and applies it directly (the reading itself remains in the Discussion per CLAIMS, so
+     checklist item C7 is unchanged). The paragraph was re-wrapped. No number or claim changed.
      v8 (2026-09-18): the what-we-do passage is rewritten in the example style — one achievement
      sentence ("In this work, by implementing a surrogate-driven active-learning search with a
      deliberately biased exploration strategy, we categorize the potential-energy surface ... and
@@ -105,10 +109,10 @@ The composition is not arbitrary. The metal electrodes of the highest-magnetores
 are boron-bearing and amorphous as deposited, which is also the condition under which the MgO barrier
 grows (001)-textured \cite{djayaprawira2005}. Boron is a glass-forming addition, and added species
 are in general understood to stabilise disordered configurations at the expense of crystalline ones,
-in the spirit of the confusion principle of metallic-glass formation \cite{greer1993} — a reading
-this paper returns to in the Discussion. Applied to this interface, where the flat film is the
-two-dimensional, disordered-like configuration and the island the three-dimensional, ordered-like
-one, it suggests that boron should lower the energy of the flat configuration relative to the island.
+in the core of the confusion principle of metallic-glass formation \cite{greer1993}. Applied to this
+interface, where the flat film is the two-dimensional, disordered-like configuration and the island
+the three-dimensional, ordered-like one, it suggests that boron should lower the energy of the flat
+configuration relative to the island.
 Whether it does so, and by how much, is a question for calculation.
 
 In this work, by implementing a surrogate-driven active-learning search with a deliberately biased

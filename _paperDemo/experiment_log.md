@@ -1762,3 +1762,17 @@ terms in the body; `gofee2017` / `hamamoto2023` remain cited (in the achievement
 roadmap's final-manuscript numbering must be reconciled at the port. `AGENTS.md` — Phase E entry to
 v8. Bibliography unchanged.
 
+## 2026-09-18 — `04_introduction.md` v9: the scientist's edit (confusion-principle pointer removed)
+
+The scientist edited the boron paragraph directly: the sentence "in the spirit of the confusion
+principle of metallic-glass formation \cite{greer1993} — a reading this paper returns to in the
+Discussion" lost its forward pointer and now reads "…formation \cite{greer1993}. Applied to this
+interface, where the flat film is the two-dimensional, disordered-like configuration …". The principle
+is now stated and applied in the same sentence; the reading itself remains in the Discussion per
+CLAIMS, so checklist item **C7** (the interpretation is placed in the Discussion only) is **unchanged**
+— only the in-text forward pointer is gone.
+
+The paragraph was re-wrapped to the file's line convention (the edit left one long line). No number or
+claim changed; `CLAIMS.md` not bumped. Version marker bumped v8 → v9, DRAFT comment updated, and
+`paper_status.md` (B2, drafting table, Next step) + `AGENTS.md` (Phase E) synced.
+
