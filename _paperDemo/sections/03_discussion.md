@@ -24,12 +24,25 @@ Boron lowers the flat-state energy by ~0.04 eV/atom in both hosts, bringing the 
 configuration closer to the ground state. Two observations frame the mechanism. First,
 boron does **not** bond to the MgO interface — it remains inside the metal film — so its
 effect is not interfacial. Second, the effect is host-independent (Fe and Fe-Co respond
-almost identically), pointing to an intrinsic, film-internal role. A plausible reading is
-that boron, as a small interstitial-like species, relieves part of the strain or modifies
-the metal cohesion in a way that favours the spread-out (flat) film over the clustered
-island. The precise origin — whether boron lowers the flat basin's energy or raises the
-island's — is not resolved by the present data and is a natural target for the
-re-relaxation and further analysis.
+almost identically), pointing to an intrinsic, film-internal role.
+
+**Confusion principle and amorphous formation.** The flat film can be read as the
+disordered, amorphous-like configuration and the island as the ordered, crystalline-like
+one. Under this reading, the stabilisation of the flat state by added elements follows the
+**confusion principle** of metallic-glass formation \cite{greer1993}: the more elements in
+an alloy, the harder it is for the alloy to select a viable crystal structure, and the
+greater the tendency toward glass (amorphous) formation. The progression Fe → FeCo → FeCoB
+increases compositional complexity, and our results show a corresponding trend: the
+flat-state energy falls and flat-basin sampling rises as the film becomes more
+compositionally complex, with boron the decisive addition. This is consistent with the
+confusion principle acting to frustrate crystallisation and favour the flat, disordered
+configuration.
+
+We note, however, that even the most complex model (FeCoB) retains the island as its ground
+state — the confusion principle stabilises the flat state but does not, in these small
+model systems, fully suppress the ordered configuration. The precise origin of boron's
+effect — whether it lowers the flat basin's energy or raises the island's — is not resolved
+by the present data and is a natural target for the re-relaxation and further analysis.
 
 ## 3.3 Cobalt plays a minor role
 
