@@ -1,0 +1,95 @@
+{
+  "description": {
+    "name": "mgo_on_fe",
+    "version": "1.0.0",
+    "produced_by": "scripts/mgo_on_fe.py",
+    "purpose": "Compare the wetting of the deposited layer between Fe-on-MgO (main text) and the inverted MgO-on-Fe stack. Flatness is measured over the deposited film in each case: Fe for femgo, MgO (Mg+O) for mgofe.",
+    "key_definitions": {
+      "flat_branch": "dZ(film) <= 1.0 A",
+      "min_iteration": 10,
+      "dZ_film": "z(max)-z(min) over the deposited film (Mg+O for mgofe, Fe for femgo)",
+      "flat_island_gap_eV_per_atom": "(E_flat_min - E_island_min)/N, pooled"
+    },
+    "data_quality": "The 5 completed mgofe searches are badly under-converged: per-seed best spans ~59 eV (~0.8 eV/atom) against ~0.09 eV/atom for femgo, and the structures are physically intact, so this is a failure to converge at 100 iterations, not a crash. The flat-film-is-lowest observation rests on 1 of 5 searches.",
+    "scope_bound": "Boron-free; bounds the structural result only.",
+    "run_selection": "completed searches only (budget 100); seed_5 stopped at 26 and is excluded; scratch trash/ excluded; iteration >= 10"
+  },
+  "per_run": [
+    {
+      "seed": "seed_0",
+      "n": 91,
+      "Emin": -419.2622182356727,
+      "dZ_film_at_Emin": 0.3864443479065933,
+      "flat_fraction": 0.46153846153846156,
+      "flat_min_E": -419.2622182356727,
+      "island_min_E": -418.05587718361465
+    },
+    {
+      "seed": "seed_1",
+      "n": 91,
+      "Emin": -362.2614359361901,
+      "dZ_film_at_Emin": 3.5348409237446443,
+      "flat_fraction": 0.0,
+      "flat_min_E": null,
+      "island_min_E": -362.2614359361901
+    },
+    {
+      "seed": "seed_2",
+      "n": 91,
+      "Emin": -394.26655503686516,
+      "dZ_film_at_Emin": 4.098062781001913,
+      "flat_fraction": 0.0,
+      "flat_min_E": null,
+      "island_min_E": -394.26655503686516
+    },
+    {
+      "seed": "seed_3",
+      "n": 91,
+      "Emin": -360.2279998451552,
+      "dZ_film_at_Emin": 2.834281167748715,
+      "flat_fraction": 0.0,
+      "flat_min_E": null,
+      "island_min_E": -360.2279998451552
+    },
+    {
+      "seed": "seed_4",
+      "n": 91,
+      "Emin": -393.7947989459638,
+      "dZ_film_at_Emin": 2.8179230525484904,
+      "flat_fraction": 0.0,
+      "flat_min_E": null,
+      "island_min_E": -393.7947989459638
+    }
+  ],
+  "pooled": {
+    "n_structures": 455,
+    "n_seeds": 5,
+    "E_global_min": -419.2622182356727,
+    "dZ_film_at_global_min": 0.3864443479065933,
+    "global_min_is_flat": true,
+    "flat_fraction": 0.09230769230769231,
+    "best_island_E": -418.05587718361465,
+    "flat_island_gap_eV_per_atom": -0.016084547360774196,
+    "n_seeds_reaching_flat_film": 1,
+    "per_seed_best_spread_eV_per_atom": 0.7871229118735672
+  },
+  "femgo_comparison": {
+    "n_seeds": 13,
+    "n_structures": 1180,
+    "global_min_is_island": true,
+    "flat_basin_min_eV_per_atom": 0.18882193067997757,
+    "per_seed_best_spread_eV_per_atom": 0.08591357282274506
+  },
+  "headline": {
+    "mgofe_global_min_is_flat": true,
+    "mgofe_flat_film_dZ": 0.3864443479065933,
+    "mgofe_flat_island_gap_eV_per_atom": -0.016084547360774196,
+    "mgofe_n_seeds_reaching_flat_film": 1,
+    "mgofe_n_seeds_total": 5,
+    "mgofe_per_seed_best_spread_eV_per_atom": 0.7871229118735672,
+    "femgo_global_min_is_island": true,
+    "femgo_flat_basin_min_eV_per_atom": 0.18882193067997757,
+    "femgo_per_seed_best_spread_eV_per_atom": 0.08591357282274506,
+    "conclusion": "qualified: the lowest structure found for MgO-on-Fe is a flat MgO film (opposite of Fe-on-MgO), but the search does not converge at 100 iterations (per-seed best spans ~0.8 eV/atom; only 1 of 5 searches reaches the flat film), so this is a weak/negative result, not a clean claim"
+  }
+}
