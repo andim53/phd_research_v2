@@ -2,8 +2,8 @@
      v6 (2026-09-18): the uncertainty paragraph now explains what p means, in plain terms (the
      probability, if boron had no effect, that a random reshuffling of the 19 per-search minima into
      groups of 13 and 6 would reproduce a shift at least as large by chance; p = 0.0444 ~ 4.4 % of
-     reshufflings). No number changed. **APPROVAL VOIDED** by this edit (it was approved 2026-09-18
-     as v5) — the scientist authorised the edit; the section needs re-approval.
+     reshufflings). No number changed. **APPROVED 2026-09-18** — re-approved by the scientist after
+     this edit (the p-explanation had voided the v5 approval; the scientist authorised it).
      v5 (2026-09-18): the two main-text figures are now cited and captioned — Figure 2 (the sampled
      two-phase landscape, §2.1) and Figure 3 (the flat-basin comparison, §2.2). No claim, number or
      table changed. APPROVED 2026-09-18.

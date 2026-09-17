@@ -6,7 +6,8 @@
      accidental-ranking notes (S3), the unequal-counts/diversity/different-composition block (S3),
      the not-converged-absolute-minimum and not-a-population notes and the Scope bound (S4), the
      not-covered-boron / single-layer and the strain-convention caveats (S5), and the SI-11
-     "indicative rather than settled" caveat (S6). No number or claim changed. Awaiting review.
+     "indicative rather than settled" caveat (S6). No number or claim changed. **APPROVED
+     2026-09-18.**
      v9 (2026-09-18): the SI-6 caveat in §S3 (dipole) is removed at the scientist's decision, after
      verification that the dipole and baseline runs share the same system and the same randomization
      seed (see paper_status.md → OPEN). The runs are seed-matched: the earliest structures are

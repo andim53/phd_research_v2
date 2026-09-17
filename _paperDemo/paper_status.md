@@ -105,31 +105,28 @@ end, so a fresh session does not re-open them.
 
 **B. Section approvals — the block-and-wait gate**
 
-- [x] **B1 · Methods and Discussion APPROVED 2026-09-18; Results approval VOIDED and awaiting
-      re-approval.** `01_methods.md` v6, `02_results.md` v5 and `03_discussion.md` v5 were reviewed
-      by the scientist and approved **as-is** on 2026-09-18, so **the gate for the introduction was
-      opened**. On the scientist's instruction, `02_results.md` was then edited (v6) to explain what
-      p means in plain terms, which **voids its approval** — Methods and Discussion remain approved;
-      the Results (v6) needs re-approval. **The introduction (v4) is still awaiting review.** `SI.md`
-      v8 is the only drafted section that has never been through this gate. The approvals/voids are
-      recorded in each section's head block — any later edit to an approved section voids its
-      approval again, per the governing rule.
-- [ ] **B2 · Review `04_introduction.md` — v11, DRAFTED, awaiting review.** The newly opened gate.
-      v6 restored the full step-by-step story; v7 merged/trimmed the GOFEE passage; **v8 rewrote the
-      what-we-do passage in the example style** (achievement sentence + roadmap); **v9** was the
-      scientist's edit (removed the Discussion forward pointer); **v10** added the reasoning paragraph
-      before "In this work, ..." (single calculation insufficient — island is a family of many local
-      minima; biased exploration of the two phases; surrogate-driven because exhaustive DFT is too
-      costly); **v11 is the scientist's edit** dropping "amorphous-like" from "the flat, amorphous-like
-      configuration" (that label belongs to the Discussion per CLAIMS). The roadmap uses
-      final-manuscript section numbers (II=Methods, III=Results, IV=Discussion, V=Conclusion), to be
-      reconciled with the draft's §1/§2/§3 at the port. What needs the scientist: **C7**
-      (confusion-principle framing), **E3** (three device references), **E4** (four fabrication
-      references), **E5** (the GOFEE/LCB reference, accept or drop).
-- [ ] **B3 · Re-approve `02_results.md` v6.** The Results was approved as-is on 2026-09-18 (v5), then
-      edited on the scientist's instruction to explain the p-value in plain terms (the uncertainty
-      paragraph now states what p is, §2.2). No number or claim changed, but the edit voids the
-      approval under the governing rule, so the section needs a fresh sign-off.
+- [x] **B1 · All drafted sections APPROVED 2026-09-18.** `01_methods.md` v6 and `03_discussion.md` v5
+      were approved earlier the same day; `02_results.md` v6, `04_introduction.md` v11 and `SI.md`
+      v10 were approved by the scientist together (B2/B3/SI), resolving the pending section reviews.
+      **All six drafted sections are approved** — the block-and-wait gate is clear, and the next step
+      is drafting `05_conclusion.md` → `06_abstract.md`, then the LaTeX port (only once all six are
+      approved, which now only lacks `05` and `06`). The approvals/voids are recorded in each section's
+      head block; any later edit to an approved section voids its approval, per the governing rule.
+- [x] **B2 · Review `04_introduction.md` — v11 — APPROVED 2026-09-18.** The introduction (v11) is
+      approved as it stands, which carries the embedded items with it: **C7** (the confusion-principle
+      framing in the Introduction) is **accepted** by the scientist, and **E3** (three device
+      references), **E4** (four fabrication references) and **E5** (the GOFEE/LCB reference) are
+      **accepted** — the cited references stand. History: v6 restored the step-by-step story; v7
+      merged/trimmed the GOFEE passage; v8 rewrote the what-we-do passage (achievement + roadmap);
+      v9 removed the Discussion forward pointer; v10 added the reasoning paragraph; v11 dropped
+      "amorphous-like". The roadmap uses final-manuscript section numbers (II=Methods, III=Results,
+      IV=Discussion, V=Conclusion), to be reconciled with the draft's §1/§2/§3 at the port.
+- [x] **B3 · Re-approve `02_results.md` v6 — APPROVED 2026-09-18.** The Results (v6) is re-approved;
+      the p-explanation edit that had voided the v5 approval is accepted.
+- [x] **B4 · Review `SI.md` v10 — APPROVED 2026-09-18.** The SI (v10), including the caveat-removal
+      pass, is approved as it stands. Note recorded: the SI now reads more definitively than the
+      frozen claims support; the removed caveats stay authoritative in `CLAIMS.md` (paired caveats +
+      Limitations) and `paper_status.md` should the scientist wish to restore any at a later pass.
 
 **C. Wording and framing**
 
@@ -151,7 +148,8 @@ end, so a fresh session does not re-open them.
       Results §2.1 (v9) rather than adding an S4. Draft one later if it is wanted in print.
 - [ ] **C6 · The `<!-- DRAFT vN -->` comment at the head of each section** is the last version
       reference inside a section file (it is stripped at the port). Move it here, or leave it?
-- [ ] **C7 · The confusion-principle framing now appears in the Introduction.** `04_introduction.md`
+- [x] **C7 · The confusion-principle framing now appears in the Introduction — ACCEPTED 2026-09-18**
+      (resolved by the B2 approval of the Introduction). `04_introduction.md`
       §4 uses it as *motivation* — that added species stabilise disordered configurations
       (`greer1993`), applied to the flat/disordered-like film against the island/ordered-like cluster —
       and points forward to the Discussion for the reading itself. The claim list places this
@@ -190,7 +188,8 @@ end, so a fresh session does not re-open them.
       close this.
 - [ ] **E2 · Stale `.bib` keys.** `agox2020` / `gofee2017` carry year 2022 in the `.bib` while the
       keys are surname+year. Left as-is so far because the sections cite them.
-- [ ] **E3 · Three device-side references added for the Introduction — accept or drop.** The 13-key
+- [x] **E3 · Three device-side references added for the Introduction — ACCEPTED 2026-09-18** (resolved
+      by the B2 approval). The 13-key
       set contained nothing for the *device* motivation, so `sections/04_introduction.md` cites three
       new keys, each verified 2026-09-18 by DOI content negotiation and confirmed in a second index:
 
@@ -207,8 +206,8 @@ end, so a fresh session does not re-open them.
       is a one-line edit in §4 plus its `.bib` entry; `references.bib` now holds **22** keys and every
       one is cited by some section (no orphans). See **E4** for the four further references the
       scientist added on top of these.
-- [ ] **E4 · Four recent MTJ-fabrication references the scientist supplied as PDFs — reviewed and
-      verified 2026-09-18, accept or drop.** `papers/fabri_*.pdf` were added to the project and, on
+- [x] **E4 · Four recent MTJ-fabrication references the scientist supplied as PDFs — ACCEPTED 2026-09-18**
+      (resolved by the B2 approval). `papers/fabri_*.pdf` were added to the project and, on
       the scientist's instruction, are now cited in the Introduction as the recent fabrication trend.
       Each was read and matched to its published record by DOI content negotiation (two were preprints
       and are cited by their **published** versions — `solano2022` was on arXiv 2209.10906 but is
@@ -226,7 +225,8 @@ end, so a fresh session does not re-open them.
       key and it is a one-line edit in §4 plus its `.bib` entry. Note the **file-name/key mismatch**:
       `papers/fabri_Crina2024.pdf` is **Ghemes et al.** (first author Ghemes), so its citation key is
       `ghemes2024`, not "crina".
-- [ ] **E5 · The GOFEE/LCB reference — accept or drop.** On the scientist's instruction, the
+- [x] **E5 · The GOFEE/LCB reference — ACCEPTED 2026-09-18** (resolved by the B2 approval). On the
+      scientist's instruction, the
       Introduction now justifies the choice of GOFEE through its lower-confidence-bound property
       (LCB(r) = E(r) − κσ(r); balances exploitation against exploration; guides the search toward
       the global minimum even when seeded from a flat reference), citing two keys: the primary GOFEE
@@ -282,18 +282,19 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | Section | Draft | Approval state |
 |---|---|---|
 | `01_methods.md` | **v6** | **APPROVED 2026-09-18** (reviewed as-is). v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
-| `02_results.md` | **v6** | **APPROVAL VOIDED 2026-09-18 — awaiting re-approval (B3).** v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2; no number or claim changed). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
+| `02_results.md` | **v6** | **APPROVED 2026-09-18** (re-approved via B3). v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2), which voided the v5 approval; the scientist re-approved it (B3). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v10** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); **v10 removed all remaining caveats from the section text** at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. Full list of what was removed: see the note in this file and `experiment_log.md`. No number or claim changed. |
-| `04_introduction.md` | **v11** | **DRAFTED — awaiting review.** v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like" from "the flat configuration" (that label belongs to the Discussion per CLAIMS). No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys. Carries the confusion-principle framing as motivation (claim list places it in the Discussion only) — **C7**. |
+| `SI.md` | **v10** | **APPROVED 2026-09-18** (B4). v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); v10 removed all remaining caveats from the section text at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. Full list of what was removed: see the note in this file and `experiment_log.md`. No number or claim changed. |
+| `04_introduction.md` | **v11** | **APPROVED 2026-09-18** (B2). v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing is accepted by this approval (**C7**). |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
-**Approvals (2026-09-18).** `01_methods.md` v6 and `03_discussion.md` v5 are approved as-is; each
-carries `APPROVED 2026-09-18` in the head block of its file. `02_results.md` v5 was approved the same
-day and then **voided** by the p-explanation edit (now v6, awaiting re-approval, item **B3**). Editing
-an approved section voids its approval and requires re-review (this is how the v3/v4 Methods approval
-was lost). The introduction, drafted and revised the same day (now v4), is **not** approved.
+**Approvals (2026-09-18).** All six drafted sections are approved: `01_methods.md` v6 and
+`03_discussion.md` v5 approved as-is earlier the same day; `02_results.md` v6, `04_introduction.md`
+v11 and `SI.md` v10 approved together by the scientist (B2/B3/B4). Each carries its approval in the
+head block of its file. Editing an approved section voids its approval and requires re-review (this
+is how the v3/v4 Methods approval was lost). `05_conclusion.md` and `06_abstract.md` are the only
+sections not yet drafted.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
@@ -650,35 +651,22 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`04_introduction.md` is drafted (v11) and awaiting review (item B2).** v1 was written after Methods
-v6, Results v5 and Discussion v5 were approved on 2026-09-18; v2–v8 built the fabrication trend, the
-phase-controlled / GOFEE-with-LCB justification, the plain-terms p-value meaning, the full narrative,
-and the example-style achievement+roadmap; v9 was the scientist's edit (removed the Discussion forward
-pointer); v10 added the reasoning paragraph before "In this work, ..." (single calculation
-insufficient — island is a family of many local minima; biased exploration of the two phases;
-surrogate-driven because exhaustive DFT is too costly); **v11 is the scientist's edit** dropping
-"amorphous-like" from "the flat configuration" (that label belongs to the Discussion per CLAIMS). Five
-things inside the section need the scientist rather than an agent: the confusion-principle framing
-appears in the Introduction although the claim list places it in the Discussion (**C7**), three
-device-side references (**E3**), four recent-fabrication references (**E4**) and the GOFEE/LCB
-reference (**E5**) were added for the section, and the roadmap uses final-manuscript section numbers
-(II=Methods … V=Conclusion), which must be reconciled with the draft's internal §1/§2/§3 numbering at
-the port.
+**The block-and-wait gate is clear — all six drafted sections are approved.** `01_methods.md` v6 and
+`03_discussion.md` v5 were approved earlier on 2026-09-18; `02_results.md` v6, `04_introduction.md`
+v11 and `SI.md` v10 were approved together by the scientist (B2/B3/B4), which also resolved the
+embedded items **C7** (confusion-principle framing accepted), **E3/E4/E5** (references accepted) and
+the SI-6 dipole decision. The next drafting steps are **`05_conclusion.md` → `06_abstract.md`**, then
+the `paper.tex` port. No LaTeX before all six sections are approved — `05` and `06` are the only ones
+left.
 
-**`02_results.md` v6 also needs re-approval (item B3).** It was approved as-is as v5 on 2026-09-18,
-then edited at the scientist's instruction to state what p means in plain terms (§2.2); the edit voids
-the approval under the governing rule, so the Results is back in the gate alongside the Introduction.
+**Two things still need the scientist before/around the port:**
+- **A1/A2 — the claims sign-off** is not covered by the section approvals: `CLAIMS.md`'s contribution
+  sentence is still the not-re-signed v9 rewrite, and it still quotes "p = 0.045" (v8 Monte-Carlo)
+  while MT-3 and the approved Results carry the exact 0.0444.
+- **Roadmap numbering** — the Introduction's roadmap uses final-manuscript section numbers
+  (II=Methods … V=Conclusion), which must be reconciled with the draft's internal §1/§2/§3 at the
+  LaTeX port.
 
-`SI.md` v8 is the last drafted section that has never been approved. After `02` (v6) is re-approved
-and `04` is approved, the order is `05_conclusion.md` → `06_abstract.md` → the `paper.tex` port; no
-LaTeX before all six sections are approved.
-
-Everything else that is open is the scientist's, not the agent's: the consolidated decision checklist
-above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–**E5** references) is the one place to
-work from. The largest open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host
-structures selected, re-relaxation not run).
-
-**One internal inconsistency left for the sign-off, not fixed here:** the contribution sentence in
-`CLAIMS.md` still quotes "two-sided permutation p = 0.045", the v8 Monte-Carlo value, while MT-3 in the
-same file and the approved Results both carry the v9 exact value **0.0444** (item A1/A2). The
-Introduction deliberately avoids quoting either. Fixing it is part of re-signing the sentence.
+Everything else that is open is recorded in the checklist above (A1–A4, C1–C6, D1–D6). The largest
+open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host structures selected,
+re-relaxation not run).

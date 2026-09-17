@@ -147,36 +147,27 @@ drafting or revising anything. Summary as of 2026-09-18:
   key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
   `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
   `torelli2009` are closed access and cited from verified abstracts only.
-- **Phase E: IN PROGRESS — Methods and Discussion APPROVED 2026-09-18; Results approval voided
-  (v6, needs re-approval); the Introduction drafted and awaiting review.**
+- **Phase E: IN PROGRESS — all six drafted sections APPROVED 2026-09-18; `05`/`06` not yet drafted.**
   - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**.
   - `02_results.md` **v6** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
-    p = 0.0444) with Figures 2–3 cited and captioned, and the p-value now explained in plain terms
-    (§2.2). **APPROVAL VOIDED** by the last edit (v5 was approved 2026-09-18; the scientist
-    authorised the p-explanation edit) → **awaiting re-approval (B3)**.
+    p = 0.0444) with Figures 2–3 cited and captioned, and the p-value explained in plain terms
+    (§2.2). **APPROVED 2026-09-18** (re-approved via B3 after the p-explanation edit voided v5).
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains →
-    **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; **the gate is now open.**
-  - `04_introduction.md` **v11** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
-    floats. v1 closed on the frozen contribution sentence; v2–v8 built the fabrication trend, the
-    phase-controlled / GOFEE-with-LCB justification, the plain-terms p-value, the full narrative, and
-    the example-style achievement+roadmap; v9 was the scientist's edit (removed the Discussion forward
-    pointer); v10 added the reasoning paragraph before "In this work, ..." (single calculation
-    insufficient — island is a family of many local minima; biased exploration of the two phases;
-    surrogate-driven because exhaustive DFT is too costly); **v11 is the scientist's edit** dropping
-    "amorphous-like" from "the flat configuration". The roadmap uses final-manuscript section numbers
-    (II=Methods … V=Conclusion) — reconcile with the draft's §1/§2/§3 at the port. Cites device-side,
-    fabrication-side and GOFEE/LCB keys; the device material is referred to generically and no Co host
-    is discussed. Items for the scientist, recorded in `paper_status.md`: **C7** (confusion-principle
-    framing), **E3** (three device references), **E4** (four recent-fabrication references) and **E5**
-    (the GOFEE/LCB reference) — each accept or drop.
-  - `SI.md` **v10** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
-      budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 added **§S6 (the inverted stack,
-      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding; v9 removed the SI-6 dipole caveat;
-      **v10 removed all remaining caveats from the section text** (scientist's instruction — a draft
-      pass; the caveats stay authoritative in `CLAIMS.md` paired caveats + Limitations and
-      `paper_status.md`). **Awaiting review.**
-  - `05`/`06` not started; no LaTeX until all sections are approved.
+    **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; the gate is now closed.
+  - `04_introduction.md` **v11** — **APPROVED 2026-09-18** (B2). Continuous prose, no subsections,
+    no floats. v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the
+    plain-terms p-value, the full narrative, and the example-style achievement+roadmap; v9 removed
+    the Discussion forward pointer; v10 added the reasoning paragraph; v11 dropped "amorphous-like".
+    The roadmap uses final-manuscript section numbers (II=Methods … V=Conclusion) — reconcile with
+    the draft's §1/§2/§3 at the port. The approval also **accepted C7** (confusion-principle framing)
+    and **E3/E4/E5** (the references cited).
+  - `SI.md` **v10** — **APPROVED 2026-09-18** (B4). §S1–§S3 Fe/MgO; v7 added §S4 (SI-9) and §S5
+    (SI-10); v8 added §S6 (SI-11, QUALIFIED/weak); v9 removed the SI-6 dipole caveat; v10 removed all
+    remaining caveats from the section text (the caveats stay authoritative in `CLAIMS.md` paired
+    caveats + Limitations and `paper_status.md`).
+  - `05`/`06` **not yet drafted** — next steps are `05_conclusion.md` → `06_abstract.md`, then the
+    `paper.tex` port; no LaTeX until all six sections are approved.
   - **Editing an approved section voids its approval** and requires re-review — that is how the
     earlier `01_methods.md` v3 approval was lost.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on

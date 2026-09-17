@@ -1866,3 +1866,27 @@ review (they said they will later decide which caveats to restore).
 v10 and a consolidated "SI caveat-removal pass" note listing every removed passage.
 `AGENTS.md` — SI Phase E entry to v10. Bibliography unchanged.
 
+## 2026-09-18 — B2/B3/B4 approved: the Introduction, Results and SI all pass the gate
+
+The scientist approved the current state of the three pending sections together: **B2**
+(`04_introduction.md` v11), **B3** (`02_results.md` v6, re-approval after the p-explanation edit) and
+**SI** (`SI.md` v10, including the caveat-removal pass). With Methods (v6) and Discussion (v5) already
+approved earlier the same day, **all six drafted sections are approved** and the block-and-wait gate
+is clear; the next drafting steps are `05_conclusion.md` → `06_abstract.md`, then the `paper.tex` port
+(no LaTeX until all six are approved — only `05`/`06` are left).
+
+**Embedded items resolved by the approval.** Approving the Introduction as it stands carries the
+embedded decisions: **C7** (the confusion-principle framing in the Introduction) is accepted, and
+**E3/E4/E5** (the device-side, fabrication-trend and GOFEE/LCB references) are accepted — the cited
+references stand.
+
+**Still open (not covered by the section approvals).** **A1/A2** — the claims sign-off: `CLAIMS.md`'s
+contribution sentence is still the not-re-signed v9 rewrite, and it still quotes "p = 0.045" (v8
+Monte-Carlo) while MT-3 and the approved Results carry the exact 0.0444. **Roadmap numbering** — the
+Introduction's roadmap uses final-manuscript section numbers (II=Methods … V=Conclusion), to be
+reconciled with the draft's §1/§2/§3 at the LaTeX port.
+
+**Doc sync.** Section head blocks marked APPROVED (`02_results.md` v6, `04_introduction.md` v11,
+`SI.md` v10). `paper_status.md` — B1 rewritten (all approved), B2/B3 checked, **B4 added** (SI), the
+drafting table and Approvals note updated, C7/E3/E4/E5 marked accepted, and "Next step" rewritten
+around the open `05`/`06` gate. `AGENTS.md` — Phase E block updated. Bibliography unchanged.

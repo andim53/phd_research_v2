@@ -2,7 +2,7 @@
      v11 (2026-09-18): the scientist's edit — in the reasoning paragraph, "the flat, amorphous-like
      configuration" is now simply "the flat configuration", dropping the amorphous-like label (which
      CLAIMS assigns to the Discussion as an interpretive framing). Line re-wrapped. No number or
-     claim changed.
+     claim changed. **APPROVED 2026-09-18.**
      v10 (2026-09-18): a reasoning paragraph added between the Greer/boron paragraph and the
      "In this work, ..." passage, motivating the method: testing the confusion-principle question is
      not a single-calculation problem (the island is a family of many local minima, so one structure
