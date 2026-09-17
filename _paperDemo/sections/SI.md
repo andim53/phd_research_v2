@@ -1,4 +1,8 @@
 # Supplementary Material
+     v13 (2026-09-18): claim tags removed from the section text — the inline [SI-1]…[SI-7] and
+     (SI-9)/(SI-10)/(SI-11)/(MT-1) markers and the *[SI-x]* tags in the table captions. They are
+     internal traceability to CLAIMS.md and should not reach the reader. No number, claim, table or
+     figure changed. **APPROVAL VOIDED** (v10 was approved 2026-09-18); re-approval pending.
      v12 (2026-09-18): abbreviation pass requested by the scientist — GPAW/LCAO/PBE (§S2), DOS
      (Fig. S2 caption), LEED (§S2) and GOFEE/GPR/LCB (§S3) now carry their long name at first use in
      this document. No number, claim, table or figure changed. **APPROVAL VOIDED** (v10 was approved
@@ -142,7 +146,7 @@ are those of Table S1 and Table S2.
 **Figure S2.** Total density of states (DOS), Fe-dz² and O-pz for the flat monolayer (blue) and the island ground
 state (red).
 
-**Table S1.** Density-of-states metrics for the two configurations. *[SI-1, SI-2]*
+**Table S1.** Density-of-states metrics for the two configurations.
 
 | Quantity | Flat | Island | Δ (island − flat) |
 |---|---|---|---|
@@ -155,7 +159,7 @@ state (red).
 
 ### Islanding reduces Fe–O hybridisation
 
-*[SI-1]* Going flat → island, the Fe d-band centre rises
+Going flat → island, the Fe d-band centre rises
 by +0.83 eV while the O-pz integral falls by 3.4 % and the Fe-dz2 manifold becomes slightly
 narrower (−0.10 eV) and more filled (+2.16). The flat monolayer is therefore the more strongly
 Fe–O hybridised of the two: it mixes more O-p character and its Fe d-states sit lower, whereas the
@@ -163,7 +167,7 @@ island's d-states shift up and localise.
 
 ### Islanding weakens the magnetic and electronic activity at E_F
 
-*[SI-2]* The spin polarisation
+The spin polarisation
 falls from 5.81 to 4.37 and the DOS at the Fermi level drops by 25 % (104.0 → 78.1). The flat
 monolayer is the electronically "hotter" configuration; the island is quieter.
 
@@ -182,7 +186,7 @@ substrate oxygen on the MgO(001) lattice.
 **Table S2.** Site-resolved d-band metrics and the Fe-on-O registry, by geometric group. The last
 two columns are the mean nearest-O distance and the mean in-plane offset from the nearest
 substrate atom (0 = directly atop); for groups that include non-contacting Fe these are not bond
-lengths. *[SI-3, SI-4]*
+lengths.
 
 | Structure | Group | n | d-centre (eV) | width (eV) | ∫ | ⟨nearest d_Fe–O⟩ (Å) | ⟨offset⟩ (Å) |
 |---|---|---|---|---|---|---|---|
@@ -193,7 +197,7 @@ lengths. *[SI-3, SI-4]*
 
 ### The island's true interface Fe are not flat-like
 
-*[SI-3]* Restricting the comparison to the
+Restricting the comparison to the
 9 Fe atoms genuinely in O contact does not recover the flat signature: their d-band centre is
 +0.5106 eV, against −0.2294 eV for the flat monolayer — a difference of 0.74 eV, larger than
 the spread between the island's interface (+0.5106) and non-interface (+0.6524) groups. Two
@@ -208,7 +212,7 @@ of an individual Fe–O bond.
 
 ### The Fe-atop-O registry is a consistency check
 
-*[SI-4]* Every in-contact Fe sits directly atop
+Every in-contact Fe sits directly atop
 an oxygen — 25/25 in the flat monolayer and 9/9 in the island — and none atop Mg. This is the
 registry determined experimentally for the first monolayer of Fe on MgO(001) by low-energy
 electron diffraction (LEED) I–V analysis
@@ -256,8 +260,7 @@ search that looks complete can have stopped early. The baseline quoted in Table 
 consists of 13 completed searches — one further search of that family stopped early — which is
 the replica count used in the main text.
 
-**Table S3.** Method-parameter sensitivity; completed searches only (100 iterations). *[SI-5, SI-6,
-SI-7]*
+**Table S3.** Method-parameter sensitivity; completed searches only (100 iterations).
 
 | Family | Setting | Searches | per-seed best (eV/atom) | Flat fraction | Diversity |
 |---|---|---|---|---|---|
@@ -280,7 +283,7 @@ family (four panels).
 
 ### Reducing the rattle strength degrades the search by about 7×
 
-*[SI-7]* Cutting the two
+Cutting the two
 perturbation amplitudes roughly in half raises the per-seed best
 from 0.0368 to 0.2607 / 0.2558 eV/atom — a factor of 7.1 and 7.0 — and the flat-basin
 fraction collapses from 0.165 to 0.023 / 0.017. Reducing the perturbation is therefore not a
@@ -292,7 +295,7 @@ magnitude in the flat fraction.
 
 ### The kappa parameter changes nothing measurable
 
-*[SI-5]* All four settings land within
+All four settings land within
 0.0321–0.0395 eV/atom — a total span of 0.0074 eV/atom, far inside the standard deviations
 (0.019–0.026) — so the method's conclusions are robust to the acquisition parameter, and in
 in particular no value of kappa can be identified as better than another from these runs. There is a small,
@@ -302,7 +305,7 @@ effect is within the same order as the seed-to-seed spread.
 
 ### The dipole correction does not change the outcome
 
-*[SI-6]* The per-seed best moves from
+The per-seed best moves from
 0.03683 ± 0.02575 to 0.03770 ± 0.02436 eV/atom, a difference of 0.0009 eV/atom — an order of
 magnitude smaller than the standard deviation.
 
@@ -343,7 +346,7 @@ minimum from 100 iterations to the full budget.
 ### The island remains the ground state at every budget
 
 In all 17 searches the lowest-energy
-structure is an island at both the 100-iteration cut and the full budget. *(MT-1)*
+structure is an island at both the 100-iteration cut and the full budget.
 
 ### The flat–island separation does not shrink with a longer search
 
@@ -352,7 +355,7 @@ unchanged in 5 of the 17 searches and larger in the other 12 — it never decrea
 +0.0104 eV/atom (range 0 to +0.0268). Pooled per arm it rises from 0.1901 to 0.1901 (200
 iterations), 0.1624 to 0.1662 (400) and 0.1807 to 0.1978 eV/atom (600). A longer search therefore
 does not bring the flat basin closer to the ground state; if anything it leaves it relatively higher.
-*(SI-9)*
+
 
 The flat basin is a smaller fraction of the sampled set at longer budgets (0.165 at 100
 iterations falling to 0.05–0.11 at 600). Longer searches keep finding better islands, so the flat
@@ -397,7 +400,7 @@ arm.
 ### The island is the ground state under every constraint
 
 In all 25 searches, at every value of
-*f*, the lowest-energy structure is an island. *(MT-1)*
+*f*, the lowest-energy structure is an island.
 
 ### The flat-basin minimum is flat against the constraint
 
@@ -406,7 +409,7 @@ Pooled, it is 0.1932 (*f* = 0.25), 0.1982
 model — a total spread of 0.0094 eV/atom across the whole sweep. The search-to-search scatter
 within an arm is 0.017–0.031 eV/atom, i.e. 2–3× the entire sweep effect, so no dependence on the
 constraint is resolvable. For scale, the constraint moves the separation by about a quarter of the
-boron effect (0.040 eV/atom). *(SI-10)*
+boron effect (0.040 eV/atom).
 
 ### The physically inverted strain case is therefore calculated for this model
 
@@ -450,4 +453,4 @@ inverted stack the lowest structure found is a flat MgO film (ΔZ = 0.39 Å), an
 island is the ground state (ΔZ = 3.65 Å), and the flat film sits 0.189 eV/atom above it. The
 sign of the wetting preference therefore inverts between the two stacks — the layer that is deposited
 keeps its flat, wetting configuration when it is the oxide, and breaks up into an island when it is
-the metal. *(SI-11)*
+the metal.

@@ -2080,3 +2080,31 @@ approved. Re-review is item **B7**. No number, claim, table or figure changed.
 
 **Doc sync.** `paper_status.md` (rows, Approvals note, B7, E2 row v3, Next step), `AGENTS.md`
 (Phase E). Bibliography unchanged.
+
+## 2026-09-18 — Claim tags removed from the manuscript text
+
+Third style pass requested by the scientist: remove the internal claim-tag markers from what the
+reader sees. They are traceability into `CLAIMS.md` and should not appear in the paper.
+
+**Removed — `latex/results.tex` (= `02_results.md`), 5 tags:** `(MT-1)`, `(MT-2)`, `(MT-8)` (twice),
+`(MT-3)`, `(MT-7)` — each sat at the end of the paragraph it labelled.
+
+**Removed — `SI.tex` (= `SI.md`), 15 tags:** the inline `\emph{[SI-1]}` … `\emph{[SI-7]}` markers that
+opened the sub-sub paragraphs of §S2/§S3; the table-caption tags
+`\emph{[SI-1, SI-2]}`, `\emph{[SI-3, SI-4]}`, `\emph{[SI-5, SI-6, SI-7]}`; and the trailing
+`\emph{(SI-9)}`, `\emph{(SI-10)}`, `\emph{(SI-11)}`, `\emph{(MT-1)}` (twice).
+
+**Method.** Removed with a brace/paren-aware scrubber that also absorbs one adjacent space, so no
+double space or space-before-punctuation is left behind (one `... not physical .` artifact found and
+fixed by hand). **Kept:** the tags in `CLAIMS.md` (where they are defined), in the section files'
+DRAFT comment blocks and changelogs, and in `paper_status.md` / `AGENTS.md` — those are the internal
+traceability record, not manuscript text.
+
+**Compile.** `paper.pdf` 13 pp, `SI.pdf` 9 pp; no errors, no overfull boxes; text extraction confirms
+**no `(MT-n)` or `[SI-n]` remains in either PDF**.
+
+**Approval consequence.** `02_results.md` (v7→v8) and `SI.md` (v12→v13) — both already
+approval-voided. No number, claim, table or figure changed.
+
+**Doc sync.** `paper_status.md` (rows, Approvals note, E2 row, Next step), `AGENTS.md` (Phase E).
+Bibliography unchanged.

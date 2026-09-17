@@ -147,15 +147,16 @@ drafting or revising anything. Summary as of 2026-09-18:
   key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
   `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
   `torelli2009` are closed access and cited from verified abstracts only.
-- **Phase E: DONE — all six sections approved 2026-09-18; two style passes then edited five of them (B7, re-review pending); the LaTeX port (E2) is DONE.**
+- **Phase E: DONE — all six sections approved 2026-09-18; three style passes then edited five of them (B7, re-review pending); the LaTeX port (E2) is DONE.**
   - `01_methods.md` **v8** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**; **v7/v8 = editorial + setup passes** (bold-lead →
     sub-sub headings, inline bold removed; AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc expanded, §1.2 heading
     trimmed) → **APPROVAL VOIDED, re-review pending (B7)**.
-  - `02_results.md` **v7** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
+  - `02_results.md` **v8** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
     p = 0.0444) with Figures 2–3 cited and captioned, and the p-value explained in plain terms
-    (§2.2) → **APPROVED 2026-09-18** (via B3). **v7 = editorial pass** (bold-lead → sub-sub headings,
-    inline bold removed, §2.4 summary rewritten as prose) → **APPROVAL VOIDED, re-review pending (B7)**.
+    (§2.2) → **APPROVED 2026-09-18** (via B3). **v7/v8 = editorial + tag-removal passes** (bold-lead
+    → sub-sub headings, inline bold removed, §2.4 summary rewritten as prose; `(MT-n)` tags removed)
+    → **APPROVAL VOIDED, re-review pending (B7)**.
   - `03_discussion.md` **v7** — the cobalt section is deleted; no Co sentence remains →
     **APPROVED 2026-09-18** (it was the gate for `04_introduction.md`). **v6/v7 = editorial + setup
     passes** (bold-lead → sub-sub headings, inline bold removed; DOS expanded, §3.3 heading spelled
@@ -165,9 +166,10 @@ drafting or revising anything. Summary as of 2026-09-18:
     subsections, no floats; the roadmap uses final-manuscript section numbers (II=Methods …
     V=Conclusion). The v11 approval also accepted **C7** (confusion-principle framing) and
     **E3/E4/E5** (the references cited).
-  - `SI.md` **v12** — **APPROVED 2026-09-18** (B4) at v10. **v11/v12 = editorial + setup passes**
-    (bold-lead → sub-sub headings, inline bold removed; GPAW/LCAO/PBE, DOS, LEED, GOFEE/GPR/LCB
-    expanded) → **APPROVAL VOIDED, re-review pending (B7)**. §S1–§S3 Fe/MgO; v7 added §S4 (SI-9) and §S5
+  - `SI.md` **v13** — **APPROVED 2026-09-18** (B4) at v10. **v11/v12/v13 = editorial + setup +
+    tag-removal passes** (bold-lead → sub-sub headings, inline bold removed; GPAW/LCAO/PBE, DOS, LEED,
+    GOFEE/GPR/LCB expanded; `[SI-n]`/`(SI-n)`/`(MT-n)` tags removed) → **APPROVAL VOIDED, re-review
+    pending (B7)**. §S1–§S3 Fe/MgO; v7 added §S4 (SI-9) and §S5
     (SI-10); v8 added §S6 (SI-11, QUALIFIED/weak); v9 removed the SI-6 dipole caveat; v10 removed all
     remaining caveats from the section text (the caveats stay authoritative in `CLAIMS.md` paired
     caveats + Limitations and `paper_status.md`).

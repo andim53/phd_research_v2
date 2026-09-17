@@ -1,4 +1,8 @@
 # 02 — Results
+     v8 (2026-09-18): claim tags removed from the section text (the (MT-1)/(MT-2)/(MT-3)/(MT-7)/(MT-8)
+     markers at the end of the relevant paragraphs) at the scientist's request — they are internal
+     traceability to CLAIMS.md and should not reach the reader. No number or claim changed.
+     **APPROVAL VOIDED** (v6 was approved 2026-09-18); re-approval pending.
      v7 (2026-09-18): editorial pass requested by the scientist — the bold-lead paragraphs are now
      sub-sub headings, all mid-paragraph bold emphasis is removed, and §2.4 "Summary of the results"
      is rewritten as running prose (the bullet list is gone). No number or claim changed.
@@ -67,7 +71,7 @@ result is *against* the direction of the bias: every search was seeded from a fl
 and, in the early phases, perturbed only at small scale from it, so the flat configuration had a
 systematic head start. The search nevertheless left the flat basin and converged on an island in
 both models. The flat-wetting state is therefore not an artefact of how the initial structures
-were built — it is genuinely higher in energy than the island. (MT-1)
+were built — it is genuinely higher in energy than the island.
 
 ### The flat configuration is a distinct, higher-energy basin
 
@@ -75,7 +79,7 @@ Taking for each model the
 lowest-energy structure with ΔZ ≤ 1.0 Å isolates the flat basin's best member. In both models it
 lies above the global minimum — by 0.1888 eV/atom for Fe/MgO and 0.1493 eV/atom for Fe-B/MgO
 (Table 3, column 6). The flat film is thus a separate basin of the landscape, not merely the
-high-ΔZ tail of a single minimum. (MT-2)
+high-ΔZ tail of a single minimum.
 
 ### The branches are families, not single structures
 
@@ -87,7 +91,7 @@ structure: comparing the lowest-energy structures of each branch by their radial
 fingerprint shows that each branch's low-energy set splits into two distinct structural
 motifs, and that a motif recurs across independent searches — for Fe/MgO, the five lowest flat
 structures come from five different searches and fall into two motifs, four of them in the
-dominant one. (MT-8)
+dominant one.
 The fingerprint is computed on the whole template-plus-film structure, so the fixed MgO
 template compresses the pair distances and the motif count is a lower bound on the
 structural diversity present; a film-resolved descriptor would be sharper. Pairwise distances
@@ -146,7 +150,7 @@ the model's own lowest energy, and the bracket gives the shift produced by boron
 
 Adding boron lowers the flat basin's best member by
 0.040 eV/atom — from 0.1888 to 0.1493 eV/atom — a 21 % reduction of the flat–island separation.
-(MT-3) The effect is measured across 13 independent Fe/MgO searches and 6 independent Fe-B/MgO
+The effect is measured across 13 independent Fe/MgO searches and 6 independent Fe-B/MgO
 searches; its search-level significance is given in the uncertainty paragraph below.
 
 ### Boron does not bond to the MgO interface
@@ -158,7 +162,7 @@ window is 0.33. Outside the window the picture is different — 101 of the 471 r
 structures do have a boron–oxygen contact — which is why the statement is restricted to the
 low-energy window rather than made over all sampled structures. Boron therefore remains inside the
 metal film rather than wetting the oxide, so its effect on the flat phase is film-internal
-rather than a change in interfacial bonding. (MT-7)
+rather than a change in interfacial bonding.
 
 ### Uncertainty from the choice of search
 
@@ -210,7 +214,7 @@ interface — it stays within the film, so its effect on the flat phase is film-
 
 The low-energy structures of each branch form a small set of recurring motifs rather than one
 repeated structure, and ΔZ is continuous: the two phases are families, and the energetics above are
-compared unweighted, since the sampled densities are biased and not physical (MT-8).
+compared unweighted, since the sampled densities are biased and not physical.
 
 The mechanistic origin of these trends (electronic structure, interface registry) and the
 robustness of the method to its parameters are presented in the Supplementary Material.
