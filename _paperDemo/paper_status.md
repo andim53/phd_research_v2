@@ -114,19 +114,17 @@ end, so a fresh session does not re-open them.
       v8 is the only drafted section that has never been through this gate. The approvals/voids are
       recorded in each section's head block — any later edit to an approved section voids its
       approval again, per the governing rule.
-- [ ] **B2 · Review `04_introduction.md` — v4, DRAFTED, awaiting review.** The newly opened gate. It
-      closes on the frozen contribution sentence with the quoted shift and the significance value
-      removed (moved to the Results), and it carries no floats. **v2 added the recent fabrication
-      trend** (new paragraph + four references); **v3 made the phase-controlled design a core
-      methodological reason** (the dewetted family is a continuous set, not a single structure, so
-      exhaustive enumeration is not the goal) **and justified the GOFEE choice through its
-      lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) balances exploitation against
-      exploration and guides the search toward the global minimum even when seeded from a flat
-      reference film; **v4 explains what p means in plain terms** (the fraction of random
-      reshufflings of the 19 per-search minima that reproduce a shift as large by chance). What is
-      new rather than a restatement is listed separately and cannot be answered by an agent: **C7**
-      (confusion-principle framing), **E3** (three device references), **E4** (four fabrication
-      references) and **E5** (the GOFEE/LCB reference, accept or drop).
+- [ ] **B2 · Review `04_introduction.md` — v5, DRAFTED, awaiting review.** The newly opened gate.
+      **v5 is a lean, hook-style rewrite** at the scientist's request: brief motivation, a compact
+      "In this work, we ..." statement of what is done and found, and the closing contribution
+      sentence, with the detailed method, results and discussion left to their own sections. It
+      carries no floats. Earlier revisions that remain inside it, compressed to single clauses:
+      the recent fabrication trend (v2), the phase-controlled / GOFEE-with-LCB justification (v3,
+      LCB = E − κσ as one clause), and the meaning of p ("calculated exactly over all 27 132
+      possible reshufflings ... about 4.4 % by chance", v4). What is new rather than a restatement
+      is listed separately and cannot be answered by an agent: **C7** (confusion-principle framing),
+      **E3** (three device references), **E4** (four fabrication references) and **E5** (the
+      GOFEE/LCB reference, accept or drop).
 - [ ] **B3 · Re-approve `02_results.md` v6.** The Results was approved as-is on 2026-09-18 (v5), then
       edited on the scientist's instruction to explain the p-value in plain terms (the uncertainty
       paragraph now states what p is, §2.2). No number or claim changed, but the edit voids the
@@ -256,7 +254,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `02_results.md` | **v6** | **APPROVAL VOIDED 2026-09-18 — awaiting re-approval (B3).** v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2; no number or claim changed). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | **v4** | **DRAFTED — awaiting review.** v1 was the first draft of the section released when `03` was approved; **v2 added the recent MTJ-fabrication trend** (four references, see **E4**); **v3 made the phase-controlled design a core methodological reason** (the dewetted family is a continuous set, not a single structure — exhaustive enumeration is not the goal) **and justified the GOFEE choice through its lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) guides the search toward the global minimum even when seeded from a flat reference, citing `gofee2017` + `hamamoto2023` (see **E5**); **v4 explains what p means in plain terms** (fraction of reshufflings reproducing the shift by chance). Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, see **E3**). Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
+| `04_introduction.md` | **v5** | **DRAFTED — awaiting review.** v1 released the section when `03` was approved; v2–v4 added the fabrication trend, the phase-controlled/GOFEE-LCB justification and the plain-terms p-value meaning; **v5 is a lean, hook-style rewrite** (brief motivation, compact "In this work, we ...", closing contribution sentence; method/results/discussion left to their own sections; "enumerate" → "calculated"). No floats. Closes on the frozen contribution sentence; cites device keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication keys (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB keys (`gofee2017`, `hamamoto2023`, **E5**). Carries the confusion-principle framing as motivation (claim list places it in the Discussion only) — **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
@@ -621,16 +619,17 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`04_introduction.md` is drafted (v4) and awaiting review (item B2).** v1 was written after Methods v6,
-Results v5 and Discussion v5 were approved on 2026-09-18; **v2 added the recent MTJ-fabrication trend**,
-**v3 made the phase-controlled design a core methodological reason** and **justified GOFEE via its
-lower-confidence-bound property**, and **v4 explained what p means in plain terms** (all at the
-scientist's request). Five things inside the section need the scientist rather than an agent: the
-confusion-principle framing appears in the Introduction although the claim list places it in the
-Discussion (**C7**), three device-side references (**E3**), four recent-fabrication references (**E4**)
-and the GOFEE/LCB reference (**E5**) were added for the section, and the v9 contribution sentence it
-closes on still awaits re-sign-off (A1/A2). Everything else in it restates a number already frozen in
-the approved Results.
+**`04_introduction.md` is drafted (v5) and awaiting review (item B2).** v1 was written after Methods v6,
+Results v5 and Discussion v5 were approved on 2026-09-18; v2–v4 added the recent MTJ-fabrication
+trend, the phase-controlled / GOFEE-with-LCB justification and the plain-terms p-value meaning, and
+**v5 rewrote the whole section lean and hook-style** — brief motivation, a compact "In this work,
+we ..." statement of what is done and found, and the closing contribution sentence, with the method,
+results and discussion left to their own sections. Five things inside the section need the scientist
+rather than an agent: the confusion-principle framing appears in the Introduction although the claim
+list places it in the Discussion (**C7**), three device-side references (**E3**), four
+recent-fabrication references (**E4**) and the GOFEE/LCB reference (**E5**) were added for the
+section, and the v9 contribution sentence it closes on still awaits re-sign-off (A1/A2). Everything
+else in it restates a number already frozen in the approved Results.
 
 **`02_results.md` v6 also needs re-approval (item B3).** It was approved as-is as v5 on 2026-09-18,
 then edited at the scientist's instruction to state what p means in plain terms (§2.2); the edit voids

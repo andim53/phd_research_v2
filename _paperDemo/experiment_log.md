@@ -1650,3 +1650,36 @@ v6), distinct from **B2** (review `04_introduction.md` v4). Methods and Discussi
 drafting table move to v4/v6, the approvals note and "Next step" updated. `AGENTS.md` — Phase E block
 (Results v6 awaiting re-approval, Introduction v4). No bibliography change.
 
+## 2026-09-18 — `04_introduction.md` v5: lean, hook-style rewrite
+
+The scientist asked for a shorter introduction that hooks the reader rather than re-deriving the
+method, results and discussion (which have their own sections), and for the word "enumerate" to be
+replaced with a plainer one. The section was rewritten as **v5**.
+
+**On "enumerate" → "calculated".** *Enumerate* is jargon for "count/list every case". "The p-value is
+**calculated exactly** over all 27 132 possible reshufflings of the 19 search minima" says the same
+thing (exact, not sampled) in plainer language, so "enumerate" is gone from the body.
+
+**What v5 does.** The body drops from roughly 1400 to **503 words** across six paragraphs: (1) hook —
+flat film vs island as two competing configurations, and the islanding tendency that fabrication must
+suppress; (2) the recent fabrication trend in two sentences (record TMR via interface engineering;
+perpendicular junctions); (3) why boron — boron-bearing amorphous electrodes, confusion principle,
+"is what we compute"; (4) **"In this work, we ..."** — one compact paragraph on what is done (two
+models differing only by boron; GOFEE seeded from a flat reference; LCB = E − κσ in a single clause
+as the reason the search can escape the flat basin; method/electronic-structure/sensitivity pointers);
+(5) the result (island ground state; flat a distinct higher-energy basin; boron lowers the flat–island
+separation by 0.040 eV/atom, p = 0.0444, "calculated exactly over all 27 132 possible reshufflings ...
+about 4.4 % by chance"; boron acts inside the film, does not displace the island); (6) the closing
+frozen contribution sentence.
+
+**What was cut (now lives only in their own sections).** The full LCB derivation, the
+phase-controlled-design paragraph, the per-search p-value build-up, and the detailed wetting
+recitation were compressed to hooks; the substance remains in Methods §1.2/§1.4, Results §2 and the
+Discussion. The meaning of p is retained as the one graspable clause ("about 4.4 % by chance").
+
+**Verification.** No orphans, all `\cite{}` keys resolve; no backticks, paths, identifiers or Co-host
+terms in the body; every number unchanged from the frozen Results; `CLAIMS.md` not bumped.
+
+**Doc sync.** `paper_status.md` — B2 and the drafting table to v5, "Next step" updated.
+`AGENTS.md` — Phase E entry to v5. Bibliography unchanged.
+
