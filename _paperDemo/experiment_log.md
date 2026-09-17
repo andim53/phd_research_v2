@@ -2043,3 +2043,40 @@ table or figure changed anywhere.
 
 **Doc sync.** `paper_status.md` (rows, Approvals note, new B7, E2 row v2, Next step),
 `AGENTS.md` (Phase E), `figures/INSTRUCTION.md`. Bibliography unchanged.
+
+## 2026-09-18 — Setup pass: abbreviations expanded, full-width tables, numbered sub-sub headings
+
+Second style pass requested by the scientist. Applied to the markdown drafts and the LaTeX port.
+
+**1. Abbreviations expanded at first use** (manuscript order). Main text: *density functional theory
+(DFT)* (Introduction), *Atomistic Global Optimization X (AGOX)*, *global optimisation with
+first-principles energy expressions (GOFEE)*, *lower confidence bound (LCB)*, *linear combination of
+atomic orbitals (LCAO)*, *Perdew–Burke–Ernzerhof (PBE)*, *low-energy electron diffraction (LEED)*,
+*body-centred cubic (bcc)* (Methods), *density of states (DOS)* (Discussion). `GPR` was already
+expanded. The SI repeats the expansions at its own first use (GPAW/LCAO/PBE, DOS, LEED, GOFEE/GPR/LCB)
+because it is a separate document. **GPAW is left unexpanded** — it is a code name with no
+uncontroversial long form (flagged for the scientist).
+
+**2. Headings.** `\subsection{Biased global optimisation (AGOX / GOFEE)}` → `Biased global
+optimisation`; `\subsection{Implications for MTJ stacks}` → `Implications for magnetic tunnel
+junction stacks` (spelled out rather than introducing the abbreviation in a heading).
+
+**3. Tables full page width.** All 10 tables converted from `tabular` to
+`tabular*{\textwidth}{@{\extracolsep{\fill}}...}` so each spans the full text width; Table S5 dropped
+to `\scriptsize`. Worst overfull is now **zero** (previously 43 pt).
+
+**4. Sub-sub headings numbered.** `secnumdepth` 3 in `paper.tex` (headings number `2.2.1`, `3.1.1`, …)
+and, in `SI.tex`, `secnumdepth` 3 with `\thesubsubsection` = `\thesection.\arabic{subsubsection}`
+(numbering `S1.1`, `S2.1`, …), since the SI has no subsections.
+
+**Compile.** `paper.pdf` 13 pp, `SI.pdf` 9 pp; no errors, **no overfull boxes**. Verified by text
+extraction: every long form present, `2.2 Biased global optimisation` (no AGOX/GOFEE), `4.3 …
+magnetic tunnel junction stacks`, SI headings `S1.1`, `S2.1`.
+
+**Approval consequence.** Fifth section touched: `04_introduction.md` (v11→v12) joins
+`01_methods.md` (v6→v8), `02_results.md` (v6→v7, unchanged this pass), `03_discussion.md` (v5→v7) and
+`SI.md` (v10→v12) as approval-voided; only `05_conclusion.md` v2 and `06_abstract.md` v1 remain
+approved. Re-review is item **B7**. No number, claim, table or figure changed.
+
+**Doc sync.** `paper_status.md` (rows, Approvals note, B7, E2 row v3, Next step), `AGENTS.md`
+(Phase E). Bibliography unchanged.

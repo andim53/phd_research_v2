@@ -1,4 +1,8 @@
 # Supplementary Material
+     v12 (2026-09-18): abbreviation pass requested by the scientist — GPAW/LCAO/PBE (§S2), DOS
+     (Fig. S2 caption), LEED (§S2) and GOFEE/GPR/LCB (§S3) now carry their long name at first use in
+     this document. No number, claim, table or figure changed. **APPROVAL VOIDED** (v10 was approved
+     2026-09-18); re-approval pending.
      v11 (2026-09-18): editorial pass requested by the scientist — the bold-lead paragraphs are now
      sub-sub headings and all mid-paragraph bold emphasis is removed (same treatment as the main
      text). No number, claim, table or figure changed. **APPROVAL VOIDED** by this edit (v10 was
@@ -129,12 +133,13 @@ one structure per model.
 Section 3.1 attributes the island ground state to the loss of forced interfacial coupling. Here
 we test that reading directly, by comparing the flat reference monolayer (ΔZ = 0.000 Å) with
 the island ground state (ΔZ = 3.652 Å) of the Fe/MgO model in the *same* projection set, so
-the two are directly comparable (GPAW LCAO/dzp, PBE, kpts (12, 12, 1), 2000 points,
+the two are directly comparable (GPAW, linear combination of atomic orbitals (LCAO) with a
+double-zeta polarised basis, the Perdew–Burke–Ernzerhof (PBE) functional, kpts (12, 12, 1), 2000 points,
 width 0.15 eV, Fermi-shifted). Projections are per atom: Fe-dz² (l = 2, m = 2) and O-pz
 (l = 1, m = 0). d-band moments are taken over [−5, +3] eV around E_F. All numbers in this section
 are those of Table S1 and Table S2.
 
-**Figure S2.** Total DOS, Fe-dz² and O-pz for the flat monolayer (blue) and the island ground
+**Figure S2.** Total density of states (DOS), Fe-dz² and O-pz for the flat monolayer (blue) and the island ground
 state (red).
 
 **Table S1.** Density-of-states metrics for the two configurations. *[SI-1, SI-2]*
@@ -205,7 +210,8 @@ of an individual Fe–O bond.
 
 *[SI-4]* Every in-contact Fe sits directly atop
 an oxygen — 25/25 in the flat monolayer and 9/9 in the island — and none atop Mg. This is the
-registry determined experimentally for the first monolayer of Fe on MgO(001) by LEED I–V analysis
+registry determined experimentally for the first monolayer of Fe on MgO(001) by low-energy
+electron diffraction (LEED) I–V analysis
 \cite{urano1988} and used in first-principles models of the Fe|MgO|Fe interface \cite{butler2001},
 and it is also the registry the reference layer is built with — the construction places the
 substrate oxygen directly above the metal sites — so the flat film's registry follows from the
@@ -227,9 +233,10 @@ lattice constant (§1.1, §3.4).
 
 ## S3 Method-parameter sensitivity of the biased exploration
 
-The search used here is a custom, biased scheme — GOFEE (a GPR surrogate with an LCB acquisition
-function) seeded from a flat Fe reference layer, with a heterostructure-aware randomiser and a
-rattle generator supplying the perturbation. Here we vary three method parameters on the same
+The search used here is a custom, biased scheme — global optimisation with first-principles energy
+expressions (GOFEE), a Gaussian-process regression (GPR) surrogate with a lower confidence bound
+(LCB) acquisition function, seeded from a flat Fe reference layer, with a heterostructure-aware
+randomiser and a rattle generator supplying the perturbation. Here we vary three method parameters on the same
 Fe25Mg25O25 system and ask whether the method's conclusions survive the choice: is the island
 still the ground state, how far does a single search reach, and is the flat/island basin picture
 preserved. The baseline for every family is the plain Fe/MgO run (rattle 1.5/2.3, kappa = 2, no

@@ -14,14 +14,14 @@ metalloid in a single host.
 \begin{table}[t]
 \small
 \caption{\label{tab:models}The two interface models: film constitution and total atom count.}
-\begin{tabular}{lllc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lllc}
 \toprule
 Model & Composition & Film species & $N$ atoms \\
 \midrule
 Fe/MgO & Fe$_{25}$Mg$_{25}$O$_{25}$ & Fe & 75 \\
 Fe-B/MgO & B$_3$Fe$_{25}$Mg$_{25}$O$_{25}$ & Fe $+$ B & 78 \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 The substrate is a single MgO(001) layer and the film a single metal layer, stacked along $z$ with
@@ -36,13 +36,14 @@ not by the film---the Fe film remains at its own equilibrium lattice constant an
 in-plane. The substrate is then held fixed in that compressed state and only the film is
 allowed to relax.
 
-\subsection{Biased global optimisation (AGOX / GOFEE)}
+\subsection{Biased global optimisation}
 \label{sec:bias}
 
-Structures were sampled with AGOX \cite{agox2020}, using a GOFEE-type surrogate-driven
-search \cite{gofee2017}: a Gaussian-process regression (GPR) surrogate with an Oganov-type
-fingerprint descriptor \cite{oganov2011} and a repulsive prior, coupled to a lower-confidence-bound
-(LCB) acquisition function ($\kappa = 2$). Each search ran 100 iterations.
+Structures were sampled with the Atomistic Global Optimization X (AGOX) package \cite{agox2020},
+using a global optimisation with first-principles energy expressions (GOFEE) search
+\cite{gofee2017}: a Gaussian-process regression (GPR) surrogate with an Oganov-type fingerprint
+descriptor \cite{oganov2011} and a repulsive prior, coupled to a lower confidence bound (LCB)
+acquisition function ($\kappa = 2$). Each search ran 100 iterations.
 
 \subsubsection{Three-phase biased exploration} Candidate generation is not uniform over the run but
 proceeds in three phases selected by the iteration counter $i$, mixing generators of different
@@ -56,7 +57,7 @@ Table~\ref{tab:schedule}.
 \caption{\label{tab:schedule}Candidate-generation schedule, common to both models: a small-scale
 heterostructure-aware randomiser and a large-scale rattle generator. The number of candidates
 generated per phase is $N$.}
-\begin{tabular}{lccc c}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc c}
 \toprule
 Phase & Iterations & Small-scale & Large-scale & Total $N$ \\
 \midrule
@@ -64,7 +65,7 @@ Phase & Iterations & Small-scale & Large-scale & Total $N$ \\
 \textbf{II}  & $10 \le i < 25$  & 10 & 10 & 20 \\
 \textbf{III} & $25 \le i$       & 0  & 20 & 20 \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 The per-phase candidate total is 20; the two models differ only in whether the film contains boron,
@@ -153,8 +154,9 @@ the analysis, i.e.\ after relaxation had begun; earlier pre-relaxation placement
 \subsection{DFT settings}
 \label{sec:dft}
 
-Energies and forces were obtained with GPAW \cite{gpaw2014} in LCAO mode (double-zeta polarised
-basis), the PBE exchange--correlation functional \cite{pbe1996}, a $(1\times1\times1)$ k-point mesh,
+Energies and forces were obtained with GPAW \cite{gpaw2014} in linear combination of atomic orbitals
+(LCAO) mode (double-zeta polarised basis), the Perdew--Burke--Ernzerhof (PBE) exchange--correlation
+functional \cite{pbe1996}, a $(1\times1\times1)$ k-point mesh,
 Fermi--Dirac smearing (width 0.05~eV), and spin polarisation with Hund's rule coupling enabled; a
 Pulay mixer and a fixed convergence criterion (energy $10^{-4}$~eV, density/eigenstates $10^{-3}$)
 were used throughout. Note the deliberately modest computational setup (single-layer slab,
@@ -165,7 +167,8 @@ The interfacial Fe--O separation is a construction parameter rather than a compu
 quantity: the reference films are built with the first oxygen layer of the substrate 2.3~\AA{} above
 the metal plane, and relaxation preserves that spacing (2.300~\AA{} for the flat basin, i.e.\
 unchanged to the printed precision, and 2.331~\AA{} for the island). Comparison with the 2.0--2.3~\AA{}
-range reported for this interface by LEED analyses and earlier calculations
+range reported for this interface by low-energy electron diffraction (LEED) analyses and earlier
+calculations
 \cite{urano1988,butler2001} therefore checks the model construction rather than testing the
 electronic-structure method. Independent of this, the LCAO basis set is appreciably less complete
 than a plane-wave or real-space representation \cite{larsen2009}, so absolute geometric parameters
@@ -213,7 +216,7 @@ qualitatively (trends across compositions). The flat configuration is therefore 
 converged relaxations, a Hessian (no imaginary modes) and a barrier between basins. A full
 re-relaxation of representative structures is necessary for this purpose.
 
-The models additionally build both phases on a body-centred-cubic Fe lattice, whereas the
+The models additionally build both phases on a body-centred cubic (bcc) Fe lattice, whereas the
 experimentally reported structure of ultrathin Fe on MgO(001) is body-centred tetragonal
 below about 10~\AA, changing to bcc only above that thickness \cite{urano1988}. The island branch
 spans $\dZ \approx 1$--$6$~\AA, so the structures compared here lie in the thickness regime in which

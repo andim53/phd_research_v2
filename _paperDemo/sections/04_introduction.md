@@ -1,4 +1,7 @@
 # 04 — Introduction
+     v12 (2026-09-18): abbreviation pass requested by the scientist — "density-functional theory" now
+     reads "density functional theory (DFT)" at its first use. No number or claim changed.
+     **APPROVAL VOIDED** by this edit (v11 was approved 2026-09-18); re-approval pending.
      v11 (2026-09-18): the scientist's edit — in the reasoning paragraph, "the flat, amorphous-like
      configuration" is now simply "the flat configuration", dropping the amorphous-like label (which
      CLAIMS assigns to the Discussion as an interpretive framing). Line re-wrapped. No number or
@@ -131,7 +134,7 @@ dewetted film comprises a large family of distinct structures with many local mi
 geometry can represent it, and the two phases cannot be compared by relaxing a single candidate of
 each. The confusion-principle question — whether an added element lowers the disordered configuration
 relative to the ordered one — is therefore about the landscape as a whole, and one that is expensive
-to answer, because exploring it with density-functional theory alone would require evaluating far too
+to answer, because exploring it with density functional theory (DFT) alone would require evaluating far too
 many structures. Two features of the problem make it tractable. First, the question is specifically
 about two phases — the flat, well-wetting film and the dewetted island — so rather than surveying
 every configuration we restrict the exploration to these two targets, a deliberately biased strategy.

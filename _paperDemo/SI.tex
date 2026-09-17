@@ -25,7 +25,8 @@
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thetable}{S\arabic{table}}
 \renewcommand{\thefigure}{S\arabic{figure}}
-\setcounter{secnumdepth}{1}
+\setcounter{secnumdepth}{3}
+\renewcommand{\thesubsubsection}{\thesection.\arabic{subsubsection}}
 \setlength{\emergencystretch}{2em}
 
 \title{Supplementary Material:\\ Effect of boron insertion on metal-film wetting of Fe on MgO}
@@ -91,22 +92,23 @@ per model.
 Section IV A of the main text attributes the island ground state to the loss of forced interfacial
 coupling. Here we test that reading directly, by comparing the flat reference monolayer
 ($\dZ = 0.000$~\AA) with the island ground state ($\dZ = 3.652$~\AA) of the Fe/MgO model in
-the \emph{same} projection set, so the two are directly comparable (GPAW LCAO/dzp, PBE, kpts
-$(12,12,1)$, 2000 points, width 0.15~eV, Fermi-shifted). Projections are per atom: Fe-$d_{z^2}$
+the \emph{same} projection set, so the two are directly comparable (GPAW, linear combination of
+atomic orbitals (LCAO) with a double-zeta polarised basis, the Perdew--Burke--Ernzerhof (PBE)
+functional, kpts $(12,12,1)$, 2000 points, width 0.15~eV, Fermi-shifted). Projections are per atom: Fe-$d_{z^2}$
 ($l = 2$, $m = 2$) and O-$p_z$ ($l = 1$, $m = 0$). $d$-band moments are taken over $[-5, +3]$~eV
 around $E_F$. All numbers in this section are those of Table~\ref{tab:S1} and Table~\ref{tab:S2}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{pdos_flat_vs_island.png}
-\caption{\label{fig:S2}Total DOS, Fe-$d_{z^2}$ and O-$p_z$ for the flat monolayer (blue) and the
+\caption{\label{fig:S2}Total density of states (DOS), Fe-$d_{z^2}$ and O-$p_z$ for the flat monolayer (blue) and the
 island ground state (red).}
 \end{figure}
 
 \begin{table}[t]
 \small
 \caption{\label{tab:S1}Density-of-states metrics for the two configurations. \emph{[SI-1, SI-2]}}
-\begin{tabular}{lccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \toprule
 Quantity & Flat & Island & $\Delta$ (island $-$ flat) \\
 \midrule
@@ -117,7 +119,7 @@ O-$p_z$ integral      & $43.8799$ & $42.3738$ & $-1.51$ ($-3.4$\,\%) \\
 Spin polarisation     & $5.8050$  & $4.3695$  & $-1.44$ (less magnetic) \\
 DOS at $E_F$          & $103.9621$ & $78.0885$ & $-25.9$ ($-25$\,\%) \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \subsubsection{Islanding reduces Fe--O hybridisation} \emph{[SI-1]} Going flat $\to$ island, the Fe
@@ -150,7 +152,7 @@ the substrate oxygen on the MgO(001) lattice.}
 The last two columns are the mean nearest-O distance and the mean in-plane offset from the
 nearest substrate atom (0 $=$ directly atop); for groups that include non-contacting Fe these are not
 bond lengths. \emph{[SI-3, SI-4]}}
-\begin{tabular}{llcccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llcccccc}
 \toprule
 Structure & Group & $n$ & $d$-centre (eV) & width (eV) & $\int$ & $\langle$nearest $d_\mathrm{Fe-O}\rangle$ (\AA) & $\langle$offset$\rangle$ (\AA) \\
 \midrule
@@ -159,7 +161,7 @@ Island & interface ($d_\mathrm{Fe-O} < 2.8$~\AA) & 9 & $+0.5106$ & 1.5165 & 12.2
 Island & non-interface                & 16 & $+0.6524$ & 1.1815 & 21.6629 & 4.3462 & 0.4726 \\
 Island & all                          & 25 & $+0.6013$ & 1.3139 & 33.8763 & 3.6208 & 0.4365 \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \subsubsection{The island's true interface Fe are not flat-like} \emph{[SI-3]} Restricting the comparison
@@ -177,8 +179,8 @@ film. The flat monolayer's strong Fe--O coupling is therefore a collective prope
 
 \subsubsection{The Fe-atop-O registry is a consistency check} \emph{[SI-4]} Every in-contact Fe sits
 directly atop an oxygen---25/25 in the flat monolayer and 9/9 in the island---and none atop
-Mg. This is the registry determined experimentally for the first monolayer of Fe on MgO(001) by LEED
-I--V analysis \cite{urano1988} and used in first-principles models of the Fe$|$MgO$|$Fe interface
+Mg. This is the registry determined experimentally for the first monolayer of Fe on MgO(001) by
+low-energy electron diffraction (LEED) I--V analysis \cite{urano1988} and used in first-principles models of the Fe$|$MgO$|$Fe interface
 \cite{butler2001}, and it is also the registry the reference layer is built with---the construction
 places the substrate oxygen directly above the metal sites---so the flat film's registry follows from
 the construction as much as from the physics. It is reported here as a consistency check, not
@@ -199,9 +201,10 @@ equilibrium lattice constant (Sec.~II A and IV D of the main text).
 \section{Method-parameter sensitivity of the biased exploration}
 \label{sec:S3}
 
-The search used here is a custom, biased scheme---GOFEE (a GPR surrogate with an LCB acquisition
-function) seeded from a flat Fe reference layer, with a heterostructure-aware randomiser and a rattle
-generator supplying the perturbation. Here we vary three method parameters on the same
+The search used here is a custom, biased scheme---global optimisation with first-principles energy
+expressions (GOFEE), a Gaussian-process regression (GPR) surrogate with a lower confidence bound
+(LCB) acquisition function, seeded from a flat Fe reference layer, with a heterostructure-aware
+randomiser and a rattle generator supplying the perturbation. Here we vary three method parameters on the same
 Fe$_{25}$Mg$_{25}$O$_{25}$ system and ask whether the method's conclusions survive the choice: is the
 island still the ground state, how far does a single search reach, and is the flat/island basin
 picture preserved. The baseline for every family is the plain Fe/MgO run (rattle 1.5/2.3,
@@ -223,7 +226,7 @@ family stopped early---which is the replica count used in the main text.
 \footnotesize
 \caption{\label{tab:S3}Method-parameter sensitivity; completed searches only (100 iterations).
 \emph{[SI-5, SI-6, SI-7]}}
-\begin{tabular}{llccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
 \toprule
 Family & Setting & Searches & per-seed best (\eVA) & Flat fraction & Diversity \\
 \midrule
@@ -237,7 +240,7 @@ kappa  & $\kappa = 4$            &  9 & 0.03209 $\pm$ 0.01872 & 0.132 & 2.68 \\
 dipole & no dipole (baseline)   & 13 & 0.03683 $\pm$ 0.02575 & 0.165 & 2.22 \\
 dipole & dipole $xy$            & 11 & 0.03770 $\pm$ 0.02436 & 0.158 & 2.67 \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \begin{figure}[t]
@@ -302,7 +305,7 @@ excluded.
 \caption{\label{tab:S4}Flat-basin minimum $\Delta E/N$ (\eVA), pooled per arm at each budget (the
 main-text definition: relative to the arm's own global minimum). The main-text model is the
 100-iteration reference.}
-\begin{tabular}{lccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccccc}
 \toprule
 Budget & completed searches & $k = 100$ & $k = 200$ & $k = 400$ & $k = 600$ \\
 \midrule
@@ -311,7 +314,7 @@ Budget & completed searches & $k = 100$ & $k = 200$ & $k = 400$ & $k = 600$ \\
 600 iterations & 4 & 0.1807 & 0.1932 & 0.1966 & 0.1978 \\
 main text (13 searches, 100 it) & 13 & \textbf{0.1888} & & & \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \begin{figure}[t]
@@ -360,10 +363,10 @@ cell $= a_\mathrm{Fe}$) is the Fe-matched reference; it uses the \emph{computed}
 not identical to the main-text model.
 
 \begin{table}[t]
-\footnotesize
+\scriptsize
 \caption{\label{tab:S5}The constraint, the strains it puts on each phase, and the flat-basin minimum
 (pooled, relative to each arm's own global minimum).}
-\begin{tabular}{ccccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ccccccc}
 \toprule
 $f$ & cell $a$ (\AA) & substrate strain & film strain & searches & flat-basin min $\Delta E/N$ (\eVA) & island ground state \\
 \midrule
@@ -372,7 +375,7 @@ $f$ & cell $a$ (\AA) & substrate strain & film strain & searches & flat-basin mi
 0.75 & 2.95025 & $-0.94$\,\% & $+2.94$\,\% & 10 & 0.1982 & yes \\
 1.00 & 2.97833 & $0.00$\,\% & $+3.92$\,\% & 5 & 0.1907 & yes \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \begin{figure}[t]
@@ -417,14 +420,14 @@ comparison.
 \begin{table}[t]
 \small
 \caption{\label{tab:S6}The two stacks at their ground states.}
-\begin{tabular}{lccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \toprule
 Stack & Ground state & $\dZ$ of the deposited film & Flat film relative to the island \\
 \midrule
 Fe on MgO (main text) & island & 3.65~\AA & \textbf{+0.189~\eVA} above \\
 \textbf{MgO on Fe (inverted)} & \textbf{flat film} & \textbf{0.39~\AA} & \textbf{$-0.016$~\eVA} below \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \begin{figure}[t]

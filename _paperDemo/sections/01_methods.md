@@ -1,4 +1,8 @@
 # 01 — Methods
+     v8 (2026-09-18): abbreviation pass requested by the scientist — AGOX, GOFEE, LCB, LCAO, PBE,
+     LEED and bcc now carry their long name at first use; the §1.2 heading drops the "(AGOX / GOFEE)"
+     parenthetical. No number or claim changed. **APPROVAL VOIDED** (v6 was approved 2026-09-18);
+     re-approval pending.
      v7 (2026-09-18): editorial pass requested by the scientist — the bold-lead paragraphs
      ("Three-phase biased exploration.", "Bias.", "Only completed searches are used.") are now
      sub-sub headings, and all mid-paragraph bold emphasis is removed (the §1.4 metric definitions
@@ -48,12 +52,13 @@ not by the film — the Fe film remains at its own equilibrium lattice constant 
 strained in-plane. The substrate is then held fixed in that compressed state and only the
 film is allowed to relax.
 
-## 1.2 Biased global optimisation (AGOX / GOFEE)
+## 1.2 Biased global optimisation
 
-Structures were sampled with AGOX \cite{agox2020}, using a GOFEE-type surrogate-driven
-search \cite{gofee2017}: a Gaussian-process regression (GPR) surrogate with an Oganov-type
+Structures were sampled with the Atomistic Global Optimization X (AGOX) package \cite{agox2020},
+using a global optimisation with first-principles energy expressions (GOFEE) search
+\cite{gofee2017}: a Gaussian-process regression (GPR) surrogate with an Oganov-type
 fingerprint descriptor \cite{oganov2011} and a repulsive prior, coupled to a
-lower-confidence-bound (LCB) acquisition function (κ = 2). Each search ran 100 iterations.
+lower confidence bound (LCB) acquisition function (κ = 2). Each search ran 100 iterations.
 
 ### Three-phase biased exploration
 
@@ -159,8 +164,9 @@ pre-relaxation placements were discarded.
 
 ## 1.3 DFT settings
 
-Energies and forces were obtained with GPAW \cite{gpaw2014} in LCAO mode (double-zeta
-polarised basis), the PBE exchange–correlation functional \cite{pbe1996}, a
+Energies and forces were obtained with GPAW \cite{gpaw2014} in linear combination of atomic
+orbitals (LCAO) mode (double-zeta polarised basis), the Perdew–Burke–Ernzerhof (PBE)
+exchange–correlation functional \cite{pbe1996}, a
 (1×1×1) k-point mesh, Fermi–Dirac smearing (width 0.05 eV), and spin polarisation with
 Hund's rule coupling enabled; a Pulay mixer and a fixed convergence criterion
 (energy 10⁻⁴ eV, density/eigenstates 10⁻³) were used throughout. Note the deliberately
@@ -171,7 +177,7 @@ The interfacial Fe–O separation is a construction parameter rather than a comp
 quantity: the reference films are built with the first oxygen layer of the substrate 2.3 Å
 above the metal plane, and relaxation preserves that spacing (2.300 Å for the flat basin, i.e.
 unchanged to the printed precision, and 2.331 Å for the island). Comparison with the 2.0–2.3 Å
-range reported for this interface by LEED analyses and earlier calculations
+range reported for this interface by low-energy electron diffraction (LEED) analyses and earlier calculations
 \cite{urano1988,butler2001} therefore checks the model construction rather than testing the
 electronic-structure method. Independent of this, the LCAO basis set is appreciably less
 complete than a plane-wave or real-space representation \cite{larsen2009}, so absolute
@@ -216,7 +222,7 @@ as a *higher-energy flat basin*, not as a metastable state — establishing meta
 would require converged relaxations, a Hessian (no imaginary modes) and a barrier between
 basins. A full re-relaxation of representative structures is necessary for this purpose.
 
-The models additionally build both phases on a body-centred-cubic Fe lattice, whereas the
+The models additionally build both phases on a body-centred cubic (bcc) Fe lattice, whereas the
 experimentally reported structure of ultrathin Fe on MgO(001) is body-centred tetragonal
 below about 10 Å, changing to bcc only above that thickness \cite{urano1988}. The island branch
 spans ΔZ ≈ 1–6 Å, so the structures compared here lie in the thickness regime in which the

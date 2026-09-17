@@ -1,4 +1,7 @@
 # 03 — Discussion
+     v7 (2026-09-18): abbreviation pass requested by the scientist — DOS and the §3.3 heading
+     ("Implications for MTJ stacks" → "Implications for magnetic tunnel junction stacks"). No number
+     or claim changed. **APPROVAL VOIDED** (v5 was approved 2026-09-18); re-approval pending.
      v6 (2026-09-18): editorial pass requested by the scientist — the bold-lead paragraphs
      ("Confusion principle and amorphous formation.", "The search-level statistic rests on 19
      searches, and it is asymmetric.") are now sub-sub headings and all mid-paragraph bold emphasis
@@ -27,8 +30,8 @@ and used in first-principles models of the Fe|MgO|Fe interface \cite{butler2001}
 Fe–O orbital overlap and pushing the Fe d-band centre down to −0.23 eV. The island abandons
 that registry: the number of metal atoms registered directly atop an oxygen drops from 25 (of
 25) to 9 (of 25), the island's interface Fe d-band centre rises to +0.51 eV (+0.60 eV averaged
-over all island Fe), and the film becomes electronically "quieter" (lower DOS at the Fermi
-level, weaker spin polarisation). The island's energy gain is therefore dominated by reduced
+over all island Fe), and the film becomes electronically "quieter", with a lower density of
+states (DOS) at the Fermi level and weaker spin polarisation. The island's energy gain is therefore dominated by reduced
 forced interfacial coupling and restored metal cohesion: the registry-locked monolayer spends
 its bonding on Fe–O contacts while forgoing the three-dimensional Fe–Fe coordination available
 to a cluster, and the island reverses that trade.
@@ -77,7 +80,7 @@ suppress the ordered configuration. The precise origin of boron's effect — whe
 flat basin's energy or raises the island's — is not resolved by the present data and is a natural
 target for the re-relaxation and further analysis.
 
-## 3.3 Implications for MTJ stacks
+## 3.3 Implications for magnetic tunnel junction stacks
 
 The performance of MgO-based magnetic tunnel junctions rests on the structural quality of the
 metal/oxide interface. The giant tunnel magnetoresistance of single-crystal Fe/MgO/Fe junctions

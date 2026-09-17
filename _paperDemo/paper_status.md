@@ -138,13 +138,15 @@ end, so a fresh session does not re-open them.
       sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No
       citations, no code identifiers, no claim outside the frozen list. **All six sections were
       approved** — the `paper.tex` port (E2) can begin.
-- [ ] **B7 · Re-review the four sections edited by the editorial pass (v7/v7/v6/v11).** The scientist
-      asked for a style pass: figure titles removed from the figures; the LaTeX set one-column; bold
-      mid-paragraph emphasis removed; bold-lead sentences promoted to (unnumbered) sub-sub headings;
-      the Results "Summary" written as prose; title and authors fixed. That edited `01_methods.md`
-      (v6→v7), `02_results.md` (v6→v7), `03_discussion.md` (v5→v6) and `SI.md` (v10→v11), voiding
-      their approvals. No number or claim changed. Re-approve the four, then re-approvals and the
-      port are in sync again.
+- [ ] **B7 · Re-review the five sections edited by the editorial + setup passes.** The scientist
+      asked for two style passes. (1) *Editorial:* figure titles removed from the figures; the LaTeX
+      set one-column; bold mid-paragraph emphasis removed; bold-lead sentences promoted to sub-sub
+      headings; the Results "Summary" written as prose; title and authors fixed. (2) *Setup:*
+      abbreviations given their long name at first use (DFT, AGOX, GOFEE, LCB, LCAO, PBE, LEED, bcc,
+      DOS); the §1.2 heading drops "(AGOX / GOFEE)" and §3.3 drops "MTJ"; tables set to full text
+      width; sub-sub headings numbered. Together these edited `01_methods.md` (v6→v8),
+      `02_results.md` (v6→v7), `03_discussion.md` (v5→v7), `04_introduction.md` (v11→v12) and
+      `SI.md` (v10→v12), voiding their approvals. No number or claim changed. Re-approve the five.
 
 **C. Wording and framing**
 
@@ -299,22 +301,23 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 
 | Section | Draft | Approval state |
 |---|---|---|
-| `01_methods.md` | **v7** | **APPROVAL VOIDED 2026-09-18** — v6 was approved that day, then the scientist's editorial pass (bold-lead paragraphs → sub-sub headings; all mid-paragraph bold removed) made v7, which voids the approval. Re-approval pending. v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
+| `01_methods.md` | **v8** | **APPROVAL VOIDED 2026-09-18** — v6 was approved that day; two edit passes since void it (v7: bold-lead paragraphs → sub-sub headings, inline bold removed; v8: AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc long names at first use, §1.2 heading trimmed). Re-approval pending. v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
 | `02_results.md` | **v7** | **APPROVAL VOIDED 2026-09-18** — v6 was approved that day, then the scientist's editorial pass (bold-lead paragraphs → sub-sub headings; inline bold removed; §2.4 summary rewritten as prose) made v7, voiding the approval. Re-approval pending. v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2), which voided the v5 approval; the scientist re-approved it (B3). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
-| `03_discussion.md` | **v6** | **APPROVAL VOIDED 2026-09-18** — v5 was approved that day (it opened the `04_introduction.md` gate), then the scientist's editorial pass (bold-lead paragraphs → sub-sub headings; inline bold removed) made v6, voiding the approval. Re-approval pending. The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v11** | **APPROVAL VOIDED 2026-09-18** — v10 was approved that day, then the scientist's editorial pass (bold-lead paragraphs → sub-sub headings; inline bold removed) made v11, voiding the approval. Re-approval pending. v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); v10 removed all remaining caveats from the section text at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. Full list of what was removed: see the note in this file and `experiment_log.md`. No number or claim changed. |
-| `04_introduction.md` | **v11** | **APPROVED 2026-09-18** (B2). v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing is accepted by this approval (**C7**). |
+| `03_discussion.md` | **v7** | **APPROVAL VOIDED 2026-09-18** — v5 was approved that day (it opened the `04_introduction.md` gate); two edit passes since void it (v6: bold-lead → sub-sub headings, inline bold removed; v7: DOS expanded, §3.3 heading spelled out from "MTJ"). Re-approval pending. The cobalt section is deleted; no sentence about the Co host remains. |
+| `SI.md` | **v12** | **APPROVAL VOIDED 2026-09-18** — v10 was approved that day; v11 (bold-lead → sub-sub headings, inline bold removed) and v12 (GPAW/LCAO/PBE, DOS, LEED, GOFEE/GPR/LCB expanded) void the approval. Re-approval pending. v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); v10 removed all remaining caveats from the section text at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. No number or claim changed. |
+| `04_introduction.md` | **v12** | **APPROVAL VOIDED 2026-09-18** — v11 was approved that day (B2); the abbreviation pass made v12 (density functional theory (DFT) at first use), voiding the approval. Re-approval pending. v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..."; **v11** dropped "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing was accepted by the v11 approval (**C7**). |
 | `05_conclusion.md` | **v2** | **APPROVED 2026-09-18** (B5). v1 was the first draft (three paragraphs); v2 removed the third paragraph (scope and future work) at the scientist's instruction, so the conclusion ends on the MTJ-relevance paragraph. Final-manuscript section V (matches the Introduction's roadmap). Cites `greer1993`. No new claim. |
 | `06_abstract.md` | **v1** | **APPROVED 2026-09-18** (B6). Written last, as a summary of the finished argument. ~165 words; mirrors the frozen contribution sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations, no code identifiers, no claim outside the frozen list. Final-manuscript Abstract (first element of the paper). |
-| E2 port to `paper.tex` | **v2** | **DONE 2026-09-18.** v1: all six sections ported to LaTeX in final-manuscript order (`paper.tex` + `latex/*.tex` + `SI.tex`), compiled with **tectonic 0.17.0** to `paper.pdf` (13 pp) and `SI.pdf` (9 pp), no errors; `\cite{}` keys carried over byte-for-byte (all resolve). Floats: Figure 1 (TikZ flowchart), Figures 2–3 (PNG), Tables 1–4; SI Figures S1–S9, Tables S1–S6. **v2 (editorial pass):** document set to **one column**; title = "Effect of boron insertion on metal-film wetting of Fe on MgO", authors = Andi Muhammad Nur Fitrah Syamsul (first) and Kohji Nakamura, one shared affiliation; mid-paragraph `\textbf` removed; bold-lead paragraphs → unnumbered `\subsubsection` headings (`secnumdepth`=2); the Results summary list → prose; the figure titles removed from the PNGs (scripts regenerated). Venue class still not fixed. |
+| E2 port to `paper.tex` | **v3** | **DONE 2026-09-18.** v1: all six sections ported to LaTeX in final-manuscript order (`paper.tex` + `latex/*.tex` + `SI.tex`), compiled with **tectonic 0.17.0**, no errors; `\cite{}` keys carried over byte-for-byte (all resolve). Floats: Figure 1 (TikZ flowchart), Figures 2–3 (PNG), Tables 1–4; SI Figures S1–S9, Tables S1–S6. **v2 (editorial pass):** one-column document; title = "Effect of boron insertion on metal-film wetting of Fe on MgO"; authors = Andi Muhammad Nur Fitrah Syamsul (first) and Kohji Nakamura, shared affiliation; mid-paragraph `\textbf` removed; bold-lead paragraphs → `\subsubsection` headings; Results summary list → prose; figure titles removed from the PNGs. **v3 (abbreviation pass):** all tables set to full text width (`tabular*` + `\extracolsep{\fill}`); sub-sub headings **numbered** (`secnumdepth`=3; SI `\thesubsubsection` = `S<n>.<k>`); AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc/DFT/DOS expanded at first use; §1.2 heading trimmed, §3.3 heading spelled out. `paper.pdf` 13 pp, `SI.pdf` 9 pp, no overfull boxes. Venue class still not fixed. |
 
-**Approvals (2026-09-18).** `04_introduction.md` v11, `05_conclusion.md` v2 and `06_abstract.md` v1
-are still approved (B2/B5/B6). The scientist's **editorial pass** the same day then edited
-`01_methods.md` (v6→v7), `02_results.md` (v6→v7), `03_discussion.md` (v5→v6) and `SI.md` (v10→v11) —
-bold-lead paragraphs became sub-sub headings, mid-paragraph bold was removed, and the Results summary
-became prose — which **voids their approvals** (the standing rule: editing an approved section voids
-it). Those four need re-review (item **B7**). No number, claim, table or figure changed. See the E2
-row for the accompanying LaTeX/format changes.
+**Approvals (2026-09-18).** Only `05_conclusion.md` v2 and `06_abstract.md` v1 remain approved
+(B5/B6). Two further edit passes the same day — an **editorial pass** (bold-lead sentences → sub-sub
+headings, inline bold removed, Results summary → prose, figure titles removed, one-column LaTeX,
+title/authors fixed) and a **setup pass** (abbreviations expanded, §1.2/§3.3 headings trimmed/spelled
+out, tables full width, sub-sub headings numbered) — edited five sections: `01_methods.md` (v6→v8),
+`02_results.md` (v6→v7), `03_discussion.md` (v5→v7), `04_introduction.md` (v11→v12) and `SI.md`
+(v10→v12). Under the standing rule their approvals are **VOIDED** and they need re-review (item
+**B7**). No number, claim, table or figure changed.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
@@ -671,13 +674,14 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**The `paper.tex` port (E2) is DONE (v2, after the editorial pass) — re-review the four edited
-sections (item B7).** The scientist's style pass edited `01_methods.md` (v7), `02_results.md` (v7),
-`03_discussion.md` (v6) and `SI.md` (v11), voiding their approvals; `04_introduction.md` v11,
-`05_conclusion.md` v2 and `06_abstract.md` v1 remain approved. The LaTeX was re-set to one column,
-retitled, the figures regenerated without in-figure titles, and recompiled — `paper.pdf` (13 pp) and
-`SI.pdf` (9 pp), no errors. **Next:** re-approve the four edited sections; the target-venue class is
-still open; then Phase F (self-review, claim verification) and Phase G (submission prep).
+**The `paper.tex` port (E2) is DONE (v3, after the editorial + setup passes) — re-review the five
+edited sections (item B7).** The two style passes edited `01_methods.md` (v8), `02_results.md` (v7),
+`03_discussion.md` (v7), `04_introduction.md` (v12) and `SI.md` (v12), voiding their approvals; only
+`05_conclusion.md` v2 and `06_abstract.md` v1 remain approved. The LaTeX is one column, retitled, with
+numbered sub-sub headings, full-width tables, expanded abbreviations and figures regenerated without
+in-figure titles — `paper.pdf` (13 pp) and `SI.pdf` (9 pp), no errors, no overfull boxes. **Next:**
+re-approve the five edited sections; the target-venue class is still open; then Phase F (self-review,
+claim verification) and Phase G (submission prep).
 
 **Two things still need the scientist before/around the port:**
 - **A1/A2 — the claims sign-off** is not covered by the section approvals: `CLAIMS.md`'s contribution
