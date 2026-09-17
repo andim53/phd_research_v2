@@ -1618,3 +1618,35 @@ only); every `\cite{}` key across the five section files resolves, none orphaned
 duplicates `gofee2017` (see **E2** for the stale year-in-key). `AGENTS.md` — Phase D key list and the
 Phase E entry. `references.bib` — the `hamamoto2023` entry in a dated block.
 
+## 2026-09-18 — the p-value is now explained in plain terms (Results v6, Introduction v4)
+
+The scientist flagged that "p = 0.0444" was quoted without saying what p is. Both places now explain
+it in terms a reader can grasp; the Results edit voids its approval, which the scientist authorised.
+
+**The explanation (identical substance in both).** Each of the 19 independent searches contributes
+its own lowest flat-state energy — 13 from the boron-free model, 6 from the boron-containing one. The
+test reshuffles those 19 values into all possible groups of 13 and 6 and asks what fraction of the
+reshufflings would, by chance alone, reproduce a shift in the flat-state energy at least as large as
+the one observed. That fraction is p. **p = 0.0444 therefore means: if boron had no effect, a shift
+this large would still appear by chance in about 4.4 % of reshufflings** — i.e. the observed lowering
+of the flat state is unlikely to be a chance outcome of which searches happened to contain boron. The
+test is exact (enumerates all 27 132 reshufflings), significant at the 5 % level, with a resolution
+floor of p = 3.7 × 10⁻⁵.
+
+**Where.**
+- `sections/02_results.md` → **v6**, §2.2 uncertainty paragraph: the meaning sentence is added right
+  after "p = 0.0444, significant at the 5 % level". No number or claim changed. The head block
+  records **APPROVAL VOIDED** (v5 was approved 2026-09-18; the scientist authorised this edit).
+- `sections/04_introduction.md` → **v4**, closing paragraph: the single-sentence statistic is
+  expanded into a short, plain-terms explanation ("if boron had no effect, a shift this large would
+  still appear by chance in about 4.4 % of reshufflings"). No number changed.
+
+**Consequence recorded under the governing rule.** Editing an approved section voids its approval.
+Results is now back in the block-and-wait gate — new checklist item **B3** (re-approve `02_results.md`
+v6), distinct from **B2** (review `04_introduction.md` v4). Methods and Discussion approvals stand.
+`CLAIMS.md` is not bumped — the p-value and its meaning are unchanged, only the exposition.
+
+**Doc sync.** `paper_status.md` — B1 rewritten (Results approval voided), **B3** added, B2 and the
+drafting table move to v4/v6, the approvals note and "Next step" updated. `AGENTS.md` — Phase E block
+(Results v6 awaiting re-approval, Introduction v4). No bibliography change.
+

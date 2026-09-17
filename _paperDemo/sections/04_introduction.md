@@ -1,4 +1,9 @@
 # 04 — Introduction
+     v4 (2026-09-18): the significance statement now explains what p is, in plain terms — each of the
+     19 searches contributes its own lowest flat-state energy, p = 0.0444 is the fraction of random
+     reshufflings of those values into two groups of 13 and 6 that would reproduce a shift as large
+     by chance alone, and the test is an exact enumeration (27 132 reshufflings, resolution floor
+     p = 3.7 × 10⁻⁵). No number changed.
      v3 (2026-09-18): the phase-controlled design is now stated as a core methodological reason
      (the dewetted family is a continuous set, not a single structure, so exhaustive enumeration is
      not the goal), and the choice of GOFEE is justified in the introduction through its
@@ -14,7 +19,7 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v3 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v4 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      Every number here is one already frozen in the approved Results: the two flat-basin minima,
      the shift between them, the island spans, the boron–oxygen window count and the exact
@@ -121,9 +126,15 @@ film and was perturbed only at small scale from it in its early iterations. The 
 nevertheless a distinct basin of the landscape rather than the high-span tail of a single minimum,
 lying 0.1888 eV/atom above the island for Fe/MgO and 0.1493 eV/atom above it for Fe-B/MgO. Adding
 boron therefore lowers the relative energy of the flat, wetting configuration by 0.040 eV/atom, a
-21 % reduction of the flat–island separation, with a search-level two-sided test over the 19
-independent searches giving p = 0.0444 — an exact enumeration of all 27 132 partitions of the pooled
-search minima, whose resolution floor is p = 3.7 × 10⁻⁵. The effect is not interfacial: within the
+21 % reduction of the flat–island separation. A search-level two-sided permutation test quantifies
+the confidence in this shift. Each of the 19 independent searches contributes its own lowest
+flat-state energy — 13 from the boron-free model and 6 from the boron-containing one — and the test
+asks how often a random reshuffling of those 19 values into two groups of 13 and 6 would, by chance
+alone, produce a shift at least as large as the one observed. The answer is p = 0.0444: if boron had
+no effect, a shift this large would still appear by chance in about 4.4 % of reshufflings. The test
+is exact, enumerating all 27 132 such reshufflings rather than sampling them, so it is significant
+at the 5 % level and its resolution floor is p = 3.7 × 10⁻⁵ — the conclusion is not an artefact of
+too few searches. The effect is not interfacial: within the
 low-energy window, only one of the 72 boron-containing structures has a boron–oxygen contact, so
 boron acts inside the metal film. What boron does not do is displace the island as the ground state:
 the ordered, three-dimensional configuration remains the more stable of the two in both models.

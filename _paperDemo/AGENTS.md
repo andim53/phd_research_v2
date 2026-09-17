@@ -147,25 +147,28 @@ drafting or revising anything. Summary as of 2026-09-18:
   key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
   `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
   `torelli2009` are closed access and cited from verified abstracts only.
-- **Phase E: IN PROGRESS — Methods, Results and Discussion APPROVED 2026-09-18; the Introduction
-  drafted and awaiting review.**
+- **Phase E: IN PROGRESS — Methods and Discussion APPROVED 2026-09-18; Results approval voided
+  (v6, needs re-approval); the Introduction drafted and awaiting review.**
   - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**.
-  - `02_results.md` **v5** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
-    p = 0.0444) and Figures 2–3 cited and captioned → **APPROVED 2026-09-18**.
+  - `02_results.md` **v6** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
+    p = 0.0444) with Figures 2–3 cited and captioned, and the p-value now explained in plain terms
+    (§2.2). **APPROVAL VOIDED** by the last edit (v5 was approved 2026-09-18; the scientist
+    authorised the p-explanation edit) → **awaiting re-approval (B3)**.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains →
     **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; **the gate is now open.**
-  - `04_introduction.md` **v3** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
+  - `04_introduction.md` **v4** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
     floats. v1 closed on the frozen contribution sentence with the quoted shift and the significance
     value removed; **v2 added the recent MTJ-fabrication trend** (four references); **v3 made the
     phase-controlled design a core methodological reason** (the dewetted family is a continuous set,
     not a single structure — exhaustive enumeration is not the goal) **and justified GOFEE via its
     lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) guides the search toward the global
-    minimum even when seeded from a flat reference, citing `gofee2017` + `hamamoto2023`. Cites
-    device-side and fabrication-side keys; the device material is referred to generically and no Co
-    host is discussed. Items for the scientist, recorded in `paper_status.md`: **C7** (confusion-
-    principle framing in the Introduction), **E3** (three device references), **E4** (four
-    recent-fabrication references) and **E5** (the GOFEE/LCB reference) — each accept or drop.
+    minimum even when seeded from a flat reference, citing `gofee2017` + `hamamoto2023`; **v4
+    explains what p means in plain terms**. Cites device-side and fabrication-side keys; the device
+    material is referred to generically and no Co host is discussed. Items for the scientist,
+    recorded in `paper_status.md`: **C7** (confusion-principle framing in the Introduction), **E3**
+    (three device references), **E4** (four recent-fabrication references) and **E5** (the GOFEE/LCB
+    reference) — each accept or drop.
   - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
       budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
       MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. **Awaiting review.**

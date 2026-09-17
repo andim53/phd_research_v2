@@ -105,14 +105,16 @@ end, so a fresh session does not re-open them.
 
 **B. Section approvals — the block-and-wait gate**
 
-- [x] **B1 · Methods, Results and Discussion APPROVED 2026-09-18.** `01_methods.md` v6,
-      `02_results.md` v5 and `03_discussion.md` v5 were reviewed by the scientist and approved
-      **as-is**, so **the gate for the introduction (section 04) is open**. `SI.md` v8 is the only drafted
-      section still awaiting review; `05_conclusion.md` / `06_abstract.md` are not started, and there
-      is no LaTeX port until all six are approved. The approvals are recorded in each section's head
-      block (`APPROVED 2026-09-18`) — any later edit to an approved section voids its approval again,
-      per the governing rule.
-- [ ] **B2 · Review `04_introduction.md` — v3, DRAFTED, awaiting review.** The newly opened gate. It
+- [x] **B1 · Methods and Discussion APPROVED 2026-09-18; Results approval VOIDED and awaiting
+      re-approval.** `01_methods.md` v6, `02_results.md` v5 and `03_discussion.md` v5 were reviewed
+      by the scientist and approved **as-is** on 2026-09-18, so **the gate for the introduction was
+      opened**. On the scientist's instruction, `02_results.md` was then edited (v6) to explain what
+      p means in plain terms, which **voids its approval** — Methods and Discussion remain approved;
+      the Results (v6) needs re-approval. **The introduction (v4) is still awaiting review.** `SI.md`
+      v8 is the only drafted section that has never been through this gate. The approvals/voids are
+      recorded in each section's head block — any later edit to an approved section voids its
+      approval again, per the governing rule.
+- [ ] **B2 · Review `04_introduction.md` — v4, DRAFTED, awaiting review.** The newly opened gate. It
       closes on the frozen contribution sentence with the quoted shift and the significance value
       removed (moved to the Results), and it carries no floats. **v2 added the recent fabrication
       trend** (new paragraph + four references); **v3 made the phase-controlled design a core
@@ -120,9 +122,15 @@ end, so a fresh session does not re-open them.
       exhaustive enumeration is not the goal) **and justified the GOFEE choice through its
       lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) balances exploitation against
       exploration and guides the search toward the global minimum even when seeded from a flat
-      reference film. What is new rather than a restatement is listed separately and cannot be
-      answered by an agent: **C7** (confusion-principle framing), **E3** (three device references),
-      **E4** (four fabrication references) and **E5** (the GOFEE/LCB reference, accept or drop).
+      reference film; **v4 explains what p means in plain terms** (the fraction of random
+      reshufflings of the 19 per-search minima that reproduce a shift as large by chance). What is
+      new rather than a restatement is listed separately and cannot be answered by an agent: **C7**
+      (confusion-principle framing), **E3** (three device references), **E4** (four fabrication
+      references) and **E5** (the GOFEE/LCB reference, accept or drop).
+- [ ] **B3 · Re-approve `02_results.md` v6.** The Results was approved as-is on 2026-09-18 (v5), then
+      edited on the scientist's instruction to explain the p-value in plain terms (the uncertainty
+      paragraph now states what p is, §2.2). No number or claim changed, but the edit voids the
+      approval under the governing rule, so the section needs a fresh sign-off.
 
 **C. Wording and framing**
 
@@ -245,17 +253,18 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | Section | Draft | Approval state |
 |---|---|---|
 | `01_methods.md` | **v6** | **APPROVED 2026-09-18** (reviewed as-is). v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
-| `02_results.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is). Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
+| `02_results.md` | **v6** | **APPROVAL VOIDED 2026-09-18 — awaiting re-approval (B3).** v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2; no number or claim changed). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | **v3** | **DRAFTED — awaiting review.** v1 was the first draft of the section released when `03` was approved; **v2 added the recent MTJ-fabrication trend** (four references, see **E4**); **v3 made the phase-controlled design a core methodological reason** (the dewetted family is a continuous set, not a single structure — exhaustive enumeration is not the goal) **and justified the GOFEE choice through its lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) guides the search toward the global minimum even when seeded from a flat reference, citing `gofee2017` + `hamamoto2023` (see **E5**). Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, see **E3**). Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
+| `04_introduction.md` | **v4** | **DRAFTED — awaiting review.** v1 was the first draft of the section released when `03` was approved; **v2 added the recent MTJ-fabrication trend** (four references, see **E4**); **v3 made the phase-controlled design a core methodological reason** (the dewetted family is a continuous set, not a single structure — exhaustive enumeration is not the goal) **and justified the GOFEE choice through its lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) guides the search toward the global minimum even when seeded from a flat reference, citing `gofee2017` + `hamamoto2023` (see **E5**); **v4 explains what p means in plain terms** (fraction of reshufflings reproducing the shift by chance). Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, see **E3**). Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
-**Approvals (2026-09-18).** `01_methods.md` v6, `02_results.md` v5 and `03_discussion.md` v5 are
-approved as-is; each carries `APPROVED 2026-09-18` in the head block of its file. Editing an approved
-section voids its approval and requires re-review (this is how the v3/v4 Methods approval was lost).
-The introduction, drafted the same day, is **not** approved.
+**Approvals (2026-09-18).** `01_methods.md` v6 and `03_discussion.md` v5 are approved as-is; each
+carries `APPROVED 2026-09-18` in the head block of its file. `02_results.md` v5 was approved the same
+day and then **voided** by the p-explanation edit (now v6, awaiting re-approval, item **B3**). Editing
+an approved section voids its approval and requires re-review (this is how the v3/v4 Methods approval
+was lost). The introduction, drafted and revised the same day (now v4), is **not** approved.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
@@ -612,19 +621,24 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`04_introduction.md` is drafted (v3) and awaiting review (item B2).** v1 was written after Methods v6,
-Results v5 and Discussion v5 were approved on 2026-09-18; **v2 added the recent MTJ-fabrication trend**
-and **v3 made the phase-controlled design a core methodological reason** and **justified GOFEE via its
-lower-confidence-bound property** (both at the scientist's request). Five things inside the section
-need the scientist rather than an agent: the confusion-principle framing appears in the Introduction
-although the claim list places it in the Discussion (**C7**), three device-side references (**E3**),
-four recent-fabrication references (**E4**) and the GOFEE/LCB reference (**E5**) were added for the
-section, and the v9 contribution sentence it closes on still awaits re-sign-off (A1/A2). Everything
-else in it restates a number already frozen in the approved Results.
+**`04_introduction.md` is drafted (v4) and awaiting review (item B2).** v1 was written after Methods v6,
+Results v5 and Discussion v5 were approved on 2026-09-18; **v2 added the recent MTJ-fabrication trend**,
+**v3 made the phase-controlled design a core methodological reason** and **justified GOFEE via its
+lower-confidence-bound property**, and **v4 explained what p means in plain terms** (all at the
+scientist's request). Five things inside the section need the scientist rather than an agent: the
+confusion-principle framing appears in the Introduction although the claim list places it in the
+Discussion (**C7**), three device-side references (**E3**), four recent-fabrication references (**E4**)
+and the GOFEE/LCB reference (**E5**) were added for the section, and the v9 contribution sentence it
+closes on still awaits re-sign-off (A1/A2). Everything else in it restates a number already frozen in
+the approved Results.
 
-`SI.md` v8 is the last drafted section still awaiting review. After `04` is approved the order is
-`05_conclusion.md` → `06_abstract.md` → the `paper.tex` port; no LaTeX before all six sections are
-approved.
+**`02_results.md` v6 also needs re-approval (item B3).** It was approved as-is as v5 on 2026-09-18,
+then edited at the scientist's instruction to state what p means in plain terms (§2.2); the edit voids
+the approval under the governing rule, so the Results is back in the gate alongside the Introduction.
+
+`SI.md` v8 is the last drafted section that has never been approved. After `02` (v6) is re-approved
+and `04` is approved, the order is `05_conclusion.md` → `06_abstract.md` → the `paper.tex` port; no
+LaTeX before all six sections are approved.
 
 Everything else that is open is the scientist's, not the agent's: the consolidated decision checklist
 above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–**E5** references) is the one place to

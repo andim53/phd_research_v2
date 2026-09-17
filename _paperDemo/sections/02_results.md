@@ -1,4 +1,9 @@
 # 02 — Results
+     v6 (2026-09-18): the uncertainty paragraph now explains what p means, in plain terms (the
+     probability, if boron had no effect, that a random reshuffling of the 19 per-search minima into
+     groups of 13 and 6 would reproduce a shift at least as large by chance; p = 0.0444 ~ 4.4 % of
+     reshufflings). No number changed. **APPROVAL VOIDED** by this edit (it was approved 2026-09-18
+     as v5) — the scientist authorised the edit; the section needs re-approval.
      v5 (2026-09-18): the two main-text figures are now cited and captioned — Figure 2 (the sampled
      two-phase landscape, §2.1) and Figure 3 (the flat-basin comparison, §2.2). No claim, number or
      table changed. APPROVED 2026-09-18.
@@ -6,7 +11,7 @@
      and the MT-4/MT-5 paragraphs are out of the paper; the p-value is now the exact 0.0444 of
      CLAIMS v9 §4; Tables 4-5 became Tables 3-4. TO BE RE-APPROVED — no prior approval survives.
 
-<!-- DRAFT v5 · section 02 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v6 · section 02 of the manuscript (markdown-first, pre-LaTeX)
      Fe/MgO and Fe-B/MgO only (CLAIMS v9). The biased search yields an EXPLORATION density over
      the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the weights
      are not physical. Organized by phase, not by additive.
@@ -147,8 +152,13 @@ boron to 0.1882 eV/atom with it on average (medians 0.2185 and 0.1834), a **medi
 0.0351 eV/atom with 94 % of resampled replicates agreeing in sign — the effect is not carried by a
 single favourable search, and the best-structure difference of Table 4 (−0.040 eV/atom) is the
 extreme of the same distribution rather than a lone outlier. A two-sided permutation test over the
-19 searches gives **p = 0.0444**, significant at the 5 % level. The test is an **exact enumeration
-of all 27 132 partitions** of the pooled search minima, so this value is exact for the data and its
+19 searches gives **p = 0.0444**, significant at the 5 % level. In words, p is the probability that a
+random reshuffling of the 19 per-search minima into two groups of 13 and 6 would, by chance alone,
+produce a shift in the flat-state energy at least as large as the one observed — so p = 0.0444 means
+such a shift arises by chance in only about 4.4 % of reshufflings, i.e. the observed lowering of the
+flat state is unlikely to be a chance outcome of which searches happened to contain boron. The test
+is an **exact enumeration of all 27 132 partitions** of the pooled search minima, so this value is
+exact for the data and its
 resolution floor is p = 3.7 × 10⁻⁵ — more than three orders of magnitude below the value reported,
 i.e. the conclusion is not an artefact of too few searches.
 
