@@ -1,7 +1,11 @@
 # Supplementary Material
+     v5 (2026-09-17): three passages reworded so the section carries no revision history (scientist's
+     instruction): §S2's interface definition and caveats, §S3's kappa paragraph and baseline count.
+     No claim, number, table or figure changes. Awaiting review.
+
      v4 (2026-09-17): scope note only — the paper is Fe/MgO + Fe-B/MgO (CLAIMS v9). No SI claim,
      number or figure changes; §S1 and §S3 are Fe/MgO-only by construction and §S2 is the flat-vs-
-     island PDOS of Fe/MgO. Awaiting review (v3's content is unchanged).
+     island PDOS of Fe/MgO.
 
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
      S3 numbers purged to completed searches only.
@@ -111,11 +115,12 @@ more.
 falls from 5.81 to 4.37 and the DOS at the Fermi level drops by 25 % (104.0 → 78.1). The flat
 monolayer is the electronically "hotter" configuration; the island is quieter.
 
-**Defining the interface by geometry, not by height.** An early version of this analysis split the
-Fe atoms into bottom-8 and top-8 by z. That split is arbitrary — the island is a buckled cluster,
-not a stack of layers — and it is superseded here by a geometric criterion: **interface Fe := Fe
-with a nearest O within 2.8 Å**, i.e. Fe actually in contact with the oxide. By this criterion the
-flat monolayer is 25/25 interface atoms and the island only 9/25.
+**Defining the interface by geometry, not by height.** The island is a buckled cluster rather than
+a stack of layers, so its interface cannot be defined by a height criterion: a z-based layer split
+would cut through the cluster and misassign atoms as a function of its buckling. We therefore define
+the interface **geometrically**: **interface Fe := Fe with a nearest O within 2.8 Å**, i.e. Fe
+actually in contact with the oxide. By this criterion the flat monolayer is 25/25 interface atoms
+and the island only 9/25.
 
 **Figure S3.** `figures/interface_registry_topview.png` — top view of the interface, showing the
 metal atoms registered directly above the substrate oxygen on the MgO(001) lattice.
@@ -171,8 +176,7 @@ between the two configurations comes from the search energies, not from these cu
 quantitative claim would require re-relaxed geometries. The d-band moments depend on the
 [−5, +3] eV window, which is a convention. The analysis is of the Fe/MgO flat and island
 structures, which is the host the whole supplementary study covers; no other film composition was
-recomputed. `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` come from the superseded
-bottom-8/top-8 split and should not be used; Table S2 supersedes them.
+recomputed. All site-resolved numbers quoted here are those of Table S2.
 
 ## S3 Method-parameter sensitivity of the biased exploration
 
@@ -193,9 +197,8 @@ the unfinished runs are not distributed evenly across settings they would distor
 between them. The rule is applied by a single shared function (`run_selection.py`) in every
 analysis script, and it is determined from the **iteration number stored in each database rather
 than from the directory name**, because a `seed_*` directory can stop early just as a `stop_*` one
-can. The practical consequence here is that the rattle and kappa families lose their worst searches
-and the baseline drops from 14 directories to **13 completed searches**, matching the replica count
-used in the main text.
+can. The baseline quoted in Table S3 therefore consists of **13 completed searches** — one of its
+directories holds a search that stopped early — which is the replica count used in the main text.
 
 **Table S3.** Method-parameter sensitivity; completed searches only (100 iterations). All numbers
 trace to `analysis/method_sensitivity.csv`. *[SI-5, SI-6, SI-7]*
@@ -234,10 +237,11 @@ magnitude in the flat fraction.
 **The kappa parameter changes nothing measurable.** *[SI-5]* All four settings land within
 **0.0321–0.0395 eV/atom** — a total span of 0.0074 eV/atom, far inside the standard deviations
 (0.019–0.026) — so the method's conclusions are **robust to the acquisition parameter**, and in
-particular **no value of kappa can be identified as better than another** from these runs. This is
-worth stating explicitly, because an earlier reading of the same data singled out kappa = 1 as the
-best setting; that ranking came from an unfinished search sitting in the baseline rather than from
-any property of kappa = 1, and it does not survive the completed-search statistic. There is a small,
+particular **no value of kappa can be identified as better than another** from these runs. This
+warrants stating explicitly, because a ranking of the settings is easy to produce accidentally: the
+per-seed best varies strongly from search to search, so a family that happens to hold one
+under-sampled search moves its mean enough to change the apparent order while the completed searches
+are indistinguishable. There is a small,
 monotone trend in the flat-basin fraction — 0.182, 0.165, 0.149 and 0.132 for kappa = 1, 2, 3 and 4
 — i.e. more exploration relative to exploitation samples slightly less of the flat basin, but the
 effect is within the same order as the seed-to-seed spread.

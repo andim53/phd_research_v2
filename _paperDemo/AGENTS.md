@@ -56,6 +56,24 @@ counterfactual (different strain convention, 4 vs 3 searches cannot reach p < 0.
   a barrier. Describe it as a "higher-energy flat basin".
 - Re-relaxation pipeline exists at `relaxation/` (116 structures selected) but has NOT run.
 
+## Voice: no process history in the sections
+
+The drafted sections are **manuscript text**, main and supplementary alike. They must read as a
+finished account of a single analysis — **never refer to earlier versions of the analysis or of the
+draft**. Specifically, do not write "an early version of this analysis…", "this supersedes…",
+"an earlier reading singled out…", "the value was X before the correction", "previously computed",
+or any other framing that makes the reader aware of a revision history. If a method or a number
+changed, state what **is** done and why it is the right choice, in the present tense.
+
+- Process history belongs in `CLAIMS.md` (changelogs), `experiment_log.md` (append-only) and
+  `paper_status.md` — those files are *supposed* to carry it.
+- Repository hygiene notes ("this CSV comes from a superseded split, do not use it") belong in
+  `paper_status.md`, **not** in a section.
+- The `<!-- DRAFT vN · … -->` comment at the head of each section is the one exception: it is
+  editorial tracking mandated by the block-and-wait workflow, and it is stripped at the LaTeX port.
+- Corrected in v9: three such passages in `sections/SI.md` (§S2 interface definition, §S2 caveat,
+  §S3 kappa) — see `paper_status.md`.
+
 ## Citations
 
 - Never hallucinate references. Fetch and verify BibTeX programmatically (DOI content
@@ -116,7 +134,8 @@ drafting or revising anything. Summary as of 2026-09-17:
     p = 0.0444) → needs review.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains.
     **This is the gate: do NOT draft `04_introduction.md` until 03 is approved.**
-  - `SI.md` **v4** — a scope note only; §S1, §S2, §S3 are Fe/MgO and unchanged, awaiting review.
+  - `SI.md` **v5** — §S1, §S2, §S3 are Fe/MgO and content-unchanged (v4 was a scope note); v5
+    removed the revision history from three passages. Awaiting review.
   - `04`–`06` not drafted; no LaTeX until all sections are approved.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
   `a_Fe` (`interpolation_factor` = 0), so the confound that threatened the cross-host comparison no

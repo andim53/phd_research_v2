@@ -120,7 +120,7 @@ host alone) vs 0.0480 (all four systems)** for the same 19 numbers. Fixed:
 | `01_methods.md` | **v5** | **No approval.** v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scopes to the Fe host, so nothing survives. |
 | `02_results.md` | **v4** | **No approval.** Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4). |
 | `03_discussion.md` | **v5** | **Awaiting review — the gate for `04_introduction.md`.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v4** | **Awaiting review.** v4 is a **scope note only** — no SI claim, number or figure changed. §S1 (SI-8), §S2 (SI-1…SI-4), §S3 (SI-5…SI-7) are all Fe/MgO and are untouched by the archive. |
+| `SI.md` | **v5** | **Awaiting review.** v4 was a **scope note only**; v5 removed the revision history from three passages (§S2 interface definition + caveats, §S3 kappa + baseline count). No SI claim, number, table or figure changed in either — §S1 (SI-8), §S2 (SI-1…SI-4), §S3 (SI-5…SI-7) are all Fe/MgO and untouched by the archive. |
 | `04_introduction.md` | — | **BLOCKED** on 03 approval. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
@@ -142,6 +142,10 @@ shifted the Results floats.
 | **Table 3** | `02_results.md` §2.1 | the two phases in each model |
 | **Table 4** | `02_results.md` §2.2 | flat-basin minimum dE/N with and without boron |
 | **Figure S1** | `SI.md` §S1 | exploration-performance panels (separate `S` series: Figures S1–S6, Tables S1–S3) |
+
+The section draft versions in the table above live in a `<!-- DRAFT vN -->` comment at the head of
+each section file and in the `# NN — Title` block under it; nothing else in a section refers to a
+version.
 
 ⚠ **The main-text figures are cited by no section.** `figures/pes_2_systems.png` (PES maps),
 `figures/flat_state_summary.png` (flat-basin comparison) and `figures/flat_vs_ground_preview.png`
@@ -330,6 +334,29 @@ growth mode at all and is therefore not cited for one. The correspondence is fra
   `figures/INSTRUCTION.md` (open figure-design questions), `.gitignore` (re-enables
   `_archive/cofe/` against the repo root's blanket `_archive/` and `*.csv` rules — verified with
   `git check-ignore`).
+
+## Voice check (2026-09-17, on the scientist's instruction)
+
+Sections are manuscript text and must not carry revision history. Three passages in `sections/SI.md`
+that did were rewritten so they stand as present-tense method statements:
+
+- **§S2, "Defining the interface by geometry, not by height"** — no longer says "an early version of
+  this analysis split the Fe atoms into bottom-8 and top-8 by z"; it now states why a height
+  criterion fails for a buckled cluster and defines the 2.8 Å geometric criterion directly.
+- **§S2, caveats** — the "`pdos_site_metrics.csv` comes from the superseded split, do not use it"
+  sentence was removed from the SI (it is repo hygiene; the note stays here and in the file: that
+  CSV and `figures/pdos_sites.png` are **not** to be used, Table S2 is authoritative).
+- **§S3, kappa** — no longer says "an earlier reading of the same data singled out kappa = 1"; it now
+  states why a ranking is easy to produce accidentally from scatter alone.
+- **§S3, completed searches** — the baseline is described as 13 completed searches (one directory
+  holds a search that stopped early) rather than as a drop from 14 directories.
+- **§2.2, the permutation test** — "enumerates all 27 132 partitions rather than sampling them"
+  became "is an exact enumeration of all 27 132 partitions".
+
+`AGENTS.md` now carries this as a governing rule ("Voice: no process history in the sections") so it
+applies to `04`–`06` when they are drafted. The `<!-- DRAFT vN -->` comment at the head of each
+section is the sole remaining version reference inside a section file; it is stripped at the port —
+say the word if it should move to this file instead.
 
 ## Next step
 

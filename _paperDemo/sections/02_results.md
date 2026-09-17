@@ -128,10 +128,10 @@ boron to 0.1882 eV/atom with it on average (medians 0.2185 and 0.1834), a **medi
 0.0351 eV/atom with 94 % of resampled replicates agreeing in sign — the effect is not carried by a
 single favourable search, and the best-structure difference of Table 4 (−0.040 eV/atom) is the
 extreme of the same distribution rather than a lone outlier. A two-sided permutation test over the
-19 searches gives **p = 0.0444**, significant at the 5 % level. The test enumerates **all 27 132 partitions**
-of the pooled search minima rather than sampling them, so this value is exact for the data and its
-resolution floor is p = 3.7 × 10⁻⁵ — four orders of magnitude below the value reported, i.e. the
-conclusion is not an artefact of too few searches.
+19 searches gives **p = 0.0444**, significant at the 5 % level. The test is an **exact enumeration
+of all 27 132 partitions** of the pooled search minima, so this value is exact for the data and its
+resolution floor is p = 3.7 × 10⁻⁵ — more than three orders of magnitude below the value reported,
+i.e. the conclusion is not an artefact of too few searches.
 
 ## 2.3 The island (dewetting) phase and the separation between phases
 
