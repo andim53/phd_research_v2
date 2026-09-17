@@ -15,6 +15,14 @@ Establishes BOTH:
 Metrics per setting: per-seed best dE/atom, running-best convergence, dZ/basin sampling
 (flat fraction), structural diversity (mean pairwise AGOX-Fingerprint distance).
 
+TRUNCATED SEARCHES: several runs were stopped early (iteration max < MIN_ITER).  A truncated
+search has had less search time, so its per-seed best is systematically worse, and because the
+truncation is NOT uniform across settings it biases the comparison between settings.  Two
+variants are therefore computed for every setting and both are written to the CSV:
+  variant='full'       - primary: only searches that reached MIN_ITER (equal iteration count)
+  variant='asreported' - every search found, as originally reported
+The figures use the primary ('full') variant.
+
 NOTE ON DIPOLE: the two dipole runs are SEPARATE searches, so their E_min difference mixes
 the dipole correction with sampling differences. This comparison is outcome-level only; a
 clean isolation of the dipole energy shift would need the same structures recomputed
@@ -34,6 +42,26 @@ from agox.environments import Environment
 METAL = ('Fe', 'Co')
 DIV_N = 200
 BASELINE = 'data/femgo'
+MIN_ITER = 100          # a search is "full" if it reached this iteration
+
+
+def split_truncated(recs, min_iter=MIN_ITER):
+    """Split records into the full searches and the truncated ones.
+
+    Some runs were stopped early (iteration max < MIN_ITER).  A truncated search has had less
+    search time than a full one, so its per-seed best is systematically worse and it inflates
+    the mean and SD of whichever setting it belongs to.  The truncation is not uniform across
+    settings, so including it biases the comparison between settings; the primary statistic
+    therefore uses full searches only (equal iteration count for every setting), and the
+    as-reported variant over all searches is kept alongside for transparency.
+    """
+    mx = {}
+    for r in recs:
+        mx[r['seed']] = max(mx.get(r['seed'], 0), r['iteration'])
+    full_seeds = {s for s, m in mx.items() if m >= min_iter}
+    return [r for r in recs if r['seed'] in full_seeds], \
+           {s: m for s, m in mx.items() if m < min_iter}
+
 
 FAMILIES = {
     'rattle': [
@@ -122,16 +150,31 @@ def main():
     print(f"overall gmin = {gmin:.3f} eV\n")
 
     all_rows = []
+    print(f'full searches = iteration max >= {MIN_ITER}\n')
     for fam, settings in FAMILIES.items():
         print(f"=== {fam} ===")
         M = {}
         for name, root, col in settings:
-            m = metrics(cache[root], gmin); M[name] = m
-            all_rows.append([fam, name, m['n'], m['n_seeds'], f"{m['seedbest'].mean():.5f}",
-                             f"{m['seedbest'].std():.5f}", f"{m['flat']:.3f}", f"{m['div']:.3f}"])
-            print(f"  {name:24s} n={m['n']:5d} seeds={m['n_seeds']:2d} "
-                  f"per-seed best={m['seedbest'].mean():.4f}±{m['seedbest'].std():.4f} eV/at  "
-                  f"flat={m['flat']:.3f}  div={m['div']:.2f}")
+            recs = cache[root]
+            full, trunc = split_truncated(recs)
+            m_full = metrics(full, gmin)          # primary: equal iteration count
+            m_all = metrics(recs, gmin)           # as-reported: every search
+            M[name] = m_full                      # figures use the primary variant
+            for variant, m in (('full', m_full), ('asreported', m_all)):
+                all_rows.append([fam, name, variant, m['n'], m['n_seeds'],
+                                 f"{m['seedbest'].mean():.5f}", f"{m['seedbest'].std():.5f}",
+                                 f"{m['flat']:.3f}", f"{m['div']:.3f}"])
+            print(f"  {name:24s} FULL  n={m_full['n']:5d} seeds={m_full['n_seeds']:2d} "
+                  f"per-seed best={m_full['seedbest'].mean():.5f}"
+                  f"+-{m_full['seedbest'].std():.5f} eV/at  flat={m_full['flat']:.3f}  "
+                  f"div={m_full['div']:.2f}")
+            print(f"  {'':24s} all   n={m_all['n']:5d} seeds={m_all['n_seeds']:2d} "
+                  f"per-seed best={m_all['seedbest'].mean():.5f}"
+                  f"+-{m_all['seedbest'].std():.5f} eV/at  flat={m_all['flat']:.3f}  "
+                  f"div={m_all['div']:.2f}")
+            if trunc:
+                print(f"  {'':24s} TRUNCATED (excluded from FULL): "
+                      + ', '.join(f'{s} @{m}' for s, m in sorted(trunc.items())))
 
         # figure 1x4
         fig, axes = plt.subplots(1, 4, figsize=(22, 4.8))
@@ -175,8 +218,9 @@ def main():
 
     with open('analysis/method_sensitivity.csv', 'w', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['family','setting','n_structures','n_seeds','per_seed_best_dE_at_mean',
-                    'per_seed_best_dE_at_sd','flat_fraction','fingerprint_diversity'])
+        w.writerow(['family','setting','variant','n_structures','n_seeds',
+                    'per_seed_best_dE_at_mean','per_seed_best_dE_at_sd','flat_fraction',
+                    'fingerprint_diversity'])
         w.writerows(all_rows)
     print('wrote analysis/method_sensitivity.csv')
 

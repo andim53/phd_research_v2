@@ -1,7 +1,34 @@
-# CLAIMS.md — FROZEN claim list (v6)
+# CLAIMS.md — FROZEN claim list (v7)
 
-**Status: FROZEN (v6, 2026-09-17).** Supersedes v5, v4, v3, v2 and v1.
+**Status: FROZEN (v7, 2026-09-17).** Supersedes v6, v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
+
+## v7 changelog (2026-09-17) — truncated searches in the sensitivity families
+
+**Finding.** `method_sensitivity.load_setting` counts every non-trash db under a family root,
+which includes searches that were **stopped early** (iteration max < 100). Every family except
+`kappa=1` contains at least one, and each truncated search has the **worst** per-seed best by a
+wide margin (0.23–0.35 eV/atom vs ~0.03–0.09 for full searches), so it inflates the mean and SD
+of whichever setting it belongs to. The truncation is **not uniform across settings**, so it
+biased the comparison: the baseline reads 0.0503 ± 0.0545 over all searches but 0.0368 ± 0.0258
+over full searches alone (+27 % and ~2× the SD from one truncated run).
+
+**Resolution.** The primary statistic is now **equal-iteration (full searches only)**; the
+as-reported variant is retained alongside in the same CSV (`variant` column) and the figures use
+the primary. Evidence cells for SI-5, SI-6 and SI-7 restated accordingly. No conclusion reverses,
+but two statements do not survive:
+
+- **"kappa = 1 is the best setting" is RETRACTED.** It was an artefact of `kappa=1` being the only
+  family with no truncated outlier. On the primary statistic the four settings span
+  0.0321–0.0395 eV/atom — 0.0074 eV/atom, far inside the SDs (0.019–0.026) — so **no kappa is
+  distinguishable from another**. SI-5's conclusion (robustness) holds; its ranking does not exist.
+- **The rattle degradation is ~7×, not ~5×** on the primary statistic (0.03683 → 0.26073 / 0.25583).
+  Direction and significance are unchanged.
+- SI-6 is unaffected in substance and cleaner on the primary statistic (difference 0.0009 eV/atom).
+
+**Seed accounting.** The sensitivity baseline's "14 seeds" is **13 full searches + the truncated
+`stop_16`**; the main text and SI §S1 use **13**. The primary `variant=full` baseline is
+therefore 13 seeds, consistent with the rest of the paper.
 
 ## v6 changelog (2026-09-17) — executes the decisions held in the v5 "PENDING v6" block
 
@@ -152,9 +179,9 @@ number of distinct structures.
 | **SI-2** | Islanding **weakens magnetism and lowers DOS(E_F)** | spin pol 5.81 → 4.37; DOS(E_F) 104.0 → 78.1 | `analysis/pdos_metrics.csv` | moderate |
 | **SI-3** *(restated v6)* | The island's **true interface Fe are NOT flat-like** → the island's gain is **reduced forced interfacial coupling plus restored metal cohesion**, **not** lattice-strain relief | island interface d-centre +0.51 eV vs flat −0.23 eV; registry-locked atoms 25/25 → 9/25. The ~equal d_Fe-O (2.33 vs 2.30 Å) follows from the 2.3 Å construction parameter surviving relaxation, so it is **not** evidence about the method | `analysis/interface_analysis.csv` | moderate |
 | **SI-4** *(reframed v6)* | **Fe sits directly atop O** at the interface — a property of the **reference construction** that agrees with the measured registry: a **consistency check**, not a search prediction | 25/25 (flat) and 9/9 (island) atop O; 0 atop Mg (flat offset 0.000 Å); `build_mgo_stack` places substrate O above the metal sites | `analysis/interface_analysis.csv` | strong (structural) |
-| **SI-5** | The result is **robust to the LCB kappa** | per-seed best 0.039–0.056 eV/atom across kappa ∈ {1,2,3,4} | `analysis/method_sensitivity.csv` | strong |
-| **SI-6** | The result is **robust to the dipole correction** | per-seed best 0.050 → 0.056 eV/atom (within seed spread) | `analysis/method_sensitivity.csv` | weak (outcome-level only) |
-| **SI-7** | **Reducing the rattle strength degrades the search ~5×** and under-samples the flat basin | per-seed best 0.050 → 0.27–0.29 eV/atom; flat fraction 0.181 → 0.030/0.015 | `analysis/method_sensitivity.csv` | strong |
+| **SI-5** *(evidence restated v7)* | The result is **robust to the LCB kappa** — and **no setting is distinguishable from another** | per-seed best **0.0321–0.0395 eV/atom** across kappa ∈ {1,2,3,4} (primary, equal-iteration: only searches that reached 100 iterations); the whole range spans 0.0074 eV/atom, far inside the SDs (0.019–0.026), so **no kappa is identified as best**. As-reported, with truncated searches included: 0.039–0.056 | `analysis/method_sensitivity.csv` (`variant=full`) | strong |
+| **SI-6** | The result is **robust to the dipole correction** | per-seed best **0.03683 ± 0.02575** (no dipole) → **0.03770 ± 0.02436** (dipole xy) — a difference of 0.0009 eV/atom, far inside the SD (primary, equal-iteration). As-reported: 0.050 → 0.056 | `analysis/method_sensitivity.csv` (`variant=full`) | weak (outcome-level only) |
+| **SI-7** *(evidence restated v7)* | **Reducing the rattle strength degrades the search ~7×** and under-samples the flat basin | per-seed best **0.03683 ± 0.02575 → 0.26073 / 0.25583 eV/atom (7.1× / 7.0×)**; flat fraction **0.165 → 0.023 / 0.017** (primary, equal-iteration). As-reported: 0.050 → 0.27–0.29, flat 0.181 → 0.030/0.015. **Caveat:** the reduced-rattle arms retain only **2 and 4** full searches after excluding truncated runs | `analysis/method_sensitivity.csv` (`variant=full`) | strong (direction), weak (magnitude — arms of n = 2 and 4) |
 | **SI-8** *(v4; signed off 2026-09-17)* | **The onset of relaxation is the pivot of the biased search**: the pre-relaxation iterations provide almost no ranking information, and roughly half the total descent occurs at the first relaxed iteration | best-known ΔE/N: 0.494 (i=1) → 0.435 (i=9; 12 % of the descent) → **0.250 (i=10; 49 %)**; per-search drop across the onset median 0.165 (range 0.084–0.233) eV/atom; 84 % of the descent by i=30, 94 % by i=50; global minimum first reached at i=77; 10 of 13 searches end within 0.05 eV/atom of it, 4 within 0.02 | `analysis/exploration_performance.json` | strong (Fe/MgO only) |
 
 **Paired caveat for SI-8 (must travel with the claim).** Fe/MgO only, and the quantities are
@@ -227,6 +254,12 @@ remains a *method-quality* claim on Fe/MgO only.
   consistency check, not an independent prediction by the search.
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold.
 - kpts = (1,1,1), single-layer slabs → qualitative/trend-level.
+- **Sensitivity families contain truncated searches (v7):** several runs were stopped early
+  (iteration max 11–90 vs 100 for a full search) and their per-seed best is systematically worse,
+  and the truncation is not uniform across settings. The primary statistic therefore uses full
+  searches only (equal iteration count); the as-reported variant is retained in the CSV. The
+  reduced-rattle arms retain only **2 and 4** full searches, so their magnitudes are weak even
+  though the direction is clear.
 
 ---
 
@@ -288,5 +321,7 @@ v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density princip
 v4 (2026-09-17) SI-8 added · v5 (2026-09-17) lattice-model + basis-set limitations,
 experimental-correspondence framing, six verified Fe/MgO references · v6 (2026-09-17) SI-3
 restated (strain relief dropped for reduced forced coupling + restored metal cohesion),
-SI-4 reframed as a consistency check, strain-convention limitation added, torelli2009
-added to the experimental-correspondence evidence.
+SI-4 reframed as a consistency check, strain-convention limitation added, torelii2009
+added to the experimental-correspondence evidence · v7 (2026-09-17) truncated searches found in
+the method-sensitivity families; SI-5/6/7 evidence cells restated on an equal-iteration primary
+statistic; "kappa = 1 is best" retracted; rattle factor 5× → 7×.

@@ -55,7 +55,7 @@ hosts (MTJ / CoFeB relevance)
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v6 (2026-09-17; supersedes v1–v5).** v2 withdrew
+- **The claim list is FROZEN in `CLAIMS.md` v7 (2026-09-17; supersedes v1–v6).** v2 withdrew
   MT-6 (flat-basin sampling fraction — a biased-exploration weight, and the exploration operator
   is not matched across systems: Fe-Co alone uses a third, species-permutation generator). v3
   added MT-8 (each branch's low-energy structures form a few recurring motifs; ΔZ continuous),
@@ -67,7 +67,9 @@ hosts (MTJ / CoFeB relevance)
   from the construction and is a consistency check, not a search prediction), and added the
   inverse-strain-convention limitation.** Drafting must not introduce claims outside the list, and
   must not drop the paired caveats. Any new claim requires bumping `CLAIMS.md` to the next version
-  first.
+  first. **v7 restated the method-sensitivity claims (SI-5/6/7) on an equal-iteration statistic: the
+  families contained searches that stopped early, whose per-seed best is systematically worse, and the
+  truncation was not uniform across settings.**
 
 ## Drafting status
 

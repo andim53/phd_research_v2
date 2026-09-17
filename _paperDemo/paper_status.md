@@ -6,7 +6,7 @@ Boron consistently lowers the relative energy of the flat metal-film wetting sta
 i.e. B promotes flat-film wetting independently of the host metal, relevant to interface
 flatness in CoFeB/MgO MTJ stacks.
 
-**Claim list frozen:** `CLAIMS.md` **v6** (2026-09-17, FROZEN; supersedes v1–v5). v2 withdrew
+**Claim list frozen:** `CLAIMS.md` **v7** (2026-09-17, FROZEN; supersedes v1–v6). **v7 restated the sensitivity evidence on an equal-iteration statistic after truncated searches were found in every family but `kappa=1`, and retracted "kappa = 1 is best".** v2 withdrew
 MT-6; v3 added MT-8 and flagged MT-4 CHALLENGED; v4 added SI-8; v5 added the bcc/bct
 lattice-model and basis-set limitations and the experimental-correspondence framing, and
 recorded six newly verified Fe/MgO references; **v6 executed the decisions previously held as
@@ -61,7 +61,7 @@ Key numbers: pre-relaxation (i = 1–9) descends only 12 % of the total (0.494 �
 i = 57, 0.005 at i = 72; **the global minimum is first found at i = 77**; only 10 / 13 searches
 end within 0.05 eV/atom and 4 / 13 within 0.02 (median final best 0.040).
 
-## Supplementary Material: S2 drafted / S3 BLOCKED on a data-integrity finding (2026-09-17)
+## Supplementary Material: S2 and S3 drafted; truncation finding resolved (2026-09-17)
 
 **§S2 — electronic-structure origin of the flat → island transition** is drafted in
 `sections/SI.md`, carrying the v6 mechanism wording (no "bulk-like" comparison — no bulk-Fe
@@ -76,11 +76,28 @@ is explicitly marked as not to be used.
 `mean_inplane_offset_A` into the CSV (2.300/0.000 flat; 2.331/0.372 island interface); rerun with
 all pre-existing columns numerically identical.
 
-**§S3 — method-parameter sensitivity is NOT drafted.** `method_sensitivity.load_setting` counts
-every non-trash db, including **searches that stopped early**. Every family except `kappa=1`
-contains at least one truncated search, and the truncated search always has the **worst** per-seed
-best (0.23–0.35 vs ~0.03–0.09 eV/atom), so it inflates the mean and SD of whichever family it sits
-in — **and the contamination is not uniform across settings**, which biases the comparison itself:
+**§S3 — method-parameter sensitivity — DRAFTED.** The blocker (below) was resolved by making the
+primary statistic **equal-iteration**: only searches that reached iteration 100 are counted, so
+every setting gets the same search time. The as-reported variant over all searches is kept in the
+same CSV (`variant` column); the figures use the primary. `scripts/method_sensitivity.py` now
+emits both variants and prints the excluded truncated searches. CLAIMS bumped to **v7**.
+
+Primary numbers (Table S3): baseline (kappa=2, no dipole) **0.03683 ± 0.02575**, 13 searches,
+flat 0.165; kappa=1 0.03947 ± 0.02371 (16); kappa=3 0.03509 ± 0.02182 (10); kappa=4
+0.03209 ± 0.01872 (9); dipole xy 0.03770 ± 0.02436 (11); rattle reduced-0.5
+0.26073 ± 0.06804 (2), flat 0.023; reduced-1.0 0.25583 ± 0.13287 (4), flat 0.017.
+Figure S4 = `method_sensitivity_rattle.png`, **S5** = `_kappa.png`, **S6** = `_dipole.png`.
+Claims: SI-5 (kappa), SI-6 (dipole), SI-7 (rattle).
+**Retracted: "kappa = 1 is the best setting"** — an artefact of `kappa=1` being the only family
+without a truncated outlier; on the primary statistic all four kappa settings span 0.0074 eV/atom
+(0.0321–0.0395), far inside the SDs (0.019–0.026), so no kappa is distinguishable from another.
+The rattle factor is **~7×** on the primary statistic, not ~5×. SI-6 is unaffected in substance.
+
+**The original blocker (kept for the record).** `method_sensitivity.load_setting` counts every
+non-trash db, including **searches that stopped early**. Every family except `kappa=1` contains at
+least one, and the truncated search always has the **worst** per-seed best (0.23–0.35 vs
+~0.03–0.09 eV/atom), so it inflates the mean and SD of whichever family it sits in — **and the
+contamination is not uniform across settings**, which biased the comparison itself:
 
 | setting | as-reported | full-only | common window ≤ 37 |
 |---|---|---|---|
@@ -92,18 +109,16 @@ in — **and the contamination is not uniform across settings**, which biases th
 | rattle reduced-0.5 | 0.2902 ± 0.0566 | 0.2607 ± 0.0680 | 0.3259 ± 0.0081 |
 | rattle reduced-1.0 | 0.2740 ± 0.1243 | 0.2558 ± 0.1329 | 0.3392 ± 0.0824 |
 
-- **SI-7 (rattle) holds** in direction/significance, but the factor is treatment-dependent:
-  ~5.4× as-reported, ~7× full-only, ~2.3× on an equal budget.
-- **SI-5 (kappa robustness) holds**, but the log's "**Best: kappa = 1**" does **not** — it is an
-  artefact of `kappa=1` being the only family with no truncated outlier. Full-only favours
-  `kappa=4`; equal-budget favours the baseline `kappa=2`. The CLAIMS "0.039–0.056" range mixes
-  treatments.
-- **SI-6 (dipole) holds**, and is cleaner under full-only.
-- **Seed accounting:** the sensitivity baseline's "14 seeds" = 13 full searches + truncated
-  `stop_16`, whereas the main text and §S1 use **13**.
-- **Open decision (scientist):** (a) report as-is + disclosure caveat, (b) recompute on a common
-  iteration budget and bump CLAIMS to v7, or (c) as-is primary with the common-budget comparison
-  alongside. Probes: `scripts/probe_stop16_bias.py`, `probe_family_seeds.py`,
+- **SI-7 (rattle) holds** in direction and significance; the factor is treatment-dependent (~5.4×
+  as-reported, **~7× on the primary**, ~2.3× on a ≤37-iteration budget).
+- **SI-5 (kappa robustness) holds**, but the log's "**Best: kappa = 1**" does **not** — it was an
+  artefact of `kappa=1` being the only family with no truncated outlier. **RETRACTED in CLAIMS v7.**
+- **SI-6 (dipole) holds**, and is cleaner on the primary statistic.
+- **Seed accounting:** the sensitivity baseline's as-reported "14 seeds" = 13 full searches +
+  truncated `stop_16`; the **primary baseline is 13**, matching the main text and §S1.
+- **RESOLVED (scientist's decision 2026-09-17):** recompute on full searches only (equal iteration
+  count) as the primary, keep as-reported as a footnote, correct the SI-5/6/7 evidence cells and
+  bump CLAIMS to **v7**. Done. Probes: `scripts/probe_stop16_bias.py`, `probe_family_seeds.py`,
   `probe_truncation_effect.py`.
 
 ✅ **SIGNED OFF:** `SI-8` is frozen in **`CLAIMS.md` v5** — *"the onset of relaxation is the
@@ -118,7 +133,7 @@ the onset step (the pivot) → the long refinement sequence → disagreement bet
 facts are all still reported (including the global minimum first being reached at i = 77), but
 they no longer carry an early/late narrative.
 
-⚠ **Held for review (not written into CLAIMS, v4–v6):** the searches are still improving at
+⚠ **Held for review (not written into CLAIMS, v4–v7):** the searches are still improving at
 iteration 100, so the per-model reference energies are not converged with respect to search
 length. The scientist elected to discuss this at review rather than to add it to the
 limitations now.
@@ -275,7 +290,7 @@ result at RT is therefore the outlier in the literature, not ours.
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
 - [~] sections/01_methods.md  (**APPROVED 2026-09-17** at `c89e1e1` — third revision;
       **VOIDED 2026-09-17**: §1.6 extended with the inverse-strain-convention limitation and the
-      header moved to CLAIMS v6 → **DRAFT v4, needs re-approval**)
+      header moved to CLAIMS v6 (now v7) → **DRAFT v4, needs re-approval**)
       Approved at `c89e1e1`: §1.1 strain direction (cell = Fe lattice constant; MgO compressed
       3.6 % relative to bulk; substrate frozen compressed; film unstrained in-plane), §1.2
       per-model exploration schedule (Fe-Co uses a third, species-permutation generator;
@@ -296,7 +311,7 @@ result at RT is therefore the outlier in the literature, not ours.
       "seeded from a flat reference" remark (previously a caveat, now a positive control) are
       gone.
 - [~] sections/03_discussion.md  (REVISED **v4** 2026-09-17 — §3.1 mechanism rewritten per
-      CLAIMS v6, §3.5 extended with the two model-bound limitations; awaiting scientist review)
+      CLAIMS v6 (now v7), §3.5 extended with the two model-bound limitations; awaiting scientist review)
       v3 changes: §3.2 confusion-principle claim restricted to the B addition (Co alone
       raises the flat energy → element count is not the driver); §3.1 unsupported
       "bulk-like" comparison removed and registry wording made precise (interface atoms
@@ -371,7 +386,7 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
-- [x] Claim list frozen (`CLAIMS.md` — now **v6, FROZEN** 2026-09-17).
+- [x] Claim list frozen (`CLAIMS.md` — now **v7, FROZEN** 2026-09-17).
 - [~] sections/01_methods.md approved 2026-09-16, re-approved 2026-09-17 at `c89e1e1` —
       **VOIDED**: §1.6 gained the inverse-strain-convention limitation (DRAFT v4) → needs re-approval.
 - [ ] **OPEN — full texts of the islanding references.** `fahsold2000` (PRB 61, 8475),

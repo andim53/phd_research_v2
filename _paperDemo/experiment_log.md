@@ -883,3 +883,40 @@ with the common-budget comparison alongside.
 
 Probes added: `scripts/probe_stop16_bias.py`, `scripts/probe_family_seeds.py`,
 `scripts/probe_truncation_effect.py`.
+
+## S3 drafted on an equal-iteration statistic; CLAIMS v7 (2026-09-17)
+
+Scientist's decision on the truncation finding: recompute on **full searches only** (equal
+iteration count) as the primary, keep the as-reported values as a footnote, correct the SI-5/6/7
+evidence cells, and bump CLAIMS to v7. Also: the confound is disclosed in the SI prose, not only
+in the log.
+
+- **`scripts/method_sensitivity.py`** now computes both variants via `split_truncated()` (a search
+  is "full" if its iteration max >= `MIN_ITER` = 100), writes **both** to
+  `analysis/method_sensitivity.csv` with a new `variant` column, and prints the excluded truncated
+  searches for each setting. The figures use the primary variant. **The `asreported` rows
+  reproduce the previous CSV exactly**, field by field — the change is additive, not a
+  redefinition of the old numbers.
+- **Primary numbers** (per-seed best dE/N, eV/atom): baseline (kappa=2, no dipole)
+  **0.03683 +- 0.02575**, 13 searches, flat 0.165, div 2.22; kappa=1 0.03947 +- 0.02371 (16);
+  kappa=3 0.03509 +- 0.02182 (10); kappa=4 0.03209 +- 0.01872 (9); dipole xy 0.03770 +- 0.02436
+  (11); rattle reduced-0.5 0.26073 +- 0.06804 (**2** searches), flat 0.023; rattle reduced-1.0
+  0.25583 +- 0.13287 (4), flat 0.017.
+- **RETRACTED: "Best: kappa = 1".** On the primary statistic all four kappa settings span
+  0.0321-0.0395 eV/atom (0.0074 total), far inside the SDs (0.019-0.026), so **no kappa is
+  distinguishable from another**. The old ranking came from the truncated `stop_16` search sitting
+  in the baseline, not from any property of kappa=1. SI-5's conclusion (robustness to kappa) holds;
+  its ranking never existed.
+- **SI-7 factor corrected: ~5x -> ~7x** (0.03683 -> 0.26073 / 0.25583 = 7.08x / 6.95x), flat
+  fraction 0.165 -> 0.023 / 0.017. Direction and significance unchanged. Caveat recorded: the
+  reduced-rattle arms retain only 2 and 4 full searches, so the **magnitude** is weakly determined.
+- **SI-6 unchanged in substance** and cleaner on the primary statistic: 0.03683 +- 0.02575 vs
+  0.03770 +- 0.02436, a difference of 0.0009 eV/atom.
+- **Seed accounting:** the primary baseline is **13** searches, matching the main text and S1; the
+  as-reported baseline counted 14 (13 + truncated `stop_16`).
+- **`sections/SI.md`** gained **S3** with Table S3 (all nine settings, primary variant) and Figures
+  S4/S5/S6; the truncation confound is stated in the section, together with the seed accounting.
+  All 20 numbers in S3 were verified against the CSV.
+- **`CLAIMS.md` -> v7**: SI-5/SI-6/SI-7 evidence cells restated on the primary variant, the
+  retraction recorded, the truncated-search limitation added, version history updated.
+  `paper_status.md` and `AGENTS.md` moved to v7; all four section headers moved to v7.

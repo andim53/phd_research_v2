@@ -1,7 +1,7 @@
 # 03 — Discussion
 
 <!-- DRAFT v3 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v6. All \cite{} keys resolve against references.bib; the three
+     Grounded in CLAIMS.md v7. All \cite{} keys resolve against references.bib; the three
      MTJ placeholders were replaced by yuasa2004 (verified) when the CoFeB-specific
      assertions were dropped. -->
 

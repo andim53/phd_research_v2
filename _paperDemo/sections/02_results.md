@@ -5,7 +5,7 @@
      Co/B/CoB are the parameter series, and the biased search yields an EXPLORATION density
      over the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the
      weights are not physical. Organized by phase, not by additive.
-     Grounded in CLAIMS.md v6. MT-6 is WITHDRAWN and no flat-fraction comparison appears here;
+     Grounded in CLAIMS.md v7. MT-6 is WITHDRAWN and no flat-fraction comparison appears here;
      MT-8 is claimed in §2.1; MT-4 is reported as a trend (flagged CHALLENGED in CLAIMS v3, still
      flagged in v6).
      Every number traces to analysis/pes_structures.csv or analysis/ensemble_stats.json. -->

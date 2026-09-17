@@ -1,7 +1,7 @@
 # Supplementary Material
 
 <!-- DRAFT v1 · supplementary document (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v6. Planned structure:
+     Grounded in CLAIMS.md v7. Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [documented in experiment_log.md]
        S3  Method-parameter sensitivity (rattle / kappa / dipole) [documented in experiment_log.md]
@@ -11,11 +11,11 @@
      interfacial coupling plus restored metal cohesion — NOT lattice-strain relief; the
      Fe-atop-O registry is inherited from the reference construction and is a consistency
      check, not a search prediction). Claims SI-1 … SI-4.
-     S3 NOT drafted — blocked on a data-integrity finding: every sensitivity family except
-     kappa=1 contains truncated searches (iteration max < 100) whose per-seed best is a
-     severe outlier (0.23-0.35 eV/atom vs ~0.03-0.09), which inflates the mean and SD of the
-     family it sits in, and the contamination is not uniform across settings (see
-     experiment_log.md, "Truncated searches in the method-sensitivity families"). -->
+     S3 drafted 2026-09-17. Claims SI-5 (kappa), SI-6 (dipole), SI-7 (rattle).
+     The primary sensitivity statistic uses searches of equal length (reaching iteration 100);
+     the as-reported variant is retained in the CSV (column `variant`). See CLAIMS v7 — the
+     truncated searches in these families biased the original comparison, and "kappa = 1 is
+     best" was retracted as an artefact. -->
 
 ## S1 Performance of the biased exploration in finding the global minimum
 
@@ -167,3 +167,93 @@ quantitative claim would require re-relaxed geometries. The d-band moments depen
 [−5, +3] eV window, which is a convention. The analysis is for Fe/MgO only; the other three models
 were not recomputed. `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` come from the
 superseded bottom-8/top-8 split and should not be used; Table S2 supersedes them.
+
+## S3 Method-parameter sensitivity of the biased exploration
+
+The search used here is a custom, biased scheme — GOFEE (a GPR surrogate with an LCB acquisition
+function) seeded from a flat Fe reference layer, with `HeteroStructRandomize` and
+`RattleGenerator` supplying the perturbation. Here we vary **three method parameters** on the same
+Fe25Mg25O25 system and ask whether the method's conclusions survive the choice: is the island
+still the ground state, how far does a single search reach, and is the flat/island basin picture
+preserved. The baseline for every family is the plain Fe/MgO run (rattle 1.5/2.3, kappa = 2, no
+dipole correction). Energies are per-seed best ΔE/N relative to the lowest energy found in any of
+these runs, −436.909 eV.
+
+**The primary statistic uses searches of equal length.** A first pass counted every search found
+under each run directory, which included several that had been **stopped early**. A short search
+has had less time to descend, so its per-seed best is systematically worse — every truncated
+search in this set is a severe outlier (0.23–0.35 eV/atom, against ~0.03–0.09 for full searches) —
+and because the truncation is **not uniform across settings** it distorts the comparison between
+them. Counting one truncated search in the baseline alone moves it from
+0.0368 ± 0.0258 to 0.0503 ± 0.0545 eV/atom, a 27 % shift in the mean and roughly a doubling of the
+standard deviation. The primary numbers below therefore use **only searches that reached iteration
+100**, giving every setting the same search time; the as-reported values over all searches are
+quoted wherever they differ, and both variants are recorded in the same file
+(`analysis/method_sensitivity.csv`, column `variant`). A side effect worth noting: the primary
+baseline is **13 searches**, matching the main text and §S1, whereas the as-reported baseline
+counted 14.
+
+**Table S3.** Method-parameter sensitivity, primary statistic (searches reaching iteration 100).
+*[SI-5, SI-6, SI-7]*
+
+| Family | Setting | Searches | per-seed best (eV/atom) | Flat fraction | Diversity |
+|---|---|---|---|---|---|
+| rattle | baseline (1.5 / 2.3) | 13 | **0.03683 ± 0.02575** | 0.165 | 2.22 |
+| rattle | reduced-0.5 (1.0 / 1.8) | 2 | **0.26073 ± 0.06804** | 0.023 | 3.74 |
+| rattle | reduced-1.0 (0.5 / 1.3) | 4 | **0.25583 ± 0.13287** | 0.017 | 4.33 |
+| kappa | kappa = 2 (baseline) | 13 | 0.03683 ± 0.02575 | 0.165 | 2.22 |
+| kappa | kappa = 1 | 16 | 0.03947 ± 0.02371 | 0.182 | 2.36 |
+| kappa | kappa = 3 | 10 | 0.03509 ± 0.02182 | 0.149 | 2.65 |
+| kappa | kappa = 4 | 9 | 0.03209 ± 0.01872 | 0.132 | 2.68 |
+| dipole | no dipole (baseline) | 13 | 0.03683 ± 0.02575 | 0.165 | 2.22 |
+| dipole | dipole xy | 11 | 0.03770 ± 0.02436 | 0.158 | 2.67 |
+
+**Figure S4.** `figures/method_sensitivity_rattle.png` — convergence, per-seed best, basin sampling
+and diversity for the rattle-strength family (four panels).
+
+**Figure S5.** `figures/method_sensitivity_kappa.png` — the same four panels for the kappa family.
+
+**Figure S6.** `figures/method_sensitivity_dipole.png` — the same four panels for the dipole family.
+
+**Reducing the rattle strength degrades the search by about 7×.** *[SI-7]* Cutting the
+`HeteroStructRandomize` / `RattleGenerator` amplitudes roughly in half raises the per-seed best
+from **0.0368 to 0.2607 / 0.2558 eV/atom** — a factor of **7.1 and 7.0** — and the flat-basin
+fraction collapses from **0.165 to 0.023 / 0.017**. Reducing the perturbation is therefore not a
+cheaper equivalent of the baseline: the rattle is what makes the search escape the initial region
+and reach the low-energy basin at all, and less of it leaves the search sampling almost exclusively
+the island side. The as-reported values tell the same story with a smaller factor
+(0.0503 → 0.2902 / 0.2740, i.e. ~5×), because the truncated searches in the reduced-rattle arms
+also depress those arms. **The magnitude here is weakly determined** — after excluding truncated
+runs the two reduced-rattle arms keep only 2 and 4 searches — so the factor should be read as
+"about an order of magnitude", not as a calibrated ratio. The direction is not in doubt: every arm
+of the sweep is worse than the baseline, and the flat basin is under-sampled by an order of
+magnitude in the flat fraction.
+
+**The kappa parameter changes nothing measurable.** *[SI-5]* All four settings land within
+**0.0321–0.0395 eV/atom** — a total span of 0.0074 eV/atom, far inside the standard deviations
+(0.019–0.026) — so the method's conclusions are **robust to the acquisition parameter**, and in
+particular **no value of kappa can be identified as better than another** from these runs. This is
+worth stating explicitly, because an earlier reading of the same data singled out kappa = 1 as the
+best setting; that ranking came from a truncated search sitting in the baseline rather than from
+any property of kappa = 1, and it does not survive the equal-iteration statistic. There is a small,
+monotone trend in the flat-basin fraction — 0.182, 0.165, 0.149 and 0.132 for kappa = 1, 2, 3 and 4
+— i.e. more exploration relative to exploitation samples slightly less of the flat basin, but the
+effect is within the same order as the seed-to-seed spread.
+
+**The dipole correction does not change the outcome.** *[SI-6]* The per-seed best moves from
+0.03683 ± 0.02575 to 0.03770 ± 0.02436 eV/atom, a difference of 0.0009 eV/atom — an order of
+magnitude smaller than the standard deviation. On the primary statistic the comparison is cleaner
+than the as-reported one (0.0503 → 0.0563), which again reflects the truncated baseline search
+rather than the dipole correction. **Caveat:** these are two *separate* searches, so the difference
+mixes the correction with sampling noise. This is an outcome-level comparison only; isolating the
+dipole energy shift would require recomputing the *same* structures with and without the
+correction, which was not done.
+
+**Caveats for the whole study.** Seed counts are unequal (13 / 2 / 4 for rattle, 13 / 16 / 10 / 9
+for kappa, 13 / 11 for dipole), and the truncated-search exclusion is disclosed above. The rattle
+sweep explores only *lower* rattle — there is no higher-rattle arm, so this is not a maximum and
+the baseline should not be read as an optimum. "Diversity" (the mean pairwise AGOX-Fingerprint
+distance) is **inversely correlated with convergence** — a better-converged population is more
+concentrated — so it is not interpreted as exploration breadth. The kappa directories contain a
+scratch `trash/` database of 41 Fe9Mg9O9 structures, which the loader excludes by skipping `trash/`
+and filtering to the target composition; the rattle and dipole directories are clean.

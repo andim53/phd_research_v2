@@ -1,7 +1,7 @@
 # 01 — Methods
 
 <!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v6. Citations verified and in references.bib
+     Grounded in CLAIMS.md v7. Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
      species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
