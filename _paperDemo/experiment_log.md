@@ -701,6 +701,36 @@ content:
 So `01_methods.md` is approved as it stands, but a fourth revision is likely once items 1–3 are
 settled — worth batching them into a single pass rather than approving again in between.
 
+## Growth mode at 1 ML — checked (2026-09-17)
+
+**Question:** does 1 ML of Fe on MgO(001) grow as an island? **This is our model's coverage** —
+25 metal atoms on 25 substrate sites = 1 ML average — so the answer matters directly.
+
+| Source | Coverage studied | Reported mode |
+|---|---|---|
+| **Fahsold, Pucci & Rieder 2000** (PRB 61, 8475; He-atom scattering) | bare MgO(001) up to beyond complete coverage, 140 ≤ T ≤ 670 K | **3D metal island growth**; island densities, sizes and shapes quantified and a coalescence thickness calculated. *"suppressed at low temperature (140 K) where a monolayer film almost completely covers the substrate"* → **at RT, 1 ML is islands** |
+| **Torelli et al. 2009** (PRB 79, 035408; XMCD + STM) | sub-nm → several ML | *"sub-nanometer Fe grows three-dimensionally on MgO"*; island coalescence between **3.5 and 6.5 ML**; **transition to a 2D growth mode above ≈6.5 ML** |
+| **Reitinger et al. 2007** (JAP 102, 034310; GISAXS) | **5 ML**, RT | **Volmer–Weber** growth, spherical islands |
+| **Urano & Kanaji 1988** (JPSJ 57, 3403) — *local paper* | **1 ML**, RT | **Layer by layer**, pseudomorphic, Fe just above O at ~2.0 Å. **Opposite** to the above |
+| **Butler et al. 2001** (PRB 63, 054416) — *local paper* | monolayer + bilayer, *theory* | Adsorption geometry only (Fe atop O, O–Fe = 2.3 Å); **no growth-mode statement** |
+| **Yuasa et al. 2004** (Nat. Mater. 3, 868) — *local paper* | 1000 Å and 100 Å Fe | Thick films; no 1-ML statement. **Consistent** once the >6.5 ML 2D transition is accounted for |
+
+**Answer:** at room temperature, **yes** — 1 ML Fe on MgO(001) is reported to grow as 3D islands,
+and the growth mode is thickness-dependent with a 3D → 2D transition around 6.5 ML. The local
+Urano paper is the **dissent**, at exactly 1 ML — most plausibly because of its conditions
+(very slow deposition, ~0.2 Å/min, onto a cleaved crystal annealed at 800 °C in O₂), i.e. low
+supersaturation favouring 2D layer growth.
+
+**Consequence for our model, which is favourable:** our two basins correspond to the two
+experimentally accessible outcomes **at 1 ML** — the 3D island (RT growth) and the 2D
+pseudomorphic monolayer (140 K, `fahsold2000`; slow deposition, `urano1988`). The >6.5 ML 2D
+transition also means our result should be framed as **1-ML specific** and not extrapolated to
+thick films — which the existing bct limitation (§1.6) already supports.
+
+**Added to `references.bib`:** `torelli2009` (verified via Crossref). Not yet cited in any
+section — it is the most direct reference for the 1-ML islanding statement and is a candidate
+for the "Experimental correspondence" paragraph of `02_results.md` §2.1.
+
 ## Model geometry correction — the strain sits on the MgO, not the film (2026-09-17)
 
 Scientist's correction: the cell uses the **Fe-optimised lattice constant**, so **MgO** is the
