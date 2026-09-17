@@ -108,7 +108,7 @@ Corrected in v9: `01_methods.md` (excluded-run names) and six places in `section
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v9 (2026-09-17; supersedes v1–v8).** Drafting must not
+- **The claim list is FROZEN in `CLAIMS.md` v10 (2026-09-17; supersedes v1–v9).** Drafting must not
   introduce claims outside the list, and must not drop the paired caveats. Any new claim requires
   bumping `CLAIMS.md` to the next version first. The per-version history is in its changelogs; the
   standing content rules are:
@@ -151,8 +151,9 @@ drafting or revising anything. Summary as of 2026-09-17:
     p = 0.0444) → needs review.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains.
     **This is the gate: do NOT draft `04_introduction.md` until 03 is approved.**
-  - `SI.md` **v6** — §S1, §S2, §S3 are Fe/MgO and content-unchanged (v4 was a scope note); v5
-    removed the revision history and v6 the code vocabulary. Awaiting review.
+  - `SI.md` **v7** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 adds **§S4 (iteration
+    budget, SI-9)** and **§S5 (lattice constraint, SI-10)**, two new boron-free Fe/MgO robustness
+    studies. Awaiting review.
   - `04`–`06` not drafted; no LaTeX until all sections are approved.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
   `a_Fe` (`interpolation_factor` = 0), so the confound that threatened the cross-host comparison no
@@ -160,7 +161,8 @@ drafting or revising anything. Summary as of 2026-09-17:
   stated limitation in §1.6/§3.4. History: `CLAIMS.md` → "RESOLVED by v9".
 - **float numbering:** sequential in order of appearance across the drafted sections.
   Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 (Results); the SI has its own `S` series
-  (Tables S1–S3, Figures S1–S6). See `paper_status.md`.
+    (Tables S1–S5, Figures S1–S8 — S4/S5 and S7/S8 are the v10 robustness studies). See
+    `paper_status.md`.
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 
@@ -174,7 +176,12 @@ drafting or revising anything. Summary as of 2026-09-17:
 - Raw data lives in `data/` (AGOX/**GOFEE** structure-search databases):
   - **The two systems in scope:** `femgo` (Fe/MgO), `febmgo` (Fe-B/MgO).
   - **Archived:** `fecomgo` (Fe-Co/MgO), `fecobmgo` (Fe-Co-B/MgO) — under `data/_archive/`;
-    read them through `scope.db_glob()` or `--all-systems`, never by a hard-coded path.
+      read them through `scope.db_glob()` or `--all-systems`, never by a hard-coded path.
+    - **SI robustness studies (v10, both boron-free Fe/MgO):** `data/extraIteration/{0_200Iter,
+      1_400Iter,2_600Iter}` (iteration budget, §S4) and `data/latt_conc/{3_latt_025,2_latt_075,
+      4_latt_100}` (lattice constraint, §S5). Each arm is tested against **its own** budget via
+      `run_selection`; scratch `trash/`/`_trash/` excluded. `_archive/latt_conc/0_latt_0` (f = 0) and
+      the empty `1_latt_1` (f = 0.5) are out of scope.
   - **Rattle-strength study** (same femgo scheme): `param_ratt05` (rattle −0.5),
     `param_ratt1` (rattle −1.0).
   - **Method-parameter study:** `femgo_kappa/{1_k1,0_k3,2_k4}` (LCB kappa = 1/3/4),

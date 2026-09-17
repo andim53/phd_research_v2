@@ -1193,3 +1193,80 @@ The rewritten contribution needs re-signing; the application framing (§3.3 no l
 needs a decision; the exact test needs formal acceptance; the three re-scoped sections need review
 (03 is the gate for the introduction); the main-text figures are still cited by no section.
 
+---
+
+## 2026-09-17 — CLAIMS v10: two new robustness studies in the SI (SI-9, SI-10)
+
+### The instruction
+
+> *"I've included new data. extraIteration and latt_conc. Include their analysis into the
+> Supplementary Material. It was testing the impact of additional Iteration onto the over the MT
+> finding, and also, the impact of the constraint, where previously, we match to the Fe, but now,
+> we also match it to the MgO (not that it's an experimental MgO lattice)."*
+
+Five follow-up decisions, all from the scientist: (1) the f = 0 arm of the constraint sweep stays
+out of the paper (it is a reference arm; `_archive/latt_conc/1_latt_1`, the f = 0.5 arm, is an empty
+directory); (2) `a_MgO = 4.212 Å` is the **experimental** MgO lattice constant used as a fixed
+reference; (3) both studies are **boron-free on purpose**, so they bound the structural result
+(MT-1, MT-2) and the stated limitations, not the boron effect (MT-3); (4) they land as two new SI
+sections, **§S4 (iteration budget, SI-9)** and **§S5 (lattice constraint, SI-10)**, with a CLAIMS bump
+to v10; (5) the iteration-budget analysis is **per-run truncation** primary (each run cut at k = 100
+and at its own budget, same trajectory, no cross-run normalisation), with the arms as a secondary
+description.
+
+### What the data is (verified)
+
+- **`data/extraIteration`** — the same Fe/MgO calculation at 200 / 400 / 600 iterations.
+  `diff data/femgo/main.py extraIteration/0_200Iter/main.py` is a **single line** (`N_iterations`
+  100 → 200); everything else identical. 6 + 7 + 4 completed searches. Scratch `trash/` and `_trash/`
+  excluded. The `_trash/seed_*` dirs are mostly 100-iteration runs set aside.
+- **`data/latt_conc`** — the constraint sweep, `a = a_Fe + f(a_MgO/√2 − a_Fe)`, both phases built on
+  `a_custom`, at f = 0.25 / 0.75 / 1.00 (10 + 10 + 5 completed searches). Cell in-plane confirms the
+  interpolation (14.470 / 14.751 / 14.892 Å). The f = 0 arm (`0_latt_0`) is in `_archive/latt_conc/`
+  and out of scope; `1_latt_1` is empty. The sweep uses `a_Fe = 2.866 Å` against the main text's
+  `2.87019 Å` (0.15 % difference, recorded as a caveat). Runs that stopped early are excluded
+  (seed_113 at 12/40 it, seed_107 at 10, seed_109 at 62).
+
+### The results
+
+**SI-9 (budget).** Island ground state in **17/17** searches at both the 100-iteration cut and the
+full budget. The flat–island separation is unchanged in 5 and larger in 12 of 17 searches (median
+**+0.0104**, range 0 to **+0.0268** eV/atom) — it never shrinks. Pooled per arm: 0.1901 → 0.1901
+(200 it), 0.1624 → 0.1662 (400 it), 0.1807 → 0.1978 eV/atom (600 it). The **absolute** minimum is
+still improving at 100 iterations (12/17 runs, median 0.0013, up to 0.0071 eV/atom) — so it is the
+*comparison*, not the absolute energy, that is budget-insensitive. The 13 main-text searches read
+through this script reproduce the pooled flat-basin minimum **0.1888 eV/atom** exactly. **This
+answers the convergence caveat held since v4.**
+
+**SI-10 (constraint).** Island ground state in **25/25** searches. Pooled flat-basin minimum
+**0.1932 / 0.1982 / 0.1907 eV/atom** across f = 0.25 / 0.75 / 1.00 against **0.1888** for the
+main-text Fe-matched model — a total spread of **0.0094 eV/atom**, 2–3× smaller than the within-arm
+search-to-search SD (0.017–0.031). The far end places the substrate at the experimental MgO lattice
+constant and stretches the film 3.92 %, so the **physically inverted strain case is now calculated**
+for the boron-free model, and the result is unchanged.
+
+### What changed in the repository
+
+- **Analysis:** `scripts/iteration_budget.py`, `scripts/lattice_constraint.py` (both scope-aware,
+  each arm tested against its own budget via `run_selection`, scratch excluded, self-describing
+  JSON + CSV + figure). Outputs `analysis/iteration_budget.{json,csv}`,
+  `analysis/lattice_constraint.{json,csv}`, `figures/iteration_budget.png`,
+  `figures/lattice_constraint.png`.
+- **Claims:** `CLAIMS.md` **v10** — SI-9 and SI-10 added with paired caveats; the convergence caveat
+  held since v4 written into the Limitations with numbers; the inverted-strain case no longer "not
+  calculated" for the boron-free model; a new limitation for the run-set spread of the flat-basin
+  reference (0.1624–0.1901 eV/atom across independent run sets); the f = 0 / f = 0.5 arms, the a_Fe
+  difference and the experimental a_MgO recorded as out of scope / reference.
+- **Sections:** `SI.md` **v7** — §S4 (Table S4, Figure S7) and §S5 (Table S5, Figure S8) drafted,
+  following the no-code / no-revision-history voice rules.
+- **Docs:** `paper_status.md` (SI-9/SI-10 section, float sources, OPEN items, drafting table),
+  `AGENTS.md` (claims v10, data list, float numbering), `figures/INSTRUCTION.md` (the two new
+  figures + open design questions).
+
+### Still open after this session
+
+SI-9 and SI-10 need sign-off; the wording of the convergence bound in §1.6 / §3.4 is the scientist's
+call (options in `paper_status.md` → OPEN); the two new figures have open design questions in
+`figures/INSTRUCTION.md`; the three main-text sections still await review (03 is the gate for the
+introduction).
+

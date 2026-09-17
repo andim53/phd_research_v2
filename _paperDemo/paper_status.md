@@ -101,9 +101,13 @@ host alone) vs 0.0480 (all four systems)** for the same 19 numbers. Fixed:
 - [ ] **Main-text figures are cited by no section** — see "Float numbering" below. `figures/INSTRUCTION.md`
       lists the open figure-design questions, including the two-system redesign of
       `flat_state_summary.png` (it was a B × Co 2×2).
-- [ ] **Convergence caveat — held, not written in.** The searches are still improving at iteration
-      100, so the per-model reference energies are not converged with respect to run length. Held
-      for review since v4.
+- [ ] **SI-9 and SI-10 need sign-off** (the iteration-budget and lattice-constraint studies, both
+      boron-free by design — CLAIMS v10). See "SI-9 / SI-10" below for the numbers.
+- [ ] **How to word the convergence bound in the sections.** The caveat held since v4 ("the searches
+      are still improving at iteration 100") is now answered with numbers by SI-9 and written into
+      the CLAIMS Limitations. Whether §1.6 and §3.4 should state it (with a pointer to §S4), and in
+      what form, is the scientist's call — options: (a) one sentence in §1.6; (b) also a sentence in
+      §3.4; (c) leave the sections and rely on the SI.
 - [ ] **Full texts of three islanding references.** `fahsold2000`, `reitinger2007` and `torelli2009`
       are cited from **verified abstracts**; all three are closed access and no institutional copy is
       in `papers/`. The Urano PDF carries a *"Downloaded from journals.jps.jp by 三重大学"* watermark,
@@ -120,7 +124,7 @@ host alone) vs 0.0480 (all four systems)** for the same 19 numbers. Fixed:
 | `01_methods.md` | **v6** | **No approval.** v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, so nothing survives. |
 | `02_results.md` | **v4** | **No approval.** Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4). |
 | `03_discussion.md` | **v5** | **Awaiting review — the gate for `04_introduction.md`.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v6** | **Awaiting review.** v4 was a **scope note only**; v5 removed the revision history from three passages; v6 removed all code from the section (figure-caption paths, generator/construction routine names, the construction-distance parameter, data-file references). No SI claim, number, table or figure changed in any of them — §S1 (SI-8), §S2 (SI-1…SI-4), §S3 (SI-5…SI-7) are all Fe/MgO and untouched by the archive. |
+| `SI.md` | **v7** | **Awaiting review.** v4–v6 were scope/history/code cleanups with no content change; **v7 adds §S4 (iteration budget, SI-9) and §S5 (lattice constraint, SI-10)** — two new boron-free Fe/MgO robustness studies (CLAIMS v10). §S1 (SI-8), §S2 (SI-1…SI-4), §S3 (SI-5…SI-7) are unchanged. |
 | `04_introduction.md` | — | **BLOCKED** on 03 approval. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
@@ -141,7 +145,7 @@ shifted the Results floats.
 | **Figure 1** | `01_methods.md` §1.2 | the biased-exploration loop (mermaid workflow diagram) |
 | **Table 3** | `02_results.md` §2.1 | the two phases in each model |
 | **Table 4** | `02_results.md` §2.2 | flat-basin minimum dE/N with and without boron |
-| **Figure S1** | `SI.md` §S1 | exploration-performance panels (separate `S` series: Figures S1–S6, Tables S1–S3) |
+| **Figure S1** | `SI.md` §S1 | exploration-performance panels (separate `S` series) |
 
 The section draft versions in the table above live in a `<!-- DRAFT vN -->` comment at the head of
 each section file and in the `# NN — Title` block under it; nothing else in a section refers to a
@@ -167,6 +171,10 @@ are manuscript text, the mapping from each float to the file that produces it li
 | Figure S3 (registry top view) | `figures/interface_registry_topview.png` | `analysis/interface_analysis.csv` |
 | Table S3 (method sensitivity) | — | `analysis/method_sensitivity.csv` |
 | Figures S4–S6 (rattle/kappa/dipole) | `figures/method_sensitivity_{rattle,kappa,dipole}.png` | `analysis/method_sensitivity.csv` |
+| Table S4 (budget) | — | `analysis/iteration_budget.json` / `.csv` |
+| Figure S7 (budget) | `figures/iteration_budget.png` | `analysis/iteration_budget.json` |
+| Table S5 (constraint) | — | `analysis/lattice_constraint.json` / `.csv` |
+| Figure S8 (constraint) | `figures/lattice_constraint.png` | `analysis/lattice_constraint.json` |
 
 `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` are **not** to be used (superseded by
 Table S2). This is the only place the code-level names are recorded, by design.
@@ -201,6 +209,36 @@ and possibly **Figure 4**. Open in `figures/INSTRUCTION.md`.
   41 Fe9Mg9O9 structures. This directory is large and is **not** part of paper commits.
 - The runs are GOFEE (GPR surrogate + LCB), a **biased** exploration, so the number of structures
   in a basin is an *exploration density*, not a physical weight.
+
+## SI-9 / SI-10 — the two new robustness studies (v10, 2026-09-17)
+
+Both are **boron-free Fe/MgO**, so they bound the structural result (MT-1, MT-2) and the stated
+limitations, **not** the boron effect (MT-3). Analysis: `scripts/iteration_budget.py`,
+`scripts/lattice_constraint.py`; outputs `analysis/iteration_budget.{json,csv}`,
+`analysis/lattice_constraint.{json,csv}`; figures `figures/iteration_budget.png`,
+`figures/lattice_constraint.png`. Drafted as **§S4** and **§S5** of `sections/SI.md` (v7).
+
+- **§S4 — iteration budget (SI-9).** `data/extraIteration/{0_200Iter,1_400Iter,2_600Iter}` is the
+  same calculation as the main text (the run script differs only in `N_iterations`), run to 200/400/
+  600 iterations; 6 + 7 + 4 completed searches. Primary evidence is **per-run truncation** (each run
+  cut at k = 100 and at its own budget, same trajectory, no cross-run normalisation). Result: island
+  ground state in **17/17** searches at both the 100-iteration cut and the full budget; the flat–island
+  separation is unchanged in 5 and larger in 12 of 17 (median **+0.0104**, range 0 to **+0.0268**
+  eV/atom); the **absolute** minimum is still improving (12/17, median 0.0013, up to 0.0071 eV/atom).
+  The 13 main-text searches read through this script reproduce the pooled flat-basin minimum
+  **0.1888 eV/atom** exactly. **This answers the convergence caveat held since v4.**
+- **§S5 — lattice constraint (SI-10).** `data/latt_conc/{3_latt_025,2_latt_075,4_latt_100}` sweeps the
+  cell `a = a_Fe + f(a_MgO/√2 − a_Fe)` with both phases built on it; 10 + 10 + 5 completed searches.
+  Result: island ground state in **25/25** searches; pooled flat-basin minimum **0.1932 / 0.1982 /
+  0.1907 eV/atom** across f = 0.25/0.75/1.00 against **0.1888** for the main-text Fe-matched model —
+  a total spread of **0.0094 eV/atom**, 2–3× smaller than the within-arm search-to-search SD
+  (0.017–0.031). The far end places the substrate at the **experimental MgO lattice constant**
+  (4.212 Å as used), so the physically inverted strain case is now calculated for this model.
+- **Out of scope:** the f = 0 and f = 0.5 arms (f = 0 is a reference arm the scientist does not want
+  in the paper; `_archive/latt_conc/1_latt_1` is empty); the sweep's a_Fe (2.866 Å) differs from the
+  main text's (2.87019 Å) by 0.15 %; a_MgO = 4.212 Å is the experimental value used as a fixed
+  reference. Runs that stopped early are excluded (constraint arm: seed_113 at 12/40 it, seed_107 at
+  10, seed_109 at 62).
 
 ## Supplementary Material (unchanged by v9)
 
@@ -332,6 +370,16 @@ growth mode at all and is therefore not cited for one. The correspondence is fra
 - `papers/mgofe_urano1988.pdf`, `papers/mgofe_butler2001.pdf`, `papers/mgofe_yuasa2004.pdf`.
 - Missing (cited from abstracts only): `fahsold2000`, `reitinger2007`, `torelli2009` — see OPEN.
 
+## What v10 added (2026-09-17)
+
+Two new boron-free Fe/MgO robustness studies in the SI — **§S4 iteration budget (SI-9)** and
+**§S5 lattice constraint (SI-10)** — with their analysis scripts, JSON/CSV outputs and figures; the
+convergence caveat held since v4 is now answered and written into the CLAIMS Limitations; the
+physically inverted strain case is now calculated for the boron-free model; a new limitation for the
+run-set spread of the flat-basin reference (0.1624–0.1901 eV/atom across independent run sets).
+`CLAIMS.md` is at **v10**. The two studies are boron-free by design, so they bound the structural
+result, not the boron effect.
+
 ## What the v9 re-scope changed, in one place
 
 - **Claims:** MT-4, MT-5 and the combined 2×2 statement archived; MT-1/MT-2/MT-7/MT-8 restricted to
@@ -396,5 +444,7 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 ## Next step
 
 Nothing here is blocked on agent work except the drafts themselves. The paper is ready for the
-scientist to review `01_methods.md` v5, `02_results.md` v4 and `03_discussion.md` v5 — 03 is the
-gate for `04_introduction.md`.
+scientist to review `01_methods.md` v6, `02_results.md` v4, `03_discussion.md` v5 and `SI.md` v7
+(which now carries §S4 and §S5) — 03 is the gate for `04_introduction.md`. The two new SI claims
+(SI-9, SI-10) and the wording of the convergence bound in the sections are the open items that
+follow from v10.
