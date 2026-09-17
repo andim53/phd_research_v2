@@ -1841,3 +1841,28 @@ be restated if a reviewer pushes), and `CLAIMS.md` SI-6 keeps its conservative c
 **Doc sync.** `SI.md` → v9 (changelog + DRAFT marker). `paper_status.md` — the SI drafting-table row
 to v9, the SI-6 caveat added to "Decided — not open", and the seed-matching finding recorded.
 `AGENTS.md` — SI Phase E entry to v9. Bibliography unchanged. No number or claim changed.
+
+## 2026-09-18 — SI.md v10: all caveats removed from the section text
+
+On the scientist's instruction — "for now, remove all the caveats, maintain in the AGENTS.md,
+CLAIMS.md, and other md. I will later review" — every caveat/hedge was stripped from the SI section
+text. All removed passages are preserved in `CLAIMS.md` (paired caveats + Limitations) and
+`paper_status.md` (a consolidated list was added there), so nothing is lost from the record.
+
+**Removed, section by section:**
+- §S1 — the "Caveats." block (single GPAW steps / residual forces ~1–2 eV/Å; iteration-as-AGOX-counter; biased-search → performance-characteristic-not-benchmark; Fe/MgO-specific).
+- §S2 — the SI-1 "no bulk-Fe reference was computed" note; the "Caveats." block (single-point DOS carries no total energy; [−5,+3] eV window convention; Fe/MgO-only).
+- §S3 — the SI-7 "magnitude weakly determined" note (arms of 2 and 4 completed searches); the kappa "a ranking is easy to produce accidentally" note; the "Caveats for the whole study" block (unequal counts; lower-rattle-only, not a maximum; diversity inversely correlated with convergence; different-composition exclusion).
+- §S4 — the "absolute minimum is not converged at 100 iterations" paragraph; the "sampling weight of a biased exploration, not a population" clause (flat fraction); the "Scope bound" (boron-free, MT-3 not re-run).
+- §S5 — the "What is *not* covered (boron-containing model; single-layer substrate)" sentence; the "Caveats." block (f=0/f=0.5 arms out of scope; a_Fe experimental-vs-computed 0.15 %; absolute energies not cross-arm).
+- §S6 — the "Caveats." block (inverted stack does not converge at 100 iterations; SI-11 "indicative rather than settled"; boron-free; one monolayer on single-layer substrate).
+
+**Effect.** The SI now reads more definitively than the frozen claims support — the paired caveats
+remain authoritative in `CLAIMS.md`. No number, claim, table, figure or citation changed; all six
+sections and their floats are intact. This is explicitly an in-progress draft for the scientist to
+review (they said they will later decide which caveats to restore).
+
+**Doc sync.** `SI.md` → v10 (changelog + DRAFT marker). `paper_status.md` — SI drafting-table row to
+v10 and a consolidated "SI caveat-removal pass" note listing every removed passage.
+`AGENTS.md` — SI Phase E entry to v10. Bibliography unchanged.
+

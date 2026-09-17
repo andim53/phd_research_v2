@@ -259,6 +259,20 @@ slight strength (not two independent searches); the divergence is a residual cau
 SI-6 still carries confidence "weak (outcome-level only)" — left as-is, since changing it is a claim
 edit; flag if the scientist wants it revisited.
 
+**SI caveat-removal pass (`SI.md` → v10, 2026-09-18).** On the scientist's instruction ("for now,
+remove all the caveats, maintain in the AGENTS.md, CLAIMS.md, and other md. I will later review"),
+every caveat was stripped from the SI section text; each is preserved in `CLAIMS.md` (paired caveats
++ Limitations) and this file. Removed:
+- §S1 — the "Caveats." block (single GPAW steps / residual forces, iteration-as-counter, biased-search caveat).
+- §S2 — the "no bulk-Fe reference" note (SI-1), and the "Caveats." block (single-point DOS, window convention, Fe/MgO-only).
+- §S3 — the SI-7 "magnitude weakly determined" note (2 and 4 searches); the kappa "easy to produce a ranking accidentally" note; the "Caveats for the whole study" block (unequal counts, lower-rattle-only, diversity-not-breadth, different-composition exclusion).
+- §S4 — the "absolute minimum not converged at 100 iterations" paragraph; the "not a population" clause (flat-fraction); the "Scope bound" (boron-free).
+- §S5 — the "What is not covered (boron / single-layer)" sentence; the "Caveats." block (f=0/f=0.5 arms out of scope, a_Fe difference, absolute energies not cross-arm).
+- §S6 — the "Caveats." block (inverted stack does not converge; SI-11 "indicative rather than settled").
+No number or claim changed. **The SI now reads more definitively than the frozen claims support —
+this is an in-progress draft; the caveats stay authoritative in `CLAIMS.md` until the scientist
+decides which to restore at review.**
+
 **Not a decision, but the largest open work item:** the relaxation pipeline (`relaxation/`, 81
 Fe-host structures selected, re-relaxation **not** run). It is the only path that removes the
 "structures are not DFT-converged, residual forces 1–2 eV/Å" caveat.
@@ -270,7 +284,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `01_methods.md` | **v6** | **APPROVED 2026-09-18** (reviewed as-is). v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
 | `02_results.md` | **v6** | **APPROVAL VOIDED 2026-09-18 — awaiting re-approval (B3).** v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2; no number or claim changed). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v9** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding (CLAIMS v11); **v9 removed the SI-6 dipole caveat** at the scientist's decision, after verification that the dipole and baseline runs are seed-matched (same system + same seed; identical early structures, matched dipole shift ~0.0013 eV/atom, but diverging after ~10 iterations). See the note under "Decided". |
+| `SI.md` | **v10** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); **v10 removed all remaining caveats from the section text** at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. Full list of what was removed: see the note in this file and `experiment_log.md`. No number or claim changed. |
 | `04_introduction.md` | **v11** | **DRAFTED — awaiting review.** v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like" from "the flat configuration" (that label belongs to the Discussion per CLAIMS). No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys. Carries the confusion-principle framing as motivation (claim list places it in the Discussion only) — **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |

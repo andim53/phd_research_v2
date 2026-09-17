@@ -1,4 +1,12 @@
 # Supplementary Material
+     v10 (2026-09-18): all caveats removed from the section text at the scientist's instruction
+     ("for now, remove all the caveats ... I will later review"), preserved in CLAIMS.md paired
+     caveats and Limitations and in paper_status.md. Removed from §S1–§S6: the "Caveats." blocks
+     (S1, S2, S3, S5, S6), the no-bulk-Fe note (S2), the weakly-determined-magnitude and
+     accidental-ranking notes (S3), the unequal-counts/diversity/different-composition block (S3),
+     the not-converged-absolute-minimum and not-a-population notes and the Scope bound (S4), the
+     not-covered-boron / single-layer and the strain-convention caveats (S5), and the SI-11
+     "indicative rather than settled" caveat (S6). No number or claim changed. Awaiting review.
      v9 (2026-09-18): the SI-6 caveat in §S3 (dipole) is removed at the scientist's decision, after
      verification that the dipole and baseline runs share the same system and the same randomization
      seed (see paper_status.md → OPEN). The runs are seed-matched: the earliest structures are
@@ -33,7 +41,7 @@
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
      S3 numbers purged to completed searches only.
 
-<!-- DRAFT v9 · supplementary document (markdown-first, pre-LaTeX)
+<!-- DRAFT v10 · supplementary document (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [drafted here]
@@ -103,13 +111,6 @@ second comes within 0.001 eV/atom of it. The final energy reached by a search th
 sizeable spread, which is why the main text compares basins across searches rather than quoting
 one structure per model.
 
-**Caveats.** The energies are single GPAW steps on surrogate-relaxed structures (residual forces
-~1–2 eV/Å), so this characterises the behaviour of the *search* rather than the convergence of any
-individual structure. Iteration is an AGOX counter, not a computational cost: each iteration
-generates 20 candidates and evaluates a fixed number of them. The search is biased — it is seeded
-from a flat reference layer — so the curve is a performance characteristic of this scheme rather
-than an unbiased global-optimisation benchmark, and the quantities are specific to Fe/MgO.
-
 ## S2 Electronic-structure origin of the flat → island transition
 
 Section 3.1 attributes the island ground state to the loss of forced interfacial coupling. Here
@@ -138,10 +139,7 @@ state (red).
 by **+0.83 eV** while the O-pz integral falls by 3.4 % and the Fe-dz2 manifold becomes slightly
 narrower (−0.10 eV) and more filled (+2.16). The flat monolayer is therefore the more strongly
 Fe–O hybridised of the two: it mixes more O-p character and its Fe d-states sit lower, whereas the
-island's d-states shift up and localise. We note explicitly that **no bulk-Fe reference was
-computed**, so this shift is not calibrated against bulk Fe and no "bulk-like" comparison is made;
-the claim is the direction and magnitude of the change between the two configurations, nothing
-more.
+island's d-states shift up and localise.
 
 **Islanding weakens the magnetic and electronic activity at E_F.** *[SI-2]* The spin polarisation
 falls from 5.81 to 4.37 and the DOS at the Fermi level drops by 25 % (104.0 → 78.1). The flat
@@ -202,14 +200,6 @@ It is explicitly **not** a lattice-strain effect: the in-plane mismatch of this 
 carried by the substrate, which is held fixed, and the metal film sits at its own equilibrium
 lattice constant (§1.1, §3.4).
 
-**Caveats.** These are single-point electronic structures on surrogate-relaxed, non-converged
-geometries (residual forces ~1–2 eV/Å), and a DOS carries no total energy — the energy ordering
-between the two configurations comes from the search energies, not from these curves, and a
-quantitative claim would require re-relaxed geometries. The d-band moments depend on the
-[−5, +3] eV window, which is a convention. The analysis is of the Fe/MgO flat and island
-structures, which is the host the whole supplementary study covers; no other film composition was
-recomputed. All site-resolved numbers quoted here are those of Table S2.
-
 ## S3 Method-parameter sensitivity of the biased exploration
 
 The search used here is a custom, biased scheme — GOFEE (a GPR surrogate with an LCB acquisition
@@ -260,20 +250,14 @@ from **0.0368 to 0.2607 / 0.2558 eV/atom** — a factor of **7.1 and 7.0** — a
 fraction collapses from **0.165 to 0.023 / 0.017**. Reducing the perturbation is therefore not a
 cheaper equivalent of the baseline: the rattle is what makes the search escape the initial region
 and reach the low-energy basin at all, and less of it leaves the search sampling almost exclusively
-the island side. **The magnitude here is weakly determined** — these two arms retain only 2 and
-4 completed searches — so the factor should be read as "about an order of magnitude", not as a
-calibrated ratio. The direction is not in doubt: every arm
+the island side. The direction is not in doubt: every arm
 of the sweep is worse than the baseline, and the flat basin is under-sampled by an order of
 magnitude in the flat fraction.
 
 **The kappa parameter changes nothing measurable.** *[SI-5]* All four settings land within
 **0.0321–0.0395 eV/atom** — a total span of 0.0074 eV/atom, far inside the standard deviations
 (0.019–0.026) — so the method's conclusions are **robust to the acquisition parameter**, and in
-particular **no value of kappa can be identified as better than another** from these runs. This
-warrants stating explicitly, because a ranking of the settings is easy to produce accidentally: the
-per-seed best varies strongly from search to search, so a family that happens to hold one
-under-sampled search moves its mean enough to change the apparent order while the completed searches
-are indistinguishable. There is a small,
+in particular **no value of kappa can be identified as better than another** from these runs. There is a small,
 monotone trend in the flat-basin fraction — 0.182, 0.165, 0.149 and 0.132 for kappa = 1, 2, 3 and 4
 — i.e. more exploration relative to exploitation samples slightly less of the flat basin, but the
 effect is within the same order as the seed-to-seed spread.
@@ -281,17 +265,6 @@ effect is within the same order as the seed-to-seed spread.
 **The dipole correction does not change the outcome.** *[SI-6]* The per-seed best moves from
 0.03683 ± 0.02575 to 0.03770 ± 0.02436 eV/atom, a difference of 0.0009 eV/atom — an order of
 magnitude smaller than the standard deviation.
-
-**Caveats for the whole study.** Search counts are unequal (13 / 2 / 4 for rattle, 13 / 16 / 10 / 9
-for kappa, 13 / 11 for dipole), and the exclusion of searches that stopped early is disclosed above.
-The rattle sweep explores only *lower* rattle — there is no higher-rattle arm, so this is not a
-maximum and the baseline should not be read as an optimum. "Diversity" (the mean pairwise
-structural-fingerprint distance between sampled structures) is **inversely correlated with
-convergence** — a better-converged population is more concentrated — so it is not interpreted as
-exploration breadth. One run family also contains a small set of structures of a different
-composition, written by the run's own bookkeeping; those are excluded from every number here, as is
-any structure outside the target composition.
-
 
 ## S4 The result does not depend on the search budget
 
@@ -335,22 +308,12 @@ iterations), 0.1624 to 0.1662 (400) and 0.1807 to 0.1978 eV/atom (600). A longer
 does not bring the flat basin closer to the ground state; if anything it leaves it relatively higher.
 *(SI-9)*
 
-**The absolute minimum is not converged at 100 iterations.** 12 of the 17 searches find a lower
-island with more budget, by a median of **0.0013 eV/atom** (range 0 to 0.0071). It is the
-*comparison* that is budget-insensitive, not the absolute energy — which is why the main text reports
-separations at a stated budget rather than converged absolute values.
-
 **The flat basin is a smaller fraction of the sampled set at longer budgets** (0.165 at 100
-iterations falling to 0.05–0.11 at 600). This is descriptive: longer searches keep finding better
-islands, so the flat basin occupies a smaller share of the sampled structures. As everywhere in this
-paper, the fraction is a sampling weight of a biased exploration, not a population.
+iterations falling to 0.05–0.11 at 600). Longer searches keep finding better islands, so the flat
+basin occupies a smaller share of the sampled structures.
 
 **Cross-check.** The 13 main-text searches, read through this analysis, reproduce the pooled
 flat-basin minimum **0.1888 eV/atom** exactly, so the two analyses agree on the reference value.
-
-**Scope bound.** All runs here are the boron-free Fe/MgO model, so this study bounds the structural
-result (MT-1, MT-2) and the flat–island separation. The boron effect (MT-3) was not re-run at a
-longer budget, and no such data exist.
 
 ## S5 The result does not depend on which phase sets the in-plane lattice
 
@@ -395,17 +358,7 @@ boron effect (0.040 eV/atom). *(SI-10)*
 
 **The physically inverted strain case is therefore calculated for this model.** The far end of the
 sweep places the substrate at the experimental MgO lattice constant and stretches the film — the
-convention of the experimental stack — and the result is unchanged. What is *not* covered is the
-boron-containing model, and the substrate is a single layer, so it is the constraint that is
-inverted, not the full experimental geometry.
-
-**Caveats.** All runs are the boron-free Fe/MgO model, so this bounds the structural result (MT-1,
-MT-2) and the strain-convention limitation, not the boron effect (MT-3). The *f* = 0 and *f* = 0.5
-arms of the sweep are outside the paper's scope, and the sweep's Fe lattice constant (2.866 Å, the
-experimental value) differs from the main text's computed value (2.87019 Å) by 0.15 %, so the
-Fe-matched reference is the paper's own model rather than a sweep arm. Absolute energies are not
-comparison across arms (the cells differ); only the separation within an arm is meaningful.
-
+convention of the experimental stack — and the result is unchanged.
 
 ## S6 The inverted stack: a ground-state comparison (an MgO film on an Fe substrate)
 
@@ -440,8 +393,3 @@ inverted stack the lowest structure found is a **flat MgO film** (ΔZ = 0.39 Å)
 sign of the wetting preference therefore inverts between the two stacks — the layer that is deposited
 keeps its flat, wetting configuration when it is the oxide, and breaks up into an island when it is
 the metal. *(SI-11)*
-
-**Caveats.** The inverted-stack searches do not converge at the 100-iteration budget, so this
-comparison is indicative rather than settled. Both stacks here are boron-free, so this bounds the
-structural result only; the boron effect was not studied in the inverted stack. The film in each case
-is about one monolayer on a single-layer substrate.
