@@ -21,10 +21,17 @@ in the film constitution:
 | Fe-Co-B/MgO | B₂Co₇Fe₁₈Mg₂₅O₂₅ | Fe + Co + B | 77 |
 
 The substrate is a single MgO(001) layer and the film a single
-metal layer, stacked along z with 20 Å of vacuum and periodic boundaries in-plane. The in-plane lattice was matched by a √2 rotation of the
-MgO cell to the optimized Fe lattice (2.870 Å), giving a **3.77 %**
-compressive/tensile mismatch; the substrate was held fixed and only the film was allowed
-to relax. A (5×5×1) in-plane supercell was used throughout.
+metal layer, stacked along z with 20 Å of vacuum and periodic boundaries in-plane. **The
+in-plane lattice of the simulation cell is the DFT-optimised Fe lattice constant**
+(a_Fe = 2.870 Å), used in a (5×5×1) supercell throughout. The MgO layer is built epitaxially
+onto that geometry: the substrate is assembled on the Fe(001) surface cell with the oxygen
+sublattice placed directly above the metal sites (a √2 rotation relative to the bulk MgO cell),
+so the MgO in-plane parameter is forced to 2.870 Å. Compared with the bulk value
+(a_MgO/√2 = 2.978 Å) this means the **MgO is compressed in-plane by 3.6 %**, i.e. the
+**mismatch (3.77 % when expressed relative to the Fe value) is accommodated by the substrate,
+not by the film** — the Fe film remains at its own equilibrium lattice constant and is not
+strained in-plane. The substrate is then **held fixed in that compressed state** and only the
+film is allowed to relax.
 
 ## 1.2 Biased global optimisation (AGOX / GOFEE)
 
@@ -134,12 +141,16 @@ Hund's rule coupling enabled; a Pulay mixer and a fixed convergence criterion
 modest computational setup (single-layer slab, Γ-point sampling): the study targets
 **trends across compositions**, not converged absolute energies (see §1.6).
 
-The LCAO basis set is appreciably less complete than a plane-wave or real-space representation
-\cite{larsen2009}, which propagates into absolute geometric parameters. At the same settings,
-this treatment gives an interfacial Fe–O separation of 2.30 Å (flat) and 2.33 Å (island), at
-the upper end of the 2.0–2.3 Å range spanned by LEED analyses and earlier calculations of this
-interface \cite{urano1988,butler2001}. Geometric and energetic quantities are therefore
-compared between models at fixed settings, not interpreted as converged absolute values.
+The interfacial Fe–O separation is a **construction parameter rather than a computed
+quantity**: the reference films are built with the first oxygen layer of the substrate 2.3 Å
+above the metal plane, and relaxation preserves that spacing (2.300 Å for the flat basin, i.e.
+unchanged to the printed precision, and 2.331 Å for the island). Comparison with the 2.0–2.3 Å
+range reported for this interface by LEED analyses and earlier calculations
+\cite{urano1988,butler2001} therefore checks the model construction rather than testing the
+electronic-structure method. Independent of this, the LCAO basis set is appreciably less
+complete than a plane-wave or real-space representation \cite{larsen2009}, so absolute
+geometric parameters are reported at fixed settings and are not interpreted as converged
+values.
 
 ## 1.4 Flatness and energy metrics
 

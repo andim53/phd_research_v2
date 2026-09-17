@@ -124,6 +124,38 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - Note: the pre-existing keys `agox2020` / `gofee2017` carry year 2022 in the `.bib` (the key
   convention is surname+year, so the keys are stale) — left as-is because the sections cite them.
 
+## Model geometry — strain is on the MgO, not the film (verified 2026-09-17)
+
+Verified from the construction code and from the stored structures (not inferred from the text):
+
+- **The simulation cell takes the DFT-optimised Fe lattice constant.** `data/femgo/seed_3`'s
+  first candidate has cell in-plane = **14.35 Å = 5 × 2.870**.
+- **The MgO is the strained component.** Its O–O in-plane nearest-neighbour distance is
+  **2.870 Å**, against the bulk value `a_MgO/√2 = 2.9783 Å` → **3.6 % in-plane compression of
+  the MgO**. (The familiar "3.77 %" is the same 0.108 Å difference expressed *relative to the
+  Fe* value.)
+- `build_mgo_stack` (`data/femgo/scripts/build_mgo_stack.py:33`) places the substrate oxygen
+  **directly above an Fe site**, so the epitaxy is built by matching MgO onto Fe, and the
+  Fe-atop-O registry is **inherited from the construction**.
+- The substrate is then held fixed in that compressed state; only the film relaxes. **The Fe
+  film sits at its own equilibrium lattice constant and is not strained in-plane.**
+- The interfacial separation is the build parameter `dist_fe2o = 2.3 Å` (the `build_mgo_stack`
+  default; `main.py` does not override it), preserved by relaxation: **2.300 Å** (flat),
+  **2.331 Å** (island). It is a construction parameter, not a computed quantity.
+
+**Decided:**
+
+- ✅ **Description fixed (2026-09-17):** `01_methods.md` §1.1 now states the strain direction
+  and §1.3 now states the Fe–O separation is a construction parameter.
+- ⏸ **Mechanism wording HELD at the scientist's request.** Dropping "strain relief" for
+  *reduced forced interfacial coupling + restored metal cohesion*, the SI-4 registry
+  reframing, the inverse-convention limitation and the possible inverted re-run are all
+  recorded in **`CLAIMS.md` → "PENDING v6"** and are **not** yet applied to `03_discussion.md`
+  §3.1 or to SI-3/SI-4.
+- **No numbers change.** The structures were always built this way; ΔZ, dE/N, flat-basin
+  minima, registry counts and d-band centres are unaffected. This is a re-description, not a
+  recomputation.
+
 ## Literature verification — Fe/MgO experiment (2026-09-17)
 
 Three PDFs added by the scientist (`papers/mgofe_{urano1988,butler2001,yuasa2004}.pdf`); the
@@ -149,8 +181,11 @@ temperature (140 K) or slow deposition on a specially prepared crystal. Urano's 
 result at RT is therefore the outlier in the literature, not ours.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [x] sections/01_methods.md  (REVISED 2026-09-17 with §1.3 LCAO note + §1.6 lattice-model
-      limitation; **APPROVED as revised, 2026-09-17**)
+- [~] sections/01_methods.md  (APPROVED as revised earlier 2026-09-17; **REVISED again
+      2026-09-17 — needs re-approval**) — §1.1 now states the strain direction (cell = Fe
+      lattice constant; MgO compressed 3.6 % relative to bulk; substrate frozen compressed;
+      film unstrained), §1.3 now states that the Fe–O separation is a construction parameter
+      rather than a computed quantity.
       Earlier v3: §1.2 exploration schedule stated per model (Fe-Co uses a third,
       species-permutation generator); mermaid made generator-count-agnostic; "Bias"
       paragraph states the reference-layer composition per model; seed count 7 → 6.

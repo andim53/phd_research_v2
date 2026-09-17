@@ -3,6 +3,31 @@
 **Status: FROZEN (v5, 2026-09-17).** Supersedes v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
 
+## PENDING v6 — decided but deliberately held (2026-09-17)
+
+The scientist has settled the following but asked that the *wording* be held while the model
+description is corrected. The frozen SI/MT text below is therefore **unchanged** until v6.
+
+1. **`SI-3` must be restated.** Its conclusion "island origin is **strain relief**, not
+   interfacial re-hybridisation" loses its object: the simulation cell takes the Fe lattice
+   constant, so the **MgO** carries the strain (compressed 3.6 % relative to bulk) and the
+   **Fe film is not strained in-plane**. The island's gain is to be described as **reduced
+   forced interfacial coupling plus restored metal cohesion**.
+2. **`SI-4` / MT-2 registry framing.** The Fe-atop-O registry is **inherited from the model
+   construction** — `build_mgo_stack` places the substrate oxygen directly above the metal
+   sites (line 33) — not predicted by the search. It must be presented as a *consistency
+   check* (externally supported by the LEED I–V registry of \cite{urano1988}), not as a result.
+3. **New limitation to add.** The strain convention is the inverse of the experimental stack:
+   in a real junction the bulk MgO imposes its lattice on a thin Fe film (~3.8 % mismatch,
+   relieved by interfacial dislocations, \cite{yuasa2004}); here the strain sits on the MgO.
+4. **Not re-run.** The physically inverted case (MgO at its bulk lattice with a strained Fe
+   film) has **not** been calculated, so whether the flat–island separation survives it is
+   unknown. Decision: re-describe against the current runs first.
+5. **Fe–O separation is a construction parameter.** `dist_fe2o = 2.3 Å` is the build input and
+   relaxation preserves it (2.300 Å flat, 2.331 Å island) — so `SI-3`'s "~equal d_Fe–O" is a
+   property of the construction, not a computed result. (Already reflected in Methods §1.3 as
+   of 2026-09-17; the SI-3 text still needs the same treatment in v6.)
+
 ## v5 changelog (2026-09-17)
 
 - **New limitation added — lattice model.** Both phases are built on a **bcc** Fe lattice,

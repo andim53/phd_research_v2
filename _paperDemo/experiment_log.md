@@ -637,4 +637,46 @@ again, so it is marked as needing re-approval.**
   MgO(001) and extend to film thicknesses beyond the complete coverage of the substrate."* —
   consistent with the framing already written.
 
+## Model geometry correction — the strain sits on the MgO, not the film (2026-09-17)
+
+Scientist's correction: the cell uses the **Fe-optimised lattice constant**, so **MgO** is the
+component constrained to match Fe; the strain is on the substrate, not the film. **Confirmed**,
+and the verification went to the code and the stored structures rather than the prose:
+
+| Check | Result | Source |
+|---|---|---|
+| Cell in-plane | **14.35 Å = 5 × 2.870** → cell = Fe lattice | `data/femgo/seed_3`, first candidate |
+| O–O in-plane NN | **2.8700 Å** vs bulk `a_MgO/√2 = 2.9783` → **3.6 % MgO compression** | same structure (substrate is frozen, so this holds for every candidate) |
+| Registry | O built **directly above an Fe site** → Fe-atop-O **inherited from construction** | `scripts/build_mgo_stack.py:33` (`pos_o = fe_top_atom.position`, `z += dist_fe2o`) |
+| Fe–O separation | build parameter `dist_fe2o = 2.3 Å` (default; `main.py:84` does not override it) → **2.300 Å** flat, **2.331 Å** island | `interface_analysis.py` re-run |
+| Film strain | Fe film at its own equilibrium, substrate frozen compressed → **no imposed in-plane film strain** | combination of the above |
+
+**Numeric nuance:** "3.77 %" is the mismatch expressed **relative to Fe**;
+`(2.9783 − 2.8702)/2.8702`. The compression of MgO **relative to its own bulk** is **3.64 %**.
+Methods §1.1 now states both.
+
+**Two consequences beyond the wording:**
+1. **"Strain relief" loses its object.** With no imposed film strain, the island cannot be
+   relieving film strain. What it does is abandon the exact registry (Fe–O contacts 25 → 9,
+   interface d-centre −0.23 → +0.51 eV) and restore 3D Fe–Fe coordination. → the island's
+   driver is to be restated as **reduced forced interfacial coupling + metal cohesion** (SI-3).
+2. **The Fe-atop-O registry is built in.** `build_mgo_stack` starts the reference perfectly
+   registered, so SI-4's "25/25 atop O, offset 0.000 Å" is **inherited**, not predicted — a
+   consistency check (now externally supported by Urano's LEED I–V), not a search result.
+   The same applies to SI-3's "~equal d_Fe–O": that follows from the 2.3 Å build parameter
+   surviving relaxation, not from the electronic-structure method.
+
+**Applied now (description only, per the scientist's instruction):**
+`01_methods.md` §1.1 now states the strain direction explicitly (cell = Fe lattice; MgO
+compressed 3.6 % relative to bulk; substrate frozen compressed; **film unstrained in-plane**),
+and §1.3 now states the Fe–O separation is a **construction parameter**, not a computed value.
+
+**Held (recorded in `CLAIMS.md` → "PENDING v6"):** restating SI-3's mechanism, reframing SI-4's
+registry, adding the inverse-strain-convention limitation, and any inverted re-run (bulk MgO
+with a strained Fe film, which has **not** been calculated).
+
+**No numbers change** — the structures were always built this way. ΔZ, dE/N, flat-basin minima,
+registry counts and d-band centres are untouched; this is a re-description, not a recomputation.
+`01_methods.md` is again **awaiting re-approval** because it was edited after approval.
+
 
