@@ -227,11 +227,7 @@ def figure(r):
     ax.legend(fontsize=9, frameon=False, loc='upper left')
     ax.grid(alpha=0.25, lw=0.5)
 
-    fig.suptitle(f'Performance of the biased exploration in finding the global minimum — '
-                 f'{LABEL} ({r["n_searches"]} independent searches, '
-                 f'iterations {r["iteration_min"]}–{r["iteration_max"]})',
-                 fontweight='bold', fontsize=14)
-    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    fig.tight_layout(rect=[0, 0, 1, 1])
     os.makedirs('figures', exist_ok=True)
     out = 'figures/exploration_performance_femgo.png'
     fig.savefig(out, dpi=300, bbox_inches='tight')

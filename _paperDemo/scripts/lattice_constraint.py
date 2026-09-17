@@ -288,9 +288,7 @@ def main():
     axes[2].set_title('(c) Search-to-search spread within each arm', fontweight='bold')
     axes[2].grid(axis='y', alpha=0.25, lw=0.5)
 
-    fig.suptitle('Lattice-constraint sensitivity — Fe/MgO, no boron (cell swept from Fe-matched '
-                 'to MgO-matched)', fontweight='bold', fontsize=14)
-    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    fig.tight_layout(rect=[0, 0, 1, 1])
     fig.savefig('figures/lattice_constraint.png', dpi=300, bbox_inches='tight')
     print('wrote figures/lattice_constraint.png')
 

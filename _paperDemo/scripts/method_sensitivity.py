@@ -182,8 +182,7 @@ def main():
         axes[3].set_title('(d) Diversity & flat sampling', fontweight='bold')
         axes[3].legend(fontsize=8); axes[3].grid(axis='y', alpha=0.25, lw=0.5)
 
-        fig.suptitle(f'Method-parameter sensitivity — {fam} (Fe/MgO)', fontweight='bold', fontsize=14)
-        fig.tight_layout(rect=[0, 0, 1, 0.94])
+        fig.tight_layout(rect=[0, 0, 1, 1])
         fig.savefig(f'figures/method_sensitivity_{fam}.png', dpi=300, bbox_inches='tight')
         print(f"  -> figures/method_sensitivity_{fam}.png\n")
 

@@ -24,7 +24,7 @@
 %  NOTE: the markdown §1/§2/§3 numbering maps onto the final-manuscript II/III/IV
 %        numbering used by the Introduction's roadmap.
 % =====================================================================================
-\documentclass[10pt,twocolumn]{article}
+\documentclass[10pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
@@ -37,15 +37,19 @@
 
 \graphicspath{{figures/}}
 
+% Sub-sub headings are used as styled paragraph headings, so they are not numbered.
+\setcounter{secnumdepth}{2}
+\setlength{\emergencystretch}{2em}
+
 % Recurring shorthand.
 \newcommand{\dZ}{\ensuremath{\Delta Z}}
 \newcommand{\dEN}{\ensuremath{\Delta E/N}}
 \newcommand{\eVA}{\ensuremath{\text{eV/atom}}}
 \newcommand{\evpa}{\ensuremath{\text{eV/atom}}}
 
-\title{[TITLE]\\[0.4em]
-  \large Effect of boron insertion on metal-film wetting of Fe on MgO}
-\author{[AUTHOR]}
+\title{Effect of boron insertion on metal-film wetting of Fe on MgO}
+\author{Andi Muhammad Nur Fitrah Syamsul\thanks{Graduate School of Engineering, Mie University,
+Tsu, Mie 514-8507, Japan.}\and Kohji Nakamura}
 \date{\today}
 
 \begin{document}

@@ -232,9 +232,7 @@ def main():
     ax2.text(1.02, 0.5 * (1.0 + _f0), 'flat film lower', transform=ax2.transAxes, fontsize=8.5,
              color='0.35', va='center')
 
-    fig.suptitle('Ground-state comparison: the deposited film, Fe-on-MgO vs the inverted stack',
-                 fontweight='bold', fontsize=13.5)
-    fig.tight_layout(rect=(0, 0, 1, 0.92))
+    fig.tight_layout(rect=(0, 0, 1, 1))
     fig.savefig('figures/mgo_on_fe.png', dpi=300, bbox_inches='tight')
     print('wrote figures/mgo_on_fe.png')
 

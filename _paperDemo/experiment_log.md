@@ -2000,3 +2000,46 @@ compiled PDFs stay tracked.
 
 **Doc sync.** `paper_status.md` — drafting-table E2 row + "Next step". `AGENTS.md` — Phase E / E2
 entry. Bibliography unchanged.
+
+## 2026-09-18 — Editorial pass: one-column LaTeX, headings, figures, title/authors
+
+Style pass requested by the scientist after reviewing the compiled PDFs. Applied to **both** the
+markdown drafts (`sections/*.md`) and the ported LaTeX (`paper.tex`, `latex/*.tex`, `SI.tex`).
+
+**1. Figure titles removed.** The figure-level title on all 11 manuscript figures was deleted from
+the generating scripts (the `fig.suptitle(...)` calls; `plot_pes_figure.py`'s single-axes
+`ax.set_title('Flat film vs ground state: effect of B')` as well) and the figures regenerated in the
+agox_v2 env. Panel labels kept (system names, `(a)/(b)/(c)`, the two registry groups) since the
+captions reference them. Script `VERSION`s bumped (plot_pes_figure 1.2.1, exploration_performance
+1.0.1, iteration_budget 1.0.1, lattice_constraint 1.0.1, mgo_on_fe 2.0.2). Recorded in
+`figures/INSTRUCTION.md`; no analysis number changed.
+
+**2. One-column LaTeX.** `\documentclass[10pt,twocolumn]{article}` → `[10pt]{article}` in `paper.tex`
+and `SI.tex`; `table*` → `table`; `\columnwidth` → `\textwidth`. `\emergencystretch` added.
+
+**3. Mid-paragraph bold removed; bold-lead sentences → sub-sub headings.** Across the prose, every
+inline `\textbf{...}` was dropped (markdown `**...**`), and a bold *sentence* at a paragraph start
+(the "pseudo-heading" pattern, e.g. "Confusion principle and amorphous formation.") became a real
+sub-sub heading: `\subsubsection{...}` in LaTeX (unnumbered — `secnumdepth`=2 in `paper.tex`,
+`secnumdepth`=1 in `SI.tex`) and `### ...` in markdown. Table emphasis (best values, phase labels)
+and figure/table caption labels were kept. Bold *terms* at paragraph start without a full stop
+(the §1.4 metric definitions) had their bold dropped but were not promoted to headings.
+
+**4. Results "Summary" written as prose.** §2.4's bullet list (`itemize` / markdown `-`) became two
+running paragraphs; no number changed.
+
+**5. Title and authors fixed.** Title = "Effect of boron insertion on metal-film wetting of Fe on
+MgO"; authors = Andi Muhammad Nur Fitrah Syamsul (first) and Kohji Nakamura, one shared affiliation
+(Graduate School of Engineering, Mie University, Tsu, Mie 514-8507, Japan). Expressed with `\and` +
+`\thanks` because the venue-agnostic `article` class has no `\affiliation` construct.
+
+**Compile.** `paper.pdf` 13 pp, `SI.pdf` 9 pp; no errors; worst overfull 18.9 pt.
+
+**Approval consequence.** The pass edited four approved sections — `01_methods.md` v6→v7,
+`02_results.md` v6→v7, `03_discussion.md` v5→v6, `SI.md` v10→v11 — so under the standing rule their
+approvals are **VOIDED** and re-review is pending (**paper_status item B7**). `04_introduction.md`
+v11, `05_conclusion.md` v2 and `06_abstract.md` v1 are unchanged and still approved. No number, claim,
+table or figure changed anywhere.
+
+**Doc sync.** `paper_status.md` (rows, Approvals note, new B7, E2 row v2, Next step),
+`AGENTS.md` (Phase E), `figures/INSTRUCTION.md`. Bibliography unchanged.

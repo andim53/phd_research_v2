@@ -110,10 +110,7 @@ def main():
     axes[0].legend(fontsize=9, loc='upper left')
     axes[1].annotate('spin up', xy=(0.03, 0.9), xycoords='axes fraction', fontsize=9, color='0.3')
     axes[1].annotate('spin down', xy=(0.03, 0.08), xycoords='axes fraction', fontsize=9, color='0.3')
-    fig.suptitle('PDOS of Fe/MgO: flat reference vs island ground state '
-                 '(GPAW LCAO, kpts 12\u00d712\u00d71, Fermi-shifted)',
-                 fontsize=13, fontweight='bold')
-    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    fig.tight_layout(rect=[0, 0, 1, 1])
     os.makedirs('figures', exist_ok=True)
     fig.savefig('figures/pdos_flat_vs_island.png', dpi=300, bbox_inches='tight')
     print('\nwrote figures/pdos_flat_vs_island.png')

@@ -77,6 +77,22 @@ no number in any analysis result moved — the regenerated `analysis/mgo_on_fe.j
 previous one in its `version` field only, and the flat-basin minima are unchanged at 0.1888 / 0.1493
 eV/atom.
 
+## Changed 2026-09-18 (figure titles removed, at the scientist's request)
+
+The figure-level title on every manuscript figure was removed — it duplicated the LaTeX caption.
+Each affected script had its `fig.suptitle(...)` call deleted (and the `tight_layout(rect=...)` top
+margin restored to a full-height `rect=[0, 0, 1, 1]`); for `flat_state_summary.png`, whose title was
+a single-axes `ax.set_title('Flat film vs ground state: effect of B')`, that call was deleted too.
+Panel labels are untouched — the per-panel titles in `pes_2_systems.png` (system names), the
+`(a)/(b)/(c)` panel headings, and the two group titles in `interface_registry_topview.png` all stay,
+since the captions refer to them.
+
+Scripts touched (VERSION bumped by one patch level where they define one): `plot_pes_figure.py`
+(1.2.1), `plot_registry.py`, `exploration_performance.py` (1.0.1), `pdos_flat_vs_island.py`,
+`method_sensitivity.py`, `iteration_budget.py` (1.0.1), `lattice_constraint.py` (1.0.1),
+`mgo_on_fe.py` (2.0.2). All 11 manuscript figures were regenerated from the agox_v2 env; no analysis
+number changed (only the `version` fields and the plot text).
+
 ## Open questions for the scientist
 
 > These are the figure-level decisions of the consolidated checklist in `paper_status.md` → OPEN

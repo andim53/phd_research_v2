@@ -33,7 +33,6 @@ for ax, (xsf, title) in zip(axes, CASES):
     ax.annotate('blue rings = Fe in O-contact (d$_{Fe-O}$ < 2.8 Å)\n'
                 'note: each in-contact Fe is centred on an O',
                 xy=(0.02, 0.02), xycoords='axes fraction', fontsize=8.5, color='0.3')
-fig.suptitle('MgO(001) registry: Fe sits directly ATOP oxygen (top view)', fontweight='bold', fontsize=13)
-fig.tight_layout(rect=[0, 0, 1, 0.95])
+fig.tight_layout(rect=[0, 0, 1, 1])
 fig.savefig('figures/interface_registry_topview.png', dpi=300, bbox_inches='tight')
 print('wrote figures/interface_registry_topview.png')

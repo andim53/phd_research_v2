@@ -14,7 +14,7 @@ count, output file name, the shared energy range anchored to the boron-free refe
 with the open styling questions in `figures/INSTRUCTION.md`; do not restyle this script without
 reading it.
 """
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np, csv, os, sys
@@ -85,10 +85,7 @@ for system, lab in SYSTEMS:                            # what the shared ceiling
     if k:
         print(f'  {lab}: {k} of {len(dE)} points ({100 * k / len(dE):.1f} %) above the shared '
               f'{Y_LIM[1]:.3f} eV/atom ceiling — not shown in the panel')
-fig.suptitle('PES map of metal-film wetting on MgO: flat vs island states\n'
-             '(AGOX/GOFEE, iterations \u2265 10, global min = 0 eV/atom, ΔZ over the film metal)',
-             fontsize=13, fontweight='bold')
-fig.tight_layout(rect=[0, 0, 1, 0.94])
+fig.tight_layout(rect=[0, 0, 1, 1])
 out1 = f'figures/pes_{n}_systems.png'
 fig.savefig(out1, dpi=300, bbox_inches='tight')
 print(f'wrote {out1}')
@@ -102,7 +99,6 @@ colors = [COL[s] for s in systems]
 bars = ax.bar(range(n), vals, color=colors, edgecolor='black', width=0.62)
 ax.set_xticks(range(n)); ax.set_xticklabels(labels, fontsize=11, rotation=12)
 ax.set_ylabel('Flat-basin ground-state\nrelative energy (eV/atom)', fontsize=12)
-ax.set_title('Flat film vs ground state: effect of B', fontsize=13, fontweight='bold')
 for b, v in zip(bars, vals):
     ax.text(b.get_x() + b.get_width() / 2, v + 0.003, f'{v:.3f}', ha='center',
             fontsize=10, fontweight='bold')

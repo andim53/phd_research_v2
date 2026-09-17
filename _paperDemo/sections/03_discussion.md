@@ -1,4 +1,9 @@
 # 03 — Discussion
+     v6 (2026-09-18): editorial pass requested by the scientist — the bold-lead paragraphs
+     ("Confusion principle and amorphous formation.", "The search-level statistic rests on 19
+     searches, and it is asymmetric.") are now sub-sub headings and all mid-paragraph bold emphasis
+     is removed. No number or claim changed. **APPROVAL VOIDED** by this edit (v5 was approved
+     2026-09-18); re-approval pending.
      v5 (2026-09-17): re-scoped to the Fe host (CLAIMS v9) — the cobalt section is deleted (no
      sentence about the Co host anywhere), the host-independence argument and the element-count
      data bound are gone, §3.5 renumbered to §3.4 and its search-count paragraph rewritten for
@@ -23,13 +28,13 @@ Fe–O orbital overlap and pushing the Fe d-band centre down to −0.23 eV. The 
 that registry: the number of metal atoms registered directly atop an oxygen drops from 25 (of
 25) to 9 (of 25), the island's interface Fe d-band centre rises to +0.51 eV (+0.60 eV averaged
 over all island Fe), and the film becomes electronically "quieter" (lower DOS at the Fermi
-level, weaker spin polarisation). The island's energy gain is therefore dominated by **reduced
-forced interfacial coupling and restored metal cohesion**: the registry-locked monolayer spends
+level, weaker spin polarisation). The island's energy gain is therefore dominated by reduced
+forced interfacial coupling and restored metal cohesion: the registry-locked monolayer spends
 its bonding on Fe–O contacts while forgoing the three-dimensional Fe–Fe coordination available
 to a cluster, and the island reverses that trade.
 
-It is **not** a lattice-strain effect. The in-plane mismatch of this interface (3.6 % of the MgO
-lattice against the Fe lattice, §1.1) is carried by the **substrate**, which is built in that
+It is not a lattice-strain effect. The in-plane mismatch of this interface (3.6 % of the MgO
+lattice against the Fe lattice, §1.1) is carried by the substrate, which is built in that
 compressed state and held fixed, not by the film; the Fe film sits at its own equilibrium lattice
 constant and is not strained in-plane, so there is no film strain for the island to relieve.
 The mechanism is consistent with the weak Fe–MgO coupling found in first-principles treatments
@@ -40,7 +45,7 @@ the same one-monolayer coverage \cite{fahsold2000,torelli2009,reitinger2007}.
 ## 3.2 Why boron stabilises the flat film
 
 Boron lowers the flat-state energy by 0.040 eV/atom, bringing the flat configuration closer to
-the ground state. Two observations frame the mechanism. First, boron does **not** bond to the MgO
+the ground state. Two observations frame the mechanism. First, boron does not bond to the MgO
 interface — it remains inside the metal film (a single B–O contact in one of 72 windowed Fe-B
 structures) — so its effect is not interfacial. Second, the shift is not carried by one favourable
 search: the Fe-B model's six per-search flat minima lie between 0.1493 and 0.2481 eV/atom, five of
@@ -48,10 +53,12 @@ them below the Fe host's median of 0.2185 eV/atom, and 94 % of resampled replica
 (§2.2). Both observations point to an intrinsic, film-internal role for boron rather than an
 interfacial or statistical one.
 
-**Confusion principle and amorphous formation.** The flat film can be read as the
+### Confusion principle and amorphous formation
+
+The flat film can be read as the
 disordered, amorphous-like configuration and the island as the ordered, crystalline-like
 one. Under this reading, the stabilisation of the flat state by added elements follows the
-**confusion principle** of metallic-glass formation \cite{greer1993}: the more elements in
+confusion principle of metallic-glass formation \cite{greer1993}: the more elements in
 an alloy, the harder it is for the alloy to select a viable crystal structure, and the
 greater the tendency toward glass (amorphous) formation.
 
@@ -106,9 +113,9 @@ The flat state is described as a
 higher-energy configuration, not a proven metastable state. A full re-relaxation of
 representative structures is necessary to place these conclusions on converged minima.
 
-Two features of the model itself bound the interpretation. First, the **strain convention is the
-inverse of the experimental stack**: here the in-plane lattice is the Fe lattice constant and the
-**MgO substrate** is the compressed component, held fixed, whereas in a real junction the bulk
+Two features of the model itself bound the interpretation. First, the strain convention is the
+inverse of the experimental stack: here the in-plane lattice is the Fe lattice constant and the
+MgO substrate is the compressed component, held fixed, whereas in a real junction the bulk
 MgO imposes its lattice on a thin Fe film, which absorbs the mismatch as in-plane strain and
 relieves it through interfacial dislocations \cite{yuasa2004}. The film in this work is therefore
 unstrained, and this model does not represent the strained-film situation. Second, both phases are
@@ -118,13 +125,15 @@ Fe on MgO(001) is body-centred tetragonal below about 10 Å \cite{urano1988}; th
 within one fixed lattice model, and extending it to thicker, experimentally strained films would
 require a different construction.
 
-**The search-level statistic rests on 19 searches, and it is asymmetric.** The comparison pools
+### The search-level statistic rests on 19 searches, and it is asymmetric
+
+The comparison pools
 13 completed searches of the Fe/MgO model against 6 of the Fe-B/MgO model. The permutation test
 enumerates all 27 132 partitions of that pool, so its resolution floor is p = 3.7 × 10⁻⁵ and the
 reported p = 0.0444 is not limited by the number of searches; it would, however, tighten with more
 completed Fe-B/MgO searches, since the smaller group sets the width of the null. Two further
 bounds follow from the same asymmetry. The boron-free interface statement (§2.2) is measured on the
-72 Fe-B/MgO structures inside the low-energy window, which come from **four** of the six searches —
+72 Fe-B/MgO structures inside the low-energy window, which come from four of the six searches —
 so its effective number of independent observations is closer to four than to 72 — and the Fe-B/MgO
 motif counts (§2.1) rest on two (flat) and three (island) searches against five and four for
 Fe/MgO. Statements resting on those sets are correspondingly weaker evidence than the flat-basin

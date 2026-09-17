@@ -341,9 +341,7 @@ def main():
     axes[2].set_title('(c) Change from 100 iterations to the full budget', fontweight='bold')
     axes[2].grid(axis='y', alpha=0.25, lw=0.5)
 
-    fig.suptitle('Iteration-budget sensitivity — Fe/MgO, no boron (same script at 100/200/400/600 '
-                 'iterations)', fontweight='bold', fontsize=14)
-    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    fig.tight_layout(rect=[0, 0, 1, 1])
     fig.savefig('figures/iteration_budget.png', dpi=300, bbox_inches='tight')
     print('wrote figures/iteration_budget.png')
 
