@@ -170,9 +170,11 @@ drafting or revising anything. Summary as of 2026-09-18:
     is discussed. Items for the scientist, recorded in `paper_status.md`: **C7** (confusion-principle
     framing), **E3** (three device references), **E4** (four recent-fabrication references) and **E5**
     (the GOFEE/LCB reference) — each accept or drop.
-  - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
-      budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
-      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. **Awaiting review.**
+  - `SI.md` **v9** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
+      budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 added **§S6 (the inverted stack,
+      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding; **v9 removed the SI-6 dipole caveat** (the
+      scientist's decision, after verifying the dipole/baseline runs are seed-matched — see
+      `paper_status.md`). **Awaiting review.**
   - `05`/`06` not started; no LaTeX until all sections are approved.
   - **Editing an approved section voids its approval** and requires re-review — that is how the
     earlier `01_methods.md` v3 approval was lost.

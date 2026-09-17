@@ -1813,3 +1813,31 @@ what motivates the biased exploration. The line was re-wrapped (the edit left it
 claim changed; `CLAIMS.md` not bumped. Version marker and DRAFT comment bumped to v11; `paper_status.md`
 (B2, drafting table, Next step) + `AGENTS.md` (Phase E) synced. Bibliography unchanged.
 
+## 2026-09-18 — SI-6 dipole caveat dropped after verifying the runs are seed-matched
+
+The scientist queried the SI-6 caveat in §S3 ("these are two *separate* searches, so the difference
+mixes the correction with sampling noise ... isolating the dipole energy shift would require
+recomputing the *same* structures ..."), noting that the dipole and baseline runs use the same system
+and the same randomization seed, and asked whether the caveat could be dropped.
+
+**Investigation (empirical, against the databases).** `data/femgo/seed_3` vs `data/femgo_dip/seed_3`,
+100 iterations each. The pristine reference structures (XSF) are identical; iterations 1–6 are
+byte-identical structures, where the energy difference is the pure dipole correction on matched
+structures (~0.0013 eV/atom, consistent with the reported 0.0009 eV/atom). From ~iteration 10 onward
+the two searches diverge into different structures (positions RMSD grows from ~0.2 Å at iter 10 to
+~1.8 Å at iter 30+), because the dipole changes the DFT energies that train the GP surrogate, which
+changes the LCB selections. Only ~10/100 structures are common to both runs.
+
+**Interpretation.** The runs are **seed-matched, not independent** — the caveat's "two separate
+searches" framing overstated the independence. But the comparison is still **outcome-level**: the
+per-seed best energies come from mostly different structures, so the 0.0009 eV/atom difference is not
+a clean same-structure isolation.
+
+**Decision.** On this finding the scientist chose to **drop the SI-6 caveat entirely** (`SI.md` → v9;
+the caveat sentence is removed). The seed-matching finding is recorded in `paper_status.md` (so it can
+be restated if a reviewer pushes), and `CLAIMS.md` SI-6 keeps its conservative confidence "weak
+(outcome-level only)" — left untouched because changing it is a claim edit.
+
+**Doc sync.** `SI.md` → v9 (changelog + DRAFT marker). `paper_status.md` — the SI drafting-table row
+to v9, the SI-6 caveat added to "Decided — not open", and the seed-matching finding recorded.
+`AGENTS.md` — SI Phase E entry to v9. Bibliography unchanged. No number or claim changed.

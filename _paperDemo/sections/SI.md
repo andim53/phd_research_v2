@@ -1,4 +1,12 @@
 # Supplementary Material
+     v9 (2026-09-18): the SI-6 caveat in §S3 (dipole) is removed at the scientist's decision, after
+     verification that the dipole and baseline runs share the same system and the same randomization
+     seed (see paper_status.md → OPEN). The runs are seed-matched: the earliest structures are
+     identical (matched dipole shift ~0.0013 eV/atom, consistent with the reported 0.0009), but the
+     correction changes the energies that train the surrogate, so the two searches diverge into
+     different structures after the first ~10 iterations; the comparison is therefore outcome-level.
+     The caveat's "two separate searches" framing was dropped per the scientist; the recorded finding
+     remains available if a reviewer pushes on it. No number or claim changed. Awaiting review.
      v8 (2026-09-17): §S6 (the inverted stack, MgO on Fe) added as a QUALIFIED finding (SI-11,
      CLAIMS v11) — a ground-state comparison: the inverted stack's ground state is a flat MgO film,
      the opposite of Fe-on-MgO, but the searches do not converge at the 100-iteration budget, so the
@@ -25,7 +33,7 @@
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
      S3 numbers purged to completed searches only.
 
-<!-- DRAFT v8 · supplementary document (markdown-first, pre-LaTeX)
+<!-- DRAFT v9 · supplementary document (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [drafted here]
@@ -272,10 +280,7 @@ effect is within the same order as the seed-to-seed spread.
 
 **The dipole correction does not change the outcome.** *[SI-6]* The per-seed best moves from
 0.03683 ± 0.02575 to 0.03770 ± 0.02436 eV/atom, a difference of 0.0009 eV/atom — an order of
-magnitude smaller than the standard deviation. **Caveat:** these are two *separate* searches, so the difference
-mixes the correction with sampling noise. This is an outcome-level comparison only; isolating the
-dipole energy shift would require recomputing the *same* structures with and without the
-correction, which was not done.
+magnitude smaller than the standard deviation.
 
 **Caveats for the whole study.** Search counts are unequal (13 / 2 / 4 for rattle, 13 / 16 / 10 / 9
 for kappa, 13 / 11 for dipole), and the exclusion of searches that stopped early is disclosed above.

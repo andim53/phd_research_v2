@@ -241,7 +241,23 @@ end, so a fresh session does not re-open them.
 **Decided — not open** (listed so they are not re-opened): the Fe-host-only scope (v9); the PES
 panels' shared energy range, anchored to the Fe/MgO ceiling, with 25 Fe-B points off-scale by
 decision (2026-09-18); the f = 0 and f = 0.5 constraint arms out of the paper; a_MgO = 4.212 Å as the
-experimental reference; SI-8 signed off 2026-09-17; the Co-host archive.
+experimental reference; SI-8 signed off 2026-09-17; the Co-host archive; **the SI-6 dipole caveat was
+dropped (2026-09-18)**.
+
+**The dipole-correction runs are seed-matched (investigated 2026-09-18).** The scientist queried the
+SI-6 caveat ("these are two separate searches") because the dipole and baseline runs use the same
+system and the same randomization seed. Verified against the databases
+(`data/femgo/seed_3/1_db/db_3.db` vs `data/femgo_dip/seed_3/1_db/db_3.db`): the pristine reference
+structures are identical, iterations 1–6 are byte-identical structures where the difference is the
+pure dipole correction (~0.0013 eV/atom, consistent with the reported 0.0009), but from ~iteration 10
+onward the two searches diverge into different structures (RMSD grows to ~1.8 Å; only ~10/100
+structures are common), because the correction changes the energies that train the surrogate and thus
+the LCB selections. The comparison is therefore **outcome-level** — the per-seed best energies come
+from different structures — even though the runs are seed-matched rather than independent. On that
+finding the scientist decided to **drop the SI-6 caveat** (`SI.md` → v9). The seed-matching is a
+slight strength (not two independent searches); the divergence is a residual caution. `CLAIMS.md`
+SI-6 still carries confidence "weak (outcome-level only)" — left as-is, since changing it is a claim
+edit; flag if the scientist wants it revisited.
 
 **Not a decision, but the largest open work item:** the relaxation pipeline (`relaxation/`, 81
 Fe-host structures selected, re-relaxation **not** run). It is the only path that removes the
@@ -254,7 +270,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `01_methods.md` | **v6** | **APPROVED 2026-09-18** (reviewed as-is). v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
 | `02_results.md` | **v6** | **APPROVAL VOIDED 2026-09-18 — awaiting re-approval (B3).** v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2; no number or claim changed). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
+| `SI.md` | **v9** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding (CLAIMS v11); **v9 removed the SI-6 dipole caveat** at the scientist's decision, after verification that the dipole and baseline runs are seed-matched (same system + same seed; identical early structures, matched dipole shift ~0.0013 eV/atom, but diverging after ~10 iterations). See the note under "Decided". |
 | `04_introduction.md` | **v11** | **DRAFTED — awaiting review.** v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like" from "the flat configuration" (that label belongs to the Discussion per CLAIMS). No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys. Carries the confusion-principle framing as motivation (claim list places it in the Discussion only) — **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
