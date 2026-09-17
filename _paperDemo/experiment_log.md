@@ -606,4 +606,35 @@ registry + weak-coupling citations (`03_discussion.md`); §1.3 LCAO/basis-set no
 lattice-model limitation (`01_methods.md`). **`01_methods.md` was approved and has been revised
 again, so it is marked as needing re-approval.**
 
+### Follow-up (same day): v5 frozen, MTJ placeholders cleared, full texts unavailable
+
+- **`CLAIMS.md` v5 is FROZEN** (2026-09-17), with `SI-8` signed off in the same act. v5 carries
+  the bcc/bct lattice-model limitation, the basis-set limitation, and the
+  experimental-correspondence framing (with its scope bound: configurations, not energies).
+- **`01_methods.md` re-approved as revised** — it is again the only fully approved section
+  (§1.3 LCAO note + §1.6 lattice-model limitation included).
+- **MTJ placeholder debt cleared.** `cofebmgo_mtj`, `cofebmgo_pma` and `b_diffusion_mtj` were
+  withdrawn from §3.3/§3.4; the CoFeB-specific assertions they supported were **dropped** rather
+  than sourced, and the verified `yuasa2004` now carries the MTJ context. §3.3 now reads: the
+  metal film in an MgO-based MTJ must be flat and coherently matched for the TMR to be high.
+  §3.4 opens with coherent tunnelling across a lattice-matched interface, dislocations
+  accommodating the residual mismatch, and growth conditions chosen to minimise them.
+  **All `\cite{}` keys in `sections/` now resolve against `references.bib`; no UNVERIFIED
+  placeholders remain.**
+- **Full texts of the two islanding references could not be obtained.** `fahsold2000`
+  (PRB 61, 8475) and `reitinger2007` (JAP 102, 034310) are both **closed access** — Semantic
+  Scholar reports `openAccessPdf.status = CLOSED` with the URL empty, and the Masaryk University
+  institutional copy of the Reitinger paper exposes no PDF link (404 on the guessed paths).
+  They are therefore cited from **verified abstracts only**, which is what the §2.1 quotes come
+  from. Note the Urano PDF's watermark — *"Downloaded from journals.jps.jp by 三重大学"* —
+  confirms the scientist has institutional access, so downloading these two would settle it.
+  A briefer secondary confirmation of the Fahsold result exists: *Applied Surface Science*
+  **137**, 224–235 (1999), DOI 10.1016/s0169-4332(98)00533-9, same group — *"Three-dimensional
+  metal island growth of Fe was suppressed by evaporation of a first atomic layer at 140 K and
+  of a second layer at room temperature."*
+- **Extended abstract for `fahsold2000`** (from the APS listing, beyond the earlier snippet):
+  *"The measurements at various substrate temperatures (140 < T < 670 K) start with bare
+  MgO(001) and extend to film thicknesses beyond the complete coverage of the substrate."* —
+  consistent with the framing already written.
+
 

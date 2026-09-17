@@ -6,10 +6,16 @@ Boron consistently lowers the relative energy of the flat metal-film wetting sta
 i.e. B promotes flat-film wetting independently of the host metal, relevant to interface
 flatness in CoFeB/MgO MTJ stacks.
 
-**Claim list frozen:** `CLAIMS.md` **v3** (2026-09-17; supersedes v2 and v1). v2 withdrew MT-6
-(flat-basin sampling fraction); v3 added MT-8 (branches are families of recurring motifs),
-flagged MT-4 as CHALLENGED pending more searches, recorded the exploration-density principle in
-Method & scope, and added the phase-separation wording. See the CLAIMS changelog.
+**Claim list frozen:** `CLAIMS.md` **v5** (2026-09-17, FROZEN; supersedes v1–v4). v2 withdrew
+MT-6; v3 added MT-8 and flagged MT-4 CHALLENGED; v4 added SI-8; v5 added the bcc/bct
+lattice-model and basis-set limitations and the experimental-correspondence framing, and
+recorded six newly verified Fe/MgO references. See the CLAIMS changelog.
+
+**MTJ placeholder debt is cleared.** All three unverified placeholders (`cofebmgo_mtj`,
+`cofebmgo_pma`, `b_diffusion_mtj`) were removed from §3.3/§3.4 by dropping the CoFeB-specific
+assertions and citing the verified `yuasa2004` for the MTJ context. **Every `\cite{}` key in
+`sections/` now resolves against `references.bib`.** If the CoFeB/PMA/boron-segregation
+specifics are wanted back, genuine CoFeB references must be fetched first.
 
 ## Target venue / format
 TBD — format-agnostic (no venue selected).
@@ -51,10 +57,9 @@ Key numbers: pre-relaxation (i = 1–9) descends only 12 % of the total (0.494 �
 i = 57, 0.005 at i = 72; **the global minimum is first found at i = 77**; only 10 / 13 searches
 end within 0.05 eV/atom and 4 / 13 within 0.02 (median final best 0.040).
 
-⚠ **CLAIM drafted, AWAITING SIGN-OFF:** `SI-8` has been added to **`CLAIMS.md` v4 (draft)** —
-*"the onset of relaxation is the pivot of the biased search: the pre-relaxation iterations
-provide almost no ranking information, and roughly half the total descent occurs at the first
-relaxed iteration."* v3 remains frozen; v4 becomes the frozen list once SI-8 is signed off.
+✅ **SIGNED OFF:** `SI-8` is frozen in **`CLAIMS.md` v5** — *"the onset of relaxation is the
+pivot of the biased search: the pre-relaxation iterations provide almost no ranking
+information, and roughly half the total descent occurs at the first relaxed iteration."*
 A paired caveat travels with it (Fe/MgO only; quantities describe the search scheme, not any
 individual structure).
 
@@ -110,12 +115,12 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - **12 verified & in `references.bib`**: agox2020, gofee2017, oganov2011, gpaw2014, pbe1996,
   greer1993, plus the six added 2026-09-17 for the Fe/MgO literature — **urano1988, butler2001,
   yuasa2004, reitinger2007, fahsold2000, larsen2009** — all verified via DOI content negotiation
-  (Crossref). Every `\cite{}` key in `sections/` resolves except the three placeholders below.
-- **`yuasa2004` is verified but currently uncited** — it is the canonical giant-TMR
-  single-crystal Fe/MgO/Fe MTJ reference and is a candidate to discharge the `cofebmgo_mtj`
-  placeholder, though it is Fe/MgO/Fe rather than a CoFeB alloy.
-- UNVERIFIED placeholders in 03_discussion.md: cofebmgo_mtj, cofebmgo_pma, b_diffusion_mtj
-  (MTJ context) — fetch before the LaTeX port.
+  (Crossref). **Every `\cite{}` key in `sections/` resolves against `references.bib`.**
+- **`yuasa2004` is verified and now cited** in §3.3 and §3.4, where it replaced the three
+  CoFeB-specific placeholders (the CoFeB assertions were dropped rather than sourced).
+- UNVERIFIED placeholders: **none remaining.** `cofebmgo_mtj`, `cofebmgo_pma` and
+  `b_diffusion_mtj` were withdrawn from §3.3/§3.4 on 2026-09-17 and replaced by the verified
+  `yuasa2004`; the CoFeB-specific assertions they supported were dropped.
 - Note: the pre-existing keys `agox2020` / `gofee2017` carry year 2022 in the `.bib` (the key
   convention is surname+year, so the keys are stale) — left as-is because the sections cite them.
 
@@ -144,11 +149,11 @@ temperature (140 K) or slow deposition on a specially prepared crystal. Urano's 
 result at RT is therefore the outlier in the literature, not ours.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [~] sections/01_methods.md  (APPROVED as v3 2026-09-17; **REVISED again 2026-09-17 — needs re-approval**)
-      New 2026-09-17 additions: §1.3 LCAO basis-set completeness note (Fe–O separation
-      2.30/2.33 Å at the upper end of the 2.0–2.3 Å experimental/calculated range;
-      \cite{larsen2009,urano1988,butler2001}); §1.6 new lattice-model limitation (bcc
-      model vs experimentally reported bct below ≈10 Å; \cite{urano1988}).
+- [x] sections/01_methods.md  (REVISED 2026-09-17 with §1.3 LCAO note + §1.6 lattice-model
+      limitation; **APPROVED as revised, 2026-09-17**)
+      Earlier v3: §1.2 exploration schedule stated per model (Fe-Co uses a third,
+      species-permutation generator); mermaid made generator-count-agnostic; "Bias"
+      paragraph states the reference-layer composition per model; seed count 7 → 6.
 - [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
       v2: reorganized by PHASE under the revised core framing —
       §2.1 the two-phase landscape (both phases populated; island is the ground state
@@ -236,8 +241,14 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
-- [x] Claim list frozen (`CLAIMS.md` — now v3, 2026-09-17).
-- [x] sections/01_methods.md approved (2026-09-16) — revised to v3 and **re-approved 2026-09-17**.
+- [x] Claim list frozen (`CLAIMS.md` — now **v5, FROZEN** 2026-09-17).
+- [x] sections/01_methods.md approved (2026-09-16) — revised twice; **APPROVED as revised 2026-09-17**.
+- [ ] **OPEN — full texts of the two islanding references.** `fahsold2000` (PRB 61, 8475) and
+      `reitinger2007` (JAP 102, 034310) are cited from their **verified abstracts only**; both
+      are closed access (Semantic Scholar `openAccessPdf.status = CLOSED`) and no institutional
+      copy was reachable, so the cited statements have not been checked against the full papers.
+      The Urano PDF carries a *"Downloaded from journals.jps.jp by 三重大学"* watermark, i.e. the
+      scientist has institutional access — placing these two PDFs in `papers/` would close this.
 - [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17, awaiting re-approval.
 - NEXT: scientist reviews `sections/03_discussion.md` (v3); on approval → draft `sections/04_introduction.md`.
 - RESOLVED 2026-09-17 (review of 03 v2): the §3.2 confusion-principle sentence had claimed the

@@ -1,7 +1,6 @@
-# CLAIMS.md — FROZEN claim list (v5 DRAFT)
+# CLAIMS.md — FROZEN claim list (v5)
 
-**Status: v5 DRAFT (2026-09-17) — the v3 content remains frozen; `SI-8` (v4) and the v5 changes
-await sign-off.** Supersedes v4, v3, v2 and v1.
+**Status: FROZEN (v5, 2026-09-17).** Supersedes v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
 
 ## v5 changelog (2026-09-17)
@@ -242,13 +241,12 @@ claims to MT/SI and do not change the frozen list.
 - [x] **Method & scope: exploration-density principle + positive-control framing** (v3,
       2026-09-17) — scientist
 - [x] **Discussion-only: phase-separation wording** (v3, 2026-09-17) — scientist
-- [ ] **SI-8: performance of the biased exploration** (v4, 2026-09-17) — **AWAITING SIGN-OFF**
-- [ ] **v5: bcc/bct lattice-model limitation, basis-set limitation, experimental-correspondence
-      framing, six verified Fe/MgO references** (2026-09-17) — **AWAITING SIGN-OFF**
+- [x] **SI-8: performance of the biased exploration** (v4, 2026-09-17) — scientist
+- [x] **v5: bcc/bct lattice-model limitation, basis-set limitation, experimental-correspondence
+      framing, six verified Fe/MgO references** (2026-09-17) — scientist
 
-**Status: v5 DRAFT (2026-09-17).** v3 remains frozen; the outstanding items are SI-8 (v4) and the
-v5 additions. Once signed off, v5 becomes the frozen list. Any further new result or claim
-requires another explicit update to this file.
+**Status: FROZEN (v5, 2026-09-17).** This list is frozen for drafting. Any new result or claim
+requires an explicit update to this file before it enters a section.
 **Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
 v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle ·
 v4 (2026-09-17) SI-8 added · v5 (2026-09-17) lattice-model + basis-set limitations,

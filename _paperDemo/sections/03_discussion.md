@@ -1,8 +1,9 @@
 # 03 — Discussion
 
 <!-- DRAFT v3 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v5. MTJ-context citations are placeholders (UNVERIFIED) —
-     to be fetched in Phase D before the LaTeX port. -->
+     Grounded in CLAIMS.md v5. All \cite{} keys resolve against references.bib; the three
+     MTJ placeholders were replaced by yuasa2004 (verified) when the CoFeB-specific
+     assertions were dropped. -->
 
 ## 3.1 Why the island is the ground state
 
@@ -60,25 +61,25 @@ by the present data and is a natural target for the re-relaxation and further an
 ## 3.3 Cobalt plays a minor role
 
 Cobalt alone barely changes the flat-state energy (+0.005 eV/atom without boron, ~0 with
-boron). This is notable given that CoFeB is the standard free-layer alloy in magnetic
-tunnel junctions \cite{cofebmgo_mtj} % UNVERIFIED — verify before port (Phase D)
-: within the present model, the wetting behaviour is set by boron, not by the Fe/Co
-constitution of the host.
+boron). The practical relevance is that the metal film in an MgO-based magnetic tunnel junction
+must be a flat, coherently matched layer for the tunnelling magnetoresistance to reach its high
+values \cite{yuasa2004}: within the present model, the wetting behaviour is set by boron, not by
+the Fe/Co constitution of the host.
 
 ## 3.4 Implications for MTJ stacks
 
-Interface flatness and boron segregation are known to govern the performance of
-CoFeB/MgO magnetic tunnel junctions, in particular the perpendicular magnetic anisotropy
-(PMA) and the tunnelling magnetoresistance \cite{cofebmgo_pma} % UNVERIFIED — verify before port (Phase D)
-\cite{b_diffusion_mtj} % UNVERIFIED — verify before port (Phase D)
-. The present results connect to this in two ways. First, they show that the flat film is
-intrinsically strained and over-coupled to the oxide, so a perfectly flat CoFeB layer is
-energetically penalised — a consideration for interface engineering. Second, they show that
-boron acts to stabilise the flat configuration without bonding to the interface, consistent
-with the picture of boron as a film-internal agent that promotes a flat, well-wetting
-interface. These are trend-level, model-system conclusions; quantitative transfer to a
-device stack would require the converged relaxations and a fuller treatment of the
-interface.
+The performance of MgO-based magnetic tunnel junctions rests on the structural quality of the
+metal/oxide interface. The giant tunnel magnetoresistance of single-crystal Fe/MgO/Fe junctions
+arises from coherent spin-polarised tunnelling across a lattice-matched interface, with the
+residual mismatch accommodated by interfacial dislocations and the growth conditions chosen to
+minimise them \cite{yuasa2004}. The present results connect to this in two ways. First, they
+show that the flat film is intrinsically strained and over-coupled to the oxide, so a perfectly
+flat metal layer is energetically penalised — a consideration for interface engineering in the
+CoFeB/MgO stack used in devices. Second, they show that boron acts to stabilise the flat
+configuration without bonding to the interface, consistent with the picture of boron as a
+film-internal agent that promotes a flat, well-wetting interface. These are trend-level,
+model-system conclusions; quantitative transfer to a device stack would require the converged
+relaxations and a fuller treatment of the interface.
 
 ## 3.5 Limitations
 
