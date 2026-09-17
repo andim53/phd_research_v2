@@ -27,21 +27,76 @@ to relax. A (5×5×1) in-plane supercell was used throughout.
 
 Structures were sampled with AGOX \cite{agox2020}, using a **GOFEE**-type surrogate-driven
 search \cite{gofee2017}: a Gaussian-process regression (GPR) surrogate with an Oganov-type
-fingerprint descriptor \cite{oganov2011} and a repulsive prior, coupled to a lower-confidence-bound
-(LCB) acquisition function (κ = 2). Candidate generation combined a heterostructure-aware
-randomiser and a rattle generator; sampling used k-means in descriptor space
-(sample size 20); candidates were collected in parallel. Each search ran 100 iterations.
+fingerprint descriptor \cite{oganov2011} and a repulsive prior, coupled to a
+lower-confidence-bound (LCB) acquisition function (κ = 2). Each search ran 100 iterations.
 
-Crucially, the exploration is **biased**: the search is seeded from a **flat** metal layer
-(the reference film geometry) rather than from a random configuration. This makes the
-sampled database a mixture of the flat (registry-locked) basin and any lower-lying basin
-the search finds. Each model was run from multiple independent random seeds
+**Three-phase biased exploration.** Candidate generation is not uniform over the run but
+proceeds in three phases selected by the iteration counter *i*, mixing two generators of
+different perturbation scale: a **small-scale** generator (heterostructure-aware
+randomiser, rattle amplitude 1.5) and a **large-scale** generator (rattle generator,
+amplitude 2.3). The schedule is:
+
+| Phase | Iterations | Small-scale | Large-scale | Total N |
+|-------|-----------|-------------|-------------|---------|
+| **I** | 0 ≤ i < 10 | 20 | 0 | 20 |
+| **II** | 10 ≤ i < 25 | 10 | 10 | 20 |
+| **III** | 25 ≤ i | 0 | 20 | 20 |
+
+```mermaid
+flowchart TD
+    Init["Initialize the search<br/>iteration (i = 0)"]
+    D1{"0 ≤ i < 10"}
+    D2{"10 ≤ i < 25"}
+    D3{"25 ≤ i"}
+
+    subgraph BE [" "]
+        BEtitle["Biased Exploration"]
+        P1["Phase I<br/>Generate N candidates<br/>(small-scale generator: N = 20)"]
+        P2["Phase II<br/>Generate N candidates<br/>(small-scale generator: N = 10,<br/>large-scale generator: N = 10)"]
+        P3["Phase III<br/>Generate N candidates<br/>(large-scale generator: N = 20)"]
+    end
+
+    class BEtitle titleLabel
+    classDef titleLabel fill:none,stroke:none,font-weight:bold
+
+    GPR["GPR surrogate<br/>optimization"]
+    LCB["LCB choose M<br/>candidates"]
+    DFT["DFT evaluate M<br/>candidates"]
+    DB["Database"]
+
+    Init --> D1
+    D1 -->|Y| P1
+    D1 -->|N| D2
+    D2 -->|Y| P2
+    D2 -->|N| D3
+    D3 -->|Y| P3
+
+    P1 --> GPR
+    P2 --> GPR
+    P3 --> GPR
+
+    GPR --> LCB
+    LCB --> DFT
+    DFT -->|Store candidates| DB
+    DB -->|i + 1| D1
+```
+
+Each phase generates N candidates, which are optimised against the GPR surrogate, ranked
+by the LCB acquisition, and the M selected candidates are evaluated with DFT and stored in
+the database; the iteration counter advances and the phase is re-selected. The early phases
+favour the small-scale (structure-aware) generator to explore the flat reference basin,
+while the later phase shifts to the large-scale rattle generator for broader exploration.
+
+**Bias.** The exploration is deliberately **biased**: the search is seeded from a **flat**
+metal layer (the reference film geometry) rather than a random configuration, so the sampled
+database is a mixture of the flat (registry-locked) basin and any lower-lying basin the
+search finds. Each model was run from multiple independent random seeds
 (13 / 7 / 5 / 4 for the four models); each seed constitutes one independent search.
 
 Candidates were relaxed by the surrogate model for up to 100 steps (starting from
 iteration 10) and evaluated with the DFT calculator below. **Only structures from
 iteration ≥ 10 were used in the analysis**, i.e. after relaxation had begun; earlier
-(10 pre-relaxation) placements were discarded.
+pre-relaxation placements were discarded.
 
 ## 1.3 DFT settings
 
