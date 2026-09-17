@@ -1270,3 +1270,20 @@ call (options in `paper_status.md` → OPEN); the two new figures have open desi
 `figures/INSTRUCTION.md`; the three main-text sections still await review (03 is the gate for the
 introduction).
 
+### Addendum — the sweep is anchored to the experimental lattice constants
+
+The scientist clarified (2026-09-17) that the constraint sweep uses the **experimental** lattice
+constants of both bulk phases, not computed values: bcc α-Fe **2.866 Å** and rocksalt MgO
+**4.2112 Å** (4.212 Å as used). Two primary measurements were verified via Crossref and added to
+`references.bib`:
+
+- **Pietrokowsky, P., *J. Appl. Phys.* 37, 4560–4571 (1966)**, DOI 10.1063/1.1708081 — bcc α-Fe
+  lattice parameter 2860.6 ± 0.1 xu ≈ 2.8665 Å.
+- **Swanson, H. E. & Tatge, E., *NBS Circular 539*, Vol. 1, pp. 63–64 (1953)**, DOI
+  10.6028/NBS.CIRC.539v1 — MgO (periclase) a₀ ≈ 4.211 Å.
+
+§S5, the CLAIMS v10 SI-10 caveat and `paper_status.md` now state that the sweep is anchored to the
+experimental lattice constants and cite both. The main-text model keeps its *computed* a_Fe =
+2.87019 Å (a recorded caveat: the sweep's f = 0 endpoint is a reference, not identical to the main
+text). All 15 `\cite{}` keys in `sections/` resolve against `references.bib`; none orphaned.
+

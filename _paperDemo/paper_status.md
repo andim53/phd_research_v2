@@ -235,10 +235,11 @@ limitations, **not** the boron effect (MT-3). Analysis: `scripts/iteration_budge
   (0.017–0.031). The far end places the substrate at the **experimental MgO lattice constant**
   (4.212 Å as used), so the physically inverted strain case is now calculated for this model.
 - **Out of scope:** the f = 0 and f = 0.5 arms (f = 0 is a reference arm the scientist does not want
-  in the paper; `_archive/latt_conc/1_latt_1` is empty); the sweep's a_Fe (2.866 Å) differs from the
-  main text's (2.87019 Å) by 0.15 %; a_MgO = 4.212 Å is the experimental value used as a fixed
-  reference. Runs that stopped early are excluded (constraint arm: seed_113 at 12/40 it, seed_107 at
-  10, seed_109 at 62).
+  in the paper; `_archive/latt_conc/1_latt_1` is empty); the sweep's a_Fe (2.866 Å, the **experimental**
+  bcc-Fe value) differs from the main text's *computed* a_Fe (2.87019 Å) by 0.15 %; the sweep is
+  anchored to the **experimental** lattice constants of both phases — bcc Fe 2.866 Å
+  (\cite{pietrokowsky1966}) and rocksalt MgO 4.2112 Å (\cite{swanson1953}, 4.212 Å as used). Runs that
+  stopped early are excluded (constraint arm: seed_113 at 12/40 it, seed_107 at 10, seed_109 at 62).
 
 ## Supplementary Material (unchanged by v9)
 

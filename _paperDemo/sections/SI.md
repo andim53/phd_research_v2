@@ -341,11 +341,15 @@ carries the in-plane mismatch (compressed 3.6 % against its bulk value) and the 
 the inverse of the experimental stack, where bulk MgO imposes its lattice on a thin film. To test
 whether the structural result depends on this choice, the cell is swept from Fe-matched to
 MgO-matched, *a* = *a*_Fe + *f*·(*a*_MgO/√2 − *a*_Fe), with both the film and the substrate built on
-that cell. At *f* = 0.25 the substrate is compressed
+that cell. The two endpoints are the **experimental lattice constants** of the two bulk phases: bcc
+α-Fe, *a* = 2.866 Å \cite{pietrokowsky1966}, and rocksalt MgO, *a* = 4.2112 Å \cite{swanson1953}
+(4.212 Å as used in the inputs). At *f* = 0.25 the substrate is compressed
 2.83 % and the film stretched 0.98 %; at *f* = 0.75, −0.94 % and +2.94 %; at *f* = 1.00 the substrate
-sits at the **experimental MgO lattice constant** (4.212 Å as used) and the film is stretched
+sits at the experimental MgO lattice constant and the film is stretched
 3.92 % — the convention of the experimental stack. 10, 10 and 5 searches completed at *f* = 0.25,
-0.75 and 1.00. The paper's own Fe/MgO model (13 searches, cell = a_Fe) is the Fe-matched reference.
+0.75 and 1.00. The paper's own Fe/MgO model (13 searches, cell = a_Fe) is the Fe-matched reference;
+it uses the *computed* Fe lattice constant (2.87019 Å) rather than the experimental 2.866 Å, so the
+sweep's f = 0 endpoint is a reference, not identical to the main-text model.
 
 **Table S5.** The constraint, the strains it puts on each phase, and the flat-basin minimum
 (pooled, relative to each arm's own global minimum).
@@ -379,8 +383,8 @@ inverted, not the full experimental geometry.
 
 **Caveats.** All runs are the boron-free Fe/MgO model, so this bounds the structural result (MT-1,
 MT-2) and the strain-convention limitation, not the boron effect (MT-3). The *f* = 0 and *f* = 0.5
-arms of the sweep are outside the paper's scope, and the sweep's Fe lattice constant (2.866 Å)
-differs from the main text's (2.87019 Å) by 0.15 %, so the Fe-matched reference is the paper's own
-model rather than a sweep arm. Absolute energies are not comparable across arms (the cells differ);
-only the separation within an arm is meaningful.
+arms of the sweep are outside the paper's scope, and the sweep's Fe lattice constant (2.866 Å, the
+experimental value) differs from the main text's computed value (2.87019 Å) by 0.15 %, so the
+Fe-matched reference is the paper's own model rather than a sweep arm. Absolute energies are not
+comparable across arms (the cells differ); only the separation within an arm is meaningful.
 

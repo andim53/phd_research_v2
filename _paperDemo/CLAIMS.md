@@ -126,7 +126,9 @@ how to word this in §1.6/§3.4 is still needed** — see OPEN.
   `2.87019 Å`. The two are therefore not the same run set and differ by 0.15 % in the cell; this is
   stated with the reference point rather than smoothed over.
 - **a_MgO = 4.212 Å is the experimental MgO lattice constant** (4.2112 Å nominal) used as a fixed
-  reference — not a computed value, and not a claim that the model reproduces an experimental stack.
+  reference, and **a_Fe = 2.866 Å is the experimental bcc-Fe lattice constant** — both cited in §S5
+  (\cite{pietrokowsky1966}, \cite{swanson1953}). Neither is a computed value, and using them is not a
+  claim that the model reproduces an experimental stack.
 - Runs that stopped early are excluded in both studies (constraint arm: `seed_113` at 12 and 40
   iterations, `seed_107` at 10, `seed_109` at 62; the budget arms had none).
 
@@ -492,9 +494,12 @@ trajectory across arms) — so the arm-level numbers carry that mixture while th
 **Paired caveat for SI-10 (must travel with the claim).** Fe/MgO **and boron-free**, for the same
 reason as SI-9. The sweep is measured at 0.25 / 0.75 / 1.00 with the paper's own Fe/MgO model as the
 Fe-matched reference: the f = 0 and f = 0.5 arms are out of scope by decision (`1_latt_1` is an empty
-directory), and the sweep's `a_Fe = 2.866 Å` differs from the main-text `2.87019 Å` by 0.15 %. The
-far end of the sweep places the substrate at the **experimental** MgO lattice constant (4.212 Å as
-used), the convention of the experimental stack; the substrate is still a single layer and the film
+directory). The two endpoints of the sweep are the **experimental lattice constants** of the two bulk
+phases — bcc α-Fe, *a* = 2.866 Å \cite{pietrokowsky1966}, and rocksalt MgO, *a* = 4.2112 Å
+\cite{swanson1953} (4.212 Å as used) — so the far end places the substrate at the experimental MgO
+lattice constant, the convention of the experimental stack. The sweep's `a_Fe = 2.866 Å` (experimental)
+differs from the main-text model's *computed* `2.87019 Å` by 0.15 %, so the Fe-matched reference is
+the paper's own model rather than a sweep arm. The substrate is still a single layer and the film
 about one monolayer, so it is the constraint that is inverted, not the full experimental geometry.
 
 **Note on SI-7 (v2):** SI-7 still uses the flat fraction, and deliberately so. Unlike
