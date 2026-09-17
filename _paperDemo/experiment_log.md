@@ -727,9 +727,14 @@ pseudomorphic monolayer (140 K, `fahsold2000`; slow deposition, `urano1988`). Th
 transition also means our result should be framed as **1-ML specific** and not extrapolated to
 thick films — which the existing bct limitation (§1.6) already supports.
 
-**Added to `references.bib`:** `torelli2009` (verified via Crossref). Not yet cited in any
-section — it is the most direct reference for the 1-ML islanding statement and is a candidate
-for the "Experimental correspondence" paragraph of `02_results.md` §2.1.
+**Added to `references.bib`:** `torelli2009` (verified via Crossref). **Now cited** in
+`02_results.md` §2.1's experimental-correspondence paragraph, together with the thickness
+dependence (sub-nanometre 3D growth; coalescence 3.5–6.5 ML; 2D only above ≈6.5 ML), which
+also frames the comparison as **1-ML specific**.
+
+**Butler not cited for the construction geometry** (scientist's decision): it reports no growth
+mode, so its monolayer/bilayer study stays out of the §1.3 discussion; it remains cited in
+`03_discussion.md` §3.1 for the Fe-atop-O registry and the weak interfacial coupling.
 
 ## Model geometry correction — the strain sits on the MgO, not the film (2026-09-17)
 

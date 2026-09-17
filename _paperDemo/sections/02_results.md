@@ -63,20 +63,29 @@ template compresses the pair distances and the motif count is a **lower bound** 
 structural diversity present; a film-resolved descriptor would be sharper. Detailed motif
 analysis is given in the Supplementary Material.
 
-**Experimental correspondence.** The two basins we map correspond to the two growth outcomes
-reported for Fe on MgO(001). At room temperature the observed growth is three-dimensional:
-He-atom scattering shows **3D metal island growth** of Fe on MgO(001), suppressed only when the
-film is deposited at low temperature (140 K), where a monolayer almost completely covers the
-substrate \cite{fahsold2000}; grazing-incidence small-angle X-ray scattering on five monolayers
+**Experimental correspondence.** The films in this study are about **one monolayer thick on
+average** — 25 metal atoms per 25 substrate sites in the 5 × 5 cell, with the boron-containing
+models carrying up to three additional boron atoms — and that is the regime in which the growth
+mode of Fe on MgO(001) has been characterised experimentally. At room
+temperature the observed growth is three-dimensional: He-atom scattering shows **3D metal
+island growth** of Fe on MgO(001), with quantified island densities, sizes and shapes,
+suppressed only when the film is deposited at low temperature (140 K), where a monolayer
+almost completely covers the substrate \cite{fahsold2000}; scanning tunnelling microscopy finds
+that **sub-nanometre Fe grows three-dimensionally** on MgO, with island coalescence between 3.5
+and 6.5 monolayers and a two-dimensional growth mode reported only above ≈6.5 monolayers
+\cite{torelli2009}; and grazing-incidence small-angle X-ray scattering on five monolayers
 evaporated at room temperature likewise identifies **Volmer–Weber growth** with spherical
 islands \cite{reitinger2007}. A flat, continuous film is obtained instead by low-temperature
 deposition \cite{fahsold2000} or by slow deposition onto a cleaved, oxygen-annealed crystal,
 where the first monolayer grows pseudomorphically and layer by layer \cite{urano1988}. Our two
-basins map onto exactly these two outcomes — the flat basin onto the experimentally realised
-pseudomorphic monolayer and the island basin onto the experimentally observed 3D clusters — and
-the energy ordering we find places the flat, wetting configuration above the island. This is a
-consistency check rather than a prediction: the growth mode observed in experiment is also set
-by kinetics, so the correspondence is between structural configurations, not between energies.
+basins therefore map onto the two outcomes that are experimentally accessible **at this
+coverage** — the flat basin onto the pseudomorphic monolayer and the island basin onto the 3D
+clusters — and the energy ordering we find places the flat, wetting configuration above the
+island. This is a consistency check rather than a prediction: the observed growth mode is also
+set by kinetics, so the correspondence is between structural configurations, not between
+energies. Because the growth mode turns two-dimensional only above ≈6.5 monolayers
+\cite{torelli2009}, the comparison is specific to the monolayer regime and should not be
+extrapolated to thick films.
 
 ## 2.2 The flat (wetting) phase under Co, B and CoB
 

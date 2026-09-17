@@ -112,10 +112,11 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - Planned fix: full DFT re-relaxation of low-force distinct structures (`relaxation/`).
 
 ## Citations (Phase D)
-- **12 verified & in `references.bib`**: agox2020, gofee2017, oganov2011, gpaw2014, pbe1996,
-  greer1993, plus the six added 2026-09-17 for the Fe/MgO literature — **urano1988, butler2001,
-  yuasa2004, reitinger2007, fahsold2000, larsen2009** — all verified via DOI content negotiation
-  (Crossref). **Every `\cite{}` key in `sections/` resolves against `references.bib`.**
+- **13 verified & in `references.bib`**: agox2020, gofee2017, oganov2011, gpaw2014, pbe1996,
+  greer1993, plus the seven added 2026-09-17 for the Fe/MgO literature — **urano1988, butler2001,
+  yuasa2004, reitinger2007, fahsold2000, torelli2009, larsen2009** — all verified via DOI
+  content negotiation (Crossref). **Every `\cite{}` key in `sections/` resolves, and no entry is
+  orphaned.**
 - **`yuasa2004` is verified and now cited** in §3.3 and §3.4, where it replaced the three
   CoFeB-specific placeholders (the CoFeB assertions were dropped rather than sourced).
 - UNVERIFIED placeholders: **none remaining.** `cofebmgo_mtj`, `cofebmgo_pma` and
@@ -197,7 +198,16 @@ Urano scan had no text layer and was OCR'd (tesseract; install recorded in the s
 | **Butler et al. 2001** (PRB 63, 054416; first-principles TMR) | Fe atop O per LEED; Fe–O **2.169 Å** (calc) / 2.0 Å (LEED) / 2.3 Å (earlier FLAPW); **~3.5 % mismatch**; *"only weak interactions"* between Fe and MgO | Supports the **registry** and **weak coupling**; not a growth-mode paper |
 | **Yuasa et al. 2004** (Nat. Mater. 3, 868; MBE MTJ) | Giant TMR; **flatness** of epitaxial Fe is the quality criterion; RT top-Fe growth gives higher dislocation density than 200 °C | Neither islanding nor a structural validation — motivates the flat-interface requirement |
 | **Fahsold et al. 2000** (PRB 61, 8475; He-atom scattering) — *added by us* | **3D metal island growth** of Fe on MgO(001) at room temperature, **suppressed only at 140 K** where a monolayer almost covers the substrate | **The genuine islanding validation**, and it is at ≈1 ML coverage |
+| **Torelli et al. 2009** (PRB 79, 035408; XMCD + STM) — *added by us* | **Sub-nanometre Fe grows three-dimensionally** on MgO; island coalescence 3.5–6.5 ML; **2D growth mode only above ≈6.5 ML** | Direct evidence for the **1-ML** case; also fixes the comparison as **1-ML specific** (cited in §2.1) |
 | **Reitinger et al. 2007** (JAP 102, 034310; GISAXS) — *added by us* | **Volmer–Weber growth** at RT on **five** monolayers, spherical superparamagnetic islands | Second islanding reference; note the coverage is **5 ML**, not 1 ML |
+
+**1-ML growth mode — checked 2026-09-17. Answer: at room temperature, islands.** Our films are
+~1 ML on average, so this is our regime. The thickness dependence reconciles the sources:
+3D islands below ≈6.5 ML, coalescence 3.5–6.5 ML, 2D above. That is why the thick Fe
+electrodes of `yuasa2004` are flat, and why the local `urano1988` (1 ML, layer-by-layer) is the
+**dissent** at exactly 1 ML — most plausibly its conditions (~0.2 Å/min on a cleaved crystal
+annealed at 800 °C in O₂; low supersaturation favours 2D). `butler2001` reports no growth mode
+at all, and is therefore not cited for one.
 
 **Consequence for the paper:** the three supplied papers cannot be cited for island formation.
 The islanding support comes from `fahsold2000` (RT, ≈1 ML) and `reitinger2007` (RT, 5 ML); the
