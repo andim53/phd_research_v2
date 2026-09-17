@@ -76,8 +76,8 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
 - [x] sections/01_methods.md  (APPROVED 2026-09-16)
-- [~] sections/02_results.md  (DRAFTED — awaiting scientist review)
-- [ ] sections/03_discussion.md
+- [x] sections/02_results.md  (APPROVED 2026-09-16)
+- [~] sections/03_discussion.md  (DRAFTED — awaiting scientist review)
 - [ ] sections/04_introduction.md
 - [ ] sections/05_conclusion.md
 - [ ] sections/06_abstract.md
@@ -87,5 +87,6 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
 - [x] Claim list frozen (`CLAIMS.md` v1).
 - [x] sections/01_methods.md approved (2026-09-16).
-- NEXT: scientist reviews `sections/02_results.md`; on approval → draft `sections/03_discussion.md`.
-- Citations: 5 verified (methods); MTJ/PMA refs still needed for intro/discussion.
+- [x] sections/02_results.md approved (2026-09-16).
+- NEXT: scientist reviews `sections/03_discussion.md`; on approval → draft `sections/04_introduction.md`.
+- Citations: 5 verified (methods); MTJ/PMA refs needed for discussion/intro.
