@@ -1,26 +1,53 @@
-"""Figures for the four-system PES analysis:
-  (1) pes_four_systems.png  — 2x2 PES maps (dE/N vs dZ)
-  (2) flat_state_summary.png — flat-basin ground-state comparison (2x2 design: B x Co)
+"""Figures for the PES analysis: one panel per analysed system.
+
+  (1) figures/pes_<n>_systems.png    — PES maps (dE/N vs dZ), one panel per system
+  (2) figures/flat_state_summary.png — flat-basin ground-state comparison, one bar per system,
+                                       with the B effect bracketed between successive pairs
+
+Scope (v9): the paper studies the Fe host only, Fe/MgO and Fe-B/MgO, so this writes
+`pes_2_systems.png` (1x2 panels) and a two-bar summary.  Run `scripts/scope.py` for why; if
+`analysis/pes_structures.csv` holds all four systems (`ensemble_analysis.py --all-systems`) the
+grid, the summary and the file name grow accordingly.
+
+NOTE — figure design is the scientist's call.  The mechanical scope changes made here (panel
+count, output file name, data-driven y-limits so nothing is clipped) are recorded with the open
+styling questions in `figures/INSTRUCTION.md`; do not restyle this script without reading it.
 """
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np, csv, os
+import numpy as np, csv, os, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scope import SYSTEMS_IN_SCOPE, label  # noqa: E402
 
 FLAT_DZ = 1.0
-SYSTEMS = [('femgo','Fe/MgO'), ('febmgo','Fe-B/MgO'),
-           ('fecomgo','Fe-Co/MgO'), ('fecobmgo','Fe-Co-B/MgO')]
+
 rows = list(csv.DictReader(open('analysis/pes_structures.csv')))
+present = sorted({r['system'] for r in rows}, key=lambda s: list(SYSTEMS_IN_SCOPE).index(s)
+                 if s in SYSTEMS_IN_SCOPE else 99)
+if '--all-systems' not in sys.argv:                  # paper scope unless asked otherwise
+    present = [s for s in present if s in SYSTEMS_IN_SCOPE]
+if not present:
+    raise SystemExit('no systems in analysis/pes_structures.csv for the current scope — '
+                     'run scripts/pes_analysis.py first')
+SYSTEMS = [(s, label(s)) for s in present]
+
 tab10 = plt.get_cmap('tab10').colors
-# color by host: Fe host = blue family, Fe-Co host = green family; B = solid/darker
+# color by host: Fe host = blue family; B = the warmer member of the pair
 COL = {'femgo': tab10[0], 'febmgo': tab10[3], 'fecomgo': tab10[2], 'fecobmgo': tab10[4]}
+
 
 def get(system):
     r = [x for x in rows if x['system'] == system]
     return (np.array([float(x['dZ']) for x in r]),
             np.array([float(x['dE_per_atom']) for x in r]))
 
-# ---- Figure 1: 2x2 PES maps ----
-fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# ---- Figure 1: one PES map per system ----
+n = len(SYSTEMS)
+ncols = min(2, n)
+nrows = int(np.ceil(n / ncols))
+fig, axes = plt.subplots(nrows, ncols, figsize=(6.2 * ncols, 5.2 * nrows), squeeze=False)
 flat_stats = {}
 for ax, (system, lab) in zip(axes.ravel(), SYSTEMS):
     dZ, dE = get(system)
@@ -37,34 +64,44 @@ for ax, (system, lab) in zip(axes.ravel(), SYSTEMS):
     ax.set_xlabel(r'$\Delta Z$ = z(metal$_{max}$) - z(metal$_{min}$)  (Å)', fontsize=11)
     ax.set_ylabel(r'$\Delta E/N$  (eV/atom)', fontsize=11)
     ax.set_title(f'{lab}  (n={len(dZ)})', fontsize=12, fontweight='bold')
-    ax.set_ylim(-0.01, 0.5); ax.legend(fontsize=8, loc='upper right')
+    ax.set_ylim(-0.01, max(0.5, 1.05 * float(dE.max())))
+    ax.legend(fontsize=8, loc='upper right')
     ax.grid(alpha=0.25, lw=0.5)
+for ax in axes.ravel()[n:]:                            # hide any unused panel
+    ax.axis('off')
 fig.suptitle('PES map of metal-film wetting on MgO: flat vs island states\n'
-             '(AGOX/GOFEE, iterations \u2265 10, global min = 0 eV/atom, ΔZ over Fe+Co)',
+             '(AGOX/GOFEE, iterations \u2265 10, global min = 0 eV/atom, ΔZ over the film metal)',
              fontsize=13, fontweight='bold')
 fig.tight_layout(rect=[0, 0, 1, 0.94])
-fig.savefig('figures/pes_four_systems.png', dpi=300, bbox_inches='tight')
-print('wrote figures/pes_four_systems.png')
+out1 = f'figures/pes_{n}_systems.png'
+fig.savefig(out1, dpi=300, bbox_inches='tight')
+print(f'wrote {out1}')
 
-# ---- Figure 2: flat-basin ground-state 2x2 summary ----
-fig, ax = plt.subplots(figsize=(7.5, 5.5))
+# ---- Figure 2: flat-basin ground-state comparison, one bar per system ----
+fig, ax = plt.subplots(figsize=(2.6 + 2.4 * n, 5.5))
 systems = [s for s, _ in SYSTEMS]
 vals = [flat_stats.get(s, np.nan) for s in systems]
-labels = [l for _, l in SYSTEMS]
+labels = [str(l) for _, l in SYSTEMS]
 colors = [COL[s] for s in systems]
-bars = ax.bar(range(4), vals, color=colors, edgecolor='black', width=0.62)
-ax.set_xticks(range(4)); ax.set_xticklabels(labels, fontsize=11, rotation=12)
+bars = ax.bar(range(n), vals, color=colors, edgecolor='black', width=0.62)
+ax.set_xticks(range(n)); ax.set_xticklabels(labels, fontsize=11, rotation=12)
 ax.set_ylabel('Flat-basin ground-state\nrelative energy (eV/atom)', fontsize=12)
-ax.set_title('Flat-Fe state vs ground state: effect of B and Co', fontsize=13, fontweight='bold')
+ax.set_title('Flat film vs ground state: effect of B', fontsize=13, fontweight='bold')
 for b, v in zip(bars, vals):
-    ax.text(b.get_x()+b.get_width()/2, v+0.003, f'{v:.3f}', ha='center', fontsize=10, fontweight='bold')
-# bracket annotations for the B effect
+    ax.text(b.get_x() + b.get_width() / 2, v + 0.003, f'{v:.3f}', ha='center',
+            fontsize=10, fontweight='bold')
+
+
+# bracket annotations for the B effect, successive pairs
 def hbar(x0, x1, y, txt):
-    ax.plot([x0, x0, x1, x1], [y, y+0.006, y+0.006, y], lw=1.2, color='0.3')
-    ax.text((x0+x1)/2, y+0.009, txt, ha='center', fontsize=9, color='0.3')
-hbar(0, 1, max(vals)+0.012, f'B effect: {vals[1]-vals[0]:+.3f}')
-hbar(2, 3, max(vals)+0.012, f'B effect: {vals[3]-vals[2]:+.3f}')
-ax.set_ylim(0, max(vals)+0.05)
+    ax.plot([x0, x0, x1, x1], [y, y + 0.006, y + 0.006, y], lw=1.2, color='0.3')
+    ax.text((x0 + x1) / 2, y + 0.009, txt, ha='center', fontsize=9, color='0.3')
+
+
+ytop = float(np.nanmax(vals))
+for k in range(0, n - 1, 2):
+    hbar(k, k + 1, ytop + 0.012, f'B effect: {vals[k + 1] - vals[k]:+.3f}')
+ax.set_ylim(0, ytop + 0.05)
 ax.grid(axis='y', alpha=0.25, lw=0.5)
 fig.tight_layout()
 fig.savefig('figures/flat_state_summary.png', dpi=300, bbox_inches='tight')

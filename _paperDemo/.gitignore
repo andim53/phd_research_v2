@@ -1,0 +1,15 @@
+# _paperDemo/.gitignore — this project's own rules, applied on top of the repo root's.
+
+# The Co-host archive is a deliberate part of the record, not a regenerable output: CLAIMS v9
+# archived the Fe-Co/Fe-Co-B models and _archive/cofe/ holds the frozen values, the evidence
+# extract and the archived structures. The repo root ignores `_archive/` wholesale, and also
+# `*.csv` / `*.xsf` as regenerable artifacts, so both are re-enabled here for that one directory.
+# Verified with `git check-ignore -v`; see _archive/cofe/README.md.
+!_archive/
+!_archive/cofe/
+!_archive/cofe/**.csv
+!_archive/cofe/**.xsf
+!_archive/cofe/**.md
+!_archive/cofe/**.json
+!_archive/cofe/**.py
+!_archive/cofe/**.png

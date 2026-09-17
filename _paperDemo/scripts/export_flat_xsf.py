@@ -13,12 +13,17 @@ Usage:
       --min-iteration 10 --flat-dZ 1.0
 """
 import matplotlib; matplotlib.use('Agg')
-import numpy as np, glob, os, argparse
+import numpy as np, glob, os, sys, argparse
 from ase.io import write
 from agox.databases import Database
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scope import (SYSTEMS_IN_SCOPE,  # noqa: E402
+                   add_scope_arguments, db_glob, systems_from_args)
+
 METAL = ('Fe', 'Co')
-SYSTEMS = ['femgo', 'febmgo', 'fecomgo', 'fecobmgo']
+# The paper's scope (v9): Fe/MgO and Fe-B/MgO. The Co systems are archived — see scope.py.
+SYSTEMS = list(SYSTEMS_IN_SCOPE)
 
 
 def load_rows(dbp):
@@ -39,11 +44,13 @@ def main():
     ap.add_argument('--min-iteration', type=int, default=10)
     ap.add_argument('--flat-dZ', type=float, default=1.0)
     ap.add_argument('--outdir', default='analysis/flat_structures')
+    add_scope_arguments(ap)
     args = ap.parse_args()
+    SYSTEMS = systems_from_args(args)
 
     os.makedirs(args.outdir, exist_ok=True)
     for system in SYSTEMS:
-        dbs = sorted(glob.glob(f'data/{system}/seed_*/1_db/db_*.db'))
+        dbs = sorted(glob.glob(db_glob(system, 'seed_*/1_db/db_*.db')))
         recs = []
         for dbp in dbs:
             seed = os.path.basename(os.path.dirname(os.path.dirname(dbp)))

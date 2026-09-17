@@ -3,7 +3,7 @@
 WHY THIS EXISTS
 ---------------
 `scripts/pes_analysis.py` describes each system by two hand-picked structures: the single
-flat-basin minimum and the single island global minimum (see figures/pes_four_systems.png).
+flat-basin minimum and the single island global minimum (see figures/pes_2_systems.png).
 Both branches of the PES are in fact *ensembles* of many near-degenerate configurations -
 the island branch contains islands of many different heights, and the flat branch contains
 many lateral arrangements that differ only in where B / Co sits. A claim built on one
@@ -39,7 +39,7 @@ Usage
 -----
   /home/think/miniconda3/envs/agox_v2/bin/python scripts/ensemble_analysis.py
 """
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 import json
 import glob
@@ -49,6 +49,7 @@ import sys
 import argparse
 import numpy as np
 from collections import Counter, defaultdict
+from itertools import combinations
 from math import comb
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, fcluster
@@ -59,6 +60,8 @@ from agox.environments import Environment
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from run_selection import (FULL_ITERATIONS, db_iteration_range, select_completed)  # noqa: E402
+from scope import (LABELS, SYSTEMS_IN_SCOPE, SYSTEMS_OUT_OF_SCOPE,  # noqa: E402
+                   add_scope_arguments, db_glob, systems_from_args)
 
 METAL = ('Fe', 'Co')          # film species for the dZ flatness metric
 D_CUT = 2.6                   # Angstrom; B-O bonding cutoff (matches pes_analysis.py)
@@ -67,9 +70,8 @@ MIN_ITER = 10                 # relaxation starts at iteration 10
 RNG = np.random.default_rng(0)
 RAND_PAIRS = 300              # random pairs sampled per (system, branch) for calibration
 
-SYSTEMS = ['femgo', 'febmgo', 'fecomgo', 'fecobmgo']
-LABELS = {'femgo': 'Fe/MgO', 'febmgo': 'Fe-B/MgO',
-          'fecomgo': 'Fe-Co/MgO', 'fecobmgo': 'Fe-Co-B/MgO'}
+# The paper's scope (v9): Fe/MgO and Fe-B/MgO. The Co systems are archived — see scope.py.
+SYSTEMS = list(SYSTEMS_IN_SCOPE)
 CSV_COLS = ['system', 'seed', 'iteration', 'E_total', 'n_atoms',
             'dE_per_atom', 'dZ', 'B_contact_frac']
 
@@ -98,8 +100,10 @@ def load_system(system):
     excluded), and then filtered by run_selection: only a search that reached
     FULL_ITERATIONS counts.  Returns (recs, used_dbs, rejected) where rejected is
     [(db_path, max_iteration)] so the caller can report the exclusions.
+
+    The data root comes from scope.db_glob, so an archived system is read from data/_archive/.
     """
-    pattern = f'data/{system}/*/1_db/db_*.db'
+    pattern = db_glob(system)
     on_disk = sorted(d for d in glob.glob(pattern) if 'trash' not in d.lower())
     dbs, rejected = select_completed(on_disk)
     recs = []
@@ -191,7 +195,7 @@ def branch_stats(data):
     return out
 
 
-def clustered_bootstrap_effect(recs_a, recs_b, n_boot=2000):
+def clustered_bootstrap_effect(recs_a, recs_b, n_boot=2000, seed=0):
     """Distribution shift between the flat branches of two systems, resampling *replicas*
     (the independent unit) rather than structures.
 
@@ -199,7 +203,14 @@ def clustered_bootstrap_effect(recs_a, recs_b, n_boot=2000):
       - shift of the per-replica MINIMUM (this is the frozen MT-3/MT-4 statistic)
       - shift of the per-replica MEDIAN (ensemble-level, less sensitive to one lucky replica)
     plus a two-sided permutation p-value on the per-replica minima.
+
+    `seed` fixes *this comparison's* draws.  They used to come from the shared module RNG, which
+    made the p-value and the bootstrap CIs depend on how many systems had already been processed —
+    so analysing the archived systems alongside the in-scope ones moved a number the paper reports
+    (p = 0.0452 -> 0.0460 for the Fe-host boron effect).  Each comparison now seeds its own
+    generator, so its statistic is identical whatever the script's scope.
     """
+    rng = np.random.default_rng(seed)
     def per_replica(sample):
         by = defaultdict(list)
         for r in sample:
@@ -220,8 +231,8 @@ def clustered_bootstrap_effect(recs_a, recs_b, n_boot=2000):
     for stat, fn in (('median', np.median), ('mean', np.mean)):
         boots = []
         for _ in range(n_boot):
-            sa = [a[k] for k in RNG.choice(ak, len(ak), replace=True)]
-            sb = [b[k] for k in RNG.choice(bk, len(bk), replace=True)]
+            sa = [a[k] for k in rng.choice(ak, len(ak), replace=True)]
+            sb = [b[k] for k in rng.choice(bk, len(bk), replace=True)]
             boots.append(fn(sa) - fn(sb))
         boots = np.array(boots)
         out[f'{stat}_ci95'] = [float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))]
@@ -233,17 +244,45 @@ def clustered_bootstrap_effect(recs_a, recs_b, n_boot=2000):
     # groups were sampled independently rather than partitioning the pool, which widens the null
     # and inflates p.  The number of distinct partitions is recorded so the resolution of the test
     # is not over-read.
+    out.update(two_sided_perm_p(va, vb, rng))
+    return out
+
+
+def two_sided_perm_p(va, vb, rng=None, n_perm=5000, max_exact=2_000_000):
+    """Two-sided permutation p-value on the pooled per-replica minima.
+
+    The pool is tiny (13 + 6 values), so whenever every distinct partition of it is tractable the
+    test ENUMERATES them all: the result is exact for the data, deterministic, and reaches the full
+    resolution that `perm_resolution` advertises.  A Monte-Carlo fallback (with the Davison &
+    Hinkley +1 correction) is kept for pools too large to enumerate.
+
+    Why: the Monte-Carlo version drew from the shared module RNG, so the paper's headline
+    p-value moved between 0.0452 and 0.0480 depending on whether the archived Co systems had been
+    analysed first.  A number the manuscript reports must not depend on the script's scope.
+    """
+    pool = np.concatenate([va, vb])
+    na, n = len(va), len(pool)
     obs = abs(va.mean() - vb.mean())
-    pool = np.concatenate([va, vb]); na = len(va)
-    n_perm = 5000
+    n_partitions = comb(n, na)
+    out = {'perm_n_partitions': int(n_partitions), 'perm_resolution': float(1.0 / n_partitions)}
+
+    if n_partitions <= max_exact:
+        total = pool.sum()
+        perm = np.empty(n_partitions)
+        for k, idx in enumerate(combinations(range(n), na)):
+            s = pool[list(idx)].sum()
+            perm[k] = abs(s / na - (total - s) / (n - na))
+        # the observed partition is one of them, so no +1 correction is needed
+        out['perm_p_mean_min'] = float((perm >= obs - 1e-12).sum() / n_partitions)
+        out['perm_method'] = 'exact enumeration of all partitions'
+        return out
+
     perm = np.empty(n_perm)
     for k in range(n_perm):
-        idx = RNG.permutation(len(pool))
+        idx = rng.permutation(n)
         perm[k] = abs(pool[idx[:na]].mean() - pool[idx[na:]].mean())
-    # +1 correction (Davison & Hinkley): avoids reporting p = 0 for an extreme observation
     out['perm_p_mean_min'] = float((1 + (perm >= obs).sum()) / (1 + n_perm))
-    out['perm_n_partitions'] = int(comb(len(pool), na))
-    out['perm_resolution'] = float(1.0 / comb(len(pool), na))
+    out['perm_method'] = f'monte-carlo, {n_perm} permutations'
     return out
 
 
@@ -321,11 +360,13 @@ def motif_test(data, F, branch, window):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out-json', default='analysis/ensemble_stats.json')
+    add_scope_arguments(ap)
     args = ap.parse_args()
+    SYSTEMS = systems_from_args(args)
 
     canonical, inventory, empty = [], {}, {}
     for system in SYSTEMS:
-        all_dbs = sorted(d for d in glob.glob(f'data/{system}/*/1_db/db_*.db')
+        all_dbs = sorted(d for d in glob.glob(db_glob(system))
                          if 'trash' not in d.lower())
         empty[system] = [os.path.basename(os.path.dirname(os.path.dirname(d)))
                          for d in all_dbs if _n_candidates(d) == 0]
@@ -390,11 +431,20 @@ def main():
     # ---- B / Co effects as distribution shifts (replica-resampled) ----
     def recs_of(s):
         return [r for r in canonical if r['system'] == s]
-    effects = {
-        'B_in_Fe_host': clustered_bootstrap_effect(recs_of('femgo'), recs_of('febmgo')),
-        'B_in_FeCo_host': clustered_bootstrap_effect(recs_of('fecomgo'), recs_of('fecobmgo')),
-        'Co_alone': clustered_bootstrap_effect(recs_of('femgo'), recs_of('fecomgo')),
-    }
+    # Each comparison needs both of its systems present, so the effects that leave the paper's
+    # scope disappear when the archived systems are not loaded (pass --all-systems to get them).
+    # The per-comparison seeds keep each statistic fixed regardless of which systems are loaded.
+    EFFECT_SEEDS = {'B_in_Fe_host': 1, 'B_in_FeCo_host': 2, 'Co_alone': 3}
+    effects = {}
+    if {'femgo', 'febmgo'} <= set(SYSTEMS):
+        effects['B_in_Fe_host'] = clustered_bootstrap_effect(
+            recs_of('femgo'), recs_of('febmgo'), seed=EFFECT_SEEDS['B_in_Fe_host'])
+    if {'fecomgo', 'fecobmgo'} <= set(SYSTEMS):
+        effects['B_in_FeCo_host'] = clustered_bootstrap_effect(
+            recs_of('fecomgo'), recs_of('fecobmgo'), seed=EFFECT_SEEDS['B_in_FeCo_host'])
+    if {'femgo', 'fecomgo'} <= set(SYSTEMS):
+        effects['Co_alone'] = clustered_bootstrap_effect(
+            recs_of('femgo'), recs_of('fecomgo'), seed=EFFECT_SEEDS['Co_alone'])
     print('\n=== effects as a shift of the flat branch (replica-resampled, eV/atom) ===')
     for k, v in effects.items():
         print(f"  {k:14s} per-replica min: {v['per_replica_min_a']:.4f} vs "
@@ -443,11 +493,13 @@ def main():
                         'asking whether a branch\'s low-energy structures are one recurring '
                         'structural motif or a degenerate manifold.'),
             'key_definitions': {
-                'dZ': 'z(max)-z(min) over Fe+Co film atoms [Angstrom]',
+                'dZ': ("z(max)-z(min) over the film's metal atoms [Angstrom]; the metric uses "
+                       "Fe and Co (pes_analysis.METAL), so boron does not enter it"),
                 'dE_per_atom': '(E - E_globalmin)/n_atoms [eV/atom]; global min per system over replicas',
                 'flat_branch': f'dZ <= {FLAT_DZ} A',
                 'island_branch': f'dZ > {FLAT_DZ} A',
-                'replica': 'independent AGOX seed (data/<system>/seed_*/1_db/db_*.db)',
+                'replica': ('independent AGOX seed (data/<system>/seed_*/1_db/db_*.db; archived '
+                            'systems under data/_archive/)'),
                 'motif_distance': ('AGOX global Fingerprint (radial+angular distribution '
                                    'functions, 720-d) Euclidean distance; invariant under '
                                    'permutation/translation/rotation, so no alignment needed'),
@@ -485,6 +537,15 @@ def main():
             },
         },
         'version': VERSION,
+        'scope': {
+            'systems_analysed': SYSTEMS,
+            'systems_archived_out_of_scope': [s for s in SYSTEMS_OUT_OF_SCOPE
+                                              if s not in SYSTEMS],
+            'note': ('The paper studies the Fe host only (v9, 2026-09-17). The Fe-Co/MgO and '
+                     'Fe-Co-B/MgO models are archived out of scope — their frozen claim values '
+                     'are in CLAIMS.md and their evidence trail in _archive/cofe/README.md. '
+                     'Re-run with --all-systems to include them.'),
+        },
         'constants': {'flat_dZ': FLAT_DZ, 'min_iteration': MIN_ITER, 'b_o_cutoff': D_CUT,
                       'random_pairs_per_branch': RAND_PAIRS},
         'replica_inventory': inventory,
@@ -494,6 +555,20 @@ def main():
             'detected_by': 'max(iteration) per database, not by directory name',
         },
         'dataset_definition_check': si_check,
+        'statistics': {
+            'unit_of_resampling': 'the replica (seed); structures within a replica are correlated',
+            'permutation_test': ('two-sided, on the pooled per-replica flat minima: one partition '
+                                 'per replicate, split into groups of size n_a and n_rest. Small '
+                                 'pools are enumerated EXACTLY (perm_method says which), so the '
+                                 'value is deterministic and reaches the full perm_resolution; '
+                                 'larger pools fall back to Monte-Carlo with a +1 correction.'),
+            'seeding': ('the bootstrap CIs seed one generator per effect (EFFECT_SEEDS in this '
+                        'script), so no reported statistic depends on which systems the script was '
+                        'asked to analyse. Before this, the shared RNG made the Fe-host boron '
+                        'p-value move between 0.0452 and 0.0480 depending on whether the archived '
+                        'Co systems were loaded; the permutation p is now exact and seedless.'),
+            'resolution': 'perm_n_partitions / perm_resolution are recorded per comparison',
+        },
         'systems': stats,
         'effects': effects,
     }

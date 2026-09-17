@@ -1,0 +1,506 @@
+{
+  "description": {
+    "name": "cofe_evidence",
+    "version": "1.0.0",
+    "produced_by": "hand-extracted from the v8 analysis outputs when the Co host was archived (2026-09-17)",
+    "purpose": "Frozen evidence for the two claims archived with the Fe-Co host (CLAIMS v8 MT-4 and MT-5). Kept so the measurements survive the v9 scope change: they were not refuted, they were taken out of the paper because the host is not a clean counterfactual.",
+    "why_archived": [
+      "strain convention: Fe-Co/Fe-Co-B sat on a_MgO/sqrt2 = 2.97833 A (film stretched 4.9%) while Fe/Fe-B sat on a_Fe = 2.87019 A (substrate compressed 3.6%)",
+      "statistical power: 4 vs 3 completed searches admit only 35 partitions, floor p = 0.029",
+      "exploration operator: data/fecomgo/main.py:75,172-175 adds a third PermutationGenerator"
+    ],
+    "read_with": [
+      "CLAIMS.md -> 'ARCHIVED - out of scope'",
+      "_archive/cofe/README.md"
+    ],
+    "revive_by": "re-run both Co models at interpolation_factor 0 on the two-generator schedule to 100 iterations, then `ensemble_analysis.py --all-systems`"
+  },
+  "source": {
+    "ensemble_stats_json": "analysis/ensemble_stats.json (v8, four systems)",
+    "pes_structures_csv": "_archive/cofe/pes_structures_cofe.csv (Co rows of the v8 canonical CSV)",
+    "raw_data": [
+      "data/_archive/fecomgo",
+      "data/_archive/fecobmgo"
+    ]
+  },
+  "effects": {
+    "B_in_FeCo_host": {
+      "n_replicas_a": 4,
+      "n_replicas_b": 3,
+      "per_replica_min_a": 0.20320433208041,
+      "per_replica_min_b": 0.16754430551813704,
+      "min_shift_eV_per_atom": 0.044722795699918966,
+      "median_shift_eV_per_atom": 0.04817476154045755,
+      "mean_shift_eV_per_atom": 0.03566002656227296,
+      "median_ci95": [
+        -0.004928015291866622,
+        0.06239571233664162
+      ],
+      "median_same_sign_fraction": 0.917,
+      "mean_ci95": [
+        0.003908443026494707,
+        0.057509895318389015
+      ],
+      "mean_same_sign_fraction": 0.9895,
+      "perm_p_mean_min": 0.09238152369526095,
+      "perm_n_partitions": 35,
+      "perm_resolution": 0.02857142857142857
+    },
+    "Co_alone": {
+      "n_replicas_a": 13,
+      "n_replicas_b": 4,
+      "per_replica_min_a": 0.21706740540940014,
+      "per_replica_min_b": 0.20320433208041,
+      "min_shift_eV_per_atom": -0.005277269394823619,
+      "median_shift_eV_per_atom": 0.016658802880148177,
+      "mean_shift_eV_per_atom": 0.013863073328990144,
+      "median_ci95": [
+        -0.00879814021511946,
+        0.030900736478408408
+      ],
+      "median_same_sign_fraction": 0.902,
+      "mean_ci95": [
+        -0.00030479545713235694,
+        0.028001488577619815
+      ],
+      "mean_same_sign_fraction": 0.9695,
+      "perm_p_mean_min": 0.2453509298140372,
+      "perm_n_partitions": 2380,
+      "perm_resolution": 0.0004201680672268908
+    }
+  },
+  "systems": {
+    "fecomgo": {
+      "n_structures": 354,
+      "n_replicas": 4,
+      "global_min_dZ": 2.7515472833740553,
+      "island": {
+        "n": 279,
+        "min": 0.0,
+        "median": 0.11386432070328738,
+        "p10": 0.03452662200545107,
+        "dZ_median": 2.425580736313508,
+        "n_within_0.02_of_island_min": 8,
+        "per_replica_min": [
+          0.0,
+          0.01192666784896725,
+          0.018333209511439085,
+          0.05817946042274116
+        ],
+        "per_replica_min_median": 0.015129938680203167,
+        "per_replica_min_sd": 0.025217867178985085,
+        "n_replicas_with_branch": 4
+      },
+      "flat": {
+        "n": 75,
+        "fraction": 0.211864406779661,
+        "min": 0.1940992000748012,
+        "median": 0.23975670291337564,
+        "p10": 0.21153746595321596,
+        "max": 0.38315066149670657,
+        "n_within_0.01_of_flat_min": 2,
+        "n_within_0.02_of_flat_min": 10,
+        "n_within_0.04_of_flat_min": 29,
+        "per_replica_min": [
+          0.1940992000748012,
+          0.19517389482379108,
+          0.20855952713385628,
+          0.21498470628919145
+        ],
+        "per_replica_min_median": 0.2018667109788237,
+        "per_replica_min_sd": 0.010244456743875908,
+        "n_replicas_with_branch": 4
+      },
+      "motif": {
+        "flat": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 10,
+          "low_set_gmin": 0.1940992000748012,
+          "within_low_mean": 2.883413562988654,
+          "within_low_max": 3.7178898313599453,
+          "random_pair_scale_mean": 4.063880059810123,
+          "random_pair_scale_p05": 2.258841543679313,
+          "ratio_within_over_random": 0.7095223088654284,
+          "n_clusters_at_p05_cut": 4,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_2",
+              "seed_3"
+            ],
+            "3": [
+              "seed_1"
+            ],
+            "4": [
+              "seed_2"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 6,
+            "3": 1,
+            "4": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 0.6726150630028839,
+          "sd_dZ_low_set": 0.19381389253700856
+        },
+        "flat_0.04": {
+          "window_eV_per_atom": 0.04,
+          "n_low": 29,
+          "low_set_gmin": 0.1940992000748012,
+          "within_low_mean": 2.9623498527039542,
+          "within_low_max": 5.282368405193294,
+          "random_pair_scale_mean": 4.163730404024756,
+          "random_pair_scale_p05": 1.996348467500494,
+          "ratio_within_over_random": 0.7114653364301589,
+          "n_clusters_at_p05_cut": 10,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_2"
+            ],
+            "3": [
+              "seed_0",
+              "seed_1",
+              "seed_2",
+              "seed_3"
+            ],
+            "4": [
+              "seed_2"
+            ],
+            "5": [
+              "seed_3"
+            ],
+            "6": [
+              "seed_0"
+            ],
+            "7": [
+              "seed_2"
+            ],
+            "8": [
+              "seed_2"
+            ],
+            "9": [
+              "seed_0"
+            ],
+            "10": [
+              "seed_0"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 1,
+            "2": 1,
+            "3": 20,
+            "4": 1,
+            "5": 1,
+            "6": 1,
+            "7": 1,
+            "8": 1,
+            "9": 1,
+            "10": 1
+          },
+          "replicas_in_low_set": [
+            "seed_0",
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 0.5506565917055696,
+          "sd_dZ_low_set": 0.33601594103415783
+        },
+        "island": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 8,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.989830102967688,
+          "within_low_max": 2.909196570886874,
+          "random_pair_scale_mean": 3.430117567295834,
+          "random_pair_scale_p05": 1.7508970081036785,
+          "ratio_within_over_random": 0.5801055106505838,
+          "n_clusters_at_p05_cut": 3,
+          "cluster_replicas": {
+            "1": [
+              "seed_3"
+            ],
+            "2": [
+              "seed_1"
+            ],
+            "3": [
+              "seed_2"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 6,
+            "2": 1,
+            "3": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 2.940988455757373,
+          "sd_dZ_low_set": 0.3418098265698344
+        },
+        "island_0.05": {
+          "window_eV_per_atom": 0.05,
+          "n_low": 40,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 2.2879697726098116,
+          "within_low_max": 4.216707687581006,
+          "random_pair_scale_mean": 3.493685615393515,
+          "random_pair_scale_p05": 1.6964131452690758,
+          "ratio_within_over_random": 0.6548871376774134,
+          "n_clusters_at_p05_cut": 4,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_2"
+            ],
+            "3": [
+              "seed_3"
+            ],
+            "4": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 6,
+            "2": 1,
+            "3": 12,
+            "4": 21
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 2.7730574123436664,
+          "sd_dZ_low_set": 0.5230938043408162
+        }
+      }
+    },
+    "fecobmgo": {
+      "n_structures": 273,
+      "n_replicas": 3,
+      "global_min_dZ": 3.451423426907011,
+      "island": {
+        "n": 194,
+        "min": 0.0,
+        "median": 0.16154270759951617,
+        "p10": 0.042469038629641624,
+        "dZ_median": 2.543823686287677,
+        "n_within_0.02_of_island_min": 7,
+        "per_replica_min": [
+          0.0,
+          0.03530476126381957,
+          0.07170010667202667
+        ],
+        "per_replica_min_median": 0.03530476126381957,
+        "per_replica_min_sd": 0.035851435657116064,
+        "n_replicas_with_branch": 3
+      },
+      "flat": {
+        "n": 79,
+        "fraction": 0.2893772893772894,
+        "min": 0.14937640437488223,
+        "median": 0.2529803421240353,
+        "p10": 0.20337298445330237,
+        "max": 0.4462218164305043,
+        "n_within_0.01_of_flat_min": 2,
+        "n_within_0.02_of_flat_min": 3,
+        "n_within_0.04_of_flat_min": 4,
+        "per_replica_min": [
+          0.14937640437488223,
+          0.15369194943836614,
+          0.19956456274116277
+        ],
+        "per_replica_min_median": 0.15369194943836614,
+        "per_replica_min_sd": 0.027814180497909485,
+        "n_replicas_with_branch": 3
+      },
+      "motif": {
+        "flat": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 3,
+          "low_set_gmin": 0.14937640437488223,
+          "within_low_mean": 2.230182782188971,
+          "within_low_max": 2.9647988735970716,
+          "random_pair_scale_mean": 3.955526846234599,
+          "random_pair_scale_p05": 1.9407510615273598,
+          "ratio_within_over_random": 0.5638143460742677,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2"
+          ],
+          "mean_dZ_low_set": 0.8557625906685159,
+          "sd_dZ_low_set": 0.02269499460559609
+        },
+        "flat_0.04": {
+          "window_eV_per_atom": 0.04,
+          "n_low": 4,
+          "low_set_gmin": 0.14937640437488223,
+          "within_low_mean": 2.673326630460659,
+          "within_low_max": 3.783482672469572,
+          "random_pair_scale_mean": 3.7617209824211617,
+          "random_pair_scale_p05": 1.761853252340899,
+          "ratio_within_over_random": 0.710665847614254,
+          "n_clusters_at_p05_cut": 3,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_1"
+            ],
+            "3": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 1,
+            "3": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2"
+          ],
+          "mean_dZ_low_set": 0.8902276150973738,
+          "sd_dZ_low_set": 0.06284752033100699
+        },
+        "island": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 7,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.5452640706866199,
+          "within_low_max": 2.090115366866889,
+          "random_pair_scale_mean": 4.142079527139937,
+          "random_pair_scale_p05": 2.0171540960235226,
+          "ratio_within_over_random": 0.37306480007485726,
+          "n_clusters_at_p05_cut": 1,
+          "cluster_replicas": {
+            "1": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 7
+          },
+          "replicas_in_low_set": [
+            "seed_1"
+          ],
+          "mean_dZ_low_set": 3.285067862508836,
+          "sd_dZ_low_set": 0.3162175668609593
+        },
+        "island_0.05": {
+          "window_eV_per_atom": 0.05,
+          "n_low": 21,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.6505900155549074,
+          "within_low_max": 2.7567320120223155,
+          "random_pair_scale_mean": 4.05499651904765,
+          "random_pair_scale_p05": 1.8388091945130935,
+          "ratio_within_over_random": 0.4070509081331005,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_1"
+            ],
+            "2": [
+              "seed_2"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 20,
+            "2": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2"
+          ],
+          "mean_dZ_low_set": 3.147451720612187,
+          "sd_dZ_low_set": 0.45880689066807295
+        }
+      }
+    }
+  },
+  "replica_inventory": {
+    "fecomgo": {
+      "n_replica_dirs_on_disk": 5,
+      "n_dbs_loaded": 4,
+      "replicas": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3"
+      ],
+      "n_replicas_with_data": 4,
+      "n_structures": 354,
+      "empty_replica_dirs": [],
+      "unfinished_runs_excluded": [
+        {
+          "replica": "seed_4",
+          "max_iteration": 10,
+          "required_iterations": 100
+        }
+      ],
+      "n_unfinished_runs_excluded": 1
+    },
+    "fecobmgo": {
+      "n_replica_dirs_on_disk": 4,
+      "n_dbs_loaded": 3,
+      "replicas": [
+        "seed_0",
+        "seed_1",
+        "seed_2"
+      ],
+      "n_replicas_with_data": 3,
+      "n_structures": 273,
+      "empty_replica_dirs": [],
+      "unfinished_runs_excluded": [
+        {
+          "replica": "seed_3",
+          "max_iteration": 73,
+          "required_iterations": 100
+        }
+      ],
+      "n_unfinished_runs_excluded": 1
+    }
+  },
+  "run_selection": {
+    "rule": "only searches that reached run_selection.FULL_ITERATIONS are used",
+    "full_iterations_required": 100,
+    "detected_by": "max(iteration) per database, not by directory name"
+  },
+  "v9_exact_permutation": {
+    "note": "CLAIMS v9 replaced the Monte-Carlo permutation test with exact enumeration of every partition. The 'effects' block above keeps the v8 Monte-Carlo values as reported then; these are the same statistics under the exact test.",
+    "B_in_FeCo_host_perm_p_mean_min_exact": 0.08571428571428572,
+    "Co_alone_perm_p_mean_min_exact": 0.2357142857142857,
+    "perm_method": "exact enumeration of all partitions"
+  }
+}

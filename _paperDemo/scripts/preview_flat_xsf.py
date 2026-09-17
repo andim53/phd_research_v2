@@ -1,14 +1,21 @@
-"""Side-view render of flat-basin min vs ground-state structures (sanity check)."""
+"""Side-view render of flat-basin min vs ground-state structures (sanity check).
+
+One row per system; the row count follows the paper's scope (v9: Fe/MgO + Fe-B/MgO).  Run
+scripts/export_flat_xsf.py first — it writes the XSFs this reads.
+"""
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
+import numpy as np, os, sys
 from ase.io import read
 
-SYSTEMS = [('femgo','Fe/MgO'), ('febmgo','Fe-B/MgO'),
-           ('fecomgo','Fe-Co/MgO'), ('fecobmgo','Fe-Co-B/MgO')]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scope import label, systems_from_argv  # noqa: E402
+
+SYSTEMS = [(s, label(s)) for s in systems_from_argv()]
 colors = {'Mg':'#1f9e4f','O':'#d33','Fe':'#1f6fd0','Co':'#7b3fbf','B':'#e08a1e'}
 
-fig, axes = plt.subplots(4, 2, figsize=(13, 14))
+n = len(SYSTEMS)
+fig, axes = plt.subplots(n, 2, figsize=(13, 3.5 * n), squeeze=False)
 for i, (system, lab) in enumerate(SYSTEMS):
     for j, (suffix, tag) in enumerate([('flat_min','flat basin'), ('ground_min','lowest-energy (island)')]):
         ax = axes[i, j]

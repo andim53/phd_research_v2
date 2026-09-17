@@ -15,8 +15,12 @@ Usage: /home/think/miniconda3/envs/agox_v2/bin/python scripts/probe_truncated_se
 import sys, json, numpy as np
 sys.path.insert(0, 'scripts')
 from ensemble_analysis import load_system, FLAT_DZ, MIN_ITER
+from scope import ALL_SYSTEMS
 
-SYSTEMS = ['femgo', 'febmgo', 'fecomgo', 'fecobmgo']
+# This probe is the v8 audit record of the truncation finding, so it deliberately covers all four
+# systems including the two the paper has since archived (v9). load_system resolves the archived
+# data root, so re-running it after the data move still reproduces the audit.
+SYSTEMS = list(ALL_SYSTEMS)
 TRUNCATED = {'fecomgo': ['seed_4'], 'fecobmgo': ['seed_3']}
 
 

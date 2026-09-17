@@ -14,11 +14,13 @@ no longer in scope. Archive: `_archive/cofe/README.md`; raw data under `data/_ar
 Items that are **not** settled. They are listed here so a fresh session does not treat the frozen
 list as fully accepted.
 
-1. **Acceptance of the permutation-test fix (v8).** The test drew two independent permutations of the
-   pooled minima instead of one split, inflating significance; corrected in v8. Of the three
-   comparisons it moved, only one survives in scope (**MT-3: 0.005 → 0.045**); the other two
-   (MT-4 0.74 → 0.092, MT-5 0.73 → 0.245) went to the archived Co host. The fix should still be
-   consciously accepted rather than inherited.
+1. **Acceptance of the significance test as it now stands (v8 + v9).** The test has been revised
+   twice: v8 replaced two independent permutations of the pooled minima with one split (+1
+   correction), and v9 replaced the Monte-Carlo draw with **exact enumeration of every partition**,
+   because the Monte-Carlo p-value was found to move with the RNG stream — it read 0.0452 or 0.0480
+   for the same data depending on whether the archived Co systems had been analysed first, which a
+   published number must not do. MT-3 is now **p = 0.0444, exact** (0.005 → 0.045 → 0.0444 across
+   the three versions). Both revisions should be consciously accepted rather than inherited.
 2. **NEW v9 — the third-element control is gone.** The Co models are what let the paper say the
    driver is *boron* rather than *any added element*. Fe vs Fe-B alone cannot separate "boron does
    this" from "an added element does this". Recorded as a stated scope bound in the Limitations.
@@ -69,8 +71,9 @@ made the pair unusable as the paper's second host:
 - **Contribution sentence rewritten** — no host independence, no Co, no CoFeB alloying claim.
 - **MT-1** now covers two systems: global-min ΔZ = 3.65 (Fe) / 3.77 Å (Fe-B).
 - **MT-3 unchanged in value and untouched by the archive, and now on firmer statistical ground:**
-  0.1888 → 0.1493 eV/atom (−0.040), p = 0.045 at 13 vs 6 completed searches, against a permutation
-  floor of 3.7×10⁻⁵ (27 132 partitions) instead of the 4-vs-3 floor of 0.029 that limited v8.
+  0.1888 → 0.1493 eV/atom (−0.040), **p = 0.0444 exact** at 13 vs 6 completed searches, against a
+  permutation floor of 3.7×10⁻⁵ (27 132 partitions) instead of the 4-vs-3 floor of 0.029 that
+  limited v8. The p-value's move from 0.045 is the exact test of §4, not a change in the data.
 - **MT-7 evidence halved** — windowed Fe-B only: 1 of 72 structures in-window, max contact
   fraction 0.33, 101 of the remaining 471 outside. The Fe-Co-B half (1 of 21; max 0.5; 25 of 252;
   "20 of the 21 from one search") and its two-completed-search caveat are archived with it.
@@ -91,7 +94,32 @@ control: Fe vs Fe-B cannot distinguish "boron does this" from "an added element 
 recorded as a limitation, and the Greer framing is kept on the boron-only argument (scientist's
 decision) rather than on an element-count contrast that is no longer measurable here.
 
-### 4. MT-6 stays withdrawn, with one reason reworded
+### 4. The significance test is now exact, and no longer scope-dependent
+
+Re-running the analysis to confirm that the scope change reproduces the frozen numbers exposed a
+**third defect in the significance test** (after v8's mis-implemented permutation):
+
+- The bootstrap CIs and the Monte-Carlo permutation p drew from the **shared module RNG**, whose
+  stream position depends on how many systems were processed before. Loading the archived Co
+  systems first therefore moved the paper's headline p-value: **0.0452 (Fe host alone) vs 0.0480
+  (all four systems)** for the same twelve numbers. A reported statistic must not depend on the
+  script's scope.
+- Both are now fixed: each effect seeds its own bootstrap generator, and the permutation test
+  **enumerates every partition of the pool exactly** (27 132 for 13 vs 6; 35 for 4 vs 3; 2380 for
+  13 vs 4) instead of sampling 5000 of them. The p-value is deterministic, seedless, and reaches
+  the resolution `perm_resolution` advertises rather than an approximation of it.
+
+| comparison | v8 (Monte-Carlo, shared RNG) | **v9 (exact enumeration)** |
+|---|---|---|
+| B in Fe host — MT-3, 13 vs 6 | p = 0.0452 (0.0480 if the Co systems were loaded) | **p = 0.04438** |
+| B in Fe-Co host — archived MT-4, 4 vs 3 | p = 0.0924 | p = 0.08571 |
+| Co alone — archived MT-5, 13 vs 4 | p = 0.2454 | p = 0.23571 |
+
+MT-3's conclusion is unchanged (p < 0.05 on both versions). The v8 changelog's 0.045 / 0.092 /
+0.245 stand as the record of what v8 reported. Verified: the Fe-host p is **byte-identical**
+whether the script is run in scope or with `--all-systems`.
+
+### 5. MT-6 stays withdrawn, with one reason reworded
 
 Its **secondary** v2 reason — `data/fecomgo/main.py`'s third generator breaking operator matching —
 no longer applies, since the Co host is out of scope and Fe/Fe-B share their schedule. The
@@ -322,7 +350,7 @@ This version needs the scientist's re-sign-off.*
 |----|-------|-------------|--------|-----------|
 | **MT-1** | The lowest-energy structure found is an **island** (not flat) in both systems | global-min ΔZ = 3.65 Å (Fe) / 3.77 Å (Fe-B) | `analysis/pes_structures.csv` | strong |
 | **MT-2** | The **flat configuration is a distinct, higher-energy basin** (not the ground state) | flat-basin min dE/N > 0 in both systems (0.1888 Fe / 0.1493 eV/atom Fe-B) | `analysis/pes_structures.csv` | strong |
-| **MT-3** | **B lowers the flat-state energy in the Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (two-sided permutation p = 0.045 at 13 vs 6 completed searches; permutation floor 3.7×10⁻⁵ over 27 132 partitions, so the test is not resolution-limited here. The earlier 0.005 came from a mis-implemented test — see v8) |
+| **MT-3** | **B lowers the flat-state energy in the Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (two-sided permutation p = **0.0444**, **exact** over all 27 132 partitions at 13 vs 6 completed searches — the floor is 3.7×10⁻⁵, so the test is not resolution-limited here. The p-value was 0.045 under v8's Monte-Carlo test and 0.005 under the mis-implemented test before it — see v9 §5 and v8) |
 | ~~MT-4~~ | ~~B lowers the flat-state energy in the Fe-Co host~~ | **ARCHIVED in v9** with the Co host — see "ARCHIVED — out of scope" | — | — |
 | ~~MT-5~~ | ~~Co alone has little effect on the flat-state energy~~ | **ARCHIVED in v9** with the Co host — see "ARCHIVED — out of scope" | — | — |
 | ~~MT-6~~ | ~~B increases the fraction of flat-basin structures sampled~~ | **WITHDRAWN in v2** — see changelog | — | — |
@@ -399,8 +427,8 @@ evidence trail: `_archive/cofe/README.md`; raw data: `data/_archive/fecomgo/`, `
 
 | was | claim | value as measured | source | why archived |
 |---|---|---|---|---|
-| MT-4 | B lowers the flat-state energy in the Fe-Co host | 0.1941 → 0.1494 eV/atom (−0.045); two-sided permutation **p = 0.092** at 4 vs 3 completed searches; median shift +0.048 eV/atom; 92 % same-sign | `analysis/pes_structures.csv`, `analysis/ensemble_stats.json` → `effects/B_in_FeCo_host` | strain confound + under-powered (floor 0.029) + unmatched generator schedule |
-| MT-5 | Co alone has little effect on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005); p = 0.245 at 13 vs 4 completed searches | `analysis/pes_structures.csv`, `analysis/ensemble_stats.json` → `effects/Co_alone` | rests on the archived Fe-Co model; the "little effect" null is not re-established here |
+| MT-4 | B lowers the flat-state energy in the Fe-Co host | 0.1941 → 0.1494 eV/atom (−0.045); two-sided permutation **p = 0.092** at 4 vs 3 completed searches (v8, Monte-Carlo; **p = 0.0857** under the exact enumeration of v9 §4); median shift +0.048 eV/atom; 92 % same-sign | `_archive/cofe/cofe_evidence.json` → `effects/B_in_FeCo_host` | strain confound + under-powered (floor 0.029) + unmatched generator schedule |
+| MT-5 | Co alone has little effect on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005); p = 0.245 at 13 vs 4 completed searches (v8, Monte-Carlo; **p = 0.2357** exact) | `_archive/cofe/cofe_evidence.json` → `effects/Co_alone` | rests on the archived Fe-Co model; the "little effect" null is not re-established here |
 
 **Combined 2×2 statement (v8, withdrawn):** B effect −0.040 (Fe) and −0.045 (Fe-Co); Co effect
 +0.005 (no B) — B the dominant lever, Co not.
@@ -477,13 +505,18 @@ the 2×2 can be restored as written in v8, with MT-4/MT-5 reinstated from this b
   consistency check, not an independent prediction by the search.
 - **The single search-level test in scope is not resolution-limited (v9).** The permutation test
   partitions the pooled per-search flat minima, so with *a* vs *b* searches only C(a+b, a) partitions
-  exist. MT-3's 13 vs 6 admits **27 132** partitions, a floor of p = 3.7×10⁻⁵ — far below the
-  reported p = 0.045, so the test is genuinely informative here. (The 4-vs-3 floor of p = 0.029 that
-  limited v8's MT-4 went to the archive with the Co host.) `analysis/ensemble_stats.json` records
-  `perm_n_partitions` and `perm_resolution` for every comparison.
+  exist. MT-3's 13 vs 6 admits **27 132** partitions, a floor of p = 3.7×10⁻⁵ — and the test now
+  **enumerates all of them exactly**, so the reported p = 0.0444 is the value for these data, not a
+  Monte-Carlo estimate of it (v8's estimate was 0.045). Far below the reported p, so the test is
+  genuinely informative here. (The 4-vs-3 floor of p = 0.029 that limited v8's MT-4 went to the
+  archive with the Co host.) `analysis/ensemble_stats.json` records `perm_n_partitions`,
+  `perm_resolution` and `perm_method` for every comparison.
 - **The permutation test was mis-implemented before v8** (two independent permutations instead of
   one split), which widened the null and inflated significance (e.g. MT-3 read p = 0.005 instead of
   p = 0.045). Fixed in v8.
+- **The test is exact from v9.** v8's version sampled 5000 permutations from the shared RNG, so its
+  p-value moved with the script's scope (0.0452 vs 0.0480 for the same data). v9 enumerates every
+  partition instead: MT-3 p = 0.0444, deterministic and scope-independent.
 - **No third-element control (v9).** The paper compares one host with and without boron. The
   archived Co models were what allowed a "boron rather than any added element" reading; within the
   present scope, an effect of the added element as such cannot be separated from an effect of boron.
@@ -577,4 +610,6 @@ changed from refuted to under-powered (status flag left for the scientist) · v9
 host archived out of scope and MT-4/MT-5 with it, plus the combined 2×2 statement and the Fe-Co-B
 halves of MT-7/MT-8; contribution rewritten host-independently-free; SI unaffected (already
 Fe/MgO-only); third-element-control scope bound added; v8's permutation-resolution limitation and
-strain-convention confound both resolved by the scope restriction; MT-6's secondary reason reworded.
+strain-convention confound both resolved by the scope restriction; MT-6's secondary reason reworded;
+the significance test made exact and scope-independent (MT-3 p = 0.0444; the v8 Monte-Carlo value
+moved with the RNG stream).

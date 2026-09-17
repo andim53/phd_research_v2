@@ -28,13 +28,14 @@ from agox.databases import Database
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from run_selection import FULL_ITERATIONS, completed_dbs  # noqa: E402
+from scope import (LABELS, SYSTEMS_IN_SCOPE,  # noqa: E402
+                   add_scope_arguments, db_glob, systems_from_args)
 
 METAL = ('Fe', 'Co')     # film species for the dZ flatness metric
 D_CUT = 2.6              # Angstrom; B-O bonding cutoff
 
-SYSTEMS = ['femgo', 'febmgo', 'fecomgo', 'fecobmgo']
-LABELS = {'femgo': 'Fe/MgO', 'febmgo': 'Fe-B/MgO',
-          'fecomgo': 'Fe-Co/MgO', 'fecobmgo': 'Fe-Co-B/MgO'}
+# The paper's scope (v9): Fe/MgO and Fe-B/MgO. The Co systems are archived — see scope.py.
+SYSTEMS = list(SYSTEMS_IN_SCOPE)
 
 
 def load_rows(dbp):
@@ -65,13 +66,15 @@ def main():
     ap.add_argument('--min-iteration', type=int, default=10)
     ap.add_argument('--flat-dZ', type=float, default=1.0)
     ap.add_argument('--out', default='analysis/pes_structures.csv')
+    add_scope_arguments(ap)
     args = ap.parse_args()
+    SYSTEMS = systems_from_args(args)
 
     os.makedirs('analysis', exist_ok=True)
     rows, summary = [], {}
     for system in SYSTEMS:
         # only searches that ran the full iteration budget (see run_selection)
-        dbs, rejected = completed_dbs(f'data/{system}/*/1_db/db_*.db', verbose=True)
+        dbs, rejected = completed_dbs(db_glob(system), verbose=True)
         if rejected:
             print(f'    ({len(rejected)} unfinished run(s) excluded for {system})')
         recs = []

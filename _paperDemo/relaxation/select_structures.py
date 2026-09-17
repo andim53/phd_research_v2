@@ -22,8 +22,13 @@ from agox.databases import Database
 from agox.models.descriptors import Fingerprint
 from agox.environments import Environment
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'scripts'))
+from scope import (SYSTEMS_IN_SCOPE,  # noqa: E402
+                   add_scope_arguments, db_glob, systems_from_args)
+
 METAL = ('Fe', 'Co')
-SYSTEMS = ['femgo', 'febmgo', 'fecomgo', 'fecobmgo']
+# The paper's scope (v9): Fe/MgO and Fe-B/MgO — see scripts/scope.py.
+SYSTEMS = list(SYSTEMS_IN_SCOPE)
 
 
 def load_rows(dbp):
@@ -54,11 +59,13 @@ def main():
     ap.add_argument('--desc-tol', type=float, default=0.2,
                     help='min fingerprint-feature distance between kept structures')
     ap.add_argument('--outdir', default='relaxation/selected')
+    add_scope_arguments(ap)
     args = ap.parse_args()
+    SYSTEMS = systems_from_args(args)
 
     manifest_rows = []
     for system in SYSTEMS:
-        dbs = sorted(glob.glob(f'data/{system}/seed_*/1_db/db_*.db'))
+        dbs = sorted(glob.glob(db_glob(system, 'seed_*/1_db/db_*.db')))
         recs = []
         for dbp in dbs:
             seed = os.path.basename(os.path.dirname(os.path.dirname(dbp)))

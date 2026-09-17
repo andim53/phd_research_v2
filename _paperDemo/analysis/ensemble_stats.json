@@ -1,15 +1,15 @@
 {
   "description": {
     "name": "ensemble_stats",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "produced_by": "scripts/ensemble_analysis.py",
     "purpose": "Describe the flat/island PES as ensembles rather than two hand-picked structures: replica inventory, branch distributions, and a motif test asking whether a branch's low-energy structures are one recurring structural motif or a degenerate manifold.",
     "key_definitions": {
-      "dZ": "z(max)-z(min) over Fe+Co film atoms [Angstrom]",
+      "dZ": "z(max)-z(min) over the film's metal atoms [Angstrom]; the metric uses Fe and Co (pes_analysis.METAL), so boron does not enter it",
       "dE_per_atom": "(E - E_globalmin)/n_atoms [eV/atom]; global min per system over replicas",
       "flat_branch": "dZ <= 1.0 A",
       "island_branch": "dZ > 1.0 A",
-      "replica": "independent AGOX seed (data/<system>/seed_*/1_db/db_*.db)",
+      "replica": "independent AGOX seed (data/<system>/seed_*/1_db/db_*.db; archived systems under data/_archive/)",
       "motif_distance": "AGOX global Fingerprint (radial+angular distribution functions, 720-d) Euclidean distance; invariant under permutation/translation/rotation, so no alignment needed",
       "ratio_within_over_random": "mean pairwise fingerprint distance among the low-energy structures of a branch, divided by the same quantity for random pairs in that branch. <<1 => one recurring motif; ~1 => degenerate manifold",
       "n_clusters_at_p05_cut": "single-linkage clusters of the low-energy set, cut at the 5th percentile of the branch random-pair distance",
@@ -23,7 +23,7 @@
     ],
     "inputs": {
       "dbs_glob": "data/{system}/*/1_db/db_*.db, then filtered to completed runs (run_selection.FULL_ITERATIONS)",
-      "n_structures_canonical": 2350
+      "n_structures_canonical": 1723
     },
     "schema": {
       "systems": "per-system branch distributions + motif tests",
@@ -32,7 +32,18 @@
       "effects": "flat-branch shifts, resampled over replicas (median CI + perm p)"
     }
   },
-  "version": "1.1.0",
+  "version": "1.2.0",
+  "scope": {
+    "systems_analysed": [
+      "femgo",
+      "febmgo"
+    ],
+    "systems_archived_out_of_scope": [
+      "fecomgo",
+      "fecobmgo"
+    ],
+    "note": "The paper studies the Fe host only (v9, 2026-09-17). The Fe-Co/MgO and Fe-Co-B/MgO models are archived out of scope \u2014 their frozen claim values are in CLAIMS.md and their evidence trail in _archive/cofe/README.md. Re-run with --all-systems to include them."
+  },
   "constants": {
     "flat_dZ": 1.0,
     "min_iteration": 10,
@@ -94,47 +105,6 @@
         }
       ],
       "n_unfinished_runs_excluded": 1
-    },
-    "fecomgo": {
-      "n_replica_dirs_on_disk": 5,
-      "n_dbs_loaded": 4,
-      "replicas": [
-        "seed_0",
-        "seed_1",
-        "seed_2",
-        "seed_3"
-      ],
-      "n_replicas_with_data": 4,
-      "n_structures": 354,
-      "empty_replica_dirs": [],
-      "unfinished_runs_excluded": [
-        {
-          "replica": "seed_4",
-          "max_iteration": 10,
-          "required_iterations": 100
-        }
-      ],
-      "n_unfinished_runs_excluded": 1
-    },
-    "fecobmgo": {
-      "n_replica_dirs_on_disk": 4,
-      "n_dbs_loaded": 3,
-      "replicas": [
-        "seed_0",
-        "seed_1",
-        "seed_2"
-      ],
-      "n_replicas_with_data": 3,
-      "n_structures": 273,
-      "empty_replica_dirs": [],
-      "unfinished_runs_excluded": [
-        {
-          "replica": "seed_3",
-          "max_iteration": 73,
-          "required_iterations": 100
-        }
-      ],
-      "n_unfinished_runs_excluded": 1
     }
   },
   "run_selection": {
@@ -156,6 +126,12 @@
     },
     "consistent": true,
     "note": "Both this script and method_sensitivity.py now select completed runs only (run_selection.FULL_ITERATIONS), so the same \"femgo baseline\" is expected to be reported with the same replica count and flat fraction."
+  },
+  "statistics": {
+    "unit_of_resampling": "the replica (seed); structures within a replica are correlated",
+    "permutation_test": "two-sided, on the pooled per-replica flat minima: one partition per replicate, split into groups of size n_a and n_rest. Small pools are enumerated EXACTLY (perm_method says which), so the value is deterministic and reaches the full perm_resolution; larger pools fall back to Monte-Carlo with a +1 correction.",
+    "seeding": "the bootstrap CIs seed one generator per effect (EFFECT_SEEDS in this script), so no reported statistic depends on which systems the script was asked to analyse. Before this, the shared RNG made the Fe-host boron p-value move between 0.0452 and 0.0480 depending on whether the archived Co systems were loaded; the permutation p is now exact and seedless.",
+    "resolution": "perm_n_partitions / perm_resolution are recorded per comparison"
   },
   "systems": {
     "femgo": {
@@ -569,384 +545,6 @@
           "sd_dZ_low_set": 0.8801300974557771
         }
       }
-    },
-    "fecomgo": {
-      "n_structures": 354,
-      "n_replicas": 4,
-      "global_min_dZ": 2.7515472833740553,
-      "island": {
-        "n": 279,
-        "min": 0.0,
-        "median": 0.11386432070328738,
-        "p10": 0.03452662200545107,
-        "dZ_median": 2.425580736313508,
-        "n_within_0.02_of_island_min": 8,
-        "per_replica_min": [
-          0.0,
-          0.01192666784896725,
-          0.018333209511439085,
-          0.05817946042274116
-        ],
-        "per_replica_min_median": 0.015129938680203167,
-        "per_replica_min_sd": 0.025217867178985085,
-        "n_replicas_with_branch": 4
-      },
-      "flat": {
-        "n": 75,
-        "fraction": 0.211864406779661,
-        "min": 0.1940992000748012,
-        "median": 0.23975670291337564,
-        "p10": 0.21153746595321596,
-        "max": 0.38315066149670657,
-        "n_within_0.01_of_flat_min": 2,
-        "n_within_0.02_of_flat_min": 10,
-        "n_within_0.04_of_flat_min": 29,
-        "per_replica_min": [
-          0.1940992000748012,
-          0.19517389482379108,
-          0.20855952713385628,
-          0.21498470628919145
-        ],
-        "per_replica_min_median": 0.2018667109788237,
-        "per_replica_min_sd": 0.010244456743875908,
-        "n_replicas_with_branch": 4
-      },
-      "motif": {
-        "flat": {
-          "window_eV_per_atom": 0.02,
-          "n_low": 10,
-          "low_set_gmin": 0.1940992000748012,
-          "within_low_mean": 2.883413562988654,
-          "within_low_max": 3.7178898313599453,
-          "random_pair_scale_mean": 4.063880059810123,
-          "random_pair_scale_p05": 2.258841543679313,
-          "ratio_within_over_random": 0.7095223088654284,
-          "n_clusters_at_p05_cut": 4,
-          "cluster_replicas": {
-            "1": [
-              "seed_2"
-            ],
-            "2": [
-              "seed_2",
-              "seed_3"
-            ],
-            "3": [
-              "seed_1"
-            ],
-            "4": [
-              "seed_2"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 2,
-            "2": 6,
-            "3": 1,
-            "4": 1
-          },
-          "replicas_in_low_set": [
-            "seed_1",
-            "seed_2",
-            "seed_3"
-          ],
-          "mean_dZ_low_set": 0.6726150630028839,
-          "sd_dZ_low_set": 0.19381389253700856
-        },
-        "flat_0.04": {
-          "window_eV_per_atom": 0.04,
-          "n_low": 29,
-          "low_set_gmin": 0.1940992000748012,
-          "within_low_mean": 2.9623498527039542,
-          "within_low_max": 5.282368405193294,
-          "random_pair_scale_mean": 4.163730404024756,
-          "random_pair_scale_p05": 1.996348467500494,
-          "ratio_within_over_random": 0.7114653364301589,
-          "n_clusters_at_p05_cut": 10,
-          "cluster_replicas": {
-            "1": [
-              "seed_2"
-            ],
-            "2": [
-              "seed_2"
-            ],
-            "3": [
-              "seed_0",
-              "seed_1",
-              "seed_2",
-              "seed_3"
-            ],
-            "4": [
-              "seed_2"
-            ],
-            "5": [
-              "seed_3"
-            ],
-            "6": [
-              "seed_0"
-            ],
-            "7": [
-              "seed_2"
-            ],
-            "8": [
-              "seed_2"
-            ],
-            "9": [
-              "seed_0"
-            ],
-            "10": [
-              "seed_0"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 1,
-            "2": 1,
-            "3": 20,
-            "4": 1,
-            "5": 1,
-            "6": 1,
-            "7": 1,
-            "8": 1,
-            "9": 1,
-            "10": 1
-          },
-          "replicas_in_low_set": [
-            "seed_0",
-            "seed_1",
-            "seed_2",
-            "seed_3"
-          ],
-          "mean_dZ_low_set": 0.5506565917055696,
-          "sd_dZ_low_set": 0.33601594103415783
-        },
-        "island": {
-          "window_eV_per_atom": 0.02,
-          "n_low": 8,
-          "low_set_gmin": 0.0,
-          "within_low_mean": 1.989830102967688,
-          "within_low_max": 2.909196570886874,
-          "random_pair_scale_mean": 3.430117567295834,
-          "random_pair_scale_p05": 1.7508970081036785,
-          "ratio_within_over_random": 0.5801055106505838,
-          "n_clusters_at_p05_cut": 3,
-          "cluster_replicas": {
-            "1": [
-              "seed_3"
-            ],
-            "2": [
-              "seed_1"
-            ],
-            "3": [
-              "seed_2"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 6,
-            "2": 1,
-            "3": 1
-          },
-          "replicas_in_low_set": [
-            "seed_1",
-            "seed_2",
-            "seed_3"
-          ],
-          "mean_dZ_low_set": 2.940988455757373,
-          "sd_dZ_low_set": 0.3418098265698344
-        },
-        "island_0.05": {
-          "window_eV_per_atom": 0.05,
-          "n_low": 40,
-          "low_set_gmin": 0.0,
-          "within_low_mean": 2.2879697726098116,
-          "within_low_max": 4.216707687581006,
-          "random_pair_scale_mean": 3.493685615393515,
-          "random_pair_scale_p05": 1.6964131452690758,
-          "ratio_within_over_random": 0.6548871376774134,
-          "n_clusters_at_p05_cut": 4,
-          "cluster_replicas": {
-            "1": [
-              "seed_2"
-            ],
-            "2": [
-              "seed_2"
-            ],
-            "3": [
-              "seed_3"
-            ],
-            "4": [
-              "seed_1"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 6,
-            "2": 1,
-            "3": 12,
-            "4": 21
-          },
-          "replicas_in_low_set": [
-            "seed_1",
-            "seed_2",
-            "seed_3"
-          ],
-          "mean_dZ_low_set": 2.7730574123436664,
-          "sd_dZ_low_set": 0.5230938043408162
-        }
-      }
-    },
-    "fecobmgo": {
-      "n_structures": 273,
-      "n_replicas": 3,
-      "global_min_dZ": 3.451423426907011,
-      "island": {
-        "n": 194,
-        "min": 0.0,
-        "median": 0.16154270759951617,
-        "p10": 0.042469038629641624,
-        "dZ_median": 2.543823686287677,
-        "n_within_0.02_of_island_min": 7,
-        "per_replica_min": [
-          0.0,
-          0.03530476126381957,
-          0.07170010667202667
-        ],
-        "per_replica_min_median": 0.03530476126381957,
-        "per_replica_min_sd": 0.035851435657116064,
-        "n_replicas_with_branch": 3
-      },
-      "flat": {
-        "n": 79,
-        "fraction": 0.2893772893772894,
-        "min": 0.14937640437488223,
-        "median": 0.2529803421240353,
-        "p10": 0.20337298445330237,
-        "max": 0.4462218164305043,
-        "n_within_0.01_of_flat_min": 2,
-        "n_within_0.02_of_flat_min": 3,
-        "n_within_0.04_of_flat_min": 4,
-        "per_replica_min": [
-          0.14937640437488223,
-          0.15369194943836614,
-          0.19956456274116277
-        ],
-        "per_replica_min_median": 0.15369194943836614,
-        "per_replica_min_sd": 0.027814180497909485,
-        "n_replicas_with_branch": 3
-      },
-      "motif": {
-        "flat": {
-          "window_eV_per_atom": 0.02,
-          "n_low": 3,
-          "low_set_gmin": 0.14937640437488223,
-          "within_low_mean": 2.230182782188971,
-          "within_low_max": 2.9647988735970716,
-          "random_pair_scale_mean": 3.955526846234599,
-          "random_pair_scale_p05": 1.9407510615273598,
-          "ratio_within_over_random": 0.5638143460742677,
-          "n_clusters_at_p05_cut": 2,
-          "cluster_replicas": {
-            "1": [
-              "seed_2"
-            ],
-            "2": [
-              "seed_1"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 2,
-            "2": 1
-          },
-          "replicas_in_low_set": [
-            "seed_1",
-            "seed_2"
-          ],
-          "mean_dZ_low_set": 0.8557625906685159,
-          "sd_dZ_low_set": 0.02269499460559609
-        },
-        "flat_0.04": {
-          "window_eV_per_atom": 0.04,
-          "n_low": 4,
-          "low_set_gmin": 0.14937640437488223,
-          "within_low_mean": 2.673326630460659,
-          "within_low_max": 3.783482672469572,
-          "random_pair_scale_mean": 3.7617209824211617,
-          "random_pair_scale_p05": 1.761853252340899,
-          "ratio_within_over_random": 0.710665847614254,
-          "n_clusters_at_p05_cut": 3,
-          "cluster_replicas": {
-            "1": [
-              "seed_2"
-            ],
-            "2": [
-              "seed_1"
-            ],
-            "3": [
-              "seed_1"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 2,
-            "2": 1,
-            "3": 1
-          },
-          "replicas_in_low_set": [
-            "seed_1",
-            "seed_2"
-          ],
-          "mean_dZ_low_set": 0.8902276150973738,
-          "sd_dZ_low_set": 0.06284752033100699
-        },
-        "island": {
-          "window_eV_per_atom": 0.02,
-          "n_low": 7,
-          "low_set_gmin": 0.0,
-          "within_low_mean": 1.5452640706866199,
-          "within_low_max": 2.090115366866889,
-          "random_pair_scale_mean": 4.142079527139937,
-          "random_pair_scale_p05": 2.0171540960235226,
-          "ratio_within_over_random": 0.37306480007485726,
-          "n_clusters_at_p05_cut": 1,
-          "cluster_replicas": {
-            "1": [
-              "seed_1"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 7
-          },
-          "replicas_in_low_set": [
-            "seed_1"
-          ],
-          "mean_dZ_low_set": 3.285067862508836,
-          "sd_dZ_low_set": 0.3162175668609593
-        },
-        "island_0.05": {
-          "window_eV_per_atom": 0.05,
-          "n_low": 21,
-          "low_set_gmin": 0.0,
-          "within_low_mean": 1.6505900155549074,
-          "within_low_max": 2.7567320120223155,
-          "random_pair_scale_mean": 4.05499651904765,
-          "random_pair_scale_p05": 1.8388091945130935,
-          "ratio_within_over_random": 0.4070509081331005,
-          "n_clusters_at_p05_cut": 2,
-          "cluster_replicas": {
-            "1": [
-              "seed_1"
-            ],
-            "2": [
-              "seed_2"
-            ]
-          },
-          "cluster_sizes": {
-            "1": 20,
-            "2": 1
-          },
-          "replicas_in_low_set": [
-            "seed_1",
-            "seed_2"
-          ],
-          "mean_dZ_low_set": 3.147451720612187,
-          "sd_dZ_low_set": 0.45880689066807295
-        }
-      }
     }
   },
   "effects": {
@@ -959,62 +557,19 @@
       "median_shift_eV_per_atom": 0.03514933932906375,
       "mean_shift_eV_per_atom": 0.028895991977340774,
       "median_ci95": [
-        -0.013562686981940048,
-        0.06766508945538871
+        -0.01196363484585597,
+        0.06713183821055382
       ],
-      "median_same_sign_fraction": 0.934,
+      "median_same_sign_fraction": 0.9405,
       "mean_ci95": [
-        -0.0009918772481798744,
-        0.05648330368875053
+        -0.002387819531578261,
+        0.05677998480762473
       ],
-      "mean_same_sign_fraction": 0.9695,
-      "perm_p_mean_min": 0.04519096180763847,
+      "mean_same_sign_fraction": 0.963,
       "perm_n_partitions": 27132,
-      "perm_resolution": 3.685684800235884e-05
-    },
-    "B_in_FeCo_host": {
-      "n_replicas_a": 4,
-      "n_replicas_b": 3,
-      "per_replica_min_a": 0.20320433208041,
-      "per_replica_min_b": 0.16754430551813704,
-      "min_shift_eV_per_atom": 0.044722795699918966,
-      "median_shift_eV_per_atom": 0.04817476154045755,
-      "mean_shift_eV_per_atom": 0.03566002656227296,
-      "median_ci95": [
-        -0.004928015291866622,
-        0.06239571233664162
-      ],
-      "median_same_sign_fraction": 0.917,
-      "mean_ci95": [
-        0.003908443026494707,
-        0.057509895318389015
-      ],
-      "mean_same_sign_fraction": 0.9895,
-      "perm_p_mean_min": 0.09238152369526095,
-      "perm_n_partitions": 35,
-      "perm_resolution": 0.02857142857142857
-    },
-    "Co_alone": {
-      "n_replicas_a": 13,
-      "n_replicas_b": 4,
-      "per_replica_min_a": 0.21706740540940014,
-      "per_replica_min_b": 0.20320433208041,
-      "min_shift_eV_per_atom": -0.005277269394823619,
-      "median_shift_eV_per_atom": 0.016658802880148177,
-      "mean_shift_eV_per_atom": 0.013863073328990144,
-      "median_ci95": [
-        -0.00879814021511946,
-        0.030900736478408408
-      ],
-      "median_same_sign_fraction": 0.902,
-      "mean_ci95": [
-        -0.00030479545713235694,
-        0.028001488577619815
-      ],
-      "mean_same_sign_fraction": 0.9695,
-      "perm_p_mean_min": 0.2453509298140372,
-      "perm_n_partitions": 2380,
-      "perm_resolution": 0.0004201680672268908
+      "perm_resolution": 3.685684800235884e-05,
+      "perm_p_mean_min": 0.04437564499484004,
+      "perm_method": "exact enumeration of all partitions"
     }
   }
 }

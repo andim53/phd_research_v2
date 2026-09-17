@@ -1,14 +1,17 @@
 import matplotlib; matplotlib.use('Agg')
-import numpy as np, glob
+import numpy as np, glob, os, sys
 from agox.databases import Database
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scope import db_glob, systems_from_argv  # noqa: E402
 
 def load_rows(dbp):
     db = Database(filename=dbp); db.restore_to_memory()
     return list(zip(db.get_all_candidates(), db.get_all_structures_data()))
 
-for system in ['femgo','febmgo','fecomgo','fecobmgo']:
+for system in systems_from_argv():          # paper scope by default; --all-systems for all four
     fm = []
-    for dbp in sorted(glob.glob(f'data/{system}/seed_*/1_db/db_*.db')):
+    for dbp in sorted(glob.glob(db_glob(system, 'seed_*/1_db/db_*.db'))):
         for c,d in load_rows(dbp):
             it = d.get('iteration')
             if it is None or it < 10: continue
