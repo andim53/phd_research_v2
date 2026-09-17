@@ -92,7 +92,7 @@ while the later phase shifts to the large-scale rattle generator for broader exp
 metal layer (the reference film geometry) rather than a random configuration, so the sampled
 database is a mixture of the flat (registry-locked) basin and any lower-lying basin the
 search finds. Each model was run from multiple independent random seeds
-(13 / 7 / 5 / 4 for the four models); each seed constitutes one independent search.
+(13 / 6 / 5 / 4 for the four models); each seed constitutes one independent search.
 
 Candidates were relaxed by the surrogate model for up to 100 steps (starting from
 iteration 10) and evaluated with the DFT calculator below. **Only structures from

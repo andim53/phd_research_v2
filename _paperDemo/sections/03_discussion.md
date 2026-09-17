@@ -36,11 +36,10 @@ one. Under this reading, the stabilisation of the flat state by added elements f
 an alloy, the harder it is for the alloy to select a viable crystal structure, and the
 greater the tendency toward glass (amorphous) formation.
 
-Our results are partly consistent with this. Adding boron lowers the flat-basin energy and
-raises flat-basin sampling in both hosts (Fe 0.1888 → Fe-B 0.1493 eV/atom, flat fraction
-0.165 → 0.208; Fe-Co 0.1941 → Fe-Co-B 0.1494 eV/atom, 0.214 → 0.242). They do not,
-however, support compositional complexity *per se* as the driver. Adding Co alone leaves the
-flat basin slightly *higher* in energy (0.1888 → 0.1941 eV/atom; §3.3), and the two
+Our results are partly consistent with this. Adding boron lowers the flat-basin energy in
+both hosts (Fe 0.1888 → Fe-B 0.1493 eV/atom; Fe-Co 0.1941 → Fe-Co-B 0.1494 eV/atom). They do
+not, however, support compositional complexity *per se* as the driver. Adding Co alone leaves
+the flat basin slightly *higher* in energy (0.1888 → 0.1941 eV/atom; §3.3), and the two
 two-element systems differ far more from each other (Fe-B vs Fe-Co, 0.045 eV/atom) than
 Fe-Co does from the three-element Fe-Co-B (0.003 eV/atom). Within these models the flat,
 disordered configuration is therefore stabilised by the presence of boron, not by the

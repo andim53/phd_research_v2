@@ -325,3 +325,52 @@ MT-3 (B lowers the flat energy in the Fe host) survives replica-level resampling
 **MT-4 (B in the Fe-Co host) is NOT statistically resolvable** at 5 vs 4 replicas (p = 0.74;
 median shift CI95 spans zero, driven by one Fe-Co-B replica whose flat minimum is 0.400).
 
+## Core-framing revision (2026-09-17) — MT-6 WITHDRAWN (CLAIMS v1 → v2)
+
+**Revised core (scientist-confirmed).** The subject is the **wetting of Fe on MgO** (the
+property that matters for MTJ stacks). Co, B and CoB are **not the subject but the parameter
+series** — a three-arm perturbation of the Fe reference. The system is a degenerate,
+island-forming, amorphous-like one that converged/conventional approaches cannot address
+directly, so we **design a biased exploration**: a global optimiser (GOFEE, built to find the
+global minimum) seeded from a **flat reference**, so both phases of interest — flat (wetting)
+and island (dewetting) — are guaranteed to be represented. What is returned is therefore **not
+a thermodynamic density of states but an exploration density** — a sampling map over the two
+phases — and because it is biased the **weights are not physically usable**. The legitimate
+evidence is the map itself plus the phase-resolved comparison: for each of the two phases, how
+do Co, B and CoB shift things relative to pure Fe? The biased search is the **instrument**, not
+a limitation, and "we seeded toward flat yet GOFEE still found the island" is a **positive
+control**, not a caveat.
+
+**Why MT-6 was withdrawn.** MT-6 ("B increases the fraction of flat-basin structures sampled",
+0.165 → 0.208; 0.214 → 0.242) is a *weight* of a biased exploration, and a cross-system
+comparison of weights additionally requires a **fixed exploration operator**. It is not fixed.
+Verified from the run scripts:
+
+| system | generators | `num_candidates` schedule |
+|---|---|---|
+| femgo (`data/femgo/main.py:55`) | HeteroStructRandomize (1.5) + RattleGenerator (2.3) | `{0:[20,0], 10:[10,10], 25:[0,20]}` |
+| febmgo (`:70`) | same two | same |
+| fecobmgo (`:78`) | same two | same |
+| **fecomgo** (`:75, 172–175`) | **three** — the two above **plus `PermutationGenerator`** (`max_number_of_swaps=n_rattle`, `rattle_strength=0.3`) | `{0:[20,0,0], 10:[10,5,5], 25:[0,10,10]}` |
+
+Phase totals are equal (20 per phase) but Fe-Co spends half its large-scale budget (10 of 20)
+on permutation in phases II–III, an operator the other three systems do not have. The **flat
+reference** also differs in kind across systems: pure Fe layer (femgo), Fe layer + B
+(`febmgo`), **randomised Fe/Co layer** via `feco_randamize_generater` (`fecomgo:125`,
+`fecobmgo:134`), plus `add_adsorbate_to_hollows` for B placement (`febmgo:125`,
+`fecobmgo:147`) and `remove_random_atoms_by_species` for composition control. So "the flat
+reference" ranges from a pure ordered layer to a configurationally random alloy layer.
+
+**Consequence:** MT-6 is not restated, it is removed, and it moves to the CLAIMS "NOT claimed"
+table with this reason. `sections/03_discussion.md` §3.2 has had its flat-fraction clause
+struck. **SI-7 retains the flat fraction legitimately** — it compares one system against itself
+under a changed method parameter (rattle strength), which is exactly what a sampling density is
+for; it is not a cross-system population claim.
+
+**Corrections applied:** `sections/01_methods.md:95` seed count 7 → 6 (Fe-B; `seed_6`'s db is
+empty). **Still open:** `sections/02_results.md:36–38,58` (approved) still reports the
+withdrawn MT-6 flat-fraction comparison and needs sign-off to edit; `sections/01_methods.md`
+§1.2 (lines 34–45) still presents the two-generator schedule as common to all four models,
+which is inaccurate for Fe-Co.
+
+

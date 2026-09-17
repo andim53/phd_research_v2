@@ -6,8 +6,9 @@ Boron consistently lowers the relative energy of the flat metal-film wetting sta
 i.e. B promotes flat-film wetting independently of the host metal, relevant to interface
 flatness in CoFeB/MgO MTJ stacks.
 
-**Claim list frozen:** `CLAIMS.md` v1 (signed off 2026-09-16). Do not add/drop claims
-without bumping to v2.
+**Claim list frozen:** `CLAIMS.md` **v2** (2026-09-17; supersedes v1 of 2026-09-16).
+v2 withdraws MT-6 (flat-basin sampling fraction — see CLAIMS.md changelog). Do not add/drop
+claims without bumping the version again.
 
 ## Target venue / format
 TBD — format-agnostic (no venue selected).
@@ -43,7 +44,7 @@ Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not 
 | B lowers flat-basin energy in Fe host | analysis/pes_structures.csv | 0.1888 → 0.1493 eV/atom | yes |
 | B lowers flat-basin energy in Fe-Co host | analysis/pes_structures.csv | 0.1941 → 0.1494 eV/atom | yes |
 | Co alone has little effect | analysis/pes_structures.csv | 0.1888 → 0.1941 eV/atom (+0.005) | yes |
-| B increases flat fraction (both hosts) | analysis/pes_structures.csv | 0.165→0.208; 0.214→0.242 | yes |
+| ~~B increases flat fraction (both hosts)~~ | — | **WITHDRAWN (MT-6, CLAIMS v2)** — biased-exploration weight, and the exploration operator is not matched across systems | — |
 | B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 | yes |
 | **[SI]** Island origin: reduced Fe–O hybridization | analysis/pdos_metrics.csv | d-band centre −0.23→+0.60 eV; O-pz 43.9→42.4 | yes |
 | **[SI]** Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
@@ -85,10 +86,30 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
       "bulk-like" comparison removed and registry wording made precise (interface atoms
       25/25 → 9/25, d-centre +0.51/+0.60 eV); §3.2 B–MgO bound restored (1 of 72);
       §3.5 unequal-seed-count limitation added. No MT/SI claim changed.
+      v3 also strikes the flat-fraction clause from §3.2 (consequence of the MT-6 withdrawal).
 - [ ] sections/04_introduction.md
 - [ ] sections/05_conclusion.md
 - [ ] sections/06_abstract.md
 - [ ] E2: port all approved sections → paper.tex
+
+## BLOCKING: sections/02_results.md (APPROVED) still contains withdrawn MT-6
+
+`sections/02_results.md:36–38` reports the flat-fraction comparison ("boron increases the
+fraction of flat-basin structures sampled … 0.165 → 0.208 … 0.214 → 0.242") and line 58
+repeats it as a summary bullet. Both are the withdrawn MT-6. They need scientist sign-off to
+remove from an approved section. Also flagged: §2.1 lines 20–23 currently use the flat-reference
+bias to *explain* the flat basin; under the revised core framing the bias is the deliberate
+instrument and "the island was found despite a flat bias" is a positive control.
+
+## OPEN: 01_methods.md §1.2 documents the exploration schedule inaccurately for Fe-Co
+
+`sections/01_methods.md:34–45` presents one two-generator schedule as common to all four
+models. `data/fecomgo/main.py:75,172–175` in fact uses a three-generator schedule
+(`num_candidates={0:[20,0,0], 10:[10,5,5], 25:[0,10,10]}` + a `PermutationGenerator`,
+`max_number_of_swaps=n_rattle`, `rattle_strength=0.3`); `femgo`, `febmgo` and `fecobmgo` use
+the two-generator schedule. Line 95's seed count was corrected 7 → 6 (2026-09-17); the
+schedule description is **not yet corrected** — it needs either a Methods revision or an
+explicit statement that Fe-Co uses an additional generator.
 
 ## Reference PDFs (papers/)
 - `papers/confusion_greer1993.pdf` — Greer, "Confusion by design," Nature 366, 303 (1993).
