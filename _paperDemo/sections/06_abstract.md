@@ -2,6 +2,7 @@
      v1 (2026-09-18): first draft, written last after all six sections were approved. Mirrors the
      frozen contribution sentence (CLAIMS v11) and the approved Results/Discussion/Conclusion; uses
      the exact p = 0.0444. No citation, no code identifier, no claim outside the frozen list.
+     **APPROVED 2026-09-18.**
 
 <!-- DRAFT v1 · section 06 of the manuscript (markdown-first, pre-LaTeX)
      Final-manuscript Abstract — the first element of the paper, drafted last as a summary of the

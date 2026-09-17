@@ -1952,3 +1952,12 @@ no code identifiers, paths or process history; no claim outside the frozen list.
 
 **Doc sync.** `paper_status.md` — drafting-table `06` row, new **B6** review item, Approvals note and
 "Next step" updated. `AGENTS.md` — Phase E gains the `06` entry. Bibliography unchanged; no orphans.
+
+## 2026-09-18 — `06_abstract.md` v1 APPROVED (B6)
+
+The scientist accepted the Abstract (v1). Head block marked **APPROVED 2026-09-18**; `paper_status.md`
+(B6 checked, drafting-table row, Approvals note, Next step) and `AGENTS.md` (Phase E) synced. **All
+six sections are now approved** — `01_methods.md` v6, `02_results.md` v6, `03_discussion.md` v5,
+`04_introduction.md` v11, `SI.md` v10, `05_conclusion.md` v2, `06_abstract.md` v1. The markdown-first
+phase is complete; the next step is the `paper.tex` port (E2). Bibliography unchanged.
+

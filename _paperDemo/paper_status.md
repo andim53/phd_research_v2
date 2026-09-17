@@ -133,11 +133,11 @@ end, so a fresh session does not re-open them.
       the MTJ-relevance paragraph. Mirrors the frozen contribution sentence and the approved
       Results/Discussion; cites `greer1993`; no new claim. **All six sections are now approved** — the
       next step is `06_abstract.md`, then the LaTeX port.
-      - [ ] **B6 · Review `06_abstract.md` v1 — DRAFTED 2026-09-18, awaiting review.** The last section.
+      - [x] **B6 · Review `06_abstract.md` v1 — APPROVED 2026-09-18.** The Abstract (v1) is approved.
       ~165 words, written as a summary of the finished argument; mirrors the frozen contribution
       sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No
-      citations, no code identifiers, no claim outside the frozen list. Once approved, all six
-      sections are approved and the `paper.tex` port (E2) can begin.
+      citations, no code identifiers, no claim outside the frozen list. **All six sections are now
+      approved** — the `paper.tex` port (E2) can begin.
 
 **C. Wording and framing**
 
@@ -298,15 +298,15 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `SI.md` | **v10** | **APPROVED 2026-09-18** (B4). v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat (seed-matching finding); v10 removed all remaining caveats from the section text at the scientist's instruction, preserved in `CLAIMS.md` paired caveats + Limitations and here. Full list of what was removed: see the note in this file and `experiment_log.md`. No number or claim changed. |
 | `04_introduction.md` | **v11** | **APPROVED 2026-09-18** (B2). v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..." (island = family of many local minima; biased exploration of the two phases; surrogate-driven because DFT is too costly); **v11 is the scientist's edit** dropping "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing is accepted by this approval (**C7**). |
 | `05_conclusion.md` | **v2** | **APPROVED 2026-09-18** (B5). v1 was the first draft (three paragraphs); v2 removed the third paragraph (scope and future work) at the scientist's instruction, so the conclusion ends on the MTJ-relevance paragraph. Final-manuscript section V (matches the Introduction's roadmap). Cites `greer1993`. No new claim. |
-| `06_abstract.md` | **v1** | **DRAFTED 2026-09-18 — awaiting review (B6).** Written last, as a summary of the finished argument. ~165 words; mirrors the frozen contribution sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations, no code identifiers, no claim outside the frozen list. Final-manuscript Abstract (first element of the paper). |
+| `06_abstract.md` | **v1** | **APPROVED 2026-09-18** (B6). Written last, as a summary of the finished argument. ~165 words; mirrors the frozen contribution sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations, no code identifiers, no claim outside the frozen list. Final-manuscript Abstract (first element of the paper). |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
-**Approvals (2026-09-18).** All six drafted sections are approved: `01_methods.md` v6 and
-`03_discussion.md` v5 approved as-is earlier the same day; `02_results.md` v6, `04_introduction.md`
-v11, `SI.md` v10 and `05_conclusion.md` v2 approved by the scientist (B2/B3/B4/B5). Each carries its
-approval in the head block of its file. Editing an approved section voids its approval and requires
-re-review (this is how the v3/v4 Methods approval was lost). `06_abstract.md` is drafted (v1) and
-awaiting review (B6) — the last section.
+**Approvals (2026-09-18).** All six sections are approved: `01_methods.md` v6 and `03_discussion.md`
+v5 approved as-is earlier the same day; `02_results.md` v6, `04_introduction.md` v11, `SI.md` v10,
+`05_conclusion.md` v2 and `06_abstract.md` v1 approved by the scientist (B2/B3/B4/B5/B6). Each carries
+its approval in the head block of its file. Editing an approved section voids its approval and
+requires re-review (this is how the v3/v4 Methods approval was lost). **The markdown-first phase is
+complete — the `paper.tex` port (E2) can begin.**
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
@@ -663,10 +663,12 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`06_abstract.md` v1 is drafted and awaiting review (item B6).** The block-and-wait gate is
-otherwise clear: `01_methods.md` v6, `03_discussion.md` v5, `02_results.md` v6, `04_introduction.md`
-v11, `SI.md` v10 and `05_conclusion.md` v2 are all approved. Once `06` is approved, **all six
-sections are approved** and the `paper.tex` port (E2) can begin.
+**`06_abstract.md` v1 is APPROVED (B6) — all six sections are approved.** The markdown-first phase
+is complete: `01_methods.md` v6, `03_discussion.md` v5, `02_results.md` v6, `04_introduction.md` v11,
+`SI.md` v10, `05_conclusion.md` v2 and `06_abstract.md` v1 are all approved. The next step is the
+**`paper.tex` port (E2)** — convert the approved sections into a single LaTeX manuscript in final
+order (Abstract, Introduction, Methods, Results, Discussion, Conclusion), place figures, and compile
+a first `paper.pdf`.
 
 **Two things still need the scientist before/around the port:**
 - **A1/A2 — the claims sign-off** is not covered by the section approvals: `CLAIMS.md`'s contribution
