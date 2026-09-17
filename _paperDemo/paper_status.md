@@ -37,6 +37,31 @@ Deliverables: `figures/method_sensitivity_{rattle,kappa,dipole}.png`,
 `analysis/method_sensitivity.csv`.
 Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not main-text.
 
+## Supplementary Material: Performance of the biased exploration (NEW, 2026-09-17)
+
+Drafted as **§S1 of `sections/SI.md`** (new file). Fe/MgO only, all 13 searches, **all**
+iterations (including the pre-relaxation ones the PES analysis discards).
+Deliverables: `figures/exploration_performance_femgo.png`, `analysis/exploration_performance.json`
+(`scripts/exploration_performance.py` v1.0.0).
+
+Key numbers: pre-relaxation (i = 1–9) descends only 12 % of the total (0.494 → 0.435 eV/atom);
+**iteration 10 (relaxation onset) is the single largest step — 49 % of the entire descent**
+(0.435 → 0.250 eV/atom; per-search median drop 0.165, range 0.084–0.233); 84 % done by i = 30,
+94 % by i = 50; best-known crosses 0.20 at i = 23, 0.10 at i = 29, 0.05 at i = 46, 0.02 at
+i = 57, 0.005 at i = 72; **the global minimum is first found at i = 77**; only 10 / 13 searches
+end within 0.05 eV/atom and 4 / 13 within 0.02 (median final best 0.040).
+
+⚠ **NOT YET IN CLAIMS.** This is a new SI claim; it needs a **CLAIMS v4** bump with an `SI-8`
+entry before it can be considered approved. Candidate wording in the claim table below.
+
+⚠ **New limitation raised by this analysis (needs the scientist's decision).** The searches are
+**still improving at iteration 100** — the best-known energy falls to the last few iterations
+and the global minimum only appears at i = 77. The per-model reference energies in the main text
+are therefore *not converged with respect to search length*, so every relative energy (MT-2,
+MT-3, MT-4, MT-5) carries a systematic uncertainty that the replica-level statistics of §2.2 do
+not capture. Options: state it as a limitation; extend the runs; or leave it implicit in the
+§1.6 non-convergence caveat.
+
 ## Claim → evidence (Phase B)
 | Claim | Evidence | Metric & value | Verified? |
 |-------|----------|----------------|-----------|
@@ -48,6 +73,7 @@ Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not 
 | ~~B increases flat fraction (both hosts)~~ | — | **WITHDRAWN (MT-6, CLAIMS v2)** — biased-exploration weight, and the exploration operator is not matched across systems | — |
 | B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 in window dE/N ≤ 0.05 eV/atom (1/72 Fe-B; 1/21 Fe-Co-B) | yes (windowed) |
 | Low-energy structures of each branch form a few recurring motifs; ΔZ continuous | analysis/ensemble_stats.json | 1–3 motifs per branch; within-set distance 0.32–0.72 × random-pair scale | yes (descriptor-limited — paired caveat in CLAIMS) |
+| **[SI] [PENDING — needs CLAIMS v4]** Biased exploration performance in finding the global minimum | analysis/exploration_performance.json | 49 % of the descent at relaxation onset (i=10); global min at i=77; 10/13 searches within 0.05 eV/atom | analysis done, claim NOT yet approved |
 | **[SI]** Island origin: reduced Fe–O hybridization | analysis/pdos_metrics.csv | d-band centre −0.23→+0.60 eV; O-pz 43.9→42.4 | yes |
 | **[SI]** Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
 | **[SI]** Island origin is strain relief, not interfacial re-hybridisation | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23) | yes — refines the picture |

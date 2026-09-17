@@ -475,4 +475,56 @@ The scientist's second round of edits to `sections/01_methods.md` (committed as 
 `02_results.md` (reconstructed v2) awaits re-approval and `03_discussion.md` (v3) awaits its
 first review.
 
+## Supplementary Material: biased-exploration performance (2026-09-17)
+
+New SI section drafted as **§S1 of `sections/SI.md`** (new file), using **Fe/MgO only** (13
+searches) and **all iterations 1–100** — unlike the PES analysis, which keeps only i ≥ 10.
+Script: `scripts/exploration_performance.py` v1.0.0. Outputs:
+`analysis/exploration_performance.json` (self-describing), and
+`figures/exploration_performance_femgo.png` — **[SI]** 3-panel figure: (a) best-so-far ΔE/N per
+search + median, (b) lowest energy found per iteration and the best-known curve with threshold
+crossings, (c) fraction of searches within 0.05 / 0.02 eV/atom of the global minimum.
+
+**Measured behaviour (13 searches, 1297 candidates, global min = −436.909 eV at 75 atoms):**
+
+| stage | best-known ΔE/N | share of total descent |
+|---|---|---|
+| i = 1 | 0.494 eV/atom | — |
+| i = 9 (last pre-relaxation) | 0.435 | 12 % |
+| **i = 10 (relaxation onset)** | **0.250** | **49 %** |
+| i = 20 | 0.219 | 56 % |
+| i = 30 | 0.078 | 84 % |
+| i = 50 | 0.030 | 94 % |
+| i = 77 (global minimum first found) | 0.000 | 100 % |
+
+- **Pre-relaxation iterations barely descend**: 1–9 gives only 12 % of the descent, and most
+  searches do not improve at all between i = 2 and i = 9 — unrelaxed placements cannot be ranked.
+- **Relaxation onset is the single largest step**: 0.435 → 0.250 eV/atom in one iteration, about
+  half the entire descent. Per-search drop across the onset: median 0.165, range 0.084–0.233.
+- **Descent is front-loaded but the minimum arrives late**: 84 % done by i = 30, 94 % by i = 50;
+  threshold crossings 0.20 @ i = 23, 0.10 @ i = 29, 0.05 @ i = 46, 0.02 @ i = 57, 0.005 @ i = 72;
+  **global minimum at i = 77**.
+- **Searches disagree about the answer**: only 10 / 13 end within 0.05 eV/atom and 4 / 13 within
+  0.02; median final best 0.040 eV/atom (range 0.000–0.086); one search supplies the global
+  minimum, a second comes within 0.001 eV/atom of it.
+
+⚠ **The stated intent does not match the data.** The request was to show "how it finds the
+lowest energy at very early iterations". For Fe/MgO that is **not** what happens: the global
+minimum is found at iteration 77, and the pre-relaxation iterations produce no improvement at
+all. What *is* true, and is the defensible version of the statement, is that (a) the largest
+single energy drop occurs at the *earliest relaxed* iteration (i = 10) and (b) roughly half the
+total descent is complete by then. The SI text is written to the data, not to the premise.
+
+⚠ **New SI claim is NOT yet in CLAIMS** — needs a **CLAIMS v4** bump with an `SI-8` entry.
+Candidate wording is in the `paper_status.md` claim table marked `[PENDING — needs CLAIMS v4]`.
+
+⚠ **Limitation raised (needs a decision):** the searches are still improving at i = 100 (the
+best-known energy falls to the last few iterations), so the per-model reference energies are not
+converged with respect to search length. Every relative energy in the main text (MT-2 … MT-5)
+therefore carries a systematic uncertainty that the replica-level statistics do not capture.
+
+**Not visually inspected:** no image-viewing tool was available in the session that produced it,
+so the figure was validated numerically (monotonicity of all running-best curves, pooled curve
+reaching 0 at i = 77, plotted ranges vs axis limits) rather than by eye. It needs a human look.
+
 
