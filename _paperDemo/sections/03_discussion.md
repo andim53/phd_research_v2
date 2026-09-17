@@ -1,16 +1,20 @@
 # 03 — Discussion
-     v4 (2026-09-17): §3.1 mechanism rewritten (no lattice-strain relief; strain sits on the
-     substrate), §3.3 cobalt p-value, §3.5 three model-bound limitations. Awaiting review.
+     v5 (2026-09-17): re-scoped to the Fe host (CLAIMS v9) — the cobalt section is deleted (no
+     sentence about the Co host anywhere), the host-independence argument and the element-count
+     data bound are gone, §3.5 renumbered to §3.4 and its search-count paragraph rewritten for
+     the exact test. TO BE REVIEWED — no prior approval survives.
 
-<!-- DRAFT v4 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v8. All \cite{} keys resolve against references.bib; the three
-     MTJ placeholders were replaced by yuasa2004 (verified) when the CoFeB-specific
-     assertions were dropped. -->
+<!-- DRAFT v5 · section 03 of the manuscript (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). All \cite{} keys resolve against
+     references.bib; the three MTJ placeholders were replaced by yuasa2004 (verified) when the
+     CoFeB-specific assertions were dropped.
+     v4 note: §3.1 mechanism rewritten (no lattice-strain relief; strain sits on the substrate). -->
 
 ## 3.1 Why the island is the ground state
 
-The search finds an island ground state in every model, with the flat film sitting
-0.15–0.19 eV/atom higher. The electronic-structure analysis (Supplementary Material)
+The search finds an island ground state in both models, with the flat film sitting
+0.19 eV/atom higher for Fe/MgO and 0.15 eV/atom higher for Fe-B/MgO. The
+electronic-structure analysis (Supplementary Material)
 indicates why. In the flat monolayer every metal atom is registry-locked directly atop an
 oxygen of the MgO surface — the registry of the reference construction, and the one determined
 experimentally for the first monolayer of Fe on MgO(001) by LEED I–V analysis \cite{urano1988}
@@ -35,12 +39,14 @@ the same one-monolayer coverage \cite{fahsold2000,torelli2009,reitinger2007}.
 
 ## 3.2 Why boron stabilises the flat film
 
-Boron lowers the flat-state energy by ~0.04 eV/atom in both hosts, bringing the flat
-configuration closer to the ground state. Two observations frame the mechanism. First,
-boron does **not** bond to the MgO interface — it remains inside the metal film (a single
-B–O contact in one of 72 windowed Fe-B structures) — so its effect is not interfacial.
-Second, the effect is host-independent (Fe and Fe-Co respond almost identically), pointing
-to an intrinsic, film-internal role.
+Boron lowers the flat-state energy by 0.040 eV/atom, bringing the flat configuration closer to
+the ground state. Two observations frame the mechanism. First, boron does **not** bond to the MgO
+interface — it remains inside the metal film (a single B–O contact in one of 72 windowed Fe-B
+structures) — so its effect is not interfacial. Second, the shift is not carried by one favourable
+search: the Fe-B model's six per-search flat minima lie between 0.1493 and 0.2481 eV/atom, five of
+them below the Fe host's median of 0.2185 eV/atom, and 94 % of resampled replicates agree in sign
+(§2.2). Both observations point to an intrinsic, film-internal role for boron rather than an
+interfacial or statistical one.
 
 **Confusion principle and amorphous formation.** The flat film can be read as the
 disordered, amorphous-like configuration and the island as the ordered, crystalline-like
@@ -49,34 +55,22 @@ one. Under this reading, the stabilisation of the flat state by added elements f
 an alloy, the harder it is for the alloy to select a viable crystal structure, and the
 greater the tendency toward glass (amorphous) formation.
 
-Our results are partly consistent with this. Adding boron lowers the flat-basin energy in
-both hosts (Fe 0.1888 → Fe-B 0.1493 eV/atom; Fe-Co 0.1941 → Fe-Co-B 0.1494 eV/atom). They do
-not, however, support compositional complexity *per se* as the driver. Adding Co alone leaves
-the flat basin slightly *higher* in energy (0.1888 → 0.1941 eV/atom; §3.3), and the two
-two-element systems differ far more from each other (Fe-B vs Fe-Co, 0.045 eV/atom) than
-Fe-Co does from the three-element Fe-Co-B (0.003 eV/atom). Within these models the flat,
-disordered configuration is therefore stabilised by the presence of boron, not by the
-number of elements — consistent with the confusion principle acting through the added
-metalloid, but not with a simple complexity-counting reading of it.
+Our results are partly consistent with this. Adding boron lowers the flat-basin energy
+(0.1888 → 0.1493 eV/atom), i.e. the added element stabilises the disordered configuration relative
+to the ordered one, in the direction the principle predicts. The present models test this for a
+single added metalloid and cannot decide between the competing readings of the principle — whether
+it acts through the *presence of an added species* by a film-internal mechanism, or through the
+*number* of species, which would require the same host with two different additions to separate. We
+therefore read our result as consistent with the confusion principle acting through the added
+metalloid and leave the element-count reading untested here (see §3.4).
 
-We note, however, that even the boron-containing models retain the island as their ground
-state — the confusion principle stabilises the flat state but does not, in these small
-model systems, fully suppress the ordered configuration. The precise origin of boron's
-effect — whether it lowers the flat basin's energy or raises the island's — is not resolved
-by the present data and is a natural target for the re-relaxation and further analysis.
+We note, however, that the boron-containing film retains the island as its ground state — the
+confusion principle stabilises the flat state but does not, in this small model system, fully
+suppress the ordered configuration. The precise origin of boron's effect — whether it lowers the
+flat basin's energy or raises the island's — is not resolved by the present data and is a natural
+target for the re-relaxation and further analysis.
 
-## 3.3 Cobalt plays a minor role
-
-Cobalt alone barely changes the flat-state energy (+0.005 eV/atom without boron, ~0 with
-boron). The difference is smaller than the search-level test can resolve (p = 0.245 across
-13 vs 4 completed searches), so this is a limit on the size of any cobalt effect rather than a
-demonstration that none exists. The practical relevance is that the metal film in an MgO-based
-magnetic tunnel junction
-must be a flat, coherently matched layer for the tunnelling magnetoresistance to reach its high
-values \cite{yuasa2004}: within the present model, the wetting behaviour is set by boron, not by
-the Fe/Co constitution of the host.
-
-## 3.4 Implications for MTJ stacks
+## 3.3 Implications for MTJ stacks
 
 The performance of MgO-based magnetic tunnel junctions rests on the structural quality of the
 metal/oxide interface. The giant tunnel magnetoresistance of single-crystal Fe/MgO/Fe junctions
@@ -85,20 +79,30 @@ residual mismatch accommodated by interfacial dislocations and the growth condit
 minimise them \cite{yuasa2004}. The present results connect to this in two ways. First, they
 show that a perfectly flat, registry-locked metal layer maximises Fe–O bonding at the expense of
 metal coordination and is therefore energetically penalised relative to a clustered film — a
-consideration for interface engineering in the CoFeB/MgO stack used in devices. Second, they show
-that boron acts to stabilise the flat configuration without bonding to the interface, consistent
-with the picture of boron as a film-internal agent that promotes a flat, well-wetting interface.
+consideration for interface engineering in MgO-based tunnel junctions, whose barrier must stay
+flat and coherently matched for the tunnelling magnetoresistance to reach its high values
+\cite{yuasa2004}. Second, they show that boron acts to stabilise the flat configuration without
+bonding to the interface, consistent with the picture of boron as a film-internal agent that
+promotes a flat, well-wetting interface.
 These are trend-level, model-system conclusions; quantitative transfer to a device stack would
 require the converged relaxations and a fuller treatment of the interface.
 
-## 3.5 Limitations
+## 3.4 Limitations
+
+One scope bound follows from the design rather than from the methods. The paper compares a single
+host with and without one added element, boron. Nothing here separates the effect of *boron* from
+the effect of *an added element as such*; that would need a second chemically different addition in
+the same host, which is not analysed (the element-count reading of the confusion principle is
+therefore untested — §3.2). What the design does exclude is a trivial explanation from the
+construction: the two models share the lattice constant, substrate, reference-layer geometry and
+candidate-generation schedule, and differ only by the boron (§1.6).
 
 The results are qualitative/trend-level: the structures are not DFT-converged minima
 (residual forces ~1–2 eV/Å), the models are single-layer slabs at Γ-point sampling, and
-the flat/island split uses a chosen ΔZ threshold. The four systems also have unequal seed
-counts (13 / 6 / 4 / 3 completed searches for Fe / Fe-B / Fe-Co / Fe-Co-B), so their sampling
-fractions are
-compared only as trends, not as like-for-like populations. The flat state is described as a
+the flat/island split uses a chosen ΔZ threshold. The two models also have unequal seed
+counts (13 completed searches for Fe/MgO against 6 for Fe-B/MgO) and their atom counts differ
+(75 and 78), so sampling fractions are compared only as trends, not as like-for-like populations.
+The flat state is described as a
 higher-energy configuration, not a proven metastable state. A full re-relaxation of
 representative structures is necessary to place these conclusions on converged minima.
 
@@ -110,15 +114,18 @@ relieves it through interfacial dislocations \cite{yuasa2004}. The film in this 
 unstrained, and this model does not represent the strained-film situation. Second, both phases are
 built on a body-centred-cubic Fe lattice, while the experimentally reported structure of ultrathin
 Fe on MgO(001) is body-centred tetragonal below about 10 Å \cite{urano1988}; the island branch
-(ΔZ ≈ 1–6 Å) lies in that regime (§1.6). The flat–island comparison is therefore a trend obtained
+(ΔZ ≈ 1–5.6 Å) lies in that regime (§1.6). The flat–island comparison is therefore a trend obtained
 within one fixed lattice model, and extending it to thicker, experimentally strained films would
 require a different construction.
 
-**The search-level statistics are limited by how few searches completed.** The four models
-contribute 13, 6, 4 and 3 completed searches, and the comparison between the two Co-containing
-models pools just 4 and 3 of them. A permutation test over that pair admits only 35 distinct
-partitions of the pooled searches, so it cannot return p < 0.029 however the data fall; the boron
-effect in the Fe-Co host (p = 0.092, median shift 0.048 eV/atom) is therefore **under-powered
-rather than absent**, and settling it requires further completed searches of that model, not
-further analysis of the existing ones. The two Co-containing models carry the weakest statistics
-in this paper, and statements resting on them are flagged as trends throughout.
+**The search-level statistic rests on 19 searches, and it is asymmetric.** The comparison pools
+13 completed searches of the Fe/MgO model against 6 of the Fe-B/MgO model. The permutation test
+enumerates all 27 132 partitions of that pool, so its resolution floor is p = 3.7 × 10⁻⁵ and the
+reported p = 0.0444 is not limited by the number of searches; it would, however, tighten with more
+completed Fe-B/MgO searches, since the smaller group sets the width of the null. Two further
+bounds follow from the same asymmetry. The boron-free interface statement (§2.2) is measured on the
+72 Fe-B/MgO structures inside the low-energy window, which come from **four** of the six searches —
+so its effective number of independent observations is closer to four than to 72 — and the Fe-B/MgO
+motif counts (§2.1) rest on two (flat) and three (island) searches against five and four for
+Fe/MgO. Statements resting on those sets are correspondingly weaker evidence than the flat-basin
+energies of Table 4, which use every search of both models.

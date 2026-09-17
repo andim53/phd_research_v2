@@ -1,28 +1,31 @@
 # 01 — Methods
-     v4 (2026-09-17): §1.2 gained the completed-search rule (13 / 6 / 4 / 3) and the list of
-     excluded runs. TO BE RE-APPROVED — the v3 approval is voided by this edit.
+     v5 (2026-09-17): re-scoped to the Fe host (CLAIMS v9) — the two Co-containing models, their
+     generator schedule (former Table 3) and their excluded runs are out of the paper. Float
+     renumbering follows: the Results tables become Tables 3 and 4. TO BE RE-APPROVED — no prior
+     approval survives this edit.
 
-<!-- DRAFT v4 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v8. Citations verified and in references.bib
+<!-- DRAFT v5 · section 01 of the manuscript (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). Citations verified and in references.bib
      (Phase D done for this section). -->
-<!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
+<!-- v4 (2026-09-17): §1.2 gained the completed-search rule and the list of excluded runs (then
+     13 / 6 / 4 / 3).
+     v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co used a third,
      species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
-     spelled out. -->
+     spelled out. The per-model schedule and the Fe-Co generator are **archived** as of v5. -->
 
 ## 1.1 Interface models
 
 We study the metal-on-oxide interface relevant to magnetic tunnel junctions: a thin
-metal film deposited on the MgO(001) surface. Four compositions were considered, differing
-in the film constitution (Table 1).
+metal film deposited on the MgO(001) surface. Two compositions were considered, differing only in
+whether boron is present in the film (Table 1) — the pair that isolates the effect of the added
+metalloid in a single host.
 
-**Table 1.** The four interface models: film constitution and total atom count.
+**Table 1.** The two interface models: film constitution and total atom count.
 
 | Model | Composition | Film species | N atoms |
 |-------|-------------|--------------|---------|
 | Fe/MgO | Fe₂₅Mg₂₅O₂₅ | Fe | 75 |
 | Fe-B/MgO | B₃Fe₂₅Mg₂₅O₂₅ | Fe + B | 78 |
-| Fe-Co/MgO | Co₇Fe₁₈Mg₂₅O₂₅ | Fe + Co | 75 |
-| Fe-Co-B/MgO | B₂Co₇Fe₁₈Mg₂₅O₂₅ | Fe + Co + B | 77 |
 
 The substrate is a single MgO(001) layer and the film a single
 metal layer, stacked along z with 20 Å of vacuum and periodic boundaries in-plane. **The
@@ -45,16 +48,14 @@ lower-confidence-bound (LCB) acquisition function (κ = 2). Each search ran 100 
 
 **Three-phase biased exploration.** Candidate generation is not uniform over the run but
 proceeds in three phases selected by the iteration counter *i*, mixing generators of different
-perturbation scale. All four models combine a **small-scale** heterostructure-aware randomiser
+perturbation scale. Both models combine a **small-scale** heterostructure-aware randomiser
 (rattle amplitude 1.5, all film atoms) with a **large-scale** rattle generator (half the film
-atoms, rattle amplitude 2.3). The **Fe-Co model uses a third generator in addition**: a
-**species-permutation** generator that swaps the Fe and Co species (swap count equal to the
-number of film atoms, rattle strength 0.3), and it correspondingly splits its large-scale
-budget between rattling and permutation. The schedules are given in Tables 2 and 3.
+atoms, rattle amplitude 2.3); the schedule is identical for the two models and is given in
+Table 2.
 
-**Table 2.** Candidate-generation schedule for Fe/MgO, Fe-B/MgO and Fe-Co-B/MgO: two generators,
-a small-scale heterostructure-aware randomiser and a large-scale rattle generator. The number
-of candidates generated per phase is N.
+**Table 2.** Candidate-generation schedule, common to both models: a small-scale
+heterostructure-aware randomiser and a large-scale rattle generator. The number of candidates
+generated per phase is N.
 
 | Phase | Iterations | Small-scale | Large-scale | Total N |
 |-------|-----------|-------------|-------------|---------|
@@ -62,18 +63,8 @@ of candidates generated per phase is N.
 | **II** | 10 ≤ i < 25 | 10 | 10 | 20 |
 | **III** | 25 ≤ i | 0 | 20 | 20 |
 
-**Table 3.** Candidate-generation schedule for Fe-Co/MgO: as Table 2, with an additional
-species-permutation generator, which splits the large-scale budget of phases II and III.
-
-| Phase | Iterations | Small-scale | Large-scale | Permutation | Total N |
-|-------|-----------|-------------|-------------|-------------|---------|
-| **I** | 0 ≤ i < 10 | 20 | 0 | 0 | 20 |
-| **II** | 10 ≤ i < 25 | 10 | 5 | 5 | 20 |
-| **III** | 25 ≤ i | 0 | 10 | 10 | 20 |
-
-The per-phase candidate total is 20 in every model; what differs between models is the
-generator mix, not the number of candidates generated. The resulting workflow is summarised in
-Fig. 1.
+The per-phase candidate total is 20; the two models differ only in whether the film contains
+boron, not in how candidates are generated. The resulting workflow is summarised in Fig. 1.
 
 ```mermaid
 flowchart TD
@@ -86,7 +77,7 @@ flowchart TD
         BEtitle["Biased Exploration"]
         P1["Phase I<br/>Generate N candidates<br/>(small-scale)"]
         P2["Phase II<br/>Generate N candidates<br/>(small-scale + large-scale)"]
-        P3["Phase III<br/>Generate N candidates<br/>(large-scale;<br/>+ permutation in Fe-Co)"]
+        P3["Phase III<br/>Generate N candidates<br/>(large-scale)"]
     end
 
     class BEtitle titleLabel
@@ -115,38 +106,37 @@ flowchart TD
 ```
 
 **Figure 1.** The biased-exploration loop. Each iteration selects a phase from the counter *i*,
-generates N candidates with that phase's generator mix (Tables 2 and 3), optimises them against
+generates N candidates with that phase's generator mix (Table 2), optimises them against
 the GPR surrogate, ranks them with the LCB acquisition, evaluates the selected candidates with
 DFT and stores them in the database; the counter then advances and the phase is re-selected.
 
 The early phases favour the small-scale (structure-aware) generator, which preserves the
 layer-resolved character of the flat reference basin, while the later phases shift to the
-large-scale rattle generator — and, in the Fe-Co model, to the species-permutation generator —
-for broader exploration.
+large-scale rattle generator for broader exploration.
 
 **Bias.** The exploration is deliberately **biased**: the search is seeded from a **flat**
 metal layer — the reference film geometry, a single-monolayer-thick film rather than a random
 three-dimensional distribution of metal atoms — so the sampled database is a mixture of the
 flat basin and any lower-lying basin the search finds. The composition of the reference layer
-follows the target stoichiometry (§1.1): a pure Fe layer for Fe/MgO; an Fe layer with B added
-above the surface for Fe-B/MgO; and a Fe/Co layer with the cation arrangement randomised, plus
-added B, for the two Co-containing models. The films are therefore single-layer in all four
-models, but the lateral cation ordering of the Co-containing references is disordered as
-placed. Each model was run from multiple independent random seeds, and each seed constitutes one
-independent search.
+follows the target stoichiometry (§1.1): a pure Fe layer for Fe/MgO, and the same Fe layer with B
+added above the surface for Fe-B/MgO. The films are single-layer in both models, and the two
+reference layers differ only by the boron. Each model was run from multiple independent random
+seeds, and each seed constitutes one independent search.
 
 **Only completed searches are used.** Every number in this paper comes from searches that ran the
-full 100-iteration budget: **13 / 6 / 4 / 3** completed searches for Fe / Fe-B / Fe-Co / Fe-Co-B,
-26 in total. Four replica directories on disk are *not* used, and they are listed here rather than
-dropped silently — `femgo/stop_16` (stopped at iteration 37), `febmgo/seed_6` (database never
-populated), `fecomgo/seed_4` (stopped at iteration 10) and `fecobmgo/seed_3` (stopped at
-iteration 73). A stopped search has had less search time than a completed one, so its best energy
-is systematically worse; and because the unfinished runs are not distributed evenly across the
-models, including them would bias every comparison drawn between the models. The selection is
-applied by a single shared rule (`run_selection.py`) in every analysis script used here, and it is
-determined from the **iteration number recorded in each database, not from the directory name** —
-`fecomgo/seed_4` and `fecobmgo/seed_3` are ordinary-looking seed directories that simply stopped
-early.
+full 100-iteration budget: **13 completed searches for Fe/MgO and 6 for Fe-B/MgO**, 19 in total.
+Two replica directories on disk are *not* used, and they are listed here rather than dropped
+silently — `femgo/stop_16` (stopped at iteration 37) and `febmgo/seed_6` (database never
+populated). A stopped search has had less search time than a completed one, so its best energy is
+systematically worse; and because the unfinished runs are not distributed evenly across the two
+models, including them would bias the comparison between them — which is also what the
+method-parameter study in the Supplementary Material showed, where stopped `seed_*` runs
+inflated the mean of one setting and depressed another (§S3). The selection is applied by a
+single shared rule (`run_selection.py`) in every analysis script used here, and it is determined
+from the **iteration number recorded in each database, not from the directory name**: a
+`seed_*` directory can stop early just as a `stop_*` directory can, and a run whose database was
+never populated is treated the same way. In the two models used here the excluded runs happen to
+be visible in their names and their emptiness; the rule does not rely on that.
 
 Candidates were relaxed by the surrogate model for up to 100 steps (starting from
 iteration 10) and evaluated with the DFT calculator below. **Only structures from
@@ -179,14 +169,14 @@ values.
 Two quantities describe each sampled structure:
 
 **Film flatness ΔZ** — the vertical span of the metal film,
-ΔZ = z(metal)_max − z(metal)_min, taken over all film atoms (Fe and Co). ΔZ ≈ 0 is a flat,
-wetting film; large ΔZ is a 3D island (dewetted). A threshold of ΔZ ≤ 1.0 Å separates the
-"flat" and "island" basins.
+ΔZ = z(metal)_max − z(metal)_min, taken over the film's **metal** atoms (Fe; boron is a
+metalloid and is not part of the flatness metric). ΔZ ≈ 0 is a flat, wetting film; large ΔZ is a
+3D island (dewetted). A threshold of ΔZ ≤ 1.0 Å separates the "flat" and "island" basins.
 
 **Relative energy dE/N** — the per-atom energy above the system's global minimum,
 dE/N = (E − E_min)/N, where E_min is the lowest energy found for that composition and N
-the atom count. By construction the global minimum is 0 eV/atom; per-atom normalisation
-makes the four models directly comparable despite their differing atom counts.
+the atom count. By construction the global minimum is 0 eV/atom; per-atom normalisation makes the
+two models directly comparable despite their differing atom counts (75 and 78 atoms).
 
 For each model, the **flat-basin ground state** (lowest dE/N among ΔZ ≤ 1.0 Å structures)
 was compared against the overall minimum, isolating the energy penalty of the flat
@@ -198,7 +188,8 @@ Because the search relies on a biased-exploration scheme, three method parameter
 varied on the Fe/MgO model to test robustness (Supplementary Material): the rattle
 strength, the LCB parameter κ, and the inclusion of a dipole correction. The principal
 conclusion was shown to be insensitive to κ and to the dipole correction, and to degrade
-only when the rattle strength was reduced.
+only when the rattle strength was reduced. This is the same model, method and reference layer as
+the Fe/MgO results of §2, so the study bounds the method used for the two models reported here.
 
 ## 1.6 Scope and limitations
 
@@ -223,4 +214,10 @@ inverse of the experimental stack**. The simulation cell takes the Fe lattice co
 **substrate** is compressed to match it, so the Fe film is unstrained in-plane, whereas in a real
 junction a thin Fe film on bulk MgO absorbs the mismatch as in-plane strain and relieves it
 through interfacial dislocations. This model therefore does not represent the strained-film
-situation (see §3.5).
+situation (see §3.4). The convention is the same for both models reported here, so it does not
+enter the Fe/MgO-vs-Fe-B/MgO comparison at all.
+
+Finally, the two models differ *only* by the added boron: both are built on the same lattice
+constant, the same substrate, the same reference-layer geometry and the same candidate-generation
+schedule. What the comparison cannot separate is boron from *any* added element — a second,
+chemically different film composition would be needed for that, and none is analysed here.

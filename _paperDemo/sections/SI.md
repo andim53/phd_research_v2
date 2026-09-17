@@ -1,9 +1,13 @@
 # Supplementary Material
+     v4 (2026-09-17): scope note only — the paper is Fe/MgO + Fe-B/MgO (CLAIMS v9). No SI claim,
+     number or figure changes; §S1 and §S3 are Fe/MgO-only by construction and §S2 is the flat-vs-
+     island PDOS of Fe/MgO. Awaiting review (v3's content is unchanged).
+
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
-     S3 numbers purged to completed searches only. Awaiting review.
+     S3 numbers purged to completed searches only.
 
 <!-- DRAFT v3 · supplementary document (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v8. Planned structure:
+     Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [documented in experiment_log.md]
        S3  Method-parameter sensitivity (rattle / kappa / dipole) [documented in experiment_log.md]
@@ -159,15 +163,16 @@ its atoms that remain in contact while restoring metal cohesion for the rest. Th
 mechanism stated in §3.1 as **reduced forced interfacial coupling plus restored metal cohesion**.
 It is explicitly **not** a lattice-strain effect: the in-plane mismatch of this interface is
 carried by the substrate, which is held fixed, and the metal film sits at its own equilibrium
-lattice constant (§1.1, §3.5).
+lattice constant (§1.1, §3.4).
 
 **Caveats.** These are single-point electronic structures on surrogate-relaxed, non-converged
 geometries (residual forces ~1–2 eV/Å), and a DOS carries no total energy — the energy ordering
 between the two configurations comes from the search energies, not from these curves, and a
 quantitative claim would require re-relaxed geometries. The d-band moments depend on the
-[−5, +3] eV window, which is a convention. The analysis is for Fe/MgO only; the other three models
-were not recomputed. `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` come from the
-superseded bottom-8/top-8 split and should not be used; Table S2 supersedes them.
+[−5, +3] eV window, which is a convention. The analysis is of the Fe/MgO flat and island
+structures, which is the host the whole supplementary study covers; no other film composition was
+recomputed. `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` come from the superseded
+bottom-8/top-8 split and should not be used; Table S2 supersedes them.
 
 ## S3 Method-parameter sensitivity of the biased exploration
 
