@@ -78,7 +78,10 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
   (MTJ context) — fetch before the LaTeX port.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [x] sections/01_methods.md  (APPROVED 2026-09-16)
+- [~] sections/01_methods.md  (APPROVED 2026-09-16; REVISED v3 2026-09-17 — needs re-approval)
+      v3: §1.2 exploration schedule stated per model (Fe-Co uses a third, species-permutation
+      generator); mermaid made generator-count-agnostic; "Bias" paragraph states the
+      reference-layer composition per model; seed count 7 → 6. No claim changed.
 - [x] sections/02_results.md  (APPROVED 2026-09-16)
 - [~] sections/03_discussion.md  (REVISED v3 2026-09-17 — awaiting scientist review)
       v3 changes: §3.2 confusion-principle claim restricted to the B addition (Co alone
@@ -101,15 +104,17 @@ remove from an approved section. Also flagged: §2.1 lines 20–23 currently use
 bias to *explain* the flat basin; under the revised core framing the bias is the deliberate
 instrument and "the island was found despite a flat bias" is a positive control.
 
-## OPEN: 01_methods.md §1.2 documents the exploration schedule inaccurately for Fe-Co
+## RESOLVED: 01_methods.md §1.2 now states the exploration schedule per model
 
-`sections/01_methods.md:34–45` presents one two-generator schedule as common to all four
-models. `data/fecomgo/main.py:75,172–175` in fact uses a three-generator schedule
-(`num_candidates={0:[20,0,0], 10:[10,5,5], 25:[0,10,10]}` + a `PermutationGenerator`,
-`max_number_of_swaps=n_rattle`, `rattle_strength=0.3`); `femgo`, `febmgo` and `fecobmgo` use
-the two-generator schedule. Line 95's seed count was corrected 7 → 6 (2026-09-17); the
-schedule description is **not yet corrected** — it needs either a Methods revision or an
-explicit statement that Fe-Co uses an additional generator.
+`sections/01_methods.md` §1.2 revised (2026-09-17, v3): the two-generator schedule is given
+for Fe/MgO, Fe-B/MgO and Fe-Co-B/MgO, and a separate three-generator schedule for Fe-Co/MgO
+(small-scale + large-scale + species-permutation, `num_candidates={0:[20,0,0], 10:[10,5,5],
+25:[0,10,10]}`; `data/fecomgo/main.py:75,172–175`). The mermaid phase diagram was made
+generator-count-agnostic and the "Bias" paragraph now states the reference-layer composition
+per model (pure Fe / Fe+B / randomised Fe–Co layer ± B). Seed count corrected 7 → 6.
+**Note:** the per-model generator mix is documented for completeness; it is *not* currently
+listed as a limitation (the scientist elected not to add it there). It remains the reason
+MT-6's cross-system density comparison was withdrawn.
 
 ## Reference PDFs (papers/)
 - `papers/confusion_greer1993.pdf` — Greer, "Confusion by design," Nature 366, 303 (1993).

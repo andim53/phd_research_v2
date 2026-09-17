@@ -1,8 +1,11 @@
 # 01 — Methods
 
 <!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v1 (signed off). Citations verified and in references.bib
+     Grounded in CLAIMS.md v2. Citations verified and in references.bib
      (Phase D done for this section). -->
+<!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
+     species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
+     spelled out. -->
 
 ## 1.1 Interface models
 
@@ -32,16 +35,32 @@ fingerprint descriptor \cite{oganov2011} and a repulsive prior, coupled to a
 lower-confidence-bound (LCB) acquisition function (κ = 2). Each search ran 100 iterations.
 
 **Three-phase biased exploration.** Candidate generation is not uniform over the run but
-proceeds in three phases selected by the iteration counter *i*, mixing two generators of
-different perturbation scale: a **small-scale** generator (heterostructure-aware
-randomiser, rattle amplitude 1.5) and a **large-scale** generator (rattle generator,
-amplitude 2.3). The schedule is:
+proceeds in three phases selected by the iteration counter *i*, mixing generators of different
+perturbation scale. All four models combine a **small-scale** heterostructure-aware randomiser
+(rattle amplitude 1.5, all film atoms) with a **large-scale** rattle generator (half the film
+atoms, rattle amplitude 2.3). The **Fe-Co model uses a third generator in addition**: a
+**species-permutation** generator that swaps the Fe and Co species (swap count equal to the
+number of film atoms, rattle strength 0.3), and it correspondingly splits its large-scale
+budget between rattling and permutation. The schedules are therefore:
+
+*Fe/MgO, Fe-B/MgO and Fe-Co-B/MgO* — two generators:
 
 | Phase | Iterations | Small-scale | Large-scale | Total N |
 |-------|-----------|-------------|-------------|---------|
 | **I** | 0 ≤ i < 10 | 20 | 0 | 20 |
 | **II** | 10 ≤ i < 25 | 10 | 10 | 20 |
 | **III** | 25 ≤ i | 0 | 20 | 20 |
+
+*Fe-Co/MgO* — three generators:
+
+| Phase | Iterations | Small-scale | Large-scale | Permutation | Total N |
+|-------|-----------|-------------|-------------|-------------|---------|
+| **I** | 0 ≤ i < 10 | 20 | 0 | 0 | 20 |
+| **II** | 10 ≤ i < 25 | 10 | 5 | 5 | 20 |
+| **III** | 25 ≤ i | 0 | 10 | 10 | 20 |
+
+The per-phase candidate total is 20 in every model; what differs between models is the
+generator mix, not the number of candidates generated.
 
 ```mermaid
 flowchart TD
@@ -52,9 +71,9 @@ flowchart TD
 
     subgraph BE [" "]
         BEtitle["Biased Exploration"]
-        P1["Phase I<br/>Generate N candidates<br/>(small-scale generator: N = 20)"]
-        P2["Phase II<br/>Generate N candidates<br/>(small-scale generator: N = 10,<br/>large-scale generator: N = 10)"]
-        P3["Phase III<br/>Generate N candidates<br/>(large-scale generator: N = 20)"]
+        P1["Phase I<br/>Generate N candidates<br/>(small-scale)"]
+        P2["Phase II<br/>Generate N candidates<br/>(small-scale + large-scale)"]
+        P3["Phase III<br/>Generate N candidates<br/>(large-scale;<br/>+ permutation in Fe-Co)"]
     end
 
     class BEtitle titleLabel
@@ -85,13 +104,20 @@ flowchart TD
 Each phase generates N candidates, which are optimised against the GPR surrogate, ranked
 by the LCB acquisition, and the M selected candidates are evaluated with DFT and stored in
 the database; the iteration counter advances and the phase is re-selected. The early phases
-favour the small-scale (structure-aware) generator to explore the flat reference basin,
-while the later phase shifts to the large-scale rattle generator for broader exploration.
+favour the small-scale (structure-aware) generator, which preserves the layer-resolved
+character of the flat reference basin, while the later phases shift to the large-scale rattle
+generator — and, in the Fe-Co model, to the species-permutation generator — for broader
+exploration.
 
 **Bias.** The exploration is deliberately **biased**: the search is seeded from a **flat**
-metal layer (the reference film geometry) rather than a random configuration, so the sampled
-database is a mixture of the flat (registry-locked) basin and any lower-lying basin the
-search finds. Each model was run from multiple independent random seeds
+metal layer — the reference film geometry, a single-monolayer-thick film rather than a random
+three-dimensional distribution of metal atoms — so the sampled database is a mixture of the
+flat basin and any lower-lying basin the search finds. The composition of the reference layer
+follows the target stoichiometry (§1.1): a pure Fe layer for Fe/MgO; an Fe layer with B added
+above the surface for Fe-B/MgO; and a Fe/Co layer with the cation arrangement randomised, plus
+added B, for the two Co-containing models. The films are therefore single-layer in all four
+models, but the lateral cation ordering of the Co-containing references is disordered as
+placed. Each model was run from multiple independent random seeds
 (13 / 6 / 5 / 4 for the four models); each seed constitutes one independent search.
 
 Candidates were relaxed by the surrogate model for up to 100 steps (starting from

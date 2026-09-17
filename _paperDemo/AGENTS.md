@@ -55,9 +55,12 @@ hosts (MTJ / CoFeB relevance)
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v1 (signed off 2026-09-16).** Drafting must not
-  introduce claims outside it, and must not drop the paired caveats. Any new claim requires
-  bumping `CLAIMS.md` to v2 first.
+- **The claim list is FROZEN in `CLAIMS.md` v2 (2026-09-17; supersedes v1 of 2026-09-16).**
+  v2 withdraws MT-6 (flat-basin sampling fraction — a biased-exploration weight, and the
+  exploration operator is not matched across systems: Fe-Co alone uses a third,
+  species-permutation generator). Drafting must not introduce claims outside the list, and
+  must not drop the paired caveats. Any new claim requires bumping `CLAIMS.md` to the next
+  version first.
 
 ## Drafting status
 
