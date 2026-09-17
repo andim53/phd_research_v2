@@ -19,11 +19,13 @@
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
      S3 numbers purged to completed searches only.
 
-<!-- DRAFT v3 · supplementary document (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
+<!-- DRAFT v7 · supplementary document (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v10 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
-       S2  PDOS — origin of island formation (flat vs island)   [documented in experiment_log.md]
-       S3  Method-parameter sensitivity (rattle / kappa / dipole) [documented in experiment_log.md]
+       S2  PDOS — origin of island formation (flat vs island)   [drafted here]
+       S3  Method-parameter sensitivity (rattle / kappa / dipole) [drafted here]
+       S4  Iteration budget — does the comparison survive a longer search?  [drafted here, v10]
+       S5  Lattice constraint — which phase sets the in-plane lattice?  [drafted here, v10]
      SI figures are flagged [SI]; SI claims are prefixed [SI] in paper_status.md.
      S1's claim is CLAIMS SI-8 (v4; signed off 2026-09-17).
      S2 drafted 2026-09-17 (CARRIES the v6 reframing: the island's gain is reduced forced
