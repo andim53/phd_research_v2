@@ -26,10 +26,11 @@ of the global minimum. The vertical line in each panel marks iteration 10, where
 begins.
 
 **The pre-relaxation iterations barely descend.** Over iterations 1–9 the best-known energy falls
-only from 0.494 to 0.435 eV/atom — about 12 % of the total descent of the run — and in most
-searches it does not improve at all between iterations 2 and 9. The first nine iterations
-therefore evaluate unrelaxed placements that are mutually indistinguishable at this level: the
-search explores structures but cannot rank them, because none of them is at a local minimum.
+only from 0.494 to 0.435 eV/atom — 0.06 eV/atom, or about 12 % of the total descent of the run.
+These are unrelaxed placements, so their energy ordering reflects the starting geometry rather
+than any relaxed configuration, and several searches plateau after the second or third iteration
+and show no further improvement for the rest of the pre-relaxation phase. The search explores
+structures but cannot yet rank them.
 
 **Relaxation onset is the single largest step in the run.** At iteration 10 the best-known
 energy drops from 0.435 to 0.250 eV/atom in one iteration, i.e. **about half of the entire
