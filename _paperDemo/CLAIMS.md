@@ -1,7 +1,82 @@
-# CLAIMS.md — FROZEN claim list (v7)
+# CLAIMS.md — FROZEN claim list (v8)
 
-**Status: FROZEN (v7, 2026-09-17).** Supersedes v6, v5, v4, v3, v2 and v1.
+**Status: FROZEN (v8, 2026-09-17).** Supersedes v7, v6, v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
+
+## v8 changelog (2026-09-17) — completed searches only, and a mis-implemented significance test
+
+Scientist's instruction: *"ignore the stopped early seed, across all analysis. Only use one that
+actually finished 100 Iterations."* Applied project-wide. Carrying it out exposed a **second,
+independent defect** in the significance test, reported below as a separate change.
+
+### 1. Run selection — only completed searches are used
+
+The loaders globbed `seed_*/1_db/db_*.db`, which drops runs *named* `stop_*` but **silently accepts
+a `seed_*` run that stopped early**. Two of the four main-text systems had one:
+
+| run directory | iteration max | before v8 | from v8 |
+|---|---|---|---|
+| `fecomgo/seed_4` | 10 | **included** (10 structures) | excluded |
+| `fecobmgo/seed_3` | 73 | **included** (66 structures) | excluded |
+| `femgo/stop_16` | 37 | already excluded (matched by name only) | excluded |
+| `febmgo/seed_6` | no data | already excluded (empty db) | excluded |
+
+The rule now lives in `scripts/run_selection.py` (`FULL_ITERATIONS = 100`) and is imported by
+`pes_analysis.py`, `wetting_metrics.py`, `exploration_performance.py`, `method_sensitivity.py` and
+`ensemble_analysis.py`. It is determined from the **iteration number stored in each database, not
+from the directory name** — `fecomgo/seed_4` and `fecobmgo/seed_3` were ordinary-looking seed
+directories that simply stopped early. `ensemble_analysis.py`'s integrity inventory now reports
+truncation by iteration (`unfinished_runs_excluded` per system); the previous naming-based field
+reported *nothing* for these systems, which is how they went unnoticed. Methods §1.2 now states the
+rule and names the excluded runs. The orphan output `analysis/pes_structures_with_partial.csv`
+(whose purpose was to add partial runs) has been deleted.
+
+**Effect:** completed searches go 13 / 6 / **4** / **3** (was 13 / 6 / 5 / 4) and the canonical
+structure count 2408 → **2350**. The excluded replicas were severe outliers — their per-search best
+sat 0.26 and 0.40 eV/atom above the system minimum.
+
+**Unchanged by this:** all four flat-basin minima (0.1888 / 0.1493 / 0.1941 / 0.1494 eV/atom), the
+island ground state in every system, every global-minimum structure, all of SI §S1 (its JSON is
+byte-identical) and all of SI §S2 (fixed structures, no searches).
+**Changed:** Fe-Co-B's flat fraction 0.242 → **0.289**, Fe-Co's 0.214 → 0.212, the per-replica
+spreads (Fe-Co-B's flat per-replica SD collapses 0.118 → 0.028 once its outlier goes), the motif
+counts, and every search-level statistic.
+
+### 2. The permutation test was not a permutation test
+
+The test drew **two independent permutations** of the pooled per-search minima — one for each group
+— instead of one permutation split into two groups. The two groups were therefore sampled
+independently rather than partitioning the pool, which gives a **narrower null** than a true
+permutation null and **inflates significance**. One permutation per replicate is now drawn and
+split, with a +1 correction (Davison & Hinkley) so p is never reported as 0. Corrected:
+
+| comparison | v6/v7 (all runs, old test) | completed runs, old test | **v8 (completed runs, fixed test)** |
+|---|---|---|---|
+| B in Fe host (13 vs 6) | p = 0.005 | p = 0.005 | **p = 0.045** |
+| B in Fe-Co host (5 vs 4 → 4 vs 3) | p = 0.74 | p = 0.008 | **p = 0.092** |
+| Co alone (13 vs 5 → 13 vs 4) | p = 0.73 | p = 0.116 | **p = 0.245** |
+
+Note the two corrections pull in opposite directions for MT-4: removing the truncated outlier
+raised its apparent significance (0.74 → 0.008), while fixing the test lowered it again
+(0.008 → 0.092). The v3/v7 figures of 0.005 and 0.74 are both superseded.
+
+**MT-4 remains CHALLENGED, but its character has changed**: p = 0.092 with a median shift of
++0.048 eV/atom and 92 % same-sign replicates is *under-powered*, not absent. The test's own floor
+for 4 vs 3 searches is p = 0.029 (35 partitions), so it cannot reach significance on this data
+however it falls. **Re-wording or un-flagging MT-4 is a scientist decision and is NOT made here.**
+`analysis/ensemble_stats.json` now records `perm_n_partitions` and `perm_resolution` per comparison,
+and the resolution limit is a stated limitation.
+
+### 3. Corrections to v7 statements
+
+- The v7 claim that "*every family except `kappa=1` contains a truncated search*" was **imprecise**:
+  `femgo_kappa/1_k1` does contain an unfinished run (`seed_19`, iteration 6), but under the
+  analysis floor of iteration ≥ 10 it contributed no records, so it never appeared as a search.
+  Corrected: kappa=1 had no *outlier depressing its mean*, which is what mattered for the retraction.
+- The v7 statement that the as-reported variant "is retained alongside in the same CSV
+  (`variant` column)" no longer holds — per the scientist's decision the as-reported numbers are
+  **purged**; the CSV carries completed searches only, and SI §S3 keeps a single disclosure sentence.
+- `torelii2009` appears correctly as `torelli2009` throughout (an earlier commit *message* typo only).
 
 ## v7 changelog (2026-09-17) — truncated searches in the sensitivity families
 
@@ -117,7 +192,8 @@ therefore 13 seeds, consistent with the rest of the paper.
 ## v2 changelog (2026-09-17)
 
 - **MT-6 WITHDRAWN** — "B increases the fraction of flat-basin structures sampled"
-  (0.165 → 0.208; 0.214 → 0.242). Reason: the flat fraction is a *weight* of a
+  (0.165 → 0.208; 0.212 → 0.289 under the v8 run-selection rule; 0.214 → 0.242 as originally
+  computed). Reason: the flat fraction is a *weight* of a
   **biased** exploration, not a physically interpretable population, and a cross-system
   comparison of weights additionally requires a fixed exploration operator, which does not
   hold — `data/fecomgo/main.py:75,172–175` adds a third `PermutationGenerator` to the schedule
@@ -147,12 +223,12 @@ paired caveats. Numbers below are frozen to the cited source files.
 |----|-------|-------------|--------|-----------|
 | **MT-1** | The lowest-energy structure found is an **island** (not flat) in all four systems | global-min ΔZ = 3.65 / 3.77 / 2.75 / 3.45 Å (Fe / Fe-B / Fe-Co / Fe-Co-B) | `analysis/pes_structures.csv` | strong |
 | **MT-2** | The **flat configuration is a distinct, higher-energy basin** (not the ground state) | flat-basin min dE/N > 0 in every system (0.149–0.194 eV/atom) | `analysis/pes_structures.csv` | strong |
-| **MT-3** | **B lowers the flat-state energy in the pure-Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (replica-resampled p = 0.005) |
-| **MT-4** | **B lowers the flat-state energy in the Fe-Co host** | 0.1941 → 0.1494 eV/atom (−0.045) | `analysis/pes_structures.csv` | **CHALLENGED — pending more searches** (replica-resampled p = 0.74 at 5 vs 4 searches; reported as a trend) |
-| **MT-5** | **Co alone has little effect** on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005) | `analysis/pes_structures.csv` | strong (replica-resampled p = 0.73 — null confirmed) |
+| **MT-3** | **B lowers the flat-state energy in the pure-Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (two-sided permutation p = 0.045 at 13 vs 6 completed searches; the earlier 0.005 came from a mis-implemented test — see v8) |
+| **MT-4** | **B lowers the flat-state energy in the Fe-Co host** | 0.1941 → 0.1494 eV/atom (−0.045) | `analysis/pes_structures.csv` | **CHALLENGED — NOT RESOLVED, and under-powered rather than absent** (two-sided permutation p = 0.092 at 4 vs 3 completed searches; median shift +0.048 eV/atom, 92 % same-sign). The test's own resolution floor for 4 vs 3 is 0.029, so it cannot reach significance on this data. The earlier p = 0.74 came from a mis-implemented test on a dataset that included unfinished searches; that figure overstated the absence of an effect. **Whether this claim stays flagged CHALLENGED or is re-worded is a scientist decision** — see v8 |
+| **MT-5** | **Co alone has little effect** on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005) | `analysis/pes_structures.csv` | moderate (two-sided permutation p = 0.245 at 13 vs 4 completed searches — consistent with no resolvable effect, but weaker support for the null than the previously reported p = 0.73) |
 | ~~MT-6~~ | ~~B increases the fraction of flat-basin structures sampled~~ | **WITHDRAWN in v2** — see changelog | — | — |
-| **MT-7** | **B does not bond to the MgO interface** (stays in the metal film) | B_contact_frac ≈ 0 in the low-energy window dE/N ≤ 0.05 eV/atom (1 of 72 Fe-B, 1 of 21 Fe-Co-B; max contact fraction 0.33 / 0.5). Window defined by `scripts/wetting_metrics.py --e-window-per-atom 0.05` | `analysis/pes_structures.csv` | strong (windowed) |
-| **MT-8** | The low-energy structures of each branch form a **small set of recurring motifs** rather than one repeated structure; ΔZ is **continuous**, with no discrete island heights | Island branch spans ΔZ ≈ 1–6 Å (no quantisation); low-energy sets split into 1–3 single-linkage motifs (flat 2/2/3/2, island 2/2/3/1 per system); within-set fingerprint distance is 0.32–0.72 × the branch's random-pair scale; Fe/MgO's 5 lowest flat structures (from 5 independent searches) fall into 2 motifs, 4 in the dominant one | `analysis/ensemble_stats.json` | moderate — see paired caveat |
+| **MT-7** | **B does not bond to the MgO interface** (stays in the metal film) | B_contact_frac ≈ 0 in the low-energy window dE/N ≤ 0.05 eV/atom (1 of 72 Fe-B, 1 of 21 Fe-Co-B; max contact fraction 0.33 / 0.5). Outside the window 101 of the remaining 471 Fe-B and 25 of the remaining 252 Fe-Co-B structures *do* have a B–O contact, so the claim is window-restricted, not global. Window defined by `scripts/wetting_metrics.py --e-window-per-atom 0.05`. **Weak-support caveat:** the 21 Fe-Co-B window structures come from only 2 completed searches (20 from one of them) | `analysis/pes_structures.csv` | moderate (windowed, and dominated by one search in Fe-Co-B) |
+| **MT-8** | The low-energy structures of each branch form a **small set of recurring motifs** rather than one repeated structure; ΔZ is **continuous**, with no discrete island heights | Island branch spans ΔZ ≈ 1–6 Å (no quantisation); low-energy sets split into 1–4 single-linkage motifs (flat 2/2/4/2, island 2/2/3/1 per system); within-set fingerprint distance is 0.37–0.71 × the branch's random-pair scale; Fe/MgO's 5 lowest flat structures (from 5 independent searches) fall into 2 motifs, 4 in the dominant one | `analysis/ensemble_stats.json` | moderate — see paired caveat |
 
 **Combined 2×2 statement (MT-3/4/5):** B effect −0.040 (Fe) and −0.045 (Fe-Co); Co effect
 +0.005 (no B) — B is the dominant lever, Co is not.
@@ -179,9 +255,9 @@ number of distinct structures.
 | **SI-2** | Islanding **weakens magnetism and lowers DOS(E_F)** | spin pol 5.81 → 4.37; DOS(E_F) 104.0 → 78.1 | `analysis/pdos_metrics.csv` | moderate |
 | **SI-3** *(restated v6)* | The island's **true interface Fe are NOT flat-like** → the island's gain is **reduced forced interfacial coupling plus restored metal cohesion**, **not** lattice-strain relief | island interface d-centre +0.51 eV vs flat −0.23 eV; registry-locked atoms 25/25 → 9/25. The ~equal d_Fe-O (2.33 vs 2.30 Å) follows from the 2.3 Å construction parameter surviving relaxation, so it is **not** evidence about the method | `analysis/interface_analysis.csv` | moderate |
 | **SI-4** *(reframed v6)* | **Fe sits directly atop O** at the interface — a property of the **reference construction** that agrees with the measured registry: a **consistency check**, not a search prediction | 25/25 (flat) and 9/9 (island) atop O; 0 atop Mg (flat offset 0.000 Å); `build_mgo_stack` places substrate O above the metal sites | `analysis/interface_analysis.csv` | strong (structural) |
-| **SI-5** *(evidence restated v7)* | The result is **robust to the LCB kappa** — and **no setting is distinguishable from another** | per-seed best **0.0321–0.0395 eV/atom** across kappa ∈ {1,2,3,4} (primary, equal-iteration: only searches that reached 100 iterations); the whole range spans 0.0074 eV/atom, far inside the SDs (0.019–0.026), so **no kappa is identified as best**. As-reported, with truncated searches included: 0.039–0.056 | `analysis/method_sensitivity.csv` (`variant=full`) | strong |
-| **SI-6** | The result is **robust to the dipole correction** | per-seed best **0.03683 ± 0.02575** (no dipole) → **0.03770 ± 0.02436** (dipole xy) — a difference of 0.0009 eV/atom, far inside the SD (primary, equal-iteration). As-reported: 0.050 → 0.056 | `analysis/method_sensitivity.csv` (`variant=full`) | weak (outcome-level only) |
-| **SI-7** *(evidence restated v7)* | **Reducing the rattle strength degrades the search ~7×** and under-samples the flat basin | per-seed best **0.03683 ± 0.02575 → 0.26073 / 0.25583 eV/atom (7.1× / 7.0×)**; flat fraction **0.165 → 0.023 / 0.017** (primary, equal-iteration). As-reported: 0.050 → 0.27–0.29, flat 0.181 → 0.030/0.015. **Caveat:** the reduced-rattle arms retain only **2 and 4** full searches after excluding truncated runs | `analysis/method_sensitivity.csv` (`variant=full`) | strong (direction), weak (magnitude — arms of n = 2 and 4) |
+| **SI-5** *(evidence restated v7)* | The result is **robust to the LCB kappa** — and **no setting is distinguishable from another** | per-seed best **0.0321–0.0395 eV/atom** across kappa ∈ {1,2,3,4} (completed searches only, 100 iterations); the whole range spans 0.0074 eV/atom, far inside the SDs (0.019–0.026), so **no kappa is identified as best** | `analysis/method_sensitivity.csv` | strong |
+| **SI-6** | The result is **robust to the dipole correction** | per-seed best **0.03683 ± 0.02575** (no dipole) → **0.03770 ± 0.02436** (dipole xy) — a difference of 0.0009 eV/atom, far inside the SD (completed searches only) | `analysis/method_sensitivity.csv` | weak (outcome-level only) |
+| **SI-7** *(evidence restated v7)* | **Reducing the rattle strength degrades the search ~7×** and under-samples the flat basin | per-seed best **0.03683 ± 0.02575 → 0.26073 / 0.25583 eV/atom (7.1× / 7.0×)**; flat fraction **0.165 → 0.023 / 0.017** (completed searches only). **Caveat:** the reduced-rattle arms retain only **2 and 4** completed searches | `analysis/method_sensitivity.csv` | strong (direction), weak (magnitude — arms of n = 2 and 4) |
 | **SI-8** *(v4; signed off 2026-09-17)* | **The onset of relaxation is the pivot of the biased search**: the pre-relaxation iterations provide almost no ranking information, and roughly half the total descent occurs at the first relaxed iteration | best-known ΔE/N: 0.494 (i=1) → 0.435 (i=9; 12 % of the descent) → **0.250 (i=10; 49 %)**; per-search drop across the onset median 0.165 (range 0.084–0.233) eV/atom; 84 % of the descent by i=30, 94 % by i=50; global minimum first reached at i=77; 10 of 13 searches end within 0.05 eV/atom of it, 4 within 0.02 | `analysis/exploration_performance.json` | strong (Fe/MgO only) |
 
 **Paired caveat for SI-8 (must travel with the claim).** Fe/MgO only, and the quantities are
@@ -234,7 +310,13 @@ remains a *method-quality* claim on Fe/MgO only.
 
 - **Structures are NOT DFT-converged** — surrogate relaxation + **1 GPAW step**; residual
   forces ~1–2 eV/Å. "Lowest energy"/"basin" = lowest DFT energy *found*.
-- Unequal seed counts across systems (13 / 6 / 5 / 4) and across parameter settings.
+- **Only completed searches are used (v8).** A search counts only if it reached the full 100-iteration
+  budget; the rule lives in `scripts/run_selection.py` and is imported by every analysis script. It
+  is applied from the **iteration number in the database, not the directory name**, because a
+  `seed_*` directory can stop early. Excluded here: `femgo/stop_16` (37 it), `febmgo/seed_6`
+  (no data), `fecomgo/seed_4` (10 it), `fecobmgo/seed_3` (73 it), plus the unfinished runs inside
+  the sensitivity families. Unequal completed-search counts across systems (**13 / 6 / 4 / 3**) and
+  across parameter settings.
 - **Lattice model (v5):** both phases are built on a **bcc** Fe lattice, but experiment reports
   **bct** Fe on MgO(001) below ≈10 Å \cite{urano1988}; the island branch (ΔZ ≈ 1–6 Å) lies in
   that regime. The comparison is a trend within a fixed lattice model.
@@ -252,14 +334,23 @@ remains a *method-quality* claim on Fe/MgO only.
   oxygen directly above the metal sites, so the flat film's registry follows from the
   construction as well as agreeing with the measured LEED I–V registry \cite{urano1988}. It is a
   consistency check, not an independent prediction by the search.
+- **Search-level tests are resolution-limited (v8).** The permutation test partitions the pooled
+  per-search flat minima, so with *a* vs *b* searches only C(a+b, a) partitions exist. For the
+  Fe-Co vs Fe-Co-B pair (4 vs 3) that is 35 partitions, i.e. a floor of p = 0.029: **the Fe-Co-host
+  boron effect cannot reach significance on this data however it falls.** Reported p-values are
+  therefore lower bounds on what further searches could establish, and MT-4 is under-powered
+  rather than refuted. `analysis/ensemble_stats.json` records `perm_n_partitions` and
+  `perm_resolution` for every comparison.
+- **The permutation test was mis-implemented before v8** (two independent permutations instead of
+  one split), which widened the null and inflated significance (e.g. MT-3 read p = 0.005 instead of
+  p = 0.045). Fixed in v8.
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold.
 - kpts = (1,1,1), single-layer slabs → qualitative/trend-level.
-- **Sensitivity families contain truncated searches (v7):** several runs were stopped early
-  (iteration max 11–90 vs 100 for a full search) and their per-seed best is systematically worse,
-  and the truncation is not uniform across settings. The primary statistic therefore uses full
-  searches only (equal iteration count); the as-reported variant is retained in the CSV. The
-  reduced-rattle arms retain only **2 and 4** full searches, so their magnitudes are weak even
-  though the direction is clear.
+- **Sensitivity families contain unfinished searches (v7; superseded by the v8 rule):** several
+  runs were stopped early (iteration max 6–90 vs 100 for a completed search) and their per-seed
+  best is systematically worse, and the unfinished runs are not distributed evenly across settings.
+  v8 excludes them everywhere. The reduced-rattle arms retain only **2 and 4** completed searches,
+  so their magnitudes are weak even though the direction is clear.
 
 ---
 
@@ -324,4 +415,7 @@ restated (strain relief dropped for reduced forced coupling + restored metal coh
 SI-4 reframed as a consistency check, strain-convention limitation added, torelii2009
 added to the experimental-correspondence evidence · v7 (2026-09-17) truncated searches found in
 the method-sensitivity families; SI-5/6/7 evidence cells restated on an equal-iteration primary
-statistic; "kappa = 1 is best" retracted; rattle factor 5× → 7×.
+statistic; "kappa = 1 is best" retracted; rattle factor 5× → 7× · v8 (2026-09-17) completed
+searches only, project-wide (run_selection.py); a mis-implemented permutation test fixed;
+MT-3/MT-4/MT-5 p-values 0.045 / 0.092 / 0.245; MT-7 and MT-8 evidence updated; MT-4 character
+changed from refuted to under-powered (status flag left for the scientist).

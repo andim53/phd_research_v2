@@ -1,7 +1,7 @@
 {
   "description": {
     "name": "ensemble_stats",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "produced_by": "scripts/ensemble_analysis.py",
     "purpose": "Describe the flat/island PES as ensembles rather than two hand-picked structures: replica inventory, branch distributions, and a motif test asking whether a branch's low-energy structures are one recurring structural motif or a degenerate manifold.",
     "key_definitions": {
@@ -19,21 +19,20 @@
       "The search is BIASED (LCB exploration seeded from a flat layer), so structure counts in an energy window are exploration densities, not a density of states. They support qualitative statements, not thermodynamic entropies.",
       "Structures are not DFT-converged (surrogate relaxation + 1 GPAW step).",
       "flat/island split at dZ <= 1.0 A is a chosen threshold.",
-      "Replica counts differ across systems and some replicas are truncated."
+      "Replica counts differ across systems. Searches that stopped before the full iteration budget are excluded everywhere in this project (run_selection.FULL_ITERATIONS); the excluded ones are listed per system in the inventory as unfinished_runs_excluded."
     ],
     "inputs": {
-      "dbs_glob": "data/{system}/seed_*/1_db/db_*.db (+ stop_* for the partial variant)",
-      "n_structures_canonical": 2408
+      "dbs_glob": "data/{system}/*/1_db/db_*.db, then filtered to completed runs (run_selection.FULL_ITERATIONS)",
+      "n_structures_canonical": 2350
     },
     "schema": {
       "systems": "per-system branch distributions + motif tests",
-      "replica_inventory": "db/replica accounting per system",
-      "partial_run_effect": "effect of including data/<system>/stop_* partial runs",
-      "dataset_definition_check": "same system described with two different replica sets (main text seed_* only vs SI recursive glob)",
+      "replica_inventory": "db/replica accounting per system, including the unfinished runs excluded by the completion rule",
+      "dataset_definition_check": "main text and SI baseline are expected to select the same replica set (both completed-runs only)",
       "effects": "flat-branch shifts, resampled over replicas (median CI + perm p)"
     }
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "constants": {
     "flat_dZ": 1.0,
     "min_iteration": 10,
@@ -43,7 +42,7 @@
   "replica_inventory": {
     "femgo": {
       "n_replica_dirs_on_disk": 14,
-      "n_seed_dbs_loaded": 13,
+      "n_dbs_loaded": 13,
       "replicas": [
         "seed_10",
         "seed_11",
@@ -62,30 +61,18 @@
       "n_replicas_with_data": 13,
       "n_structures": 1180,
       "empty_replica_dirs": [],
-      "partial_replicas_on_disk": [
-        "stop_16"
+      "unfinished_runs_excluded": [
+        {
+          "replica": "stop_16",
+          "max_iteration": 37,
+          "required_iterations": 100
+        }
       ],
-      "replicas_used_with_partial": [
-        "seed_10",
-        "seed_11",
-        "seed_12",
-        "seed_13",
-        "seed_14",
-        "seed_15",
-        "seed_3",
-        "seed_4",
-        "seed_5",
-        "seed_6",
-        "seed_7",
-        "seed_8",
-        "seed_9",
-        "stop_16"
-      ],
-      "n_structures_with_partial": 1207
+      "n_unfinished_runs_excluded": 1
     },
     "febmgo": {
       "n_replica_dirs_on_disk": 7,
-      "n_seed_dbs_loaded": 7,
+      "n_dbs_loaded": 6,
       "replicas": [
         "seed_0",
         "seed_1",
@@ -99,43 +86,18 @@
       "empty_replica_dirs": [
         "seed_6"
       ],
-      "partial_replicas_on_disk": [],
-      "replicas_used_with_partial": [
-        "seed_0",
-        "seed_1",
-        "seed_2",
-        "seed_3",
-        "seed_4",
-        "seed_5"
+      "unfinished_runs_excluded": [
+        {
+          "replica": "seed_6",
+          "max_iteration": null,
+          "required_iterations": 100
+        }
       ],
-      "n_structures_with_partial": 543
+      "n_unfinished_runs_excluded": 1
     },
     "fecomgo": {
       "n_replica_dirs_on_disk": 5,
-      "n_seed_dbs_loaded": 5,
-      "replicas": [
-        "seed_0",
-        "seed_1",
-        "seed_2",
-        "seed_3",
-        "seed_4"
-      ],
-      "n_replicas_with_data": 5,
-      "n_structures": 355,
-      "empty_replica_dirs": [],
-      "partial_replicas_on_disk": [],
-      "replicas_used_with_partial": [
-        "seed_0",
-        "seed_1",
-        "seed_2",
-        "seed_3",
-        "seed_4"
-      ],
-      "n_structures_with_partial": 355
-    },
-    "fecobmgo": {
-      "n_replica_dirs_on_disk": 4,
-      "n_seed_dbs_loaded": 4,
+      "n_dbs_loaded": 4,
       "replicas": [
         "seed_0",
         "seed_1",
@@ -143,52 +105,57 @@
         "seed_3"
       ],
       "n_replicas_with_data": 4,
-      "n_structures": 330,
+      "n_structures": 354,
       "empty_replica_dirs": [],
-      "partial_replicas_on_disk": [],
-      "replicas_used_with_partial": [
+      "unfinished_runs_excluded": [
+        {
+          "replica": "seed_4",
+          "max_iteration": 10,
+          "required_iterations": 100
+        }
+      ],
+      "n_unfinished_runs_excluded": 1
+    },
+    "fecobmgo": {
+      "n_replica_dirs_on_disk": 4,
+      "n_dbs_loaded": 3,
+      "replicas": [
         "seed_0",
         "seed_1",
-        "seed_2",
-        "seed_3"
+        "seed_2"
       ],
-      "n_structures_with_partial": 330
+      "n_replicas_with_data": 3,
+      "n_structures": 273,
+      "empty_replica_dirs": [],
+      "unfinished_runs_excluded": [
+        {
+          "replica": "seed_3",
+          "max_iteration": 73,
+          "required_iterations": 100
+        }
+      ],
+      "n_unfinished_runs_excluded": 1
     }
   },
-  "partial_run_effect": {
-    "femgo": {
-      "n_structures_without": 1180,
-      "n_structures_with": 1207,
-      "extra_replicas": [
-        "stop_16"
-      ],
-      "global_min_eV_without": -436.909329426727,
-      "global_min_eV_with": -436.909329426727,
-      "flat_min_without": 0.18882193067997757,
-      "flat_min_with_renorm": 0.18882193067997757,
-      "flat_fraction_without": 0.1652542372881356,
-      "flat_fraction_with": 0.18061309030654515
-    }
+  "run_selection": {
+    "rule": "only searches that reached run_selection.FULL_ITERATIONS are used",
+    "full_iterations_required": 100,
+    "detected_by": "max(iteration) per database, not by directory name"
   },
   "dataset_definition_check": {
     "si_baseline_row": {
       "setting": "baseline (1.5/2.3)",
-      "n_structures": "1207",
-      "n_seeds": "14",
-      "flat_fraction": "0.181"
+      "n_structures": "1180",
+      "n_seeds": "13",
+      "flat_fraction": "0.165"
     },
     "main_text_definition": {
       "n_structures": 1180,
       "n_replicas": 13,
       "flat_fraction": 0.1652542372881356
     },
-    "with_partial_definition": {
-      "n_structures": 1207,
-      "n_replicas": 14,
-      "flat_fraction": 0.18061309030654515
-    },
     "consistent": true,
-    "note": "method_sensitivity.py loads data/<system>/**/*.db (recursive), which includes stop_* partial runs; pes_analysis.py loads only seed_*/. The same \"femgo baseline\" is therefore reported with different replica counts and a different flat fraction."
+    "note": "Both this script and method_sensitivity.py now select completed runs only (run_selection.FULL_ITERATIONS), so the same \"femgo baseline\" is expected to be reported with the same replica count and flat fraction."
   },
   "systems": {
     "femgo": {
@@ -604,8 +571,8 @@
       }
     },
     "fecomgo": {
-      "n_structures": 355,
-      "n_replicas": 5,
+      "n_structures": 354,
+      "n_replicas": 4,
       "global_min_dZ": 2.7515472833740553,
       "island": {
         "n": 279,
@@ -625,11 +592,11 @@
         "n_replicas_with_branch": 4
       },
       "flat": {
-        "n": 76,
-        "fraction": 0.2140845070422535,
+        "n": 75,
+        "fraction": 0.211864406779661,
         "min": 0.1940992000748012,
-        "median": 0.24108310623344703,
-        "p10": 0.21184917558953048,
+        "median": 0.23975670291337564,
+        "p10": 0.21153746595321596,
         "max": 0.38315066149670657,
         "n_within_0.01_of_flat_min": 2,
         "n_within_0.02_of_flat_min": 10,
@@ -638,12 +605,11 @@
           0.1940992000748012,
           0.19517389482379108,
           0.20855952713385628,
-          0.21498470628919145,
-          0.2573800231695509
+          0.21498470628919145
         ],
-        "per_replica_min_median": 0.20855952713385628,
-        "per_replica_min_sd": 0.02580141026145785,
-        "n_replicas_with_branch": 5
+        "per_replica_min_median": 0.2018667109788237,
+        "per_replica_min_sd": 0.010244456743875908,
+        "n_replicas_with_branch": 4
       },
       "motif": {
         "flat": {
@@ -652,27 +618,30 @@
           "low_set_gmin": 0.1940992000748012,
           "within_low_mean": 2.883413562988654,
           "within_low_max": 3.7178898313599453,
-          "random_pair_scale_mean": 4.249654445303943,
-          "random_pair_scale_p05": 2.309827460197937,
-          "ratio_within_over_random": 0.6785054173463337,
-          "n_clusters_at_p05_cut": 3,
+          "random_pair_scale_mean": 4.063880059810123,
+          "random_pair_scale_p05": 2.258841543679313,
+          "ratio_within_over_random": 0.7095223088654284,
+          "n_clusters_at_p05_cut": 4,
           "cluster_replicas": {
             "1": [
               "seed_2"
             ],
             "2": [
-              "seed_1",
               "seed_2",
               "seed_3"
             ],
             "3": [
+              "seed_1"
+            ],
+            "4": [
               "seed_2"
             ]
           },
           "cluster_sizes": {
             "1": 2,
-            "2": 7,
-            "3": 1
+            "2": 6,
+            "3": 1,
+            "4": 1
           },
           "replicas_in_low_set": [
             "seed_1",
@@ -688,32 +657,56 @@
           "low_set_gmin": 0.1940992000748012,
           "within_low_mean": 2.9623498527039542,
           "within_low_max": 5.282368405193294,
-          "random_pair_scale_mean": 4.10404431415125,
-          "random_pair_scale_p05": 2.150415758809498,
-          "ratio_within_over_random": 0.721812345565911,
-          "n_clusters_at_p05_cut": 4,
+          "random_pair_scale_mean": 4.163730404024756,
+          "random_pair_scale_p05": 1.996348467500494,
+          "ratio_within_over_random": 0.7114653364301589,
+          "n_clusters_at_p05_cut": 10,
           "cluster_replicas": {
             "1": [
               "seed_2"
             ],
             "2": [
+              "seed_2"
+            ],
+            "3": [
               "seed_0",
               "seed_1",
               "seed_2",
               "seed_3"
             ],
-            "3": [
+            "4": [
+              "seed_2"
+            ],
+            "5": [
+              "seed_3"
+            ],
+            "6": [
               "seed_0"
             ],
-            "4": [
+            "7": [
+              "seed_2"
+            ],
+            "8": [
+              "seed_2"
+            ],
+            "9": [
+              "seed_0"
+            ],
+            "10": [
               "seed_0"
             ]
           },
           "cluster_sizes": {
-            "1": 2,
-            "2": 25,
-            "3": 1,
-            "4": 1
+            "1": 1,
+            "2": 1,
+            "3": 20,
+            "4": 1,
+            "5": 1,
+            "6": 1,
+            "7": 1,
+            "8": 1,
+            "9": 1,
+            "10": 1
           },
           "replicas_in_low_set": [
             "seed_0",
@@ -799,32 +792,31 @@
       }
     },
     "fecobmgo": {
-      "n_structures": 330,
-      "n_replicas": 4,
+      "n_structures": 273,
+      "n_replicas": 3,
       "global_min_dZ": 3.451423426907011,
       "island": {
-        "n": 250,
+        "n": 194,
         "min": 0.0,
-        "median": 0.1977727811647339,
-        "p10": 0.05906344982905413,
-        "dZ_median": 2.508496978046308,
+        "median": 0.16154270759951617,
+        "p10": 0.042469038629641624,
+        "dZ_median": 2.543823686287677,
         "n_within_0.02_of_island_min": 7,
         "per_replica_min": [
           0.0,
           0.03530476126381957,
-          0.07170010667202667,
-          0.41903271937157893
+          0.07170010667202667
         ],
-        "per_replica_min_median": 0.05350243396792312,
-        "per_replica_min_sd": 0.1939045001657272,
-        "n_replicas_with_branch": 4
+        "per_replica_min_median": 0.03530476126381957,
+        "per_replica_min_sd": 0.035851435657116064,
+        "n_replicas_with_branch": 3
       },
       "flat": {
-        "n": 80,
-        "fraction": 0.24242424242424243,
+        "n": 79,
+        "fraction": 0.2893772893772894,
         "min": 0.14937640437488223,
-        "median": 0.2541248080024021,
-        "p10": 0.20361486667708675,
+        "median": 0.2529803421240353,
+        "p10": 0.20337298445330237,
         "max": 0.4462218164305043,
         "n_within_0.01_of_flat_min": 2,
         "n_within_0.02_of_flat_min": 3,
@@ -832,12 +824,11 @@
         "per_replica_min": [
           0.14937640437488223,
           0.15369194943836614,
-          0.19956456274116277,
-          0.4000158164695889
+          0.19956456274116277
         ],
-        "per_replica_min_median": 0.17662825608976446,
-        "per_replica_min_sd": 0.11843353948745379,
-        "n_replicas_with_branch": 4
+        "per_replica_min_median": 0.15369194943836614,
+        "per_replica_min_sd": 0.027814180497909485,
+        "n_replicas_with_branch": 3
       },
       "motif": {
         "flat": {
@@ -846,9 +837,9 @@
           "low_set_gmin": 0.14937640437488223,
           "within_low_mean": 2.230182782188971,
           "within_low_max": 2.9647988735970716,
-          "random_pair_scale_mean": 3.970940481351894,
-          "random_pair_scale_p05": 1.8980339985707908,
-          "ratio_within_over_random": 0.5616258396876582,
+          "random_pair_scale_mean": 3.955526846234599,
+          "random_pair_scale_p05": 1.9407510615273598,
+          "ratio_within_over_random": 0.5638143460742677,
           "n_clusters_at_p05_cut": 2,
           "cluster_replicas": {
             "1": [
@@ -875,9 +866,9 @@
           "low_set_gmin": 0.14937640437488223,
           "within_low_mean": 2.673326630460659,
           "within_low_max": 3.783482672469572,
-          "random_pair_scale_mean": 3.7853488693791046,
-          "random_pair_scale_p05": 1.814718605807481,
-          "ratio_within_over_random": 0.7062299203347019,
+          "random_pair_scale_mean": 3.7617209824211617,
+          "random_pair_scale_p05": 1.761853252340899,
+          "ratio_within_over_random": 0.710665847614254,
           "n_clusters_at_p05_cut": 3,
           "cluster_replicas": {
             "1": [
@@ -908,9 +899,9 @@
           "low_set_gmin": 0.0,
           "within_low_mean": 1.5452640706866199,
           "within_low_max": 2.090115366866889,
-          "random_pair_scale_mean": 4.785645030743681,
-          "random_pair_scale_p05": 2.0229480724915083,
-          "ratio_within_over_random": 0.3228956725289106,
+          "random_pair_scale_mean": 4.142079527139937,
+          "random_pair_scale_p05": 2.0171540960235226,
+          "ratio_within_over_random": 0.37306480007485726,
           "n_clusters_at_p05_cut": 1,
           "cluster_replicas": {
             "1": [
@@ -932,18 +923,21 @@
           "low_set_gmin": 0.0,
           "within_low_mean": 1.6505900155549074,
           "within_low_max": 2.7567320120223155,
-          "random_pair_scale_mean": 4.778756590165155,
-          "random_pair_scale_p05": 2.211546993677419,
-          "ratio_within_over_random": 0.3454015672093193,
-          "n_clusters_at_p05_cut": 1,
+          "random_pair_scale_mean": 4.05499651904765,
+          "random_pair_scale_p05": 1.8388091945130935,
+          "ratio_within_over_random": 0.4070509081331005,
+          "n_clusters_at_p05_cut": 2,
           "cluster_replicas": {
             "1": [
-              "seed_1",
+              "seed_1"
+            ],
+            "2": [
               "seed_2"
             ]
           },
           "cluster_sizes": {
-            "1": 21
+            "1": 20,
+            "2": 1
           },
           "replicas_in_low_set": [
             "seed_1",
@@ -974,47 +968,53 @@
         0.05648330368875053
       ],
       "mean_same_sign_fraction": 0.9695,
-      "perm_p_mean_min": 0.005
+      "perm_p_mean_min": 0.04519096180763847,
+      "perm_n_partitions": 27132,
+      "perm_resolution": 3.685684800235884e-05
     },
     "B_in_FeCo_host": {
-      "n_replicas_a": 5,
-      "n_replicas_b": 4,
-      "per_replica_min_a": 0.21403947029823817,
-      "per_replica_min_b": 0.22566218325600002,
+      "n_replicas_a": 4,
+      "n_replicas_b": 3,
+      "per_replica_min_a": 0.20320433208041,
+      "per_replica_min_b": 0.16754430551813704,
       "min_shift_eV_per_atom": 0.044722795699918966,
-      "median_shift_eV_per_atom": 0.031931271044091825,
-      "mean_shift_eV_per_atom": -0.01162271295776185,
+      "median_shift_eV_per_atom": 0.04817476154045755,
+      "mean_shift_eV_per_atom": 0.03566002656227296,
       "median_ci95": [
-        -0.1914562893357326,
-        0.08075176707978643
+        -0.004928015291866622,
+        0.06239571233664162
       ],
-      "median_same_sign_fraction": 0.6955,
+      "median_same_sign_fraction": 0.917,
       "mean_ci95": [
-        -0.1316891596220506,
-        0.0686279563421205
+        0.003908443026494707,
+        0.057509895318389015
       ],
-      "mean_same_sign_fraction": 0.6025,
-      "perm_p_mean_min": 0.7438
+      "mean_same_sign_fraction": 0.9895,
+      "perm_p_mean_min": 0.09238152369526095,
+      "perm_n_partitions": 35,
+      "perm_resolution": 0.02857142857142857
     },
     "Co_alone": {
       "n_replicas_a": 13,
-      "n_replicas_b": 5,
+      "n_replicas_b": 4,
       "per_replica_min_a": 0.21706740540940014,
-      "per_replica_min_b": 0.21403947029823817,
+      "per_replica_min_b": 0.20320433208041,
       "min_shift_eV_per_atom": -0.005277269394823619,
-      "median_shift_eV_per_atom": 0.009965986725115589,
-      "mean_shift_eV_per_atom": 0.003027935111161978,
+      "median_shift_eV_per_atom": 0.016658802880148177,
+      "mean_shift_eV_per_atom": 0.013863073328990144,
       "median_ci95": [
-        -0.038854509310579016,
-        0.027764252780277
+        -0.00879814021511946,
+        0.030900736478408408
       ],
-      "median_same_sign_fraction": 0.7705,
+      "median_same_sign_fraction": 0.902,
       "mean_ci95": [
-        -0.021248203284858866,
-        0.02425269909825049
+        -0.00030479545713235694,
+        0.028001488577619815
       ],
-      "mean_same_sign_fraction": 0.6175,
-      "perm_p_mean_min": 0.7264
+      "mean_same_sign_fraction": 0.9695,
+      "perm_p_mean_min": 0.2453509298140372,
+      "perm_n_partitions": 2380,
+      "perm_resolution": 0.0004201680672268908
     }
   }
 }

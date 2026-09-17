@@ -23,8 +23,11 @@ Usage:
       --min-iteration 10 --flat-dZ 1.0
 """
 import matplotlib; matplotlib.use('Agg')
-import numpy as np, glob, os, csv, argparse
+import numpy as np, glob, os, csv, argparse, sys
 from agox.databases import Database
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from run_selection import FULL_ITERATIONS, completed_dbs  # noqa: E402
 
 METAL = ('Fe', 'Co')     # film species for the dZ flatness metric
 D_CUT = 2.6              # Angstrom; B-O bonding cutoff
@@ -67,7 +70,10 @@ def main():
     os.makedirs('analysis', exist_ok=True)
     rows, summary = [], {}
     for system in SYSTEMS:
-        dbs = sorted(glob.glob(f'data/{system}/seed_*/1_db/db_*.db'))
+        # only searches that ran the full iteration budget (see run_selection)
+        dbs, rejected = completed_dbs(f'data/{system}/*/1_db/db_*.db', verbose=True)
+        if rejected:
+            print(f'    ({len(rejected)} unfinished run(s) excluded for {system})')
         recs = []
         for dbp in dbs:
             for c, d in load_rows(dbp):

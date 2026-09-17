@@ -36,7 +36,11 @@ VERSION = "1.0.0"
 import json
 import glob
 import os
+import sys
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from run_selection import FULL_ITERATIONS, completed_dbs  # noqa: E402
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -57,7 +61,11 @@ COL = plt.get_cmap('tab10').colors
 def load(root=ROOT):
     """(seed, iteration, E_total, n_atoms) for every candidate with iteration metadata."""
     recs = []
-    for dbp in sorted(glob.glob(f'{root}/seed_*/1_db/db_*.db')):
+    dbs, rejected = completed_dbs(f'{root}/*/1_db/db_*.db', verbose=True)
+    if rejected:
+        print(f'    {len(rejected)} unfinished run(s) excluded from {root} '
+              f'(completion rule: {FULL_ITERATIONS} iterations)')
+    for dbp in dbs:
         seed = dbp.split('/')[2]
         db = Database(filename=dbp)
         db.restore_to_memory()

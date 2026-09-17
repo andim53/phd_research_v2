@@ -1,7 +1,7 @@
 # 03 — Discussion
 
 <!-- DRAFT v3 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v7. All \cite{} keys resolve against references.bib; the three
+     Grounded in CLAIMS.md v8. All \cite{} keys resolve against references.bib; the three
      MTJ placeholders were replaced by yuasa2004 (verified) when the CoFeB-specific
      assertions were dropped. -->
 
@@ -66,7 +66,10 @@ by the present data and is a natural target for the re-relaxation and further an
 ## 3.3 Cobalt plays a minor role
 
 Cobalt alone barely changes the flat-state energy (+0.005 eV/atom without boron, ~0 with
-boron). The practical relevance is that the metal film in an MgO-based magnetic tunnel junction
+boron). The difference is smaller than the search-level test can resolve (p = 0.245 across
+13 vs 4 completed searches), so this is a limit on the size of any cobalt effect rather than a
+demonstration that none exists. The practical relevance is that the metal film in an MgO-based
+magnetic tunnel junction
 must be a flat, coherently matched layer for the tunnelling magnetoresistance to reach its high
 values \cite{yuasa2004}: within the present model, the wetting behaviour is set by boron, not by
 the Fe/Co constitution of the host.
@@ -91,7 +94,8 @@ require the converged relaxations and a fuller treatment of the interface.
 The results are qualitative/trend-level: the structures are not DFT-converged minima
 (residual forces ~1–2 eV/Å), the models are single-layer slabs at Γ-point sampling, and
 the flat/island split uses a chosen ΔZ threshold. The four systems also have unequal seed
-counts (13 / 6 / 5 / 4 for Fe / Fe-B / Fe-Co / Fe-Co-B), so their sampling fractions are
+counts (13 / 6 / 4 / 3 completed searches for Fe / Fe-B / Fe-Co / Fe-Co-B), so their sampling
+fractions are
 compared only as trends, not as like-for-like populations. The flat state is described as a
 higher-energy configuration, not a proven metastable state. A full re-relaxation of
 representative structures is necessary to place these conclusions on converged minima.
@@ -107,3 +111,12 @@ Fe on MgO(001) is body-centred tetragonal below about 10 Å \cite{urano1988}; th
 (ΔZ ≈ 1–6 Å) lies in that regime (§1.6). The flat–island comparison is therefore a trend obtained
 within one fixed lattice model, and extending it to thicker, experimentally strained films would
 require a different construction.
+
+**The search-level statistics are limited by how few searches completed.** The four models
+contribute 13, 6, 4 and 3 completed searches, and the comparison between the two Co-containing
+models pools just 4 and 3 of them. A permutation test over that pair admits only 35 distinct
+partitions of the pooled searches, so it cannot return p < 0.029 however the data fall; the boron
+effect in the Fe-Co host (p = 0.092, median shift 0.048 eV/atom) is therefore **under-powered
+rather than absent**, and settling it requires further completed searches of that model, not
+further analysis of the existing ones. The two Co-containing models carry the weakest statistics
+in this paper, and statements resting on them are flagged as trends throughout.

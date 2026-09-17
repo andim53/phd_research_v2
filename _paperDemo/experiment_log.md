@@ -920,3 +920,105 @@ in the log.
 - **`CLAIMS.md` -> v7**: SI-5/SI-6/SI-7 evidence cells restated on the primary variant, the
   retraction recorded, the truncated-search limitation added, version history updated.
   `paper_status.md` and `AGENTS.md` moved to v7; all four section headers moved to v7.
+
+## v8 — completed searches only, across all analysis (2026-09-17)
+
+Scientist's instruction: *"ignore the stopped early seed, across all analysis. Only use one that
+actually finished 100 Iterations."* Applied project-wide; a second, independent defect in the
+significance test surfaced while verifying the recomputation.
+
+### Run selection
+
+**Audit of all 196 dbs.** Truncation was NOT confined to the sensitivity families: the main-text
+loaders globbed `seed_*/1_db/db_*.db`, which drops runs *named* `stop_*` but silently accepts a
+`seed_*` run that stopped early. Two main-text systems had one:
+
+| run | iteration max | before | from v8 |
+|---|---|---|---|
+| `fecomgo/seed_4` | 10 | included (10 structures) | excluded |
+| `fecobmgo/seed_3` | 73 | included (66 structures) | excluded |
+| `femgo/stop_16` | 37 | excluded (by name only) | excluded |
+| `febmgo/seed_6` | no data | excluded (empty) | excluded |
+
+`data/mgofe`, `data/extraIteration` and `data/latt_conc` also contain unfinished runs, but nothing
+in the paper, CLAIMS or analysis reads those trees (exploratory only).
+
+**Enforcement (scientist's chosen option: a single shared rule).** New `scripts/run_selection.py`
+(`FULL_ITERATIONS = 100`, `completed_dbs()` / `select_completed()` / `db_iteration_range()`), now
+imported by `pes_analysis.py`, `wetting_metrics.py`, `exploration_performance.py`,
+`method_sensitivity.py` and `ensemble_analysis.py`. Completion is read from **max(iteration) in the
+database, not from the directory name** — that naming assumption is what hid these two runs.
+
+- `ensemble_analysis.py` v1.1.0: `load_system(system)` returns `(recs, used_dbs, rejected)`; the
+  integrity inventory now records `unfinished_runs_excluded` (replica + max_iteration +
+  required_iterations) per system, replacing the naming-based `partial_replicas_on_disk` which had
+  reported `[]` for Fe-Co and Fe-Co-B. The `include_partial` option and the
+  `pes_structures_with_partial.csv` output are **gone** (a variant built from unfinished runs
+  contradicts the rule); the orphan CSV was deleted.
+- `method_sensitivity.py`: `split_truncated`/`MIN_ITER` replaced by `select_completed`; the
+  `variant` column and the as-reported computation are removed per the scientist's decision to
+  purge those numbers.
+- `exploration_performance.py`, `pes_analysis.py`, `wetting_metrics.py`: glob replaced by
+  `completed_dbs(...)`, with the exclusions printed.
+
+### A second defect: the permutation test was not a permutation test
+
+`clustered_bootstrap_effect` drew **two independent permutations** of the pooled minima (one per
+group) instead of one permutation split into groups. The two groups were therefore sampled
+independently rather than partitioning the pool — a **narrower null than a true permutation null**,
+which inflates significance. Fixed: one permutation per replicate, split at `na`, with a +1
+correction so p is never 0. `perm_n_partitions` and `perm_resolution` are now recorded per
+comparison so the test's resolution cannot be over-read.
+
+| comparison | v6/v7 (all runs, old test) | completed runs, old test | **v8 (completed + fixed test)** |
+|---|---|---|---|
+| B in Fe host (13 vs 6) | 0.005 | 0.005 | **0.045** |
+| B in Fe-Co host (5v4 -> 4v3) | 0.74 | 0.008 | **0.092** |
+| Co alone (13v5 -> 13v4) | 0.73 | 0.116 | **0.245** |
+
+The two corrections pull in opposite directions for MT-4: removing the truncated outlier raised its
+apparent significance (0.74 -> 0.008), fixing the test lowered it again (0.008 -> 0.092). **MT-4 is
+under-powered, not absent** (median shift +0.048 eV/atom, 92 % same-sign, floor p = 0.029 at 4 vs 3).
+Its status flag is **left for the scientist** — not changed here.
+
+### Recomputed headline numbers
+
+- Completed searches **13 / 6 / 4 / 3** (was 13 / 6 / 5 / 4); canonical structures **2350** (was 2408).
+- Flat-basin minima **unchanged**: 0.1888 / 0.1493 / 0.1941 / 0.1494 eV/atom. In every system the
+  global minimum belongs to a completed search (shift exactly 0.00000 eV/atom), so all dE/N values
+  are unchanged. The excluded replicas were outliers: their per-search best sat 0.26 (Fe-Co) and
+  0.40 (Fe-Co-B) eV/atom above the minimum.
+- **Changed:** Fe-Co-B flat fraction 0.242 -> **0.289**; Fe-Co 0.214 -> 0.212; Fe-Co-B flat
+  per-replica SD 0.118 -> 0.028; motif counts **1-4** per branch (flat 2/2/4/2, island 2/2/3/1);
+  within-set fingerprint distance **0.37-0.71** x random-pair scale.
+- **Unchanged:** SI S1 (its JSON is byte-identical), SI S2 (fixed structures — the PDOS and registry
+  analyses read two XSF files and never touched the search databases), MT-1, MT-2, the experimental
+  correspondence, and MT-7's window counts (1 of 72 Fe-B, 1 of 21 Fe-Co-B).
+- `pes_analysis.py` and `ensemble_analysis.py` still rebuild `pes_structures.csv` identically
+  (max numeric diff 0.0; only row order and `nan` vs `0.0` for the B-free system differ).
+
+### Content propagated (full propagation, per the scientist's decision)
+
+- `01_methods.md` S1.2: counts 13/6/4/3, and a new **"Only completed searches are used"** paragraph
+  naming the four excluded runs and stating that the rule reads the iteration number, not the
+  directory name. **This voids the 2026-09-17 approval again** -> DRAFT v4, needs re-approval.
+- `02_results.md`: MT-8 motif count 1-3 -> **1-4** plus the ratio range and a single-search caveat;
+  MT-7 extended with the outside-window figures (101 of 471 Fe-B; 25 of 252 Fe-Co-B) and a
+  weak-support caveat (the Fe-Co-B window comes from 2 searches); the uncertainty paragraph carries
+  the new counts and p-values (0.045 / 0.245 / 0.092) and states the test's resolution floor.
+- `03_discussion.md`: S3.3 cobalt sentence now gives p = 0.245 and frames it as a bound on the
+  effect size; S3.5 gained a **third model-bound limitation** on the search-level statistics.
+- `sections/SI.md`: S3's as-reported variant **purged** (numbers removed, single disclosure sentence
+  kept, per the scientist's decision); Table S3 reframed as "completed searches only" with no number
+  changes.
+- `CLAIMS.md` -> **v8**: MT-3/MT-4/MT-5 evidence restated with the corrected p-values, MT-7 and MT-8
+  evidence updated, the run-selection rule and the permutation-resolution limit added as
+  limitations, MT-6's supporting fractions refreshed, version history. Two v7 statements corrected:
+  kappa=1 *does* contain an unfinished run (`seed_19`, iteration 6 — it contributed no records under
+  the iteration>=10 floor) and the v7 "as-reported variant retained" note no longer holds.
+- `paper_status.md` / `AGENTS.md`: v8, the enforcement map, the corrected evidence table, and three
+  OPEN items (MT-4's status; the dangling "detailed motif analysis is in the Supplementary Material"
+  pointer with no SI motif section; the voided Methods approval).
+
+Probes added earlier and still used here: `probe_stop16_bias.py`, `probe_family_seeds.py`,
+`probe_truncation_effect.py`, `probe_truncated_seed_effect.py`.

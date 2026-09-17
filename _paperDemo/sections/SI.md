@@ -1,7 +1,7 @@
 # Supplementary Material
 
 <!-- DRAFT v1 · supplementary document (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v7. Planned structure:
+     Grounded in CLAIMS.md v8. Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [documented in experiment_log.md]
        S3  Method-parameter sensitivity (rattle / kappa / dipole) [documented in experiment_log.md]
@@ -12,10 +12,9 @@
      Fe-atop-O registry is inherited from the reference construction and is a consistency
      check, not a search prediction). Claims SI-1 … SI-4.
      S3 drafted 2026-09-17. Claims SI-5 (kappa), SI-6 (dipole), SI-7 (rattle).
-     The primary sensitivity statistic uses searches of equal length (reaching iteration 100);
-     the as-reported variant is retained in the CSV (column `variant`). See CLAIMS v7 — the
-     truncated searches in these families biased the original comparison, and "kappa = 1 is
-     best" was retracted as an artefact. -->
+     Only completed searches (100 iterations) are used, everywhere in this paper. See CLAIMS v8:
+     unfinished runs biased the original comparison, and "kappa = 1 is best" was retracted as an
+     artefact of one such run sitting in the baseline. -->
 
 ## S1 Performance of the biased exploration in finding the global minimum
 
@@ -179,22 +178,20 @@ preserved. The baseline for every family is the plain Fe/MgO run (rattle 1.5/2.3
 dipole correction). Energies are per-seed best ΔE/N relative to the lowest energy found in any of
 these runs, −436.909 eV.
 
-**The primary statistic uses searches of equal length.** A first pass counted every search found
-under each run directory, which included several that had been **stopped early**. A short search
-has had less time to descend, so its per-seed best is systematically worse — every truncated
-search in this set is a severe outlier (0.23–0.35 eV/atom, against ~0.03–0.09 for full searches) —
-and because the truncation is **not uniform across settings** it distorts the comparison between
-them. Counting one truncated search in the baseline alone moves it from
-0.0368 ± 0.0258 to 0.0503 ± 0.0545 eV/atom, a 27 % shift in the mean and roughly a doubling of the
-standard deviation. The primary numbers below therefore use **only searches that reached iteration
-100**, giving every setting the same search time; the as-reported values over all searches are
-quoted wherever they differ, and both variants are recorded in the same file
-(`analysis/method_sensitivity.csv`, column `variant`). A side effect worth noting: the primary
-baseline is **13 searches**, matching the main text and §S1, whereas the as-reported baseline
-counted 14.
+**Only completed searches are used.** Several run directories in this study contain searches that
+were **stopped early**, and they are excluded everywhere in this paper. A short search has had less
+time to descend, so its per-seed best is systematically worse — every unfinished search in this set
+is a severe outlier (0.23–0.35 eV/atom, against ~0.03–0.09 for completed searches) — and because
+the unfinished runs are not distributed evenly across settings they would distort the comparison
+between them. The rule is applied by a single shared function (`run_selection.py`) in every
+analysis script, and it is determined from the **iteration number stored in each database rather
+than from the directory name**, because a `seed_*` directory can stop early just as a `stop_*` one
+can. The practical consequence here is that the rattle and kappa families lose their worst searches
+and the baseline drops from 14 directories to **13 completed searches**, matching the replica count
+used in the main text.
 
-**Table S3.** Method-parameter sensitivity, primary statistic (searches reaching iteration 100).
-*[SI-5, SI-6, SI-7]*
+**Table S3.** Method-parameter sensitivity; completed searches only (100 iterations). All numbers
+trace to `analysis/method_sensitivity.csv`. *[SI-5, SI-6, SI-7]*
 
 | Family | Setting | Searches | per-seed best (eV/atom) | Flat fraction | Diversity |
 |---|---|---|---|---|---|
@@ -221,11 +218,9 @@ from **0.0368 to 0.2607 / 0.2558 eV/atom** — a factor of **7.1 and 7.0** — a
 fraction collapses from **0.165 to 0.023 / 0.017**. Reducing the perturbation is therefore not a
 cheaper equivalent of the baseline: the rattle is what makes the search escape the initial region
 and reach the low-energy basin at all, and less of it leaves the search sampling almost exclusively
-the island side. The as-reported values tell the same story with a smaller factor
-(0.0503 → 0.2902 / 0.2740, i.e. ~5×), because the truncated searches in the reduced-rattle arms
-also depress those arms. **The magnitude here is weakly determined** — after excluding truncated
-runs the two reduced-rattle arms keep only 2 and 4 searches — so the factor should be read as
-"about an order of magnitude", not as a calibrated ratio. The direction is not in doubt: every arm
+the island side. **The magnitude here is weakly determined** — these two arms retain only 2 and
+4 completed searches — so the factor should be read as "about an order of magnitude", not as a
+calibrated ratio. The direction is not in doubt: every arm
 of the sweep is worse than the baseline, and the flat basin is under-sampled by an order of
 magnitude in the flat fraction.
 
@@ -234,17 +229,15 @@ magnitude in the flat fraction.
 (0.019–0.026) — so the method's conclusions are **robust to the acquisition parameter**, and in
 particular **no value of kappa can be identified as better than another** from these runs. This is
 worth stating explicitly, because an earlier reading of the same data singled out kappa = 1 as the
-best setting; that ranking came from a truncated search sitting in the baseline rather than from
-any property of kappa = 1, and it does not survive the equal-iteration statistic. There is a small,
+best setting; that ranking came from an unfinished search sitting in the baseline rather than from
+any property of kappa = 1, and it does not survive the completed-search statistic. There is a small,
 monotone trend in the flat-basin fraction — 0.182, 0.165, 0.149 and 0.132 for kappa = 1, 2, 3 and 4
 — i.e. more exploration relative to exploitation samples slightly less of the flat basin, but the
 effect is within the same order as the seed-to-seed spread.
 
 **The dipole correction does not change the outcome.** *[SI-6]* The per-seed best moves from
 0.03683 ± 0.02575 to 0.03770 ± 0.02436 eV/atom, a difference of 0.0009 eV/atom — an order of
-magnitude smaller than the standard deviation. On the primary statistic the comparison is cleaner
-than the as-reported one (0.0503 → 0.0563), which again reflects the truncated baseline search
-rather than the dipole correction. **Caveat:** these are two *separate* searches, so the difference
+magnitude smaller than the standard deviation. **Caveat:** these are two *separate* searches, so the difference
 mixes the correction with sampling noise. This is an outcome-level comparison only; isolating the
 dipole energy shift would require recomputing the *same* structures with and without the
 correction, which was not done.

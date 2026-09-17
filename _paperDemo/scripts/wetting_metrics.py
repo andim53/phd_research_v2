@@ -22,8 +22,11 @@ Usage:
       --e-window-per-atom 0.05
 """
 import matplotlib; matplotlib.use('Agg')
-import numpy as np, glob, os, csv, argparse
+import numpy as np, glob, os, csv, argparse, sys
 from agox.databases import Database
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from run_selection import FULL_ITERATIONS, completed_dbs  # noqa: E402
 
 D_CUT = 2.6            # Angstrom; Fe-O / B-O bonding cutoff for interfacial contact
 COVERAGE_DXY = 1.2     # Angstrom lateral bin for 2D coverage footprint
@@ -102,7 +105,7 @@ def main():
     os.makedirs('analysis', exist_ok=True)
     rows = []
     for system in ['femgo', 'febmgo']:
-        dbs = sorted(glob.glob(f'data/{system}/seed_*/1_db/db_*.db'))
+        dbs, rejected = completed_dbs(f'data/{system}/*/1_db/db_*.db', verbose=True)
         emins, allc = [], []
         for dbp in dbs:
             for c in load_cands(dbp):

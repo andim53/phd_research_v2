@@ -1,7 +1,7 @@
 # 01 — Methods
 
 <!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v7. Citations verified and in references.bib
+     Grounded in CLAIMS.md v8. Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
      species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
@@ -130,8 +130,21 @@ follows the target stoichiometry (§1.1): a pure Fe layer for Fe/MgO; an Fe laye
 above the surface for Fe-B/MgO; and a Fe/Co layer with the cation arrangement randomised, plus
 added B, for the two Co-containing models. The films are therefore single-layer in all four
 models, but the lateral cation ordering of the Co-containing references is disordered as
-placed. Each model was run from multiple independent random seeds
-(13 / 6 / 5 / 4 for the four models); each seed constitutes one independent search.
+placed. Each model was run from multiple independent random seeds, and each seed constitutes one
+independent search.
+
+**Only completed searches are used.** Every number in this paper comes from searches that ran the
+full 100-iteration budget: **13 / 6 / 4 / 3** completed searches for Fe / Fe-B / Fe-Co / Fe-Co-B,
+26 in total. Four replica directories on disk are *not* used, and they are listed here rather than
+dropped silently — `femgo/stop_16` (stopped at iteration 37), `febmgo/seed_6` (database never
+populated), `fecomgo/seed_4` (stopped at iteration 10) and `fecobmgo/seed_3` (stopped at
+iteration 73). A stopped search has had less search time than a completed one, so its best energy
+is systematically worse; and because the unfinished runs are not distributed evenly across the
+models, including them would bias every comparison drawn between the models. The selection is
+applied by a single shared rule (`run_selection.py`) in every analysis script used here, and it is
+determined from the **iteration number recorded in each database, not from the directory name** —
+`fecomgo/seed_4` and `fecobmgo/seed_3` are ordinary-looking seed directories that simply stopped
+early.
 
 Candidates were relaxed by the surrogate model for up to 100 steps (starting from
 iteration 10) and evaluated with the DFT calculator below. **Only structures from

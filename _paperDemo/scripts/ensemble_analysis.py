@@ -12,9 +12,11 @@ structure per branch is therefore only as robust as that pick.
 This script answers, from the existing AGOX/GOFEE databases:
 
   1. DATA INTEGRITY - inventory of independent replicas (AGOX seeds) per system, including
-     empty / truncated / partial runs that the `seed_*` glob in pes_analysis.py silently
-     drops or silently accepts. Rebuilds analysis/pes_structures.csv and reports the effect
-     of the partial `stop_16` run on the Fe numbers.
+     empty runs AND runs that stopped before the full iteration budget.  Truncation is detected by
+     the iteration number (run_selection), not by the directory name, because a `seed_*` run can
+     stop early just as a `stop_*` run can — that is how `fecomgo/seed_4` (iteration 10 only) and
+     `fecobmgo/seed_3` (stopped at 73) came to be included in an earlier version of this analysis.
+     Rebuilds analysis/pes_structures.csv.
   2. DISTRIBUTION - describes the flat branch as a distribution (per-replica minimum,
      median, IQR) rather than a single point, and contrasts it with the island branch.
   3. MOTIF TEST - the decisive question: are the low-energy structures of a branch the
@@ -30,29 +32,33 @@ A branch whose low-energy structures span the random-pair scale is a degenerate 
 
 Outputs
 -------
-  analysis/pes_structures.csv               (canonical: seed_* replicas, unchanged schema)
-  analysis/pes_structures_with_partial.csv  (adds data/<system>/stop_* partial runs)
+  analysis/pes_structures.csv               (canonical: completed replicas only, unchanged schema)
   analysis/ensemble_stats.json              (self-describing; see "description" block)
 
 Usage
 -----
   /home/think/miniconda3/envs/agox_v2/bin/python scripts/ensemble_analysis.py
 """
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 import json
 import glob
 import os
 import csv
+import sys
 import argparse
 import numpy as np
 from collections import Counter, defaultdict
+from math import comb
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, fcluster
 
 from agox.databases import Database
 from agox.models.descriptors import Fingerprint
 from agox.environments import Environment
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from run_selection import (FULL_ITERATIONS, db_iteration_range, select_completed)  # noqa: E402
 
 METAL = ('Fe', 'Co')          # film species for the dZ flatness metric
 D_CUT = 2.6                   # Angstrom; B-O bonding cutoff (matches pes_analysis.py)
@@ -85,20 +91,20 @@ def b_contact_frac(atoms):
     return float((d < D_CUT).mean())
 
 
-def load_system(system, include_partial):
-    """Return records for one system: iteration>=MIN_ITER structures, all replicas.
+def load_system(system):
+    """Return records for one system: iteration>=MIN_ITER structures, completed runs only.
 
-    Mirrors pes_analysis.py exactly for the `seed_*` replicas; optionally also picks up
-    `stop_*` (partial) runs, which the original `seed_*` glob drops.
+    Every replica directory on disk is considered (`<replica>/1_db/db_*.db`, scratch `trash/`
+    excluded), and then filtered by run_selection: only a search that reached
+    FULL_ITERATIONS counts.  Returns (recs, used_dbs, rejected) where rejected is
+    [(db_path, max_iteration)] so the caller can report the exclusions.
     """
-    pats = [f'data/{system}/seed_*/1_db/db_*.db']
-    if include_partial:
-        pats.append(f'data/{system}/stop_*/1_db/db_*.db')
-    dbs = sorted(d for p in pats for d in glob.glob(p))
+    pattern = f'data/{system}/*/1_db/db_*.db'
+    on_disk = sorted(d for d in glob.glob(pattern) if 'trash' not in d.lower())
+    dbs, rejected = select_completed(on_disk)
     recs = []
     for dbp in dbs:
         replica = os.path.basename(os.path.dirname(os.path.dirname(dbp)))
-        partial = not replica.startswith('seed_')
         db = Database(filename=dbp)
         db.restore_to_memory()
         cands, data = db.get_all_candidates(), db.get_all_structures_data()
@@ -106,11 +112,11 @@ def load_system(system, include_partial):
             it = d.get('iteration')
             if it is None or it < MIN_ITER:
                 continue
-            recs.append(dict(system=system, replica=replica, partial=partial,
+            recs.append(dict(system=system, replica=replica,
                              iteration=int(it), E=float(c.get_potential_energy()),
                              n_atoms=len(c), dZ=delta_z(c), B_contact_frac=b_contact_frac(c),
                              atoms=c.copy()))
-    return recs, dbs
+    return recs, dbs, rejected
 
 
 def _n_candidates(dbp):
@@ -221,12 +227,23 @@ def clustered_bootstrap_effect(recs_a, recs_b, n_boot=2000):
         out[f'{stat}_ci95'] = [float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))]
         out[f'{stat}_same_sign_fraction'] = float((np.sign(boots) == np.sign(out[f'{stat}_shift_eV_per_atom'])).mean())
 
-    # two-sided permutation test on the per-replica minima
+    # Two-sided permutation test on the per-replica minima.
+    # One permutation per replicate, split into groups of size na and n-na.  An earlier version
+    # drew TWO INDEPENDENT permutations (one per group), which is not a permutation test: the two
+    # groups were sampled independently rather than partitioning the pool, which widens the null
+    # and inflates p.  The number of distinct partitions is recorded so the resolution of the test
+    # is not over-read.
     obs = abs(va.mean() - vb.mean())
     pool = np.concatenate([va, vb]); na = len(va)
-    perm = np.array([abs(pool[RNG.permutation(len(pool))][:na].mean()
-                         - pool[RNG.permutation(len(pool))][na:].mean()) for _ in range(5000)])
-    out['perm_p_mean_min'] = float((perm >= obs).mean())
+    n_perm = 5000
+    perm = np.empty(n_perm)
+    for k in range(n_perm):
+        idx = RNG.permutation(len(pool))
+        perm[k] = abs(pool[idx[:na]].mean() - pool[idx[na:]].mean())
+    # +1 correction (Davison & Hinkley): avoids reporting p = 0 for an extreme observation
+    out['perm_p_mean_min'] = float((1 + (perm >= obs).sum()) / (1 + n_perm))
+    out['perm_n_partitions'] = int(comb(len(pool), na))
+    out['perm_resolution'] = float(1.0 / comb(len(pool), na))
     return out
 
 
@@ -312,64 +329,30 @@ def main():
                          if 'trash' not in d.lower())
         empty[system] = [os.path.basename(os.path.dirname(os.path.dirname(d)))
                          for d in all_dbs if _n_candidates(d) == 0]
-        recs, dbs = load_system(system, include_partial=False)
+        recs, dbs, rejected = load_system(system)
         normalise(recs)
         canonical.extend(recs)
-        with_partial, _ = load_system(system, include_partial=True)
         inventory[system] = {
             'n_replica_dirs_on_disk': len(all_dbs),
-            'n_seed_dbs_loaded': len(dbs),
+            'n_dbs_loaded': len(dbs),
             'replicas': sorted(set(r['replica'] for r in recs)),
             'n_replicas_with_data': len(set(r['replica'] for r in recs)),
             'n_structures': len(recs),
             'empty_replica_dirs': empty[system],
-            'partial_replicas_on_disk': [os.path.basename(os.path.dirname(os.path.dirname(d)))
-                                         for d in all_dbs
-                                         if not os.path.basename(os.path.dirname(
-                                             os.path.dirname(d))).startswith('seed_')],
-            'replicas_used_with_partial': sorted(set(r['replica'] for r in with_partial)),
-            'n_structures_with_partial': len(with_partial),
+            'unfinished_runs_excluded': [
+                {'replica': os.path.basename(os.path.dirname(os.path.dirname(d))),
+                 'max_iteration': hi, 'required_iterations': FULL_ITERATIONS}
+                for d, hi in rejected],
+            'n_unfinished_runs_excluded': len(rejected),
         }
+        if rejected:
+            detail = ', '.join(
+                f"{os.path.basename(os.path.dirname(os.path.dirname(d)))}"
+                f"@{'no data' if hi is None else hi}" for d, hi in rejected)
+            print(f'  {system}: excluded {len(rejected)} unfinished run(s) '
+                  f'(< {FULL_ITERATIONS} iterations): {detail}')
     write_csv('analysis/pes_structures.csv', canonical)
     print(f'wrote analysis/pes_structures.csv ({len(canonical)} rows)')
-
-    # ---- effect of including the partial stop_* runs (Fe host only has one) ----
-    partial_effect = {}
-    for system in SYSTEMS:
-        base, _ = load_system(system, include_partial=False)
-        normalise(base)
-        full, _ = load_system(system, include_partial=True)
-        if len(full) == len(base):
-            continue
-        recs_all = full
-        normalise(recs_all)
-        # canonical normalisation applied to the same superset for a like-for-like view
-        g_all = min(r['E'] for r in recs_all)
-        for r in base:
-            r['dE_renorm'] = (r['E'] - g_all) / r['n_atoms']
-        for r in recs_all:
-            r['dE_renorm'] = r['dE_per_atom']
-        partial_effect[system] = {
-            'n_structures_without': len(base),
-            'n_structures_with': len(recs_all),
-            'extra_replicas': sorted(set(r['replica'] for r in recs_all)
-                                     - set(r['replica'] for r in base)),
-            'global_min_eV_without': min(r['E'] for r in base),
-            'global_min_eV_with': g_all,
-            'flat_min_without': branch_stats(base)['flat']['min'],
-            'flat_min_with_renorm': branch_stats(recs_all)['flat']['min'],
-            'flat_fraction_without': branch_stats(base)['flat']['fraction'],
-            'flat_fraction_with': branch_stats(recs_all)['flat']['fraction'],
-        }
-    # variant CSV: all systems with their partial runs included (renormalised per system)
-    if partial_effect:
-        sup = []
-        for system in SYSTEMS:
-            recs, _ = load_system(system, include_partial=True)
-            normalise(recs)
-            sup.extend(recs)
-        write_csv('analysis/pes_structures_with_partial.csv', sup)
-        print(f'wrote analysis/pes_structures_with_partial.csv ({len(sup)} rows)')
 
     # ---- per-system statistics + motif tests ----
     stats = {}
@@ -422,39 +405,33 @@ def main():
               f"perm-p(mean-min) {v['perm_p_mean_min']:.3f}  "
               f"(n={v['n_replicas_a']} vs {v['n_replicas_b']})")
 
-    # ---- main-text vs SI baseline: same system defined with two different replica sets ----
+    # ---- main-text vs SI baseline: both must now select the same replica set ----
     si_check = None
     si_csv = 'analysis/method_sensitivity.csv'
     if os.path.exists(si_csv):
         si = [r for r in csv.DictReader(open(si_csv)) if r['setting'].startswith('baseline')]
         if si:
             base = branch_stats([r for r in canonical if r['system'] == 'femgo'])
-            femgo_partial, _ = load_system('femgo', include_partial=True)
-            normalise(femgo_partial)
-            bp = branch_stats(femgo_partial)
+            # tolerate either schema (a `variant` column, or a single-variant CSV)
+            row = next((r for r in si if r.get('variant', 'full') == 'full'), si[0])
             si_check = {
-                'si_baseline_row': {k: si[0][k] for k in ('setting', 'n_structures', 'n_seeds',
-                                                          'flat_fraction')},
+                'si_baseline_row': {k: row.get(k) for k in ('setting', 'n_structures', 'n_seeds',
+                                                            'flat_fraction')},
                 'main_text_definition': {'n_structures': base['n_structures'],
                                          'n_replicas': base['n_replicas'],
                                          'flat_fraction': base['flat']['fraction']},
-                'with_partial_definition': {'n_structures': bp['n_structures'],
-                                            'n_replicas': bp['n_replicas'],
-                                            'flat_fraction': bp['flat']['fraction']},
-                'consistent': (int(si[0]['n_structures']) == bp['n_structures']
-                               and int(si[0]['n_seeds']) == bp['n_replicas']),
-                'note': ('method_sensitivity.py loads data/<system>/**/*.db (recursive), which '
-                         'includes stop_* partial runs; pes_analysis.py loads only seed_*/. '
-                         'The same "femgo baseline" is therefore reported with different '
-                         'replica counts and a different flat fraction.'),
+                'consistent': (int(float(row['n_structures'])) == base['n_structures']
+                               and int(float(row['n_seeds'])) == base['n_replicas']),
+                'note': ('Both this script and method_sensitivity.py now select completed runs '
+                         'only (run_selection.FULL_ITERATIONS), so the same "femgo baseline" is '
+                         'expected to be reported with the same replica count and flat fraction.'),
             }
             print(f"\n=== dataset-definition check (femgo) ===\n"
-                  f"  main text (seed_* only): {base['n_structures']} structures / "
+                  f"  main text (completed runs): {base['n_structures']} structures / "
                   f"{base['n_replicas']} replicas, flat fraction {base['flat']['fraction']:.3f}\n"
-                  f"  SI baseline (recursive): {si[0]['n_structures']} structures / "
-                  f"{si[0]['n_seeds']} replicas, flat fraction {float(si[0]['flat_fraction']):.3f}\n"
-                  f"  with partial runs:       {bp['n_structures']} structures / "
-                  f"{bp['n_replicas']} replicas, flat fraction {bp['flat']['fraction']:.3f}")
+                  f"  SI baseline:                {row['n_structures']} structures / "
+                  f"{row['n_seeds']} replicas, flat fraction {float(row['flat_fraction']):.3f}\n"
+                  f"  consistent: {si_check['consistent']}")
 
     payload = {
         'description': {
@@ -490,16 +467,20 @@ def main():
                 'They support qualitative statements, not thermodynamic entropies.',
                 'Structures are not DFT-converged (surrogate relaxation + 1 GPAW step).',
                 f'flat/island split at dZ <= {FLAT_DZ} A is a chosen threshold.',
-                'Replica counts differ across systems and some replicas are truncated.',
+                'Replica counts differ across systems. Searches that stopped before the full '
+                'iteration budget are excluded everywhere in this project '
+                '(run_selection.FULL_ITERATIONS); the excluded ones are listed per system in the '
+                'inventory as unfinished_runs_excluded.',
             ],
-            'inputs': {'dbs_glob': 'data/{system}/seed_*/1_db/db_*.db (+ stop_* for the partial variant)',
+            'inputs': {'dbs_glob': ('data/{system}/*/1_db/db_*.db, then filtered to completed runs '
+                                    '(run_selection.FULL_ITERATIONS)'),
                        'n_structures_canonical': len(canonical)},
             'schema': {
                 'systems': 'per-system branch distributions + motif tests',
-                'replica_inventory': 'db/replica accounting per system',
-                'partial_run_effect': 'effect of including data/<system>/stop_* partial runs',
-                'dataset_definition_check': ('same system described with two different replica '
-                                             'sets (main text seed_* only vs SI recursive glob)'),
+                'replica_inventory': ('db/replica accounting per system, including the unfinished '
+                                      'runs excluded by the completion rule'),
+                'dataset_definition_check': ('main text and SI baseline are expected to select the '
+                                             'same replica set (both completed-runs only)'),
                 'effects': 'flat-branch shifts, resampled over replicas (median CI + perm p)',
             },
         },
@@ -507,7 +488,11 @@ def main():
         'constants': {'flat_dZ': FLAT_DZ, 'min_iteration': MIN_ITER, 'b_o_cutoff': D_CUT,
                       'random_pairs_per_branch': RAND_PAIRS},
         'replica_inventory': inventory,
-        'partial_run_effect': partial_effect,
+        'run_selection': {
+            'rule': 'only searches that reached run_selection.FULL_ITERATIONS are used',
+            'full_iterations_required': FULL_ITERATIONS,
+            'detected_by': 'max(iteration) per database, not by directory name',
+        },
         'dataset_definition_check': si_check,
         'systems': stats,
         'effects': effects,
