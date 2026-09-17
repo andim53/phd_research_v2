@@ -1,6 +1,8 @@
 # Supplementary Material
+     v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
+     S3 numbers purged to completed searches only. Awaiting review.
 
-<!-- DRAFT v1 · supplementary document (markdown-first, pre-LaTeX)
+<!-- DRAFT v3 · supplementary document (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v8. Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [documented in experiment_log.md]

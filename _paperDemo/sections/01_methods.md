@@ -1,6 +1,8 @@
 # 01 — Methods
+     v4 (2026-09-17): §1.2 gained the completed-search rule (13 / 6 / 4 / 3) and the list of
+     excluded runs. TO BE RE-APPROVED — the v3 approval is voided by this edit.
 
-<!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v4 · section 01 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v8. Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,

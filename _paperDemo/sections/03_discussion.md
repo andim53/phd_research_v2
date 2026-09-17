@@ -1,6 +1,8 @@
 # 03 — Discussion
+     v4 (2026-09-17): §3.1 mechanism rewritten (no lattice-strain relief; strain sits on the
+     substrate), §3.3 cobalt p-value, §3.5 three model-bound limitations. Awaiting review.
 
-<!-- DRAFT v3 · section 03 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v4 · section 03 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v8. All \cite{} keys resolve against references.bib; the three
      MTJ placeholders were replaced by yuasa2004 (verified) when the CoFeB-specific
      assertions were dropped. -->

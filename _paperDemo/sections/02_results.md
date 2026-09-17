@@ -1,6 +1,9 @@
 # 02 — Results
+     v3 (2026-09-17): §2.1 gained the 1-ML experimental correspondence (torelli2009); §2.2 the
+     completed-search counts and corrected p-values (0.045 / 0.245 / 0.092); MT-8 motif range
+     1–4. Awaiting re-approval.
 
-<!-- DRAFT v2 · section 02 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v3 · section 02 of the manuscript (markdown-first, pre-LaTeX)
      RECONSTRUCTED 2026-09-17 under the revised core framing: Fe wetting is the subject,
      Co/B/CoB are the parameter series, and the biased search yields an EXPLORATION density
      over the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the
