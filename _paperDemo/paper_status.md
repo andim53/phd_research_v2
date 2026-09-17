@@ -6,9 +6,10 @@ Boron consistently lowers the relative energy of the flat metal-film wetting sta
 i.e. B promotes flat-film wetting independently of the host metal, relevant to interface
 flatness in CoFeB/MgO MTJ stacks.
 
-**Claim list frozen:** `CLAIMS.md` **v2** (2026-09-17; supersedes v1 of 2026-09-16).
-v2 withdraws MT-6 (flat-basin sampling fraction — see CLAIMS.md changelog). Do not add/drop
-claims without bumping the version again.
+**Claim list frozen:** `CLAIMS.md` **v3** (2026-09-17; supersedes v2 and v1). v2 withdrew MT-6
+(flat-basin sampling fraction); v3 added MT-8 (branches are families of recurring motifs),
+flagged MT-4 as CHALLENGED pending more searches, recorded the exploration-density principle in
+Method & scope, and added the phase-separation wording. See the CLAIMS changelog.
 
 ## Target venue / format
 TBD — format-agnostic (no venue selected).
@@ -41,11 +42,12 @@ Status: **SUPPLEMENTARY (SI)** — validates the biased-exploration scheme; not 
 |-------|----------|----------------|-----------|
 | Lowest-energy structure found is an island (all 4) | analysis/pes_structures.csv | ΔZ 2.75–3.77 Å at lowest energy | yes |
 | Flat config is a distinct, higher-energy basin | analysis/pes_structures.csv | flat-basin dE/N > 0 (0.149–0.194) | yes |
-| B lowers flat-basin energy in Fe host | analysis/pes_structures.csv | 0.1888 → 0.1493 eV/atom | yes |
-| B lowers flat-basin energy in Fe-Co host | analysis/pes_structures.csv | 0.1941 → 0.1494 eV/atom | yes |
-| Co alone has little effect | analysis/pes_structures.csv | 0.1888 → 0.1941 eV/atom (+0.005) | yes |
+| **B lowers flat-basin energy in Fe host** | analysis/pes_structures.csv | 0.1888 → 0.1493 eV/atom | yes — replica-resampled p = 0.005 |
+| **B lowers flat-basin energy in Fe-Co host** | analysis/pes_structures.csv | 0.1941 → 0.1494 eV/atom | **CHALLENGED** — replica-resampled p = 0.74 (5 vs 4 searches); reported as a trend |
+| Co alone has little effect | analysis/pes_structures.csv | 0.1888 → 0.1941 eV/atom (+0.005) | yes — replica-resampled p = 0.73 (null confirmed) |
 | ~~B increases flat fraction (both hosts)~~ | — | **WITHDRAWN (MT-6, CLAIMS v2)** — biased-exploration weight, and the exploration operator is not matched across systems | — |
-| B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 | yes |
+| B does not bond to MgO | analysis/pes_structures.csv | B_contact_frac ≈ 0 in window dE/N ≤ 0.05 eV/atom (1/72 Fe-B; 1/21 Fe-Co-B) | yes (windowed) |
+| Low-energy structures of each branch form a few recurring motifs; ΔZ continuous | analysis/ensemble_stats.json | 1–3 motifs per branch; within-set distance 0.32–0.72 × random-pair scale | yes (descriptor-limited — paired caveat in CLAIMS) |
 | **[SI]** Island origin: reduced Fe–O hybridization | analysis/pdos_metrics.csv | d-band centre −0.23→+0.60 eV; O-pz 43.9→42.4 | yes |
 | **[SI]** Island origin: weaker magnetism/higher stability | analysis/pdos_metrics.csv | spin pol 5.81→4.37; DOS(E_F) 104→78 | yes |
 | **[SI]** Island origin is strain relief, not interfacial re-hybridisation | analysis/interface_analysis.csv | island interface Fe d-centre +0.51 (not flat-like −0.23) | yes — refines the picture |
@@ -89,8 +91,9 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
       basin, MT-2; branches are families of structures); §2.2 the flat (wetting) phase under
       Co/B/CoB (MT-3, MT-4, MT-5, MT-7); §2.3 the island (dewetting) phase and the
       flat–island separation; §2.4 summary.
-      The withdrawn MT-6 flat-fraction comparison has been **removed**. Two [NEW]/[PENDING]
-      blocks require sign-off (see below). The old section's single-lever ordering and its
+      The withdrawn MT-6 flat-fraction comparison has been **removed**. The three items first
+      flagged inline were resolved in CLAIMS v3 (MT-8 added; MT-4 flagged as a trend; §2.3
+      wording recorded) — see below. The old section's single-lever ordering and its
       "seeded from a flat reference" remark (previously a caveat, now a positive control) are
       gone.
 - [~] sections/03_discussion.md  (REVISED v3 2026-09-17 — awaiting scientist review)
@@ -105,32 +108,27 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - [ ] sections/06_abstract.md
 - [ ] E2: port all approved sections → paper.tex
 
-## RESOLVED: withdrawn MT-6 removed from 02_results.md (reconstructed v2)
+## RESOLVED: reconstructed 02_results.md, sign-off items closed via CLAIMS v3
 
 `sections/02_results.md` was reconstructed (2026-09-17) and no longer contains the withdrawn
-MT-6 flat-fraction comparison. The section is now organized by phase (see the drafting-progress
-entry above) and is **awaiting re-approval**, since reconstructing an approved section voids
-its approval.
+MT-6 flat-fraction comparison. It is organized by phase and is **awaiting re-approval**, since
+reconstructing an approved section voids its approval.
 
-**Two [NEW]/[PENDING] blocks in the reconstructed section are not yet covered by CLAIMS v2 and
-need the scientist's decision:**
+The three items that were flagged inline in the first reconstruction have all been resolved by
+the scientist and are now in `CLAIMS.md` v3 — the inline `[PENDING SIGN-OFF]` markers have been
+removed from the section:
 
-1. **§2.1 "The branches are families, not single structures."** Reports that ΔZ is continuous
-   (island branch ΔZ ≈ 1–6 Å) and that each branch's low-energy structures form 1–3 structural
-   motifs recurring across independent searches (from `analysis/ensemble_stats.json`). This is
-   new evidence underpinning the "map" framing. Either approve it as main-text results content
-   (requires a CLAIMS v3 claim) or move it wholly to the Supplementary Material and reduce §2.1
-   to Table 1 + MT-1 + MT-2.
-2. **§2.2 "[PENDING SIGN-OFF] Uncertainty of the B effect at the level of independent searches."**
-   Reports the replica-resampled permutation test: Fe host +0.040 (p = 0.005, 13 vs 6),
-   Fe-Co host +0.045 (**p = 0.74**, 5 vs 4), Co alone −0.005 (p = 0.73). **This challenges the
-   "strong" confidence rating that CLAIMS v2 still assigns to MT-4.** Either MT-4's confidence
-   is downgraded in CLAIMS v3 / the claim is reported as unresolved, or more Fe-Co and Fe-Co-B
-   searches are run before MT-4 is written as a result.
-3. **§2.3 [NEW] phase-separation wording.** States that B changes the flat–island separation
-   without resolving whether the flat phase is stabilised or the island destabilised. This is
-   already the interpretation in 03_discussion §3.2 but is not currently in CLAIMS; confirm it
-   as wording, not a claim.
+1. **§2.1 "The branches are families, not single structures"** → kept in the main text as
+   **MT-8**, with a paired caveat (the global template+film fingerprint compresses distances,
+   so the motif count is a *lower bound*).
+2. **§2.2 uncertainty paragraph** → retitled "Uncertainty from the choice of search"; **MT-4 is
+   now flagged CHALLENGED — pending more searches** and is reported in the Results as a trend.
+   Its confidence rating is deliberately *not* downgraded yet: the intent is to settle it with
+   more Fe-Co / Fe-Co-B searches.
+3. **§2.3 phase-separation wording** → added to CLAIMS' *Discussion-only interpretations*.
+
+**Open follow-up:** running additional Fe-Co and Fe-Co-B searches is the agreed way to resolve
+MT-4. Until then it stays a trend.
 
 ## RESOLVED: 01_methods.md §1.2 now states the exploration schedule per model
 
@@ -173,7 +171,7 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
-- [x] Claim list frozen (`CLAIMS.md` v1).
+- [x] Claim list frozen (`CLAIMS.md` — now v3, 2026-09-17).
 - [x] sections/01_methods.md approved (2026-09-16).
 - [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17, awaiting re-approval.
 - NEXT: scientist reviews `sections/03_discussion.md` (v3); on approval → draft `sections/04_introduction.md`.

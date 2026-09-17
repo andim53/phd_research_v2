@@ -415,4 +415,43 @@ in CLAIMS.
 Because an approved section was rewritten, `02_results.md` is marked as **awaiting
 re-approval** in `paper_status.md`.
 
+## CLAIMS v3 (2026-09-17) — MT-8 added, MT-4 flagged, framing recorded
+
+Scientist decisions on the three items flagged in the reconstructed Results:
+
+1. **"Branches are families" kept in the main text as a result → `MT-8` added.**
+   *The low-energy structures of each branch form a small set of recurring motifs rather than
+   one repeated structure; ΔZ is continuous, with no discrete island heights.* Value: island
+   branch ΔZ ≈ 1–6 Å with no quantisation; low-energy sets split into 1–3 single-linkage motifs
+   (flat 2/2/3/2, island 2/2/3/1 for Fe / Fe-B / Fe-Co / Fe-Co-B); within-set fingerprint
+   distance 0.32–0.72 × the branch's random-pair scale; Fe/MgO's five lowest flat structures
+   (five independent searches) fall into two motifs, four in the dominant one. Source:
+   `analysis/ensemble_stats.json`. Confidence: **moderate**, with a **paired caveat** that must
+   travel with the claim — the AGOX global fingerprint is computed on the whole template+film
+   structure, so the 50-atom MgO template dominates and compresses all distances, making the
+   motif count a *lower bound* on structural diversity. A film-resolved descriptor would be
+   sharper.
+2. **`MT-4` flagged CHALLENGED — pending more searches.** Value unchanged (0.1941 → 0.1494),
+   but the replica-resampled permutation test gives p = 0.74 at 5 vs 4 searches, versus
+   p = 0.005 for MT-3 at 13 vs 6. MT-4 is reported in the Results as a *trend* of the same size
+   as MT-3. The confidence rating is deliberately **not** downgraded in v3; the agreed resolution
+   is to run more Fe-Co / Fe-Co-B searches.
+3. **Phase-separation wording → added to CLAIMS' *Discussion-only interpretations*.** Boron is
+   described as changing the flat–island separation, not as stabilising the flat phase or
+   destabilising the island, because each model is referenced to its own minimum.
+
+**Also recorded in v3's *Method & scope*:** the governing epistemic principle — the biased
+search returns an *exploration* density, not a thermodynamic density of states, so basin weights
+are not physical and only unweighted structural/energetic comparisons are admissible; plus the
+positive-control framing of MT-1 (the island is the ground state despite the flat bias).
+
+**Also updated in v3:** MT-3 and MT-5 now carry their replica-resampled p-values (0.005 and
+0.73); MT-7's evidence cell now states the energy window explicitly
+(`--e-window-per-atom 0.05`, i.e. dE/N ≤ 0.05 eV/atom → 1 of 72 Fe-B, 1 of 21 Fe-Co-B), because
+outside that window 102 of 543 Fe-B structures do have a B–O contact.
+
+**Sections updated to match:** `02_results.md` — inline `[NEW]`/`[PENDING SIGN-OFF]` markers
+removed, MT-8 tagged in §2.1, MT-4 stated as a trend in §2.2, §2.3 wording left in place;
+header now cites CLAIMS v3. `03_discussion.md` header now cites CLAIMS v3.
+
 

@@ -1,22 +1,38 @@
-# CLAIMS.md — FROZEN claim list (v2)
+# CLAIMS.md — FROZEN claim list (v3)
 
-**Status: FROZEN (v2, 2026-09-17).** Supersedes v1 (signed off 2026-09-16).
+**Status: FROZEN (v3, 2026-09-17).** Supersedes v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
+
+## v3 changelog (2026-09-17)
+
+- **MT-8 ADDED** — the low-energy structures of each branch form a small set of *recurring
+  motifs* rather than one repeated structure, and ΔZ is continuous (no discrete island
+  heights). New main-text claim supporting the "map" framing; evidence from
+  `analysis/ensemble_stats.json`.
+- **MT-4 status: CHALLENGED — pending more searches.** Its value is unchanged, but a
+  replica-resampled permutation test on the per-search flat-basin minima gives p = 0.74 at
+  5 (Fe-Co) vs 4 (Fe-Co-B) searches, versus p = 0.005 for MT-3 at 13 vs 6. MT-4 is therefore
+  reported in the Results as a *trend* of the same size as MT-3 until more Fe-Co / Fe-Co-B
+  searches exist. The confidence rating is left as-is but flagged; it is not downgraded in v3.
+- **Method & scope** now records the governing epistemic principle: the biased search returns
+  an *exploration* density, not a thermodynamic density of states, so basin weights are not
+  physical and only unweighted structural/energetic comparisons are used.
+- **Discussion-only interpretations** gains the phase-separation wording: boron changes the
+  flat–island separation, and the data do not resolve whether the flat phase is stabilised or
+  the island destabilised.
+- MT-1 … MT-5, MT-7 and SI-1 … SI-7 are otherwise unchanged from v2 (no values, sources or
+  confidence levels altered). MT-6 remains withdrawn (v2).
 
 ## v2 changelog (2026-09-17)
 
 - **MT-6 WITHDRAWN** — "B increases the fraction of flat-basin structures sampled"
   (0.165 → 0.208; 0.214 → 0.242). Reason: the flat fraction is a *weight* of a
-  **biased** exploration, not a physically interpretable population. The sampling density
-  can only be compared across systems if the exploration operator is held fixed, and it is
-  not: `data/fecomgo/main.py` uses a three-generator schedule
-  (`num_candidates={0:[20,0,0], 10:[10,5,5], 25:[0,10,10]}`, adding a `PermutationGenerator`,
-  lines 172–175), whereas `femgo`, `febmgo` and `fecobmgo` use two generators
-  (`{0:[20,0], 10:[10,10], 25:[0,20]}`). The flat reference itself also differs in kind
-  across systems (pure Fe layer vs randomised Fe/Co layer vs B-decorated layer). The claim is
-  therefore not sound as a *physical* result and has been removed rather than restated.
-- MT-1 … MT-5 and MT-7 are **unchanged** from v1 (no values, sources or confidence levels
-  altered). SI-1 … SI-7 are unchanged except for the note on SI-7 below.
+  **biased** exploration, not a physically interpretable population, and a cross-system
+  comparison of weights additionally requires a fixed exploration operator, which does not
+  hold — `data/fecomgo/main.py:75,172–175` adds a third `PermutationGenerator` to the schedule
+  used by `femgo`, `febmgo` and `fecobmgo`. The flat reference also differs in kind across
+  systems (pure Fe layer vs randomised Fe/Co layer vs B-decorated layer).
+- MT-1 … MT-5 and MT-7 unchanged; SI-1 … SI-7 unchanged except for the note on SI-7 below.
 - The withdrawn claim moves to "NOT claimed (explicitly excluded)".
 
 This is the authoritative list of what the paper claims and does NOT claim. Drafting
@@ -40,17 +56,27 @@ paired caveats. Numbers below are frozen to the cited source files.
 |----|-------|-------------|--------|-----------|
 | **MT-1** | The lowest-energy structure found is an **island** (not flat) in all four systems | global-min ΔZ = 3.65 / 3.77 / 2.75 / 3.45 Å (Fe / Fe-B / Fe-Co / Fe-Co-B) | `analysis/pes_structures.csv` | strong |
 | **MT-2** | The **flat configuration is a distinct, higher-energy basin** (not the ground state) | flat-basin min dE/N > 0 in every system (0.149–0.194 eV/atom) | `analysis/pes_structures.csv` | strong |
-| **MT-3** | **B lowers the flat-state energy in the pure-Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong |
-| **MT-4** | **B lowers the flat-state energy in the Fe-Co host** | 0.1941 → 0.1494 eV/atom (−0.045) | `analysis/pes_structures.csv` | strong |
-| **MT-5** | **Co alone has little effect** on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005) | `analysis/pes_structures.csv` | strong |
+| **MT-3** | **B lowers the flat-state energy in the pure-Fe host** | 0.1888 → 0.1493 eV/atom (−0.040) | `analysis/pes_structures.csv` | strong (replica-resampled p = 0.005) |
+| **MT-4** | **B lowers the flat-state energy in the Fe-Co host** | 0.1941 → 0.1494 eV/atom (−0.045) | `analysis/pes_structures.csv` | **CHALLENGED — pending more searches** (replica-resampled p = 0.74 at 5 vs 4 searches; reported as a trend) |
+| **MT-5** | **Co alone has little effect** on the flat-state energy | 0.1888 → 0.1941 eV/atom (+0.005) | `analysis/pes_structures.csv` | strong (replica-resampled p = 0.73 — null confirmed) |
 | ~~MT-6~~ | ~~B increases the fraction of flat-basin structures sampled~~ | **WITHDRAWN in v2** — see changelog | — | — |
-| **MT-7** | **B does not bond to the MgO interface** (stays in the metal film) | B_contact_frac ≈ 0 (1 of 72 windowed structures has a single B–O contact) | `analysis/pes_structures.csv` | strong |
+| **MT-7** | **B does not bond to the MgO interface** (stays in the metal film) | B_contact_frac ≈ 0 in the low-energy window dE/N ≤ 0.05 eV/atom (1 of 72 Fe-B, 1 of 21 Fe-Co-B; max contact fraction 0.33 / 0.5). Window defined by `scripts/wetting_metrics.py --e-window-per-atom 0.05` | `analysis/pes_structures.csv` | strong (windowed) |
+| **MT-8** | The low-energy structures of each branch form a **small set of recurring motifs** rather than one repeated structure; ΔZ is **continuous**, with no discrete island heights | Island branch spans ΔZ ≈ 1–6 Å (no quantisation); low-energy sets split into 1–3 single-linkage motifs (flat 2/2/3/2, island 2/2/3/1 per system); within-set fingerprint distance is 0.32–0.72 × the branch's random-pair scale; Fe/MgO's 5 lowest flat structures (from 5 independent searches) fall into 2 motifs, 4 in the dominant one | `analysis/ensemble_stats.json` | moderate — see paired caveat |
 
 **Combined 2×2 statement (MT-3/4/5):** B effect −0.040 (Fe) and −0.045 (Fe-Co); Co effect
 +0.005 (no B) — B is the dominant lever, Co is not.
 **Note:** MT-6 (flat-basin sampling fraction) is withdrawn in v2. The flat-basin *fraction*
 may still be reported as a descriptive attribute of the sampled database, but not as a
 physical result and not as a cross-system comparison.
+
+**Paired caveat for MT-8 (must travel with the claim).** The motif test uses the AGOX global
+`Fingerprint` (radial + angular distribution functions) computed on the whole template + film
+structure. Because the 50-atom MgO template is identical across structures, it dominates the
+descriptor and compresses all pair distances, so the reported motif counts are a *lower bound*
+on the structural diversity present — the descriptor cannot resolve differences finer than the
+distances it reports. A film-resolved descriptor (or a species-aware RMSD) would be sharper.
+The claim must therefore be stated as "a small set of recurring motifs", not as an exact
+number of distinct structures.
 
 ---
 
@@ -93,6 +119,15 @@ remains a *method-quality* claim on Fe/MgO only.
 
 - Search: AGOX **GOFEE** (GPR surrogate + LCB), a **biased** exploration seeded from a
   reference **flat** metal layer; only **iteration ≥ 10** used.
+- **Epistemic status of the sampled data (v3).** The search returns an ***exploration*
+  density, not a thermodynamic density of states**. The sampling is deliberately biased
+  (seeded from a flat reference, with a phase-dependent generator mix), so the number of
+  structures in a basin is **not** a physical population or weight. Only **unweighted**
+  structural and energetic comparisons are admissible; basin counts may be reported as
+  descriptive attributes of the sampled database only.
+- **The island being the ground state despite the flat bias is a positive control** (MT-1):
+  every search started from a flat reference layer and was perturbed only at small scale in
+  the early phases, yet converged on an island in all four models.
 - Metrics: **ΔZ** = z(metal_max) − z(metal_min) over Fe+Co [Å]; **dE/N** = (E − E_globalmin)/N
   [eV/atom] per system, global min = 0; flat/island split at ΔZ ≤ 1.0 Å.
 - Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å (main search).
@@ -127,6 +162,12 @@ claims to MT/SI and do not change the frozen list.
   metalloid, not through complexity counting. Honest bound retained: even the boron-bearing
   models keep the island as ground state, so the principle stabilises but does not fully
   suppress the ordered configuration in these models.
+- **Phase-separation wording (added 2026-09-17, v3).** Boron is described as changing the
+  **flat–island separation**, not as stabilising the flat phase or destabilising the island
+  individually. Because each model is referenced to its own lowest energy, a reduced
+  separation is consistent with either. Resolving it would require an absolute (cross-system)
+  energy reference and/or a converged treatment of both basins. Permitted in Results §2.3 and
+  Discussion §3.2; it is wording, not a results claim.
 
 ## Sign-off
 
@@ -135,7 +176,14 @@ claims to MT/SI and do not change the frozen list.
 - [x] **Exclusions confirmed** — scientist (2026-09-16)
 - [x] Contribution sentence approved (2026-09-16)
 - [x] **MT-6 withdrawn and moved to the excluded list** (v2, 2026-09-17) — scientist
+- [x] **MT-8 added** (main text, v3, 2026-09-17) — scientist
+- [x] **MT-4 flagged CHALLENGED, to be reported as a trend pending more Fe-Co searches**
+      (v3, 2026-09-17) — scientist
+- [x] **Method & scope: exploration-density principle + positive-control framing** (v3,
+      2026-09-17) — scientist
+- [x] **Discussion-only: phase-separation wording** (v3, 2026-09-17) — scientist
 
-**Status: FROZEN (v2, 2026-09-17).** This list is frozen for drafting. Any new result or
+**Status: FROZEN (v3, 2026-09-17).** This list is frozen for drafting. Any new result or
 claim requires an explicit update to this file before it enters a section.
-**Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn.
+**Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
+v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle.

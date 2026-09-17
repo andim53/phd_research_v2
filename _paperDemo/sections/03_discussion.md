@@ -1,7 +1,7 @@
 # 03 — Discussion
 
 <!-- DRAFT v3 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v2. MTJ-context citations are placeholders (UNVERIFIED) —
+     Grounded in CLAIMS.md v3. MTJ-context citations are placeholders (UNVERIFIED) —
      to be fetched in Phase D before the LaTeX port. -->
 
 ## 3.1 Why the island is the ground state

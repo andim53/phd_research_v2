@@ -1,7 +1,7 @@
 # 01 — Methods
 
 <!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v2. Citations verified and in references.bib
+     Grounded in CLAIMS.md v3. Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
      species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
@@ -127,7 +127,7 @@ pre-relaxation placements were discarded.
 ## 1.3 DFT settings
 
 Energies and forces were obtained with GPAW \cite{gpaw2014} in LCAO mode (double-zeta
-polarised basis, `dzp`), the PBE exchange–correlation functional \cite{pbe1996}, a
+polarised basis), the PBE exchange–correlation functional \cite{pbe1996}, a
 (1×1×1) k-point mesh, Fermi–Dirac smearing (width 0.05 eV), and spin polarisation with
 Hund's rule coupling enabled; a Pulay mixer and a fixed convergence criterion
 (energy 10⁻⁴ eV, density/eigenstates 10⁻³) were used throughout. Note the deliberately
@@ -169,4 +169,4 @@ order 1–2 eV/Å. Accordingly, "lowest energy" and "basin" denote the lowest DF
 qualitatively (trends across compositions). The flat configuration is therefore described
 as a *higher-energy flat basin*, not as a metastable state — establishing metastability
 would require converged relaxations, a Hessian (no imaginary modes) and a barrier between
-basins. A full re-relaxation of representative structures is prepared for this purpose.
+basins. A full re-relaxation of representative structures is necessary for this purpose.
