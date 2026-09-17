@@ -9,6 +9,10 @@ host metal, relevant to interface flatness in CoFeB/MgO MTJ stacks.
 ## Context (search method)
 - Runs are AGOX/**GOFEE** global optimization (GPR surrogate + LCB): a **biased**
   exploration seeded from a reference **flat** metal layer.
+- **Three-phase biased exploration** (see `sections/01_methods.md` §1.2): Phase I
+  (0 ≤ i < 10) small-scale generator N=20; Phase II (10 ≤ i < 25) small 10 + large 10;
+  Phase III (25 ≤ i) large-scale N=20. Small = `HeteroStructRandomize` (rattle 1.5),
+  large = `RattleGenerator` (rattle 2.3). Matches `num_candidates={0:[20,0],10:[10,10],25:[0,20]}`.
 - Relaxation starts at **iteration 10**; only structures with **iteration >= 10** are used.
 
 ## Data inventory
@@ -234,6 +238,14 @@ data: `analysis/method_sensitivity.csv`. Supersedes the earlier standalone rattl
 - `figures/wetting_metrics.png` — 4-panel wetting-metric boxplot (SUPERSEDED, early analysis).
 - `analysis/flat_structures/{system}_flat_min.xsf` — inspectable flat structures.
 - `analysis/flat_structures/{system}_ground_min.xsf` — inspectable lowest-energy structures.
+
+## Drafting & citations status
+- **Phase A:** DONE — contribution + claim list signed off (`CLAIMS.md` v1, 2026-09-16).
+- **Phase D:** 5 citations verified in `references.bib` (agox2020, gofee2017, oganov2011,
+  gpaw2014, pbe1996) — all `\cite{}` keys in `01_methods.md` resolve. MTJ/PMA refs pending.
+- **Phase E:** `sections/01_methods.md` drafted (v3, three-phase flow + real citations),
+  awaiting scientist review. Block-and-wait before `02_results.md`.
+- **Phase F/G:** not started.
 
 ## Caveats
 - **Relaxation is NOT DFT-converged.** Candidates are relaxed by the **GPR surrogate**

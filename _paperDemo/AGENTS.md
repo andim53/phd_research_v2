@@ -55,6 +55,18 @@ hosts (MTJ / CoFeB relevance)
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
+- **The claim list is FROZEN in `CLAIMS.md` v1 (signed off 2026-09-16).** Drafting must not
+  introduce claims outside it, and must not drop the paired caveats. Any new claim requires
+  bumping `CLAIMS.md` to v2 first.
+
+## Drafting status
+
+- **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
+- **Phase D: PARTIAL** — 5 citations verified in `references.bib` (methods); MTJ/PMA refs
+  still needed for intro/discussion.
+- **Phase E: IN PROGRESS** — `sections/01_methods.md` drafted (v3, awaiting scientist
+  review). Block-and-wait: do NOT draft `02_results.md` until 01 is approved.
+- **Phase F/G: not started.**
 
 ## Checkpoint / resume
 
@@ -78,6 +90,11 @@ hosts (MTJ / CoFeB relevance)
 - The runs are GOFEE (GPR surrogate + LCB): a **biased** exploration seeded from a
   reference **flat** metal layer. Only structures with **iteration >= 10** are used
   (relaxation starts at iteration 10).
+- **Three-phase biased exploration** (see `sections/01_methods.md` §1.2): candidate
+  generation follows a phase schedule by iteration *i* — Phase I (0 ≤ i < 10) small-scale
+  generator N=20; Phase II (10 ≤ i < 25) small 10 + large 10; Phase III (25 ≤ i) large-scale
+  N=20. Small-scale = `HeteroStructRandomize` (rattle 1.5), large-scale = `RattleGenerator`
+  (rattle 2.3). Matches `num_candidates={0:[20,0],10:[10,10],25:[0,20]}` in `main.py`.
 - Flatness metric: **ΔZ = z(metal_max) − z(metal_min)** over all metal film atoms (Fe+Co)
   [Å]; ΔZ ≈ 0 = flat film (wet), ΔZ large = island (dewet).
 - PES coordinate: **dE/N = (E_i − E_globalmin)/N_atoms** [eV/atom], global min = 0,
