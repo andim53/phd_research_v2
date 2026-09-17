@@ -62,11 +62,14 @@ hosts (MTJ / CoFeB relevance)
 ## Drafting status
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
-- **Phase D: PARTIAL** — 5 citations verified in `references.bib` (methods); MTJ/PMA refs
-  still needed for intro/discussion.
-- **Phase E: IN PROGRESS** — `sections/01_methods.md` drafted (v3, awaiting scientist
-  review). Block-and-wait: do NOT draft `02_results.md` until 01 is approved.
+- **Phase D: PARTIAL** — 6 citations verified in `references.bib` (agox2020, gofee2017,
+  oganov2011, gpaw2014, pbe1996, greer1993). MTJ/PMA refs (cofebmgo_mtj, cofebmgo_pma,
+  b_diffusion_mtj) still UNVERIFIED in 03_discussion.md.
+- **Phase E: IN PROGRESS** — `01_methods.md` APPROVED, `02_results.md` APPROVED,
+  `03_discussion.md` drafted v2 (awaiting review). Block-and-wait: do NOT draft
+  `04_introduction.md` until 03 is approved.
 - **Phase F/G: not started.**
+- Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 
 ## Checkpoint / resume
 

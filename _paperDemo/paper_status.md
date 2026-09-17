@@ -77,16 +77,20 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
 - [x] sections/01_methods.md  (APPROVED 2026-09-16)
 - [x] sections/02_results.md  (APPROVED 2026-09-16)
-- [~] sections/03_discussion.md  (DRAFTED — awaiting scientist review)
+- [~] sections/03_discussion.md  (DRAFTED v2 — awaiting scientist review; includes Greer confusion-principle §3.2)
 - [ ] sections/04_introduction.md
 - [ ] sections/05_conclusion.md
 - [ ] sections/06_abstract.md
 - [ ] E2: port all approved sections → paper.tex
+
+## Reference PDFs (papers/)
+- `papers/confusion_greer1993.pdf` — Greer, "Confusion by design," Nature 366, 303 (1993).
+  Used for the confusion-principle discussion (§3.2). Citation `greer1993` in references.bib.
 
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
 - [x] Claim list frozen (`CLAIMS.md` v1).
 - [x] sections/01_methods.md approved (2026-09-16).
 - [x] sections/02_results.md approved (2026-09-16).
-- NEXT: scientist reviews `sections/03_discussion.md`; on approval → draft `sections/04_introduction.md`.
-- Citations: 5 verified (methods); MTJ/PMA refs needed for discussion/intro.
+- NEXT: scientist reviews `sections/03_discussion.md` (v2); on approval → draft `sections/04_introduction.md`.
+- Citations: 6 verified; MTJ/PMA refs (cofebmgo_mtj, cofebmgo_pma, b_diffusion_mtj) still UNVERIFIED.

@@ -241,11 +241,13 @@ data: `analysis/method_sensitivity.csv`. Supersedes the earlier standalone rattl
 
 ## Drafting & citations status
 - **Phase A:** DONE — contribution + claim list signed off (`CLAIMS.md` v1, 2026-09-16).
-- **Phase D:** 5 citations verified in `references.bib` (agox2020, gofee2017, oganov2011,
-  gpaw2014, pbe1996) — all `\cite{}` keys in `01_methods.md` resolve. MTJ/PMA refs pending.
-- **Phase E:** `sections/01_methods.md` drafted (v3, three-phase flow + real citations),
-  awaiting scientist review. Block-and-wait before `02_results.md`.
+- **Phase D:** 6 citations verified in `references.bib` (agox2020, gofee2017, oganov2011,
+  gpaw2014, pbe1996, greer1993). 3 MTJ placeholders still UNVERIFIED in `03_discussion.md`.
+- **Phase E:** `01_methods.md` APPROVED · `02_results.md` APPROVED ·
+  `03_discussion.md` drafted v2 (awaiting review; §3.2 includes the Greer confusion principle).
+  Block-and-wait before `04_introduction.md`.
 - **Phase F/G:** not started.
+- Reference PDFs: `papers/confusion_greer1993.pdf` (Greer, Nature 366, 303, 1993 → `greer1993`).
 
 ## Caveats
 - **Relaxation is NOT DFT-converged.** Candidates are relaxed by the **GPR surrogate**

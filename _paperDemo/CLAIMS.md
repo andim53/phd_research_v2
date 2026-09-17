@@ -81,6 +81,20 @@ paired caveats. Numbers below are frozen to the cited source files.
 
 ---
 
+## Discussion-only interpretations (not results claims)
+
+These are interpretive framings permitted in the Discussion; they do **not** add results
+claims to MT/SI and do not change the frozen list.
+
+- **Flat ↔ amorphous, island ↔ crystalline mapping.** The flat film is read as the
+  disordered/amorphous-like configuration and the island as the ordered/crystalline-like
+  one.
+- **Greer confusion principle** \cite{greer1993}: the Fe → FeCo → FeCoB progression
+  (increasing compositional complexity) is claimed to *explain the trend* of flat-state
+  stabilisation — more elements frustrate crystallisation and favour the flat/disordered
+  configuration. Honest bound retained: even FeCoB keeps the island as ground state, so the
+  principle stabilises but does not fully suppress the ordered configuration in these models.
+
 ## Sign-off
 
 - [x] **MT-1 … MT-7 approved** (main text) — scientist (2026-09-16)
