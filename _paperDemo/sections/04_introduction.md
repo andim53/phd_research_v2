@@ -1,4 +1,10 @@
 # 04 — Introduction
+     v10 (2026-09-18): a reasoning paragraph added between the Greer/boron paragraph and the
+     "In this work, ..." passage, motivating the method: testing the confusion-principle question is
+     not a single-calculation problem (the island is a family of many local minima, so one structure
+     cannot represent it); because the question is about two phases we restrict to a deliberately
+     biased exploration of those phases; and because exhaustive DFT is too costly we drive the search
+     with a surrogate model. No number or claim changed; no new citation.
      v9 (2026-09-18): the scientist's edit — the confusion-principle sentence no longer carries the
      forward pointer "a reading this paper returns to in the Discussion"; the sentence now states the
      principle and applies it directly (the reading itself remains in the Discussion per CLAIMS, so
@@ -47,7 +53,7 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v8 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v10 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      As of v8 this section carries no numbers: the detailed findings (flat-basin minima, the shift,
      the p-value) live in Results §2. The motivation cites the growth/islanding literature and the
@@ -114,6 +120,20 @@ interface, where the flat film is the two-dimensional, disordered-like configura
 the three-dimensional, ordered-like one, it suggests that boron should lower the energy of the flat
 configuration relative to the island.
 Whether it does so, and by how much, is a question for calculation.
+
+Testing this idea directly is not a single-calculation question. The flat, amorphous-like
+configuration is one well-defined structure, but the ordered island it competes with is not: the
+dewetted film comprises a large family of distinct structures with many local minima, so no one
+geometry can represent it, and the two phases cannot be compared by relaxing a single candidate of
+each. The confusion-principle question — whether an added element lowers the disordered configuration
+relative to the ordered one — is therefore about the landscape as a whole, and one that is expensive
+to answer, because exploring it with density-functional theory alone would require evaluating far too
+many structures. Two features of the problem make it tractable. First, the question is specifically
+about two phases — the flat, well-wetting film and the dewetted island — so rather than surveying
+every configuration we restrict the exploration to these two targets, a deliberately biased strategy.
+Second, because the search must still sample many candidates to populate both phases, we guide it with
+a surrogate model, so that the expensive density-functional evaluations are spent only where they are
+most informative.
 
 In this work, by implementing a surrogate-driven active-learning search with a deliberately biased
 exploration strategy \cite{gofee2017,hamamoto2023}, we categorize the potential-energy surface of Fe

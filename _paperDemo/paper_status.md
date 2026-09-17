@@ -114,17 +114,19 @@ end, so a fresh session does not re-open them.
       v8 is the only drafted section that has never been through this gate. The approvals/voids are
       recorded in each section's head block — any later edit to an approved section voids its
       approval again, per the governing rule.
-- [ ] **B2 · Review `04_introduction.md` — v9, DRAFTED, awaiting review.** The newly opened gate.
+- [ ] **B2 · Review `04_introduction.md` — v10, DRAFTED, awaiting review.** The newly opened gate.
       v6 restored the full step-by-step story; v7 merged and trimmed the GOFEE passage; **v8 rewrote
-      the what-we-do passage in the scientist's example style** — one achievement sentence + a
-      roadmap ("This paper is organized as follows. In Sec. II … Sec. V.") — removing the
-      method/model/findings detail repeated from Methods §1 / Results §2. **v9 is the scientist's own
-      edit**: the confusion-principle sentence no longer carries the forward pointer "a reading this
-      paper returns to in the Discussion" (C7 unchanged — the reading still belongs to the Discussion
-      per CLAIMS). The roadmap uses final-manuscript section numbers (II=Methods, III=Results,
-      IV=Discussion, V=Conclusion), to be reconciled with the draft's §1/§2/§3 at the port. What
-      needs the scientist: **C7** (confusion-principle framing), **E3** (three device references),
-      **E4** (four fabrication references), **E5** (the GOFEE/LCB reference, accept or drop).
+      the what-we-do passage in the scientist's example style** (achievement sentence + roadmap);
+      **v9 is the scientist's own edit** (removed the Discussion forward pointer); **v10 adds a
+      reasoning paragraph** between the Greer/boron paragraph and "In this work, ..." — testing the
+      confusion-principle question is not a single-calculation problem (the island is a family of many
+      local minima, one structure cannot represent it), so the question needs a landscape view; since
+      it concerns two phases we restrict to a deliberately biased exploration of those phases; and
+      since exhaustive DFT is too costly we drive the search with a surrogate model. The roadmap uses
+      final-manuscript section numbers (II=Methods, III=Results, IV=Discussion, V=Conclusion), to be
+      reconciled with the draft's §1/§2/§3 at the port. What needs the scientist: **C7**
+      (confusion-principle framing), **E3** (three device references), **E4** (four fabrication
+      references), **E5** (the GOFEE/LCB reference, accept or drop).
 - [ ] **B3 · Re-approve `02_results.md` v6.** The Results was approved as-is on 2026-09-18 (v5), then
       edited on the scientist's instruction to explain the p-value in plain terms (the uncertainty
       paragraph now states what p is, §2.2). No number or claim changed, but the edit voids the
@@ -254,7 +256,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `02_results.md` | **v6** | **APPROVAL VOIDED 2026-09-18 — awaiting re-approval (B3).** v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2; no number or claim changed). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | **v9** | **DRAFTED — awaiting review.** v1 released the section when `03` was approved; v2–v7 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value and the full narrative; **v8 rewrote the what-we-do passage in the scientist's example style** (one achievement sentence + roadmap; numbers and LCB rule moved to Results §2 / Conclusion); **v9 is the scientist's own edit** removing the "returns to in the Discussion" forward pointer from the confusion-principle sentence. No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys. Carries the confusion-principle framing as motivation (claim list places it in the Discussion only) — **C7**. |
+| `04_introduction.md` | **v10** | **DRAFTED — awaiting review.** v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9 is the scientist's own edit** (removed the Discussion forward pointer); **v10 adds a reasoning paragraph** before "In this work, ..." — the confusion-principle question is not a single-calculation problem (island = family of many local minima), so it needs a landscape view; restricted to a deliberately biased exploration of the two phases; surrogate-driven because exhaustive DFT is too costly. No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys. Carries the confusion-principle framing as motivation (claim list places it in the Discussion only) — **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
@@ -619,18 +621,20 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`04_introduction.md` is drafted (v9) and awaiting review (item B2).** v1 was written after Methods v6,
-Results v5 and Discussion v5 were approved on 2026-09-18; v2–v7 built the fabrication trend, the
-phase-controlled / GOFEE-with-LCB justification, the plain-terms p-value meaning, and the full
-narrative; **v8 rewrote the what-we-do passage in the scientist's example style** (achievement sentence
-and roadmap), moving the numbers and the LCB rule to Results §2 / Conclusion; **v9 is the scientist's
-own edit** removing the "returns to in the Discussion" forward pointer from the confusion-principle
-sentence. Five things inside the section need the scientist rather than an agent: the confusion-
-principle framing appears in the Introduction although the claim list places it in the Discussion
-(**C7**), three device-side references (**E3**), four recent-fabrication references (**E4**) and the
-GOFEE/LCB reference (**E5**) were added for the section, and the roadmap uses final-manuscript section
-numbers (II=Methods … V=Conclusion), which must be reconciled with the draft's internal §1/§2/§3
-numbering at the port.
+**`04_introduction.md` is drafted (v10) and awaiting review (item B2).** v1 was written after Methods
+v6, Results v5 and Discussion v5 were approved on 2026-09-18; v2–v8 built the fabrication trend, the
+phase-controlled / GOFEE-with-LCB justification, the plain-terms p-value meaning, the full narrative,
+and the example-style achievement+roadmap; v9 was the scientist's own edit (removed the Discussion
+forward pointer); **v10 adds a reasoning paragraph** before "In this work, ..." — the
+confusion-principle question is not a single-calculation problem (the island is a family of many local
+minima, one structure cannot represent it), so it needs a landscape view; since it concerns two phases
+we restrict to a deliberately biased exploration of them; and since exhaustive DFT is too costly we
+drive the search with a surrogate model. Five things inside the section need the scientist rather than
+an agent: the confusion-principle framing appears in the Introduction although the claim list places
+it in the Discussion (**C7**), three device-side references (**E3**), four recent-fabrication
+references (**E4**) and the GOFEE/LCB reference (**E5**) were added for the section, and the roadmap
+uses final-manuscript section numbers (II=Methods … V=Conclusion), which must be reconciled with the
+draft's internal §1/§2/§3 numbering at the port.
 
 **`02_results.md` v6 also needs re-approval (item B3).** It was approved as-is as v5 on 2026-09-18,
 then edited at the scientist's instruction to state what p means in plain terms (§2.2); the edit voids

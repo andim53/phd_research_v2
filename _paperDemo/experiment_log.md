@@ -1776,3 +1776,28 @@ The paragraph was re-wrapped to the file's line convention (the edit left one lo
 claim changed; `CLAIMS.md` not bumped. Version marker bumped v8 → v9, DRAFT comment updated, and
 `paper_status.md` (B2, drafting table, Next step) + `AGENTS.md` (Phase E) synced.
 
+## 2026-09-18 — `04_introduction.md` v10: reasoning paragraph before "In this work, ..."
+
+The scientist pointed out that the introduction jumped straight from the Greer/boron paragraph to
+"In this work, by implementing a surrogate-driven active-learning search ..." without motivating the
+method. On their instruction, a reasoning paragraph was inserted between them.
+
+**Content (as the scientist specified, and confirmed):** testing the confusion-principle
+(amorphous vs ordered) question is not a single-calculation problem — the flat, amorphous-like
+configuration is one well-defined structure, but the ordered island is a family of many local minima
+that no single geometry can represent, so the two phases cannot be compared by relaxing one candidate
+of each. Because the question is about two phases (flat vs island), a deliberately biased exploration
+targeting those phases is proposed rather than a survey of every configuration. And because mapping
+the landscape with DFT alone would require far too many evaluations, the search is guided by a
+surrogate model so the expensive density-functional evaluations are spent where they are most
+informative.
+
+**Notes.** The paragraph deliberately re-introduces the "flat film is one geometry / island is a
+family of many minima" reasoning that v8 removed from the Introduction — but here it motivates the
+*method* rather than reciting Methods, so it does not duplicate §1. It avoids thermodynamic/population
+language (consistent with `CLAIMS.md`). No new citation was added (the surrogate/GOFEE keys already
+appear in the achievement sentence). No number or claim changed; `CLAIMS.md` not bumped.
+
+**Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" to v10. `AGENTS.md` — Phase E
+entry to v10. Bibliography unchanged. (The section's DRAFT marker, which had gone stale at v8, was
+brought to v10.)

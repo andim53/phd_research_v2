@@ -157,16 +157,18 @@ drafting or revising anything. Summary as of 2026-09-18:
     authorised the p-explanation edit) → **awaiting re-approval (B3)**.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains →
     **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; **the gate is now open.**
-  - `04_introduction.md` **v9** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
-    floats. v1 closed on the frozen contribution sentence; v2–v7 built the fabrication trend, the
-    phase-controlled / GOFEE-with-LCB justification, the plain-terms p-value and the full narrative;
-    **v8 rewrote the what-we-do passage in the scientist's example style** (achievement sentence +
-    roadmap; numbers and LCB rule moved to Results §2 / Conclusion); **v9 is the scientist's own edit**
-    removing the "returns to in the Discussion" forward pointer from the confusion-principle sentence.
-    The roadmap uses final-manuscript section numbers (II=Methods … V=Conclusion) — reconcile with the
-    draft's §1/§2/§3 at the port. Cites device-side, fabrication-side and GOFEE/LCB keys; the device
-    material is referred to generically and no Co host is discussed. Items for the scientist, recorded
-    in `paper_status.md`: **C7** (confusion-principle framing), **E3** (three device references), **E4**
+  - `04_introduction.md` **v10** — **DRAFTED, awaiting review.** Continuous prose, no subsections, no
+    floats. v1 closed on the frozen contribution sentence; v2–v8 built the fabrication trend, the
+    phase-controlled / GOFEE-with-LCB justification, the plain-terms p-value, the full narrative, and
+    the example-style achievement+roadmap; v9 was the scientist's own edit (removed the Discussion
+    forward pointer); **v10 adds a reasoning paragraph** before "In this work, ..." — the
+    confusion-principle question is not a single-calculation problem (the island is a family of many
+    local minima), so it needs a landscape view; restricted to a deliberately biased exploration of
+    the two phases; surrogate-driven because exhaustive DFT is too costly. The roadmap uses
+    final-manuscript section numbers (II=Methods … V=Conclusion) — reconcile with the draft's §1/§2/§3
+    at the port. Cites device-side, fabrication-side and GOFEE/LCB keys; the device material is
+    referred to generically and no Co host is discussed. Items for the scientist, recorded in
+    `paper_status.md`: **C7** (confusion-principle framing), **E3** (three device references), **E4**
     (four recent-fabrication references) and **E5** (the GOFEE/LCB reference) — each accept or drop.
   - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
       budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
