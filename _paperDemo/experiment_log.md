@@ -1935,3 +1935,20 @@ sections are now approved** — `01_methods.md` v6, `02_results.md` v6, `03_disc
 `04_introduction.md` v11, `SI.md` v10, `05_conclusion.md` v2. The only remaining drafting step is
 `06_abstract.md`, after which the `paper.tex` port can begin. Bibliography unchanged.
 
+## 2026-09-18 — `06_abstract.md` v1 drafted
+
+The last section, written after all six others were approved. ~165 words, a summary of the finished
+argument: the wetting competition (flat film vs dewetted island) on MgO(001) for the same Fe host
+with and without boron, mapped with a biased surrogate-driven search; the island is the ground state
+in both models (flat film a distinct basin, 0.1888 / 0.1493 eV/atom above); boron lowers the
+flat–island separation by 0.040 eV/atom (21 %), p = 0.0444, acting inside the film; boron moves the
+flat, well-wetting configuration closer to the island ground state without displacing it — the
+direction the confusion principle predicts — favouring the flat film MgO-based tunnel junctions
+require.
+
+**Consistency.** Mirrors the frozen contribution sentence (CLAIMS v11) and the approved
+Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations (standard for an abstract),
+no code identifiers, paths or process history; no claim outside the frozen list.
+
+**Doc sync.** `paper_status.md` — drafting-table `06` row, new **B6** review item, Approvals note and
+"Next step" updated. `AGENTS.md` — Phase E gains the `06` entry. Bibliography unchanged; no orphans.
