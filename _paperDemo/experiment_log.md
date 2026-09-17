@@ -1926,3 +1926,12 @@ no-third-element-control bound) was removed. The conclusion now ends on the MTJ-
 (confusion principle + flat-film requirement for MgO-based tunnel junctions). No number or claim
 changed; `CLAIMS.md` not bumped. Version marker and DRAFT comment to v2; `paper_status.md` (B5, the
 drafting-table row, Next step) and `AGENTS.md` (Phase E) synced. Bibliography unchanged.
+
+## 2026-09-18 — `05_conclusion.md` v2 APPROVED (B5)
+
+The scientist approved the Conclusion (v2). Head block marked **APPROVED 2026-09-18**; `paper_status.md`
+(B5 checked, drafting-table row, Approvals note, Next step) and `AGENTS.md` (Phase E) synced. **All six
+sections are now approved** — `01_methods.md` v6, `02_results.md` v6, `03_discussion.md` v5,
+`04_introduction.md` v11, `SI.md` v10, `05_conclusion.md` v2. The only remaining drafting step is
+`06_abstract.md`, after which the `paper.tex` port can begin. Bibliography unchanged.
+

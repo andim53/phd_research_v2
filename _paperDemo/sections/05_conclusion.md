@@ -2,6 +2,7 @@
      v2 (2026-09-18): the third paragraph (scope and future work — trend-level / non-converged
      structures, re-relaxation, the no-third-element-control bound) is removed at the scientist's
      instruction. The conclusion now ends on the MTJ-relevance paragraph. No number or claim changed.
+     **APPROVED 2026-09-18.**
      v1 (2026-09-18): first draft, written after Methods, Results, Discussion, Introduction and the
      SI were approved. Mirrors the frozen contribution sentence of the claim list (CLAIMS v11) and
      the approved Results/Discussion; uses the exact p = 0.0444. No claim outside the frozen list.
