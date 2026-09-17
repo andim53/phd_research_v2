@@ -55,43 +55,55 @@ hosts (MTJ / CoFeB relevance)
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v8 (2026-09-17; supersedes v1–v7).** v2 withdrew
-  MT-6 (flat-basin sampling fraction — a biased-exploration weight, and the exploration operator
-  is not matched across systems: Fe-Co alone uses a third, species-permutation generator). v3
-  added MT-8 (each branch's low-energy structures form a few recurring motifs; ΔZ continuous),
-  flagged MT-4 as CHALLENGED pending more Fe-Co searches, and recorded the exploration-density
-  principle in Method & scope. v4 added SI-8; v5 added the bcc/bct and basis-set limitations plus
-  the experimental-correspondence framing; **v6 restated SI-3 (the island's gain is reduced forced
-  interfacial coupling + restored metal cohesion, *not* lattice-strain relief — the strain sits on
-  the substrate and the film is unstrained), reframed SI-4 (the Fe-atop-O registry is inherited
-  from the construction and is a consistency check, not a search prediction), and added the
-  inverse-strain-convention limitation.** Drafting must not introduce claims outside the list, and
-  must not drop the paired caveats. Any new claim requires bumping `CLAIMS.md` to the next version
-  first. **v7 restated the method-sensitivity claims (SI-5/6/7) on an equal-iteration statistic: the
-  families contained searches that stopped early, whose per-seed best is systematically worse, and the
-  truncation was not uniform across settings.**
-- **Only completed searches are used (v8): a search counts only if it reached the full
-  100-iteration budget.** The rule lives in `scripts/run_selection.py` and is imported by every
-  analysis script; it is detected from the iteration number in the database, **not** from the
-  directory name, because a `seed_*` directory can stop early. Reported counts are therefore
-  **13 / 6 / 4 / 3** completed searches for Fe / Fe-B / Fe-Co / Fe-Co-B.
+- **The claim list is FROZEN in `CLAIMS.md` v8 (2026-09-17; supersedes v1–v7).** Drafting must not
+  introduce claims outside the list, and must not drop the paired caveats. Any new claim requires
+  bumping `CLAIMS.md` to the next version first. The per-version history is in its changelogs; the
+  standing content rules are:
+  - the search returns an **exploration density, not a thermodynamic density of states**, so basin
+    *weights* are not physical and only unweighted structural/energetic comparisons may be used;
+  - the **Fe-atop-O registry is inherited from the construction** — a consistency check against the
+    measured registry, not a prediction of the search;
+  - the island's gain is **reduced forced interfacial coupling plus restored metal cohesion, *not*
+    lattice-strain relief**;
+  - **searches that stopped before the iteration budget are excluded everywhere** (see the next
+    bullet).
+- **Only completed searches are used (v8): a search counts only if it reached the full 100-iteration
+  budget.** The rule lives in `scripts/run_selection.py` and is imported by every analysis script; it
+  is detected from the **iteration number in the database, not the directory name**, because a
+  `seed_*` directory can stop early. Reported counts are therefore **13 / 6 / 4 / 3** completed
+  searches for Fe / Fe-B / Fe-Co / Fe-Co-B.
+- **Search-level significance comes from the two-sided permutation test in `ensemble_analysis.py`**,
+  whose resolution is bounded by `perm_n_partitions` in `analysis/ensemble_stats.json`. Check that
+  bound before reading any p-value close to the floor (4 vs 3 searches admit only 35 partitions, so
+  p >= 0.029 there).
 
 ## Drafting status
+
+**Approval state is authoritative in `paper_status.md`** — read its "Drafting progress" table before
+drafting or revising anything. Summary as of 2026-09-17:
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
 - **Phase D: DONE for the main text** — 13 citations verified in `references.bib` (agox2020,
   gofee2017, oganov2011, gpaw2014, pbe1996, greer1993, urano1988, butler2001, yuasa2004,
-  reitinger2007, fahsold2000, larsen2009, torelli2009). The three MTJ placeholders (cofebmgo_mtj,
-  cofebmgo_pma, b_diffusion_mtj) were **withdrawn** and replaced by `yuasa2004`; **no
-  UNVERIFIED placeholders remain**. Open: the full texts of `fahsold2000`, `reitinger2007` and
-  `torelli2009` are closed access and are cited from verified abstracts only.
-- **Phase E: IN PROGRESS** — `01_methods.md` **APPROVED 2026-09-17 at `c89e1e1` but VOIDED** by a
-  later §1.6 addition (inverse-strain limitation) → v4 awaiting re-approval; `02_results.md`
-  RECONSTRUCTED v2 awaiting re-approval; `03_discussion.md` **v4** awaiting review.
-  Block-and-wait: do NOT draft `04_introduction.md` until 03 is approved.
-- **Float numbering:** tables and figures are numbered sequentially in order of appearance
-  across the drafted section sequence. Currently Tables 1–3 + Figure 1 (Methods) and Tables 4–5
-  (Results); the SI uses its own `S` series. See `paper_status.md`.
+  reitinger2007, fahsold2000, larsen2009, torelli2009); every `\cite{}` key resolves and none is
+  orphaned. The three MTJ placeholders were **withdrawn** and replaced by `yuasa2004`; no UNVERIFIED
+  placeholders remain. Open: `fahsold2000`, `reitinger2007` and `torelli2009` are closed access and
+  cited from verified abstracts only.
+- **Phase E: IN PROGRESS — no section is currently approved.**
+  - `01_methods.md` **v4** — approval **VOIDED** (edited after approval; §1.6 then §1.2) → re-approval.
+  - `02_results.md` **v3** — needs re-approval (reconstructed, then extended).
+  - `03_discussion.md` **v4** — awaiting first review. **This is the gate: do NOT draft
+    `04_introduction.md` until 03 is approved.**
+  - `SI.md` **v3** — §S1, §S2, §S3 drafted, awaiting review.
+  - `04`–`06` not drafted; no LaTeX until all sections are approved.
+- **BEFORE publishing §1.1 or §3.1 as they stand, read `paper_status.md` → "Open decisions":** the
+  Fe/Fe-B models sit on `a_Fe` (substrate strained) while the Fe-Co/Fe-Co-B models sit on
+  `a_MgO/√2` (**film stretched 4.9 %**) — `interpolation_factor` 0 vs 1. Both sections currently
+  describe one convention for all four models, and the cross-host comparison is confounded by this.
+  **Unresolved; awaiting the scientist.**
+- **float numbering:** sequential in order of appearance across the drafted sections.
+  Currently Tables 1–3 + Figure 1 (Methods), Tables 4–5 (Results); the SI has its own `S` series
+  (Tables S1–S3, Figures S1–S6). See `paper_status.md`.
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 

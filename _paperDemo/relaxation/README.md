@@ -1,5 +1,15 @@
 # relaxation/ — DFT re-relaxation of search structures
 
+> **Status (2026-09-17): the SELECTION has been run; the DFT RE-RELAXATION has NOT.**
+> `relaxation/selected/` holds 116 structures (femgo 53, febmgo 28, fecomgo 18, fecobmgo 17) with
+> `manifest.csv`, but there is **no `relaxed/` directory and no `relax_results.csv`** — `relax.py`
+> has never been executed, so no structure in this paper rests on a converged DFT minimum. The
+> convergence limitation in the draft is a consequence of this.
+>
+> Verified 2026-09-17: the selection contains **no structures from the runs excluded by the v8
+> completed-search rule** (no `fecomgo/seed_4`, no `fecobmgo/seed_3`), so re-running it is not
+> required by that rule. A fresh selection would still need the rule applied.
+
 The AGOX search structures are **not DFT-converged**: candidates are relaxed by the GPR
 surrogate (`ParallelRelaxPostprocess`, 100 steps, `start_relax=10`) and then evaluated
 with only **1 GPAW step** (`fmax=0.05, steps=1`), leaving residual forces of ~1–2 eV/Å.

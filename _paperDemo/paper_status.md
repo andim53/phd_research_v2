@@ -246,6 +246,10 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
   evaluated with **1 GPAW step** (`fmax=0.05, steps=1`). Residual max |F| = 1.0–2.4 eV/Å.
 - "Lowest-energy"/"basin" = lowest DFT energy *found*, not a converged minimum.
 - Planned fix: full DFT re-relaxation of low-force distinct structures (`relaxation/`).
+  **Status: the selection is done (116 structures), the re-relaxation has NOT been run** — no
+  `relaxed/` directory, no `relax_results.csv`. See `relaxation/README.md` for the status banner.
+  Verified: the selection contains no structures from the runs excluded by the v8
+  completed-search rule.
 
 ## Citations (Phase D)
 - **13 verified & in `references.bib`**: agox2020, gofee2017, oganov2011, gpaw2014, pbe1996,
@@ -291,39 +295,55 @@ the two-phase landscape and the additive comparison in prose only. Wiring them i
 them **Figure 2** (PES maps, §2.1), **Figure 3** (flat-state summary, §2.2) and possibly
 **Figure 4** (side views). Awaiting the scientist's decision on which belong in the main text.
 
-## Model geometry — strain is on the MgO, not the film (verified 2026-09-17)
+## Model geometry — the strained component DIFFERS between the model pairs (verified 2026-09-17)
 
-Verified from the construction code and from the stored structures (not inferred from the text):
+Verified from the construction code *and* from the cells stored in the databases (not inferred from
+the text). **The four models are not on the same cell** — see "Open decisions".
 
-- **The simulation cell takes the DFT-optimised Fe lattice constant.** `data/femgo/seed_3`'s
-  first candidate has cell in-plane = **14.35 Å = 5 × 2.870**.
-- **The MgO is the strained component.** Its O–O in-plane nearest-neighbour distance is
-  **2.870 Å**, against the bulk value `a_MgO/√2 = 2.9783 Å` → **3.6 % in-plane compression of
-  the MgO**. (The familiar "3.77 %" is the same 0.108 Å difference expressed *relative to the
-  Fe* value.)
-- `build_mgo_stack` (`data/femgo/scripts/build_mgo_stack.py:33`) places the substrate oxygen
-  **directly above an Fe site**, so the epitaxy is built by matching MgO onto Fe, and the
-  Fe-atop-O registry is **inherited from the construction**.
-- The substrate is then held fixed in that compressed state; only the film relaxes. **The Fe
-  film sits at its own equilibrium lattice constant and is not strained in-plane.**
-- The interfacial separation is the build parameter `dist_fe2o = 2.3 Å` (the `build_mgo_stack`
-  default; `main.py` does not override it), preserved by relaxation: **2.300 Å** (flat),
-  **2.331 Å** (island). It is a construction parameter, not a computed quantity.
+**Fe/MgO and Fe-B/MgO** (`interpolation_factor` = 0; absent in `femgo`):
 
-**Decided:**
+- **The cell takes the DFT-optimised Fe lattice constant.** `data/femgo/seed_3`'s first candidate has
+  cell in-plane = **14.35 Å = 5 × 2.870**; `febmgo/seed_0` = 14.35095 = 5 × 2.87019.
+- **The MgO is the strained component.** Its in-plane periodicity is 2.870 Å against the bulk
+  `a_MgO/√2 = 2.9783 Å` → **3.6 % in-plane compression of the MgO**. (The familiar "3.77 %" is the
+  same difference expressed *relative to the Fe* value.)
+- The substrate is then held fixed in that compressed state and only the film relaxes, so **the film
+  sits at its own equilibrium lattice constant and is not strained in-plane.**
 
-- ✅ **Description fixed (2026-09-17):** `01_methods.md` §1.1 now states the strain direction
-  and §1.3 now states the Fe–O separation is a construction parameter.
-- ✅ **Mechanism wording APPLIED (CLAIMS v6, 2026-09-17).** "Strain relief" was dropped for
-  *reduced forced interfacial coupling + restored metal cohesion*; `03_discussion.md` §3.1 now
-  states explicitly that the strain sits on the substrate and the film is unstrained, so there
-  is no film strain to relieve. The SI-4 registry reframing is applied to the CLAIMS table and
-  the inverse-convention limitation now appears in §3.5 and Methods §1.6. The physically
-  inverted case (bulk MgO + strained Fe film) remains **not calculated** — recorded as a scope
-  bound, not silently omitted.
-- **No numbers change.** The structures were always built this way; ΔZ, dE/N, flat-basin
-  minima, registry counts and d-band centres are unaffected. This is a re-description, not a
-  recomputation.
+**Fe-Co/MgO and Fe-Co-B/MgO** (`interpolation_factor` = **1**) — the opposite convention:
+
+- `a_feco = 2.839177 Å`, but the cell is built as
+  `a_custom = a_own + 1 × (a_MgO/√2 − a_own) = 2.97833 Å`, confirmed in the databases:
+  `fecomgo/seed_0` and `fecobmgo/seed_0` both have cell in-plane = **14.89167 = 5 × 2.97833**.
+- **The substrate is at bulk** (`a_MgO/√2`) and **the film is stretched in-plane by 4.9 %**.
+- Their `latt_log.md` records `strain=4.90 %`, where the Fe models record `3.77 %`.
+- `data/latt_conc/` holds a sweep along exactly this axis (`0_latt_0` = 0.0, `1_latt_1` = 0.5,
+  `2_latt_075`, `3_latt_025`, `4_latt_100` = 1).
+
+**Common to all four:** `build_mgo_stack` places the substrate oxygen **directly above a metal site**,
+so the Fe-atop-O registry is **inherited from the construction**.
+
+**The interfacial separation is a construction parameter:** `dist_fe2o = 2.3 Å` is the
+`build_mgo_stack` default and `main.py` does not override it, so it is preserved by relaxation
+(**2.300 Å** flat, **2.331 Å** island) rather than computed. (Note `dist_z_fe2o = 0.5` in `main.py`
+is a *different* quantity — the randomiser's initial slab offset, commented `#2.3` — and is a naming
+trap, not a contradiction.)
+
+**Consequences:**
+
+- `01_methods.md` §1.1 and `03_discussion.md` §3.1 state the **Fe** convention for all four models.
+  That holds for two of them only.
+- The **inverse-strain-convention limitation** added to §1.6 and §3.5 applies to Fe/Fe-B; for
+  Fe-Co/Fe-Co-B the convention is the one the experimental stack actually has (bulk substrate, film
+  strained), so those two are *less* inverted, not more.
+- The **cross-host comparison** (MT-3/MT-4/MT-5) confounds boron with the strain convention.
+
+**Decided:** ✅ §1.1 states the strain direction and §1.3 the Fe–O separation as a construction
+parameter (2026-09-17). ✅ "Strain relief" was dropped for *reduced forced interfacial coupling +
+restored metal cohesion* (CLAIMS v6); the physically inverted case remains **not calculated**, and is
+recorded as a scope bound rather than silently omitted. **No numbers change** — ΔZ, dE/N, flat-basin
+minima, registry counts and d-band centres are unaffected; this is a re-description, not a
+recomputation. ⚠ **The convention split itself is UNRESOLVED — see "Open decisions".**
 
 ## Literature verification — Fe/MgO experiment (2026-09-17)
 
@@ -360,40 +380,25 @@ temperature (140 K) or slow deposition on a specially prepared crystal. Urano's 
 result at RT is therefore the outlier in the literature, not ours.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [~] sections/01_methods.md  (**APPROVED 2026-09-17** at `c89e1e1` — third revision;
-      **VOIDED 2026-09-17**: §1.6 extended with the inverse-strain-convention limitation and the
-      header moved to CLAIMS v6 (now v8) → **DRAFT v4, needs re-approval**; §1.2 gained the completed-search rule + excluded-run list)
-      Approved at `c89e1e1`: §1.1 strain direction (cell = Fe lattice constant; MgO compressed
-      3.6 % relative to bulk; substrate frozen compressed; film unstrained in-plane), §1.2
-      per-model exploration schedule (Fe-Co uses a third, species-permutation generator;
-      seed count 7 → 6), §1.3 Fe–O separation as a construction parameter, §1.6 bcc/bct
-      lattice-model limitation, and the numbered floats Table 1–3 + Figure 1 with in-text
-      citations and unified captions.
-      **Still outside any approval:** the main-text figures, which no section yet cites.
-- [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
-      v2: reorganized by PHASE under the revised core framing —
-      §2.1 the two-phase landscape (both phases populated; island is the ground state
-      *despite* the flat bias → positive control, MT-1; flat is a distinct higher-energy
-      basin, MT-2; branches are families of structures); §2.2 the flat (wetting) phase under
-      Co/B/CoB (MT-3, MT-4, MT-5, MT-7); §2.3 the island (dewetting) phase and the
-      flat–island separation; §2.4 summary.
-      The withdrawn MT-6 flat-fraction comparison has been **removed**. The three items first
-      flagged inline were resolved in CLAIMS v3 (MT-8 added; MT-4 flagged as a trend; §2.3
-      wording recorded) — see below. The old section's single-lever ordering and its
-      "seeded from a flat reference" remark (previously a caveat, now a positive control) are
-      gone.
-- [~] sections/03_discussion.md  (REVISED **v4** 2026-09-17 — §3.1 mechanism rewritten per
-      CLAIMS v6 (now v8), §3.5 extended with three model-bound limitations (inverse strain convention, bcc/bct, under-powered search statistics); awaiting scientist review)
-      v3 changes: §3.2 confusion-principle claim restricted to the B addition (Co alone
-      raises the flat energy → element count is not the driver); §3.1 unsupported
-      "bulk-like" comparison removed and registry wording made precise (interface atoms
-      25/25 → 9/25, d-centre +0.51/+0.60 eV); §3.2 B–MgO bound restored (1 of 72);
-      §3.5 unequal-seed-count limitation added. No MT/SI claim changed.
-      v3 also strikes the flat-fraction clause from §3.2 (consequence of the MT-6 withdrawal).
-- [ ] sections/04_introduction.md
-- [ ] sections/05_conclusion.md
-- [ ] sections/06_abstract.md
-- [ ] E2: port all approved sections → paper.tex
+
+**Approval state (2026-09-17).** Only sections explicitly marked approved may be treated as
+settled; any edit to an approved section voids its approval and it must be re-approved.
+
+| Section | Draft | Approval state |
+|---|---|---|
+| `01_methods.md` | **v4** | **VOIDED — needs re-approval.** Approved 2026-09-17 at `c89e1e1`, then edited twice: §1.6 gained the inverse-strain-convention limitation (v4), then §1.2 gained the completed-search rule and the excluded-run list. |
+| `02_results.md` | **v3** | **Needs re-approval.** Approved 2026-09-16, then reconstructed (v2, organised by phase) and extended (v3: §2.1 experimental correspondence, corrected counts and p-values, MT-8 motif range). |
+| `03_discussion.md` | **v4** | **Awaiting first review — this is the gate for `04_introduction.md`.** v3 fixed the §3.2 confusion-principle claim and the §3.1 registry wording; v4 rewrote the §3.1 mechanism per CLAIMS v6 and extended §3.5. |
+| `SI.md` | **v3** | **Awaiting review.** §S1 (biased-exploration performance, CLAIMS SI-8), §S2 (PDOS / island origin, SI-1…SI-4), §S3 (method-parameter sensitivity, SI-5…SI-7) all drafted. |
+| `04_introduction.md` | — | **BLOCKED** on 03 approval. |
+| `05_conclusion.md`, `06_abstract.md` | — | Not started. |
+| E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
+
+**Approved content of record (01 v3 at `c89e1e1`):** §1.1 strain direction, §1.2 per-model
+exploration schedule (Fe-Co uses a third, species-permutation generator), §1.3 Fe–O separation as a
+construction parameter, §1.6 bcc/bct lattice-model limitation, and floats Table 1–3 + Figure 1 with
+in-text citations and unified captions. **Still outside any approval:** the main-text figures, which
+no section yet cites.
 
 ## RESOLVED: reconstructed 02_results.md, sign-off items closed via CLAIMS v3
 
@@ -458,26 +463,48 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
   run for fecomgo/fecobmgo before the claim is written as a result.
 
 ## Open decisions / next step
-- [x] SCIENTIST: contribution sentence approved (2026-09-16).
-- [x] Claim list frozen (`CLAIMS.md` — now **v8, FROZEN** 2026-09-17).
-- [~] sections/01_methods.md approved 2026-09-16, re-approved 2026-09-17 at `c89e1e1` —
-      **VOIDED**: §1.6 gained the inverse-strain-convention limitation (DRAFT v4) → needs re-approval.
-- [ ] **OPEN — full texts of the islanding references.** `fahsold2000` (PRB 61, 8475),
-      `reitinger2007` (JAP 102, 034310) and `torelli2009` (PRB 79, 035408) are cited from their
-      **verified abstracts** (plus, for Torelli, a quotation of its text retrieved from an indexed
-      copy); all three are closed access and no institutional copy is in `papers/`, so the cited
-      statements have not been checked against the full papers.
-      The Urano PDF carries a *"Downloaded from journals.jps.jp by 三重大学"* watermark, i.e. the
-      scientist has institutional access — placing these PDFs in `papers/` would close this.
-- [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17
-      (and §2.1 extended with `torelli2009` + the 1-ML thickness dependence), awaiting re-approval.
-- NEXT: scientist reviews `sections/03_discussion.md` (**v4**) and re-approves 01 and 02; on
-  approval → draft `sections/04_introduction.md`.
-- RESOLVED 2026-09-17 (review of 03 v2): the §3.2 confusion-principle sentence had claimed the
-  flat energy falls along Fe → FeCo → FeCoB. It does not — Co alone raises it (MT-5). §3.2 is
-  now restricted to the B addition, and the CLAIMS discussion-only entry carries the same
-  bound. No MT/SI claim changed by that edit; the claim list is now v6.
-- Open for the scientist: §3.1 no longer calls the island d-band centre "+0.5–0.6 eV, bulk-like"
-  (unsupported — no bulk Fe d-centre reference exists in the repo). If the bulk comparison is
-  wanted, a bulk-Fe reference calculation is needed.
-- Citations: 6 verified; MTJ/PMA refs (cofebmgo_mtj, cofebmgo_pma, b_diffusion_mtj) still UNVERIFIED.
+
+**Awaiting the scientist** — nothing below is blocked on agent work.
+
+- [ ] **STRAIN CONVENTION DIFFERS BETWEEN THE MODEL PAIRS (most consequential).** Fe and Fe-B sit on
+      `a_Fe = 2.87019 Å` (film unstrained, **substrate** compressed 3.6 %); Fe-Co and Fe-Co-B sit on
+      `a_MgO/√2 = 2.97833 Å` (substrate at bulk, **film stretched 4.9 %**) — `interpolation_factor`
+      0 vs 1, verified against the cells stored in the databases. Methods §1.1 and Discussion §3.1
+      state one convention for all four models, and the 2×2 cross-host comparison (MT-3/MT-4/MT-5)
+      confounds boron with the strain convention. Options: (a) state both + Table 1 column + a
+      stated confound; (b) re-run the two Co models at factor 0 (HPC; invalidates the Co numbers);
+      (c) restrict the cross-host claim until unified; (d) record only. Full evidence in
+      `experiment_log.md`, "Dropped runs: iteration at which each stops". **`data/latt_conc/`
+      already holds a sweep along this axis.**
+- [ ] **MT-4's status.** Left flagged **CHALLENGED** but re-characterised as **under-powered, not
+      absent** (p = 0.092 at 4 vs 3 completed searches; median shift +0.048 eV/atom; the test's
+      floor for that pair is 0.029). Keep the flag, or re-word as an under-powered trend? Settling
+      it needs more **completed** Fe-Co-B searches, not more analysis.
+- [ ] **Accept the permutation-test fix.** The test drew two independent permutations instead of one
+      split; corrected, which moved the p-values (MT-3 0.005 → 0.045, MT-5 0.73 → 0.245,
+      MT-4 0.74 → 0.092). This changes published statistics and should be consciously accepted.
+- [ ] **Re-approve `01_methods.md` (v4) and `02_results.md` (v3); review `03_discussion.md` (v4) and
+      `SI.md` (v3).** 03 is the gate for `04_introduction.md`.
+- [ ] **Dangling SI pointer.** Results §2.1 says "Detailed motif analysis is given in the
+      Supplementary Material", but no SI section covers motifs. Draft an S4 (MT-8) or remove the
+      pointer.
+- [ ] **Full texts of three islanding references.** `fahsold2000`, `reitinger2007` and `torelli2009`
+      are cited from **verified abstracts**; all three are closed access and no institutional copy is
+      in `papers/`. The Urano PDF carries a *"Downloaded from journals.jps.jp by 三重大学"*
+      watermark, i.e. the scientist has institutional access — adding these PDFs would close this.
+- [ ] **Convergence caveat — held, not written in.** The searches are still improving at
+      iteration 100, so the per-model reference energies are not converged with respect to run
+      length. Held for review since v4 (see the note above the claim→evidence table).
+- [ ] **Main-text figures are cited by no section.** `pes_four_systems.png`,
+      `flat_state_summary.png` and `flat_vs_ground_preview.png` exist and are regenerated against
+      the v8 data, but no section references them. Proposed: Figure 2 = PES maps (§2.1),
+      Figure 3 = flat-state summary (§2.2), Figure 4 = side views.
+- [ ] **Bulk-Fe reference, if wanted.** §3.1 no longer calls the island d-band centre "bulk-like"
+      because no bulk-Fe reference calculation exists in the repo. Adding one would allow the
+      comparison.
+
+**Resolved** (kept for the record): contribution sentence signed off 2026-09-16 · `CLAIMS.md` now
+**v8 FROZEN** · MTJ placeholders withdrawn and replaced by `yuasa2004` · 13 citations verified, none
+orphaned · 01 §1.2 exploration schedule per model · the §3.2 confusion-principle sentence restricted
+to the boron addition · the withdrawn MT-6 flat-fraction comparison removed from Results · the
+run-selection rule (completed searches only) applied project-wide · the permutation test fixed.

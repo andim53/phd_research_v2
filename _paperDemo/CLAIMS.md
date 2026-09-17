@@ -3,6 +3,27 @@
 **Status: FROZEN (v8, 2026-09-17).** Supersedes v7, v6, v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
 
+## OPEN — awaiting scientist sign-off (2026-09-17)
+
+Items that are **not** settled. They are listed here so a fresh session does not treat the frozen
+list as fully accepted.
+
+1. **MT-4's status.** Left flagged **CHALLENGED**, but v8 re-characterised it as **under-powered
+   rather than absent** (p = 0.092 at 4 vs 3 completed searches; median shift +0.048 eV/atom; 92 %
+   same-sign; the test's floor for that pair is p = 0.029). Keep the flag, or re-word as an
+   under-powered trend? Settling it requires more **completed** Fe-Co-B searches, not more analysis.
+2. **Acceptance of the permutation-test fix (v8).** The test drew two independent permutations of the
+   pooled minima instead of one split, inflating significance; corrected. This changed published
+   statistics (MT-3 0.005 → 0.045, MT-4 0.74 → 0.092, MT-5 0.73 → 0.245) and should be consciously
+   accepted rather than inherited.
+3. **STRAIN CONVENTION DIFFERS BETWEEN THE MODEL PAIRS — bears directly on MT-3/MT-4/MT-5.** Fe and
+   Fe-B sit on `a_Fe = 2.87019 Å` (film unstrained, **substrate** compressed 3.6 %); Fe-Co and
+   Fe-Co-B sit on `a_MgO/√2 = 2.97833 Å` (substrate at bulk, **film stretched 4.9 %**). The 2×2
+   cross-host comparison therefore confounds boron with the strain convention, and Methods §1.1 /
+   Discussion §3.1 currently describe one convention for all four models. No number, cell or claim
+   was changed for this. Evidence and options: `experiment_log.md`, "Dropped runs: iteration at
+   which each stops"; summary in `paper_status.md` → "Open decisions".
+
 ## v8 changelog (2026-09-17) — completed searches only, and a mis-implemented significance test
 
 Scientist's instruction: *"ignore the stopped early seed, across all analysis. Only use one that
