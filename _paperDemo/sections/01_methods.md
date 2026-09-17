@@ -1,4 +1,8 @@
 # 01 — Methods
+     v6 (2026-09-17): the excluded searches are described in prose (iteration reached, structures
+     missing) instead of by directory name, and the selection rule is no longer referred to by its
+     filename. Awaiting re-approval.
+
      v5 (2026-09-17): re-scoped to the Fe host (CLAIMS v9) — the two Co-containing models, their
      generator schedule (former Table 3) and their excluded runs are out of the paper. Float
      renumbering follows: the Results tables become Tables 3 and 4. TO BE RE-APPROVED — no prior
@@ -125,18 +129,17 @@ seeds, and each seed constitutes one independent search.
 
 **Only completed searches are used.** Every number in this paper comes from searches that ran the
 full 100-iteration budget: **13 completed searches for Fe/MgO and 6 for Fe-B/MgO**, 19 in total.
-Two replica directories on disk are *not* used, and they are listed here rather than dropped
-silently — `femgo/stop_16` (stopped at iteration 37) and `febmgo/seed_6` (database never
-populated). A stopped search has had less search time than a completed one, so its best energy is
-systematically worse; and because the unfinished runs are not distributed evenly across the two
-models, including them would bias the comparison between them — which is also what the
-method-parameter study in the Supplementary Material showed, where stopped `seed_*` runs
-inflated the mean of one setting and depressed another (§S3). The selection is applied by a
-single shared rule (`run_selection.py`) in every analysis script used here, and it is determined
-from the **iteration number recorded in each database, not from the directory name**: a
-`seed_*` directory can stop early just as a `stop_*` directory can, and a run whose database was
-never populated is treated the same way. In the two models used here the excluded runs happen to
-be visible in their names and their emptiness; the rule does not rely on that.
+Two further searches were started and are *not* used, and we record them here rather than drop them
+silently — one Fe/MgO search reached only iteration 37, and one Fe-B/MgO search produced no stored
+structures at all. A stopped search has had less search time than a completed one, so its best energy
+is systematically worse; and because such searches are not distributed evenly across the two models,
+including them would bias the comparison between them — as the method-parameter study in the
+Supplementary Material also shows, where searches that stopped early inflate the mean of one setting
+and depress another (§S3). The same criterion is applied without exception throughout the analysis,
+and it is decided from the **iteration count recorded for each search, not from how a search is
+labelled**: a search that looks complete can have stopped early, and one whose stored structures are
+missing is treated the same way. In the two models used here the excluded searches happen to be
+identifiable at a glance; the rule does not rely on that.
 
 Candidates were relaxed by the surrogate model for up to 100 steps (starting from
 iteration 10) and evaluated with the DFT calculator below. **Only structures from

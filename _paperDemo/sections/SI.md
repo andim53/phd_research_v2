@@ -1,4 +1,9 @@
 # Supplementary Material
+     v6 (2026-09-17): no code in the section — figure captions no longer carry file paths, the two
+     perturbation generators, the reference-construction routine and the 2.3 Å construction distance
+     are described in words, and the data-file references are replaced by Table S1/S2/S3. No claim,
+     number, table or figure changes. Awaiting review.
+
      v5 (2026-09-17): three passages reworded so the section carries no revision history (scientist's
      instruction): §S2's interface definition and caveats, §S3's kappa paragraph and baseline count.
      No claim, number, table or figure changes. Awaiting review.
@@ -35,7 +40,7 @@ progresses towards the global minimum, and to show what the discarded early iter
 Energies are given as ΔE/N = (E − E_globalmin)/N relative to the lowest energy found anywhere in
 the 13 searches, so the best-known energy descends to zero (Fig. S1).
 
-**Figure S1.** `figures/exploration_performance_femgo.png` — (a) best-so-far ΔE/N against
+**Figure S1.** Best-so-far ΔE/N against
 iteration for each of the 13 searches, with the median over searches in black; (b) the lowest
 energy found in each iteration (points) and the best-known energy across all searches (black
 line), with the iterations at which it first crosses 0.20, 0.10, 0.05, 0.02 and 0.005 eV/atom
@@ -84,12 +89,12 @@ Section 3.1 attributes the island ground state to the loss of forced interfacial
 we test that reading directly, by comparing the **flat reference monolayer** (ΔZ = 0.000 Å) with
 the **island ground state** (ΔZ = 3.652 Å) of the Fe/MgO model in the *same* projection set, so
 the two are directly comparable (GPAW LCAO/dzp, PBE, kpts (12, 12, 1), 2000 points,
-width 0.15 eV, Fermi-shifted). Projections are per atom: Fe `dz2` (l = 2, m = 2) and O `pz`
+width 0.15 eV, Fermi-shifted). Projections are per atom: Fe-dz² (l = 2, m = 2) and O-pz
 (l = 1, m = 0). d-band moments are taken over [−5, +3] eV around E_F. All numbers in this section
-trace to `analysis/pdos_metrics.csv` and `analysis/interface_analysis.csv`.
+are those of Table S1 and Table S2.
 
-**Figure S2.** `figures/pdos_flat_vs_island.png` — total DOS, Fe-dz2 and O-pz for the flat
-monolayer (blue) and the island ground state (red).
+**Figure S2.** Total DOS, Fe-dz² and O-pz for the flat monolayer (blue) and the island ground
+state (red).
 
 **Table S1.** Density-of-states metrics for the two configurations. *[SI-1, SI-2]*
 
@@ -122,8 +127,8 @@ the interface **geometrically**: **interface Fe := Fe with a nearest O within 2.
 actually in contact with the oxide. By this criterion the flat monolayer is 25/25 interface atoms
 and the island only 9/25.
 
-**Figure S3.** `figures/interface_registry_topview.png` — top view of the interface, showing the
-metal atoms registered directly above the substrate oxygen on the MgO(001) lattice.
+**Figure S3.** Top view of the interface, showing the metal atoms registered directly above the
+substrate oxygen on the MgO(001) lattice.
 
 **Table S2.** Site-resolved d-band metrics and the Fe-on-O registry, by geometric group. The last
 two columns are the mean **nearest**-O distance and the mean in-plane offset from the nearest
@@ -142,9 +147,9 @@ lengths. *[SI-3, SI-4]*
 **+0.5106 eV**, against −0.2294 eV for the flat monolayer — a difference of 0.74 eV, larger than
 the spread between the island's interface (+0.5106) and non-interface (+0.6524) groups. Two
 features of the model matter here. First, the two groups sit at essentially the **same nearest-O
-distance** (2.3311 Å island vs 2.3000 Å flat), and that distance is the construction parameter
-`dist_fe2o = 2.3 Å` surviving relaxation (§1.3) rather than an emergent quantity — so the
-electronic difference **cannot** be a per-bond-length effect. Second, the flat layer's registry is
+distance** (2.3311 Å island vs 2.3000 Å flat), and that distance is the one set when the reference
+film is built — a 2.3 Å interfacial separation that relaxation preserves (§1.3) — rather than an
+emergent quantity, so the electronic difference **cannot** be a per-bond-length effect. Second, the flat layer's registry is
 perfect (offset 0.0000 Å) and uniform, whereas the island's 9 contacts are buckled (offset
 0.3722 Å) and only a third of the film. The flat monolayer's strong Fe–O coupling is therefore a
 **collective** property of all 25 metal atoms being registry-locked in one plane, not a property
@@ -154,8 +159,8 @@ of an individual Fe–O bond.
 an oxygen — 25/25 in the flat monolayer and 9/9 in the island — and **none** atop Mg. This is the
 registry determined experimentally for the first monolayer of Fe on MgO(001) by LEED I–V analysis
 \cite{urano1988} and used in first-principles models of the Fe|MgO|Fe interface \cite{butler2001},
-and it is also the registry the reference layer is built with: `build_mgo_stack` places the
-substrate oxygen directly above the metal sites, so the flat film's registry follows from the
+and it is also the registry the reference layer is built with — the construction places the
+substrate oxygen directly above the metal sites — so the flat film's registry follows from the
 construction as much as from the physics. It is reported here as a **consistency check, not as a
 prediction of the search**. What the search does add is the island's behaviour: the Fe that remain
 in contact keep O as their nearest in-plane neighbour (9/9) rather than switching to Mg, so the
@@ -181,27 +186,27 @@ recomputed. All site-resolved numbers quoted here are those of Table S2.
 ## S3 Method-parameter sensitivity of the biased exploration
 
 The search used here is a custom, biased scheme — GOFEE (a GPR surrogate with an LCB acquisition
-function) seeded from a flat Fe reference layer, with `HeteroStructRandomize` and
-`RattleGenerator` supplying the perturbation. Here we vary **three method parameters** on the same
+function) seeded from a flat Fe reference layer, with a heterostructure-aware randomiser and a
+rattle generator supplying the perturbation. Here we vary **three method parameters** on the same
 Fe25Mg25O25 system and ask whether the method's conclusions survive the choice: is the island
 still the ground state, how far does a single search reach, and is the flat/island basin picture
 preserved. The baseline for every family is the plain Fe/MgO run (rattle 1.5/2.3, kappa = 2, no
 dipole correction). Energies are per-seed best ΔE/N relative to the lowest energy found in any of
 these runs, −436.909 eV.
 
-**Only completed searches are used.** Several run directories in this study contain searches that
-were **stopped early**, and they are excluded everywhere in this paper. A short search has had less
-time to descend, so its per-seed best is systematically worse — every unfinished search in this set
-is a severe outlier (0.23–0.35 eV/atom, against ~0.03–0.09 for completed searches) — and because
-the unfinished runs are not distributed evenly across settings they would distort the comparison
-between them. The rule is applied by a single shared function (`run_selection.py`) in every
-analysis script, and it is determined from the **iteration number stored in each database rather
-than from the directory name**, because a `seed_*` directory can stop early just as a `stop_*` one
-can. The baseline quoted in Table S3 therefore consists of **13 completed searches** — one of its
-directories holds a search that stopped early — which is the replica count used in the main text.
+**Only completed searches are used.** Several of the searches in this study were **stopped early**,
+and they are excluded everywhere in this paper. A short search has had less time to descend, so its
+per-seed best is systematically worse — every such search in this set is a severe outlier
+(0.23–0.35 eV/atom, against ~0.03–0.09 for completed searches) — and because searches that stopped
+early are not distributed evenly across the settings they would distort the comparison between
+them. The same criterion is applied without exception throughout the analysis, and it is decided
+from the **iteration count recorded for each search, not from how a search is labelled**: a
+search that looks complete can have stopped early. The baseline quoted in Table S3 therefore
+consists of **13 completed searches** — one further search of that family stopped early — which is
+the replica count used in the main text.
 
-**Table S3.** Method-parameter sensitivity; completed searches only (100 iterations). All numbers
-trace to `analysis/method_sensitivity.csv`. *[SI-5, SI-6, SI-7]*
+**Table S3.** Method-parameter sensitivity; completed searches only (100 iterations). *[SI-5, SI-6,
+SI-7]*
 
 | Family | Setting | Searches | per-seed best (eV/atom) | Flat fraction | Diversity |
 |---|---|---|---|---|---|
@@ -215,15 +220,15 @@ trace to `analysis/method_sensitivity.csv`. *[SI-5, SI-6, SI-7]*
 | dipole | no dipole (baseline) | 13 | 0.03683 ± 0.02575 | 0.165 | 2.22 |
 | dipole | dipole xy | 11 | 0.03770 ± 0.02436 | 0.158 | 2.67 |
 
-**Figure S4.** `figures/method_sensitivity_rattle.png` — convergence, per-seed best, basin sampling
-and diversity for the rattle-strength family (four panels).
+**Figure S4.** Convergence, per-seed best, basin sampling and diversity for the rattle-strength
+family (four panels).
 
-**Figure S5.** `figures/method_sensitivity_kappa.png` — the same four panels for the kappa family.
+**Figure S5.** The same four panels for the kappa family.
 
-**Figure S6.** `figures/method_sensitivity_dipole.png` — the same four panels for the dipole family.
+**Figure S6.** The same four panels for the dipole family.
 
-**Reducing the rattle strength degrades the search by about 7×.** *[SI-7]* Cutting the
-`HeteroStructRandomize` / `RattleGenerator` amplitudes roughly in half raises the per-seed best
+**Reducing the rattle strength degrades the search by about 7×.** *[SI-7]* Cutting the two
+perturbation amplitudes roughly in half raises the per-seed best
 from **0.0368 to 0.2607 / 0.2558 eV/atom** — a factor of **7.1 and 7.0** — and the flat-basin
 fraction collapses from **0.165 to 0.023 / 0.017**. Reducing the perturbation is therefore not a
 cheaper equivalent of the baseline: the rattle is what makes the search escape the initial region
@@ -253,11 +258,12 @@ mixes the correction with sampling noise. This is an outcome-level comparison on
 dipole energy shift would require recomputing the *same* structures with and without the
 correction, which was not done.
 
-**Caveats for the whole study.** Seed counts are unequal (13 / 2 / 4 for rattle, 13 / 16 / 10 / 9
-for kappa, 13 / 11 for dipole), and the truncated-search exclusion is disclosed above. The rattle
-sweep explores only *lower* rattle — there is no higher-rattle arm, so this is not a maximum and
-the baseline should not be read as an optimum. "Diversity" (the mean pairwise AGOX-Fingerprint
-distance) is **inversely correlated with convergence** — a better-converged population is more
-concentrated — so it is not interpreted as exploration breadth. The kappa directories contain a
-scratch `trash/` database of 41 Fe9Mg9O9 structures, which the loader excludes by skipping `trash/`
-and filtering to the target composition; the rattle and dipole directories are clean.
+**Caveats for the whole study.** Search counts are unequal (13 / 2 / 4 for rattle, 13 / 16 / 10 / 9
+for kappa, 13 / 11 for dipole), and the exclusion of searches that stopped early is disclosed above.
+The rattle sweep explores only *lower* rattle — there is no higher-rattle arm, so this is not a
+maximum and the baseline should not be read as an optimum. "Diversity" (the mean pairwise
+structural-fingerprint distance between sampled structures) is **inversely correlated with
+convergence** — a better-converged population is more concentrated — so it is not interpreted as
+exploration breadth. One run family also contains a small set of structures of a different
+composition, written by the run's own bookkeeping; those are excluded from every number here, as is
+any structure outside the target composition.

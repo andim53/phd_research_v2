@@ -117,10 +117,10 @@ host alone) vs 0.0480 (all four systems)** for the same 19 numbers. Fixed:
 
 | Section | Draft | Approval state |
 |---|---|---|
-| `01_methods.md` | **v5** | **No approval.** v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scopes to the Fe host, so nothing survives. |
+| `01_methods.md` | **v6** | **No approval.** v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, so nothing survives. |
 | `02_results.md` | **v4** | **No approval.** Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4). |
 | `03_discussion.md` | **v5** | **Awaiting review — the gate for `04_introduction.md`.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v5** | **Awaiting review.** v4 was a **scope note only**; v5 removed the revision history from three passages (§S2 interface definition + caveats, §S3 kappa + baseline count). No SI claim, number, table or figure changed in either — §S1 (SI-8), §S2 (SI-1…SI-4), §S3 (SI-5…SI-7) are all Fe/MgO and untouched by the archive. |
+| `SI.md` | **v6** | **Awaiting review.** v4 was a **scope note only**; v5 removed the revision history from three passages; v6 removed all code from the section (figure-caption paths, generator/construction routine names, the construction-distance parameter, data-file references). No SI claim, number, table or figure changed in any of them — §S1 (SI-8), §S2 (SI-1…SI-4), §S3 (SI-5…SI-7) are all Fe/MgO and untouched by the archive. |
 | `04_introduction.md` | — | **BLOCKED** on 03 approval. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
@@ -146,6 +146,30 @@ shifted the Results floats.
 The section draft versions in the table above live in a `<!-- DRAFT vN -->` comment at the head of
 each section file and in the `# NN — Title` block under it; nothing else in a section refers to a
 version.
+
+**Float sources and traceability (v9 — the sections no longer carry file paths).** Because sections
+are manuscript text, the mapping from each float to the file that produces it lives here:
+
+| Float | Figure/table file | Data source |
+|---|---|---|
+| Figure 1 (Methods workflow) | inline mermaid diagram | `sections/01_methods.md` |
+| Table 1 (the two models) | — | `data/{femgo,febmgo}/main.py`, `scripts/build_mgo_stack.py` |
+| Table 2 (generation schedule) | — | `data/{femgo,febmgo}/main.py` (`num_candidates`, rattle amplitudes) |
+| Table 3 (phases per model) | — | `analysis/pes_structures.csv` |
+| Table 4 (flat-basin min dE/N) | — | `analysis/pes_structures.csv`, `analysis/ensemble_stats.json` |
+| Figure 2 candidate (PES maps) | `figures/pes_2_systems.png` | `analysis/pes_structures.csv` |
+| Figure 3 candidate (flat-basin summary) | `figures/flat_state_summary.png` | same |
+| Figure 4 candidate (side views) | `figures/flat_vs_ground_preview.png` | `analysis/flat_structures/*.xsf` |
+| Figure S1 (exploration performance) | `figures/exploration_performance_femgo.png` | `analysis/exploration_performance.json` |
+| Table S1 (DOS metrics) | — | `analysis/pdos_metrics.csv` |
+| Figure S2 (flat vs island DOS) | `figures/pdos_flat_vs_island.png` | `data/dos_femgo_flatngs/` |
+| Table S2 (site-resolved d-band, registry) | — | `analysis/interface_analysis.csv` |
+| Figure S3 (registry top view) | `figures/interface_registry_topview.png` | `analysis/interface_analysis.csv` |
+| Table S3 (method sensitivity) | — | `analysis/method_sensitivity.csv` |
+| Figures S4–S6 (rattle/kappa/dipole) | `figures/method_sensitivity_{rattle,kappa,dipole}.png` | `analysis/method_sensitivity.csv` |
+
+`analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` are **not** to be used (superseded by
+Table S2). This is the only place the code-level names are recorded, by design.
 
 ⚠ **The main-text figures are cited by no section.** `figures/pes_2_systems.png` (PES maps),
 `figures/flat_state_summary.png` (flat-basin comparison) and `figures/flat_vs_ground_preview.png`
@@ -357,6 +381,17 @@ that did were rewritten so they stand as present-tense method statements:
 applies to `04`–`06` when they are drafted. The `<!-- DRAFT vN -->` comment at the head of each
 section is the sole remaining version reference inside a section file; it is stripped at the port —
 say the word if it should move to this file instead.
+
+**Second pass, same session — no code in the sections.** On the scientist's instruction (*"don't use
+the programming term, like the `dist_fe2o = 2.3 Å`, or the `build_mgo_stack`"*), every identifier,
+path and parameter name was removed from `01_methods.md` and `sections/SI.md` and replaced with prose:
+the excluded searches by their iteration count rather than by directory name; the selection rule
+without its filename; the two perturbation generators, the reference-construction routine and the
+2.3 Å construction distance in words; the figure captions without `figures/*.png`; and the data-file
+references as Table S1/S2/S3. **Zero code spans remain in any section** (verified by scan). The
+file-level mapping that was removed now lives in "Float sources and traceability" above, and the
+substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_methods.md` v6,
+`SI.md` v6 — no claim, number, table or figure changed.
 
 ## Next step
 

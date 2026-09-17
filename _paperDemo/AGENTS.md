@@ -74,6 +74,22 @@ changed, state what **is** done and why it is the right choice, in the present t
 - Corrected in v9: three such passages in `sections/SI.md` (§S2 interface definition, §S2 caveat,
   §S3 kappa) — see `paper_status.md`.
 
+**No code in the sections either.** A section is read by a referee, not by the analysis code, so it
+must not contain identifiers, paths, parameter names or any other programming vocabulary:
+
+| do not write | write instead |
+|---|---|
+| `` `dist_fe2o = 2.3 Å` `` | "the construction's 2.3 Å interfacial separation" |
+| `` `build_mgo_stack` places the O above the metal `` | "the construction places the substrate oxygen directly above the metal sites" |
+| `` `HeteroStructRandomize` / `RattleGenerator` `` | "the heterostructure-aware randomiser and the rattle generator" |
+| `` `run_selection.py` `` | "the same criterion, applied without exception throughout the analysis" |
+| `` `femgo/stop_16`, `seed_*`, `stop_*`, `trash/` `` | "one Fe/MgO search reached only iteration 37"; "a search that looks complete can have stopped early"; "a small set of structures of a different composition, written by the run's own bookkeeping" |
+| `` `figures/x.png` `` in a caption, `` `analysis/y.csv` `` in the text | nothing — the caption describes the figure, and the file it came from is listed in `paper_status.md` → "Float sources and traceability" |
+
+Code names that identify a **method or code used** stay, with their citation: AGOX, GOFEE, GPAW,
+LCAE/dzp basis, PBE. Physical symbols and units stay: ΔZ, dE/N, κ, a_Fe, a_MgO/√2, eV/atom, Å.
+Corrected in v9: `01_methods.md` (excluded-run names) and six places in `sections/SI.md`.
+
 ## Citations
 
 - Never hallucinate references. Fetch and verify BibTeX programmatically (DOI content
@@ -129,13 +145,14 @@ drafting or revising anything. Summary as of 2026-09-17:
   placeholders remain. Open: `fahsold2000`, `reitinger2007` and `torelli2009` are closed access and
   cited from verified abstracts only.
 - **Phase E: IN PROGRESS — no section is approved.**
-  - `01_methods.md` **v5** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) → needs review.
+  - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
+    of code identifiers → needs review.
   - `02_results.md` **v4** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
     p = 0.0444) → needs review.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains.
     **This is the gate: do NOT draft `04_introduction.md` until 03 is approved.**
-  - `SI.md` **v5** — §S1, §S2, §S3 are Fe/MgO and content-unchanged (v4 was a scope note); v5
-    removed the revision history from three passages. Awaiting review.
+  - `SI.md` **v6** — §S1, §S2, §S3 are Fe/MgO and content-unchanged (v4 was a scope note); v5
+    removed the revision history and v6 the code vocabulary. Awaiting review.
   - `04`–`06` not drafted; no LaTeX until all sections are approved.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
   `a_Fe` (`interpolation_factor` = 0), so the confound that threatened the cross-host comparison no
