@@ -1,16 +1,20 @@
 # 04 — Introduction
+     v2 (2026-09-18): four recent MTJ-fabrication references added (scheike2023, solano2022,
+     ichinose2025, ghemes2024) with a new paragraph on the recent fabrication trend; the
+     metal-on-MgO islanding difficulty is now also anchored to modern device-scale growth
+     (ichinose2025). No claim or number changed.
      v1 (2026-09-18): first draft, written after Methods, Results and Discussion were approved. It
      closes on the frozen contribution sentence of the claim list, with the quoted energy shift and
-     the significance value left to the Results. Three device-side references were added for this
-     section and verified by DOI content negotiation. No Co host is discussed and the device material
-     is referred to generically.
+     the significance value left to the Results. No Co host is discussed and the device material is
+     referred to generically.
 
-<!-- DRAFT v1 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v2 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      Every number here is one already frozen in the approved Results: the two flat-basin minima,
      the shift between them, the island spans, the boron–oxygen window count and the exact
      search-level statistic. Nothing is introduced that is not in the frozen claim list.
-     Citation keys added for this section: parkin2004, djayaprawira2005, ikeda2008. -->
+     Citation keys for this section: parkin2004, djayaprawira2005, ikeda2008 (device);
+     scheike2023, solano2022, ichinose2025, ghemes2024 (recent fabrication trend). -->
 
 ## Introduction
 
@@ -25,6 +29,21 @@ relaxation are themselves sensitive to how the metal is deposited and annealed
 \cite{djayaprawira2005,ikeda2008}. The structural quality of the metal/oxide interface is therefore
 part of the specification of the device rather than an incidental detail.
 
+Two recent trends in junction fabrication have only sharpened that point. The first is the push on
+the tunnel magnetoresistance itself: after a decade of stagnation at the 604 % reported in 2008 for
+junctions with boron-alloy electrodes \cite{ikeda2008}, epitaxial junctions now reach a record 631 %
+at room temperature (1143 % at 10 K), and the gain comes explicitly from the interface — from tuning
+the crystallographic orientation and the oxygen content of the MgO barrier through ultrathin metal
+insertions at the metal/oxide boundary \cite{scheike2023}. The second is the move to perpendicularly
+magnetised junctions for dense, non-volatile memory, in which the metal/oxide interface is itself a
+functional layer: the Fe/MgO interface carries a large perpendicular surface anisotropy, whose
+strength is traced to the hybridisation of interfacial iron and oxygen states \cite{solano2022}, and
+sub-nanometre metal films grown on the barrier are engineered for the perpendicular anisotropy and
+the low magnetic damping that low-power switching requires \cite{ichinose2025}. Both trends converge
+on the same requirement — a metal film that is flat, epitaxial and well-wetting on the crystalline
+barrier — and, in practice, on layer-by-layer control of the roughness and thickness of each film in
+the stack \cite{ghemes2024}.
+
 The flat, lattice-matched film assumed in such interface models is not, however, the configuration
 that a metal film necessarily adopts when it is deposited on MgO(001). At the monolayer coverages
 relevant to a thin electrode, growth experiments find the film dewetting into three-dimensional
@@ -35,11 +54,15 @@ three-dimensionally, with a two-dimensional growth mode reported only above abou
 \cite{torelli2009}; and grazing-incidence small-angle X-ray scattering on five monolayers likewise
 identifies Volmer–Weber growth with spherical islands \cite{reitinger2007}. A flat, pseudomorphic
 monolayer is obtained instead by slow deposition onto a cleaved, oxygen-annealed crystal
-\cite{urano1988}. Two structural outcomes thus compete at this coverage — a flat, well-wetting film
-and a dewetted island — and the growth experiments constrain their kinetics rather than their
-relative energies, while interface models assume the flat geometry by construction. What is missing
-is a comparison of the two configurations' energies for one and the same interface, and an answer to
-how that comparison responds to a change in the film's composition.
+\cite{urano1988}. The islanding tendency survives even into the most controlled modern fabrication:
+grain-to-grain epitaxial growth of a sub-nanometre ferromagnetic layer on a polycrystalline MgO(001)
+barrier on 300 mm wafers must be performed at cryogenic temperature (100 K), because room-temperature
+deposition lets the metal nucleate as islands and break the film's continuity \cite{ichinose2025}.
+Two structural outcomes thus compete at this coverage — a flat, well-wetting film and a dewetted
+island — and the growth experiments constrain their kinetics rather than their relative energies,
+while interface models assume the flat geometry by construction. What is missing is a comparison of
+the two configurations' energies for one and the same interface, and an answer to how that comparison
+responds to a change in the film's composition.
 
 The composition is not arbitrary. The metal electrodes of the highest-magnetoresistance MgO junctions
 are boron-bearing and amorphous as deposited, which is also the condition under which the MgO barrier

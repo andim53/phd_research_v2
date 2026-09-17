@@ -112,12 +112,13 @@ end, so a fresh session does not re-open them.
       is no LaTeX port until all six are approved. The approvals are recorded in each section's head
       block (`APPROVED 2026-09-18`) — any later edit to an approved section voids its approval again,
       per the governing rule.
-- [ ] **B2 · Review `04_introduction.md` v1 — DRAFTED 2026-09-18, awaiting review.** The newly
-      opened gate. It closes on the frozen contribution sentence with the quoted shift and the
-      significance value removed (moved to the Results), and it carries no floats. Two things inside
-      it are new rather than restatements, and are listed separately below as **C7** (the
-      confusion-principle framing now appears in the Introduction) and **E3** (three device-side
-      references were added for it). Neither can be answered by an agent.
+- [ ] **B2 · Review `04_introduction.md` — v2, DRAFTED, awaiting review.** The newly opened gate. It
+      closes on the frozen contribution sentence with the quoted shift and the significance value
+      removed (moved to the Results), and it carries no floats. **v2 adds the recent fabrication
+      trend** (new paragraph + four references). What is new rather than a restatement is listed
+      separately and cannot be answered by an agent: **C7** (the confusion-principle framing now
+      appears in the Introduction), **E3** (three device-side references) and **E4** (four
+      recent-fabrication references).
 
 **C. Wording and framing**
 
@@ -192,8 +193,28 @@ end, so a fresh session does not re-open them.
       says "boron-bearing amorphous electrodes" and "MgO-based magnetic tunnel junctions" — so citing
       them is not a scope breach, but the scientist may prefer to drop them (the two AIP papers in
       particular) and leave the device motivation to `yuasa2004` + `butler2001` alone. Dropping a key
-      is a one-line edit in §4 plus its `.bib` entry; `references.bib` now holds **18** keys and every
-      one is cited by some section (no orphans).
+      is a one-line edit in §4 plus its `.bib` entry; `references.bib` now holds **22** keys and every
+      one is cited by some section (no orphans). See **E4** for the four further references the
+      scientist added on top of these.
+- [ ] **E4 · Four recent MTJ-fabrication references the scientist supplied as PDFs — reviewed and
+      verified 2026-09-18, accept or drop.** `papers/fabri_*.pdf` were added to the project and, on
+      the scientist's instruction, are now cited in the Introduction as the recent fabrication trend.
+      Each was read and matched to its published record by DOI content negotiation (two were preprints
+      and are cited by their **published** versions — `solano2022` was on arXiv 2209.10906 but is
+      published in Phys. Rev. Materials, and `ichinose2025` was arXiv 2504.07350 but is published in
+      NPG Asia Materials, where its barrier is the Fe-doped MgFeO):
+
+      | key | paper | what it is cited for in §4 |
+      |---|---|---|
+      | `scheike2023` | Scheike et al., *Appl. Phys. Lett.* 122, 112404 (2023) | record 631 % room-temperature TMR (1143 % at 10 K) reached by interface atomic-structure engineering in epitaxial junctions |
+      | `solano2022` | Solano et al., *Phys. Rev. Mater.* 6, 124409 (2022) | large perpendicular surface anisotropy of the Fe/MgO interface, traced to interfacial Fe–O hybridisation |
+      | `ichinose2025` | Ichinose et al., *NPG Asia Mater.* 17 (2025) | cryogenic (100 K) growth needed to suppress island-like metal nucleation on polycrystalline MgO(001); low-damping ultrathin film for low-power switching |
+      | `ghemes2024` | Ghemes et al., *Materials* 17, 2554 (2024) | layer-by-layer control of film roughness/thickness as the fabrication practice |
+
+      All are device-side (CoFe/CoFeB/MgO) papers; the prose names no alloy and no Co host. Drop any
+      key and it is a one-line edit in §4 plus its `.bib` entry. Note the **file-name/key mismatch**:
+      `papers/fabri_Crina2024.pdf` is **Ghemes et al.** (first author Ghemes), so its citation key is
+      `ghemes2024`, not "crina".
 
 **Decided — not open** (listed so they are not re-opened): the Fe-host-only scope (v9); the PES
 panels' shared energy range, anchored to the Fe/MgO ceiling, with 25 Fe-B points off-scale by
@@ -212,7 +233,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `02_results.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is). Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | **v1** | **DRAFTED 2026-09-18 — awaiting review.** The first draft of the section that was released when `03` was approved. Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three new device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`) — see **E3**. Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
+| `04_introduction.md` | **v2** | **DRAFTED — awaiting review.** v1 was the first draft of the section released when `03` was approved; **v2 added the recent MTJ-fabrication trend** — four new references (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, see **E4**) and a new trend paragraph, with the metal-on-MgO islanding difficulty also anchored to modern device-scale growth (`ichinose2025`). Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, see **E3**). Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
@@ -223,11 +244,12 @@ The introduction, drafted the same day, is **not** approved.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
-device-side references the 13-key set did not contain, so three were verified and added
-(`parkin2004`, `djayaprawira2005`, `ikeda2008`; see **E3**). `references.bib` now holds **16 citations
-for the main text** (18 entries including the two lattice-constant references cited only by the SI);
-every `\cite{}` key in `sections/` resolves and no entry is orphaned — re-checked by script over all
-five section files. **Phase F/G: not started.**
+device-side and recent-fabrication references the 13-key set did not contain, so seven were verified
+and added in two batches (`parkin2004`, `djayaprawira2005`, `ikeda2008`; then `scheike2023`,
+`solano2022`, `ichinose2025`, `ghemes2024`; see **E3** and **E4**). `references.bib` now holds **20
+citations for the main text** (22 entries including the two lattice-constant references cited only by
+the SI); every `\cite{}` key in `sections/` resolves and no entry is orphaned — re-checked by script
+over all five section files. **Phase F/G: not started.**
 
 ## Float numbering (v9)
 
@@ -575,19 +597,22 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`04_introduction.md` v1 is drafted and awaiting review (item B2).** It was written after Methods v6,
-Results v5 and Discussion v5 were approved on 2026-09-18. Two things inside it need the scientist
-rather than an agent: the confusion-principle framing appears in the Introduction although the claim
-list places it in the Discussion (**C7**), and three device-side references were added for the section
-(**E3**). Everything else in it restates a number already frozen in the approved Results.
+**`04_introduction.md` is drafted (v2) and awaiting review (item B2).** v1 was written after Methods v6,
+Results v5 and Discussion v5 were approved on 2026-09-18; **v2 added the recent MTJ-fabrication trend**
+at the scientist's request (new paragraph and four references, item **E4**). Four things inside the
+section need the scientist rather than an agent: the confusion-principle framing appears in the
+Introduction although the claim list places it in the Discussion (**C7**), three device-side references
+(**E3**) and four recent-fabrication references (**E4**) were added for the section, and the v9
+contribution sentence it closes on still awaits re-sign-off (A1/A2). Everything else in it restates a
+number already frozen in the approved Results.
 
 `SI.md` v8 is the last drafted section still awaiting review. After `04` is approved the order is
 `05_conclusion.md` → `06_abstract.md` → the `paper.tex` port; no LaTeX before all six sections are
 approved.
 
 Everything else that is open is the scientist's, not the agent's: the consolidated decision checklist
-above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–E3 references) is the one place to work
-from. The largest open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host
+above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–**E4** references) is the one place to
+work from. The largest open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host
 structures selected, re-relaxation not run).
 
 **One internal inconsistency left for the sign-off, not fixed here:** the contribution sentence in

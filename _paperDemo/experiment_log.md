@@ -1534,3 +1534,42 @@ section notes that the Introduction carries no float, and "Next step" is rewritt
 `AGENTS.md` — Phase D key list, Phase E block and the float-numbering line. `references.bib` — the
 three entries in a new dated block.
 
+## 2026-09-18 — `04_introduction.md` v2: the recent MTJ-fabrication trend added
+
+The scientist added four papers to `papers/fabri_*.pdf` and asked that the Introduction carry the
+recent trend in MTJ fabrication, with each paper and its contents made clear. The section went to
+**v2**.
+
+**The four papers, clarified** (each read in full from the supplied PDF and matched to its published
+record by DOI content negotiation; two were preprints and are cited by their **published** versions):
+
+| key | paper | contents | role in §4 |
+|---|---|---|---|
+| `scheike2023` | Scheike, Wen, Sukegawa, Mitani, *Appl. Phys. Lett.* 122, 112404 (2023), NIMS | Record **631 % room-temperature TMR** (1143 % at 10 K) in epitaxial CoFe/MgO/CoFe(001) junctions; the gain comes from tuning interface atomic structure (crystallographic orientation, MgO interface oxidation, ultrathin CoFe/Mg insertions); large TMR-thickness oscillation. | The record-TMR / interface-engineering arm of the trend. |
+| `solano2022` | Solano et al., *Phys. Rev. Mater.* 6, 124409 (2022) (arXiv 2209.10906), Strasbourg | Broadband FMR of single-crystal MgO/Fe/MgO; large **perpendicular surface anisotropy** of the Fe/MgO interface, attributed to interfacial Fe–O hybridisation. | The perpendicular-magnetisation / interface-as-functional-layer arm of the trend. |
+| `ichinose2025` | Ichinose et al., *NPG Asia Mater.* 17 (2025) (arXiv 2504.07350), AIST | **Cryogenic (100 K) sputtering** suppresses the island-like initial growth of a sub-nanometre CoFe layer on polycrystalline MgO(001) on 300 mm wafers, enabling grain-to-grain epitaxy; low magnetic damping (0.008) on an Fe-doped (MgFeO) barrier for voltage-driven switching. | Cited twice: the perpendicular/low-damping film arm of the trend, **and** the fabrication-side proof that the metal's islanding tendency on MgO is a live obstacle (room-temperature growth nucleates islands; low temperature suppresses them). |
+| `ghemes2024` | Ghemes et al., *Materials* 17, 2554 (2024), Iasi | Layer-by-layer study of an MTJ stack (component analysis + deposition-parameter adjustment); MgO barrier smoothness depends on the underlying layers; ~10 % average TMR gain from process control; CoFeB crystallises bcc(001) on anneal. | The fabrication-practice arm: layer-by-layer control of roughness and thickness. |
+
+**How §4 changed.** A new second paragraph states the recent trend: after a decade's stagnation at
+Ikeda's 604 % \cite{ikeda2008}, epitaxial junctions now reach a record 631 % through interface
+atomic-structure engineering \cite{scheike2023}; in parallel, perpendicular junctions make the
+metal/oxide interface a functional layer, via the Fe/MgO interface's perpendicular surface
+anisotropy traced to Fe–O hybridisation \cite{solano2022} and via engineered sub-nanometre films with
+low damping \cite{ichinose2025}; and both trends converge on a flat, epitaxial, well-wetting film,
+controlled layer by layer \cite{ghemes2024}. In the wetting paragraph, the metal's islanding tendency
+is now anchored to modern device-scale growth: grain-to-grain epitaxy on polycrystalline MgO(001) on
+300 mm wafers must be run at 100 K because room-temperature deposition lets the metal nucleate as
+islands \cite{ichinose2025}. No claim, number, or result was touched — this is literature framing
+only, and `CLAIMS.md` is not bumped.
+
+**Verification.** `references.bib` holds **22** entries (20 cited by the main text, 2 by the SI
+only); every `\cite{}` key across the five section files resolves, none orphaned (checked by script).
+§4 now cites 16 keys. The prose still names no alloy and no Co host (verified by scan). Note the
+**file-name/key mismatch**: `papers/fabri_Crina2024.pdf` is **Ghemes et al.**, key `ghemes2024`.
+
+**Doc sync.** `paper_status.md` — the drafting table and B2 move to v2, Phase D records 20/22 keys,
+a new **E4** checklist item lists the four papers with their content and the accept-or-drop decision,
+and "Next step" is updated. `AGENTS.md` — Phase D key list and the Phase E entry. `references.bib` —
+four entries in a new dated block. The scratch extraction `.txt` files were removed; the four PDFs
+remain in `papers/` (untracked, as the directory has been).
+
