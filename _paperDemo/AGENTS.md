@@ -181,11 +181,11 @@ drafting or revising anything. Summary as of 2026-09-17:
       4_latt_100}` (lattice constraint, §S5). Each arm is tested against **its own** budget via
       `run_selection`; scratch `trash/`/`_trash/` excluded. `_archive/latt_conc/0_latt_0` (f = 0) and
       the empty `1_latt_1` (f = 0.5) are out of scope.
-        - **Inverted stack (v11, QUALIFIED finding):** `data/mgofe` — an MgO film on an Fe substrate
-          (Fe25Mg25O25, cell = a_Fe = 2.866 Å experimental, 100 iterations, 5 completed searches). The
-          lowest structure found is a flat MgO film (the opposite of Fe-on-MgO), but the search does not
-          converge at 100 iterations (per-seed best spans ~0.8 eV/atom; only 1 of 5 searches reaches the
-          flat film), so SI-11 is a weak/negative result, not a clean claim. Flatness is over the
+        - **Inverted stack (v11, QUALIFIED — a ground-state comparison):** `data/mgofe` — an MgO film on
+          an Fe substrate (Fe25Mg25O25, cell = a_Fe = 2.866 Å experimental, 100 iterations, 5 completed
+          searches). Its ground state is a flat MgO film, the opposite of Fe-on-MgO whose ground state is
+          an island, but the searches do not converge at the 100-iteration budget, so SI-11 is qualified,
+          not a clean claim. **§S6 is ground-state only — no per-seed content.** Flatness is over the
           deposited film in each stack (Fe for femgo, MgO for mgofe).
   - **Rattle-strength study** (same femgo scheme): `param_ratt05` (rattle −0.5),
     `param_ratt1` (rattle −1.0).

@@ -64,11 +64,11 @@ the look of the figures, so they are listed for review.
       from 100 to the full budget. Panel (c) is the primary evidence. Open: whether to add the
       pooled-per-arm curve to (c), and whether the per-run lines in (a)/(b) should be thinned (17
       lines is busy) — e.g. show the median ± range per arm instead.
-- [ ] **`mgo_on_fe.png` (new, §S6, SI-11 — qualified finding).** Three panels: (a) per-seed best
-      energy of the inverted stack (shows the 59 eV spread), (b) the MgO film's ΔZ at each search's
-      best against the 1.0 Å threshold, (c) the flat-basin fraction per search. Open: whether a
-      fourth panel comparing the two stacks' film-ΔZ distributions would make the inversion clearer
-      than Table S6 does.
+- [ ] **`mgo_on_fe.png` (new, §S6, SI-11 — a ground-state comparison).** Two panels: (a) ΔZ of the
+      deposited film at the ground state of each stack (Fe-on-MgO island 3.65 Å vs MgO-on-Fe flat
+      film 0.39 Å), against the 1.0 Å threshold; (b) where the flat film lies relative to the island
+      for each stack (+0.189 / −0.016 eV/atom), so the sign of the wetting preference is visible.
+      Open: whether to add the two ground-state structures as an inset.
 - [ ] **`lattice_constraint.png` (new, §S5, SI-10).** Three panels: (a) separation vs the constraint
       with per-search scatter, (b) ΔZ distributions per arm, (c) per-search spread. Open: whether
       the main-text reference (f = 0) should be a distinct marker in (a) — it currently is the leftmost

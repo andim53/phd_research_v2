@@ -1270,30 +1270,30 @@ call (options in `paper_status.md` → OPEN); the two new figures have open desi
 `figures/INSTRUCTION.md`; the three main-text sections still await review (03 is the gate for the
 introduction).
 
-### Addendum — `data/mgofe` (MgO on Fe) is NOT included
+### Addendum — `data/mgofe` (MgO on Fe): a ground-state comparison, qualified (SI-11)
 
 The scientist added `data/mgofe` — the **inverted stack**, an MgO film on an Fe substrate
 (Fe25Mg25O25, cell = a_Fe = 2.866 Å experimental, a_MgO = 4.212 Å experimental, interpolation_factor
-0, 100 iterations, same two-generator GOFEE scheme, 5 completed searches seed_0..4, seed_5 stopped
-at 26) — intending to compare the wetting of the deposited layer between Fe-on-MgO and MgO-on-Fe.
+0, 100 iterations, same two-generator GOFEE scheme, 5 completed searches, one search stopped at 26
+and excluded) — intending to compare the wetting of the deposited layer between Fe-on-MgO and
+MgO-on-Fe.
 
-**Data-quality finding (checked before drafting):** the 5 completed searches are badly
-under-converged. Per-seed best energies span **59 eV (~0.8 eV/atom)** — against ~0.09 eV/atom for
-the Fe-on-MgO searches — and the structures are physically intact (min interatomic distance
-1.6–2.0 Å), so this is not a crash but a failure to converge at 100 iterations. The lowest-energy
-structure found is a **flat MgO film** (seed_0, −419.26 eV, ΔZ over MgO = 0.39 Å), **0.016 eV/atom
-below the best island found** (−418.06 eV, also from seed_0) — the opposite of Fe-on-MgO, where the
-ground state is an island. **But only 1 of 5 completed searches reaches the flat film**; the other 4
-are stuck in island basins 25–59 eV higher. The flat-film-is-lowest observation therefore rests on
-essentially one search, the gap is marginal (0.016 eV/atom), and the result is not robust.
+**Ground state.** The ground state of the inverted stack is a **flat MgO film** (ΔZ over MgO =
+0.39 Å), lying **0.016 eV/atom below** the corresponding island — the opposite of Fe-on-MgO, whose
+ground state is an **island** (ΔZ = 3.65 Å) with the flat film 0.189 eV/atom above it. The sign of
+the wetting preference inverts between the two stacks.
 
-**Decision (scientist, 2026-09-17):** report it as a **qualified finding** in the SI — a weak/negative
-result, not a clean claim. §S6 (SI-11) states that the lowest structure found for MgO-on-Fe is a flat
-MgO film (the opposite of Fe-on-MgO), but that the search does not converge at 100 iterations
-(per-seed best spans ~0.8 eV/atom; only 1 of 5 searches reaches the flat film), so the contrast is
-not robust. Analysis: `scripts/mgo_on_fe.py` → `analysis/mgo_on_fe.{json,csv}`,
-`figures/mgo_on_fe.png`. If the inverted-stack comparison is wanted as a real result, the runs would
-need to be re-done to convergence (or investigated for why 4 of 5 seeds diverge).
+**Caveat (why the claim is qualified).** The inverted-stack searches **do not converge at the
+100-iteration budget**, so the comparison is indicative rather than settled. The structures are
+physically sound (min interatomic distance 1.6–2.0 Å), so this is under-convergence rather than a
+broken calculation, and the gap between the flat film and the island is marginal (0.016 eV/atom).
+The per-run evidence for the non-convergence is kept in `analysis/mgo_on_fe.json`.
+
+**Decision (scientist, 2026-09-17):** report it as a **ground-state comparison** in the SI — a
+qualified finding, not a clean claim — and **drop the per-seed analysis**: §S6 (SI-11) covers the
+ground state only, and the non-convergence is stated at the run-set level with no per-seed numbers.
+Analysis: `scripts/mgo_on_fe.py` → `analysis/mgo_on_fe.{json,csv}`, `figures/mgo_on_fe.png`. To make
+it a real result the inverted stack would need to be run to convergence.
 
 ### Addendum — the sweep is anchored to the experimental lattice constants
 

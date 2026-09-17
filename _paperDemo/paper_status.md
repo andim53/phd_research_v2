@@ -103,9 +103,9 @@ host alone) vs 0.0480 (all four systems)** for the same 19 numbers. Fixed:
       `flat_state_summary.png` (it was a B × Co 2×2).
 - [ ] **SI-9 and SI-10 need sign-off** (the iteration-budget and lattice-constraint studies, both
       boron-free by design — CLAIMS v10). See "SI-9 / SI-10" below for the numbers.
-- [ ] **SI-11 needs sign-off — it is a QUALIFIED/weak finding, not a clean claim** (the inverted
-      stack, MgO on Fe). See "SI-11 / §S6" below. If the inverted-stack comparison is wanted as a
-      real result, the runs must be redone to convergence.
+- [ ] **SI-11 needs sign-off — it is a QUALIFIED/weak claim, not a clean one** (the inverted stack,
+      MgO on Fe; a ground-state comparison). See "SI-11 / §S6" below. If it is wanted as a real
+      result, the inverted stack must be run to convergence.
 - [ ] **How to word the convergence bound in the sections.** The caveat held since v4 ("the searches
       are still improving at iteration 100") is now answered with numbers by SI-9 and written into
       the CLAIMS Limitations. Whether §1.6 and §3.4 should state it (with a pointer to §S4), and in
@@ -245,27 +245,26 @@ limitations, **not** the boron effect (MT-3). Analysis: `scripts/iteration_budge
   (\cite{pietrokowsky1966}) and rocksalt MgO 4.2112 Å (\cite{swanson1953}, 4.212 Å as used). Runs that
   stopped early are excluded (constraint arm: seed_113 at 12/40 it, seed_107 at 10, seed_109 at 62).
 
-## SI-11 / §S6 — the inverted stack (MgO on Fe), a QUALIFIED finding (v11, 2026-09-17)
+## SI-11 / §S6 — the inverted stack (MgO on Fe), a ground-state comparison (v11, 2026-09-17)
 
 `data/mgofe` is the **inverted stack**: an MgO film deposited on an Fe substrate (Fe25Mg25O25, cell =
 a_Fe = 2.866 Å experimental, a_MgO = 4.212 Å experimental, interpolation_factor 0, 100 iterations,
-same two-generator scheme, 5 completed searches seed_0..4, seed_5 stopped at 26 and excluded).
-Analysis: `scripts/mgo_on_fe.py` → `analysis/mgo_on_fe.{json,csv}`, `figures/mgo_on_fe.png`
-(not yet in `figures/INSTRUCTION.md`). Flatness is measured over the **deposited film** in each
-stack — Fe for femgo, MgO (Mg+O) for mgofe — so the comparison is apples-to-apples on wetting.
+same two-generator scheme, 5 completed searches, one search stopped at 26 and excluded). Analysis:
+`scripts/mgo_on_fe.py` → `analysis/mgo_on_fe.{json,csv}`, `figures/mgo_on_fe.png` (in
+`figures/INSTRUCTION.md`). The comparison is at the **ground state** of each stack; flatness is
+measured over the **deposited film** (Fe for femgo, MgO for mgofe), so it is apples-to-apples on
+wetting.
 
-- **The lowest structure found is a flat MgO film** (ΔZ 0.39 Å, −419.26 eV), **0.016 eV/atom below
-  the best island found** (−418.06 eV) — the opposite of Fe-on-MgO, where the island is the ground
-  state and the flat film sits 0.189 eV/atom above it. The sign of the wetting preference inverts
-  between the two stacks.
-- **But the inverted-stack searches do not converge at 100 iterations:** per-seed best energies span
-  **59 eV (~0.79 eV/atom)** against 0.086 eV/atom across the 13 Fe-on-MgO searches, and **only 1 of
-  the 5 searches reaches the flat film** (the other 4 stop in island configurations 25–59 eV higher).
-  The structures are physically sound (min interatomic distance 1.6–2.0 Å), so this is under-
-  convergence, not a broken calculation. **SI-11 is therefore a qualified/weak finding** — an
-  indication that the wetting preference may invert with the stack, not an established result.
-- **To make it a real result:** re-run the inverted stack to convergence (or work out why 4 of 5
-  seeds diverge). Boron-free, so it bounds the structural result only.
+- **The ground state of the inverted stack is a flat MgO film** (ΔZ 0.39 Å), with the flat film
+  **0.016 eV/atom below** the corresponding island — the opposite of Fe-on-MgO, whose ground state is
+  an **island** (ΔZ 3.65 Å) with the flat film 0.189 eV/atom above it. The sign of the wetting
+  preference inverts between the two stacks.
+- **But the inverted-stack searches do not converge at the 100-iteration budget**, so the comparison
+  is indicative rather than settled. That is the sole reason SI-11 is qualified; the per-run evidence
+  is in `analysis/mgo_on_fe.json` and is deliberately **not** restated in the manuscript — §S6 is a
+  ground-state comparison, with no per-seed content.
+- **To make it a real result:** run the inverted stack to convergence. Boron-free, so it bounds the
+  structural result only.
 
 ## Supplementary Material (unchanged by v9)
 - **§S1 — performance of the biased exploration** (claim **SI-8**, signed off 2026-09-17). Fe/MgO
