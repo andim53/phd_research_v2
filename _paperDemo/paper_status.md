@@ -82,7 +82,17 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
       v3: §1.2 exploration schedule stated per model (Fe-Co uses a third, species-permutation
       generator); mermaid made generator-count-agnostic; "Bias" paragraph states the
       reference-layer composition per model; seed count 7 → 6. No claim changed.
-- [x] sections/02_results.md  (APPROVED 2026-09-16)
+- [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
+      v2: reorganized by PHASE under the revised core framing —
+      §2.1 the two-phase landscape (both phases populated; island is the ground state
+      *despite* the flat bias → positive control, MT-1; flat is a distinct higher-energy
+      basin, MT-2; branches are families of structures); §2.2 the flat (wetting) phase under
+      Co/B/CoB (MT-3, MT-4, MT-5, MT-7); §2.3 the island (dewetting) phase and the
+      flat–island separation; §2.4 summary.
+      The withdrawn MT-6 flat-fraction comparison has been **removed**. Two [NEW]/[PENDING]
+      blocks require sign-off (see below). The old section's single-lever ordering and its
+      "seeded from a flat reference" remark (previously a caveat, now a positive control) are
+      gone.
 - [~] sections/03_discussion.md  (REVISED v3 2026-09-17 — awaiting scientist review)
       v3 changes: §3.2 confusion-principle claim restricted to the B addition (Co alone
       raises the flat energy → element count is not the driver); §3.1 unsupported
@@ -95,14 +105,32 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - [ ] sections/06_abstract.md
 - [ ] E2: port all approved sections → paper.tex
 
-## BLOCKING: sections/02_results.md (APPROVED) still contains withdrawn MT-6
+## RESOLVED: withdrawn MT-6 removed from 02_results.md (reconstructed v2)
 
-`sections/02_results.md:36–38` reports the flat-fraction comparison ("boron increases the
-fraction of flat-basin structures sampled … 0.165 → 0.208 … 0.214 → 0.242") and line 58
-repeats it as a summary bullet. Both are the withdrawn MT-6. They need scientist sign-off to
-remove from an approved section. Also flagged: §2.1 lines 20–23 currently use the flat-reference
-bias to *explain* the flat basin; under the revised core framing the bias is the deliberate
-instrument and "the island was found despite a flat bias" is a positive control.
+`sections/02_results.md` was reconstructed (2026-09-17) and no longer contains the withdrawn
+MT-6 flat-fraction comparison. The section is now organized by phase (see the drafting-progress
+entry above) and is **awaiting re-approval**, since reconstructing an approved section voids
+its approval.
+
+**Two [NEW]/[PENDING] blocks in the reconstructed section are not yet covered by CLAIMS v2 and
+need the scientist's decision:**
+
+1. **§2.1 "The branches are families, not single structures."** Reports that ΔZ is continuous
+   (island branch ΔZ ≈ 1–6 Å) and that each branch's low-energy structures form 1–3 structural
+   motifs recurring across independent searches (from `analysis/ensemble_stats.json`). This is
+   new evidence underpinning the "map" framing. Either approve it as main-text results content
+   (requires a CLAIMS v3 claim) or move it wholly to the Supplementary Material and reduce §2.1
+   to Table 1 + MT-1 + MT-2.
+2. **§2.2 "[PENDING SIGN-OFF] Uncertainty of the B effect at the level of independent searches."**
+   Reports the replica-resampled permutation test: Fe host +0.040 (p = 0.005, 13 vs 6),
+   Fe-Co host +0.045 (**p = 0.74**, 5 vs 4), Co alone −0.005 (p = 0.73). **This challenges the
+   "strong" confidence rating that CLAIMS v2 still assigns to MT-4.** Either MT-4's confidence
+   is downgraded in CLAIMS v3 / the claim is reported as unresolved, or more Fe-Co and Fe-Co-B
+   searches are run before MT-4 is written as a result.
+3. **§2.3 [NEW] phase-separation wording.** States that B changes the flat–island separation
+   without resolving whether the flat phase is stabilised or the island destabilised. This is
+   already the interpretation in 03_discussion §3.2 but is not currently in CLAIMS; confirm it
+   as wording, not a claim.
 
 ## RESOLVED: 01_methods.md §1.2 now states the exploration schedule per model
 
@@ -147,7 +175,7 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
 - [x] Claim list frozen (`CLAIMS.md` v1).
 - [x] sections/01_methods.md approved (2026-09-16).
-- [x] sections/02_results.md approved (2026-09-16).
+- [x] sections/02_results.md approved (2026-09-16) — **voided**: reconstructed v2 on 2026-09-17, awaiting re-approval.
 - NEXT: scientist reviews `sections/03_discussion.md` (v3); on approval → draft `sections/04_introduction.md`.
 - RESOLVED 2026-09-17 (review of 03 v2): the §3.2 confusion-principle sentence had claimed the
   flat energy falls along Fe → FeCo → FeCoB. It does not — Co alone raises it (MT-5). §3.2 is

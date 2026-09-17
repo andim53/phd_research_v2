@@ -373,4 +373,46 @@ withdrawn MT-6 flat-fraction comparison and needs sign-off to edit; `sections/01
 §1.2 (lines 34–45) still presents the two-generator schedule as common to all four models,
 which is inaccurate for Fe-Co.
 
+## Results reconstruction (2026-09-17) — 02_results.md v2, organized by phase
+
+`sections/02_results.md` rewritten under the revised core framing. Previous structure was
+single-lever (island GS → B lowers flat → Co minor → B not bonding); the new structure is
+**by phase**:
+
+- **§2.1 The two-phase landscape.** The design stated as the deliverable: a GOFEE search seeded
+  from a flat reference yields a sampled ΔZ–energy distribution ("an *exploration* density, not
+  a thermodynamic density of states"), with the caveat that only unweighted structural and
+  energetic comparisons are used and basin counts are descriptive attributes. Table 1 gives
+  n / island / flat / global-min ΔZ / flat-basin min for the four models. **MT-1 is reframed as
+  a positive control**: every search was seeded from a flat reference and perturbed only at
+  small scale in the early phases, yet the global minimum is an island in all four models — so
+  the flat bias did not manufacture the result. MT-2 unchanged (flat is a distinct,
+  higher-energy basin, 0.149–0.194 eV/atom). New: the branches are families of structures, not
+  single configurations.
+- **§2.2 The flat (wetting) phase under Co, B and CoB.** MT-3 (−0.040), MT-4 (−0.045), MT-5
+  (+0.005) and MT-7, the last now stated with its energy window made explicit and verified:
+  within dE/N ≤ 0.05 eV/atom, 1 of 72 Fe-B and 1 of 21 Fe-Co-B structures has any B–O contact
+  (max contact fraction 0.33 and 0.5). Across *all* structures the picture is different
+  (102/543 Fe-B structures have some B–O contact), so the window is essential to the claim.
+- **§2.3 The island phase and the separation between phases.** The parameter series leaves the
+  island phase qualitatively similar (ΔZ ≈ 1–6 Å in every model; global-min ΔZ 2.75–3.77 Å);
+  what B changes is the **flat–island separation**, since each model is referenced to its own
+  minimum. States explicitly that the data do not resolve whether B stabilises the flat phase or
+  destabilises the island.
+- **§2.4 Summary**, reflecting the two-phase framing.
+
+**Withdrawn MT-6 has been removed** — no flat-fraction comparison remains in the section.
+
+**Two [NEW]/[PENDING] blocks need sign-off** (not covered by CLAIMS v2):
+(a) §2.1 "branches are families, not single structures" — continuous ΔZ and 1–3 recurring
+motifs per branch (from `analysis/ensemble_stats.json`); needs a CLAIMS v3 claim or should move
+wholly to the SI. (b) §2.2 "[PENDING SIGN-OFF] Uncertainty of the B effect at the level of
+independent searches" — Fe host +0.040 (p = 0.005, 13 vs 6 searches), Fe-Co host +0.045
+(**p = 0.74**, 5 vs 4), Co alone −0.005 (p = 0.73). This **challenges MT-4's "strong" rating in
+CLAIMS v2**. (c) §2.3's phase-separation wording is already the §3.2 interpretation but is not
+in CLAIMS.
+
+Because an approved section was rewritten, `02_results.md` is marked as **awaiting
+re-approval** in `paper_status.md`.
+
 
