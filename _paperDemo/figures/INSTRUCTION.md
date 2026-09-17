@@ -12,6 +12,8 @@ $PY scripts/ensemble_analysis.py        # rebuilds analysis/pes_structures.csv +
 $PY scripts/plot_pes_figure.py          # pes_<n>_systems.png, flat_state_summary.png
 $PY scripts/export_flat_xsf.py          # analysis/flat_structures/*.xsf
 $PY scripts/preview_flat_xsf.py         # flat_vs_ground_preview.png
+$PY scripts/iteration_budget.py         # figures/iteration_budget.png (SI-9, §S4)
+$PY scripts/lattice_constraint.py       # figures/lattice_constraint.png (SI-10, §S5)
 ```
 
 ## Styling conventions (do not change silently)
@@ -56,3 +58,12 @@ the look of the figures, so they are listed for review.
       maps become Figure 2 and the summary Figure 3 before the LaTeX port.
 - [ ] **`exploration_performance_femgo.png` and `method_sensitivity_*.png`** are SI figures and are
       untouched by the Co archive (they are all `femgo`-based). They keep their own `S` numbering.
+- [ ] **`iteration_budget.png` (new, §S4, SI-9).** Three panels: (a) the absolute ground state still
+      improving with budget, (b) the flat–island separation not shrinking, (c) the per-search change
+      from 100 to the full budget. Panel (c) is the primary evidence. Open: whether to add the
+      pooled-per-arm curve to (c), and whether the per-run lines in (a)/(b) should be thinned (17
+      lines is busy) — e.g. show the median ± range per arm instead.
+- [ ] **`lattice_constraint.png` (new, §S5, SI-10).** Three panels: (a) separation vs the constraint
+      with per-search scatter, (b) ΔZ distributions per arm, (c) per-search spread. Open: whether
+      the main-text reference (f = 0) should be a distinct marker in (a) — it currently is the leftmost
+      point — and whether the a_Fe difference (2.866 vs 2.87019 Å) should be annotated on the axis.

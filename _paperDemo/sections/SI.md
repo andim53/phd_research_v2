@@ -1,4 +1,8 @@
 # Supplementary Material
+     v7 (2026-09-17): §S4 (iteration budget, SI-9) and §S5 (lattice constraint, SI-10) added —
+     two new boron-free Fe/MgO robustness studies (CLAIMS v10). New floats: Table S4 + Figure S7
+     (§S4), Table S5 + Figure S8 (§S5). Awaiting review.
+
      v6 (2026-09-17): no code in the section — figure captions no longer carry file paths, the two
      perturbation generators, the reference-construction routine and the 2.3 Å construction distance
      are described in words, and the data-file references are replaced by Table S1/S2/S3. No claim,
@@ -27,6 +31,8 @@
      Fe-atop-O registry is inherited from the reference construction and is a consistency
      check, not a search prediction). Claims SI-1 … SI-4.
      S3 drafted 2026-09-17. Claims SI-5 (kappa), SI-6 (dipole), SI-7 (rattle).
+     S4 drafted 2026-09-17 (v10). Claim SI-9 (iteration budget). Fe/MgO, boron-free.
+     S5 drafted 2026-09-17 (v10). Claim SI-10 (lattice constraint). Fe/MgO, boron-free.
      Only completed searches (100 iterations) are used, everywhere in this paper. See CLAIMS v8:
      unfinished runs biased the original comparison, and "kappa = 1 is best" was retracted as an
      artefact of one such run sitting in the baseline. -->
@@ -267,3 +273,114 @@ convergence** — a better-converged population is more concentrated — so it i
 exploration breadth. One run family also contains a small set of structures of a different
 composition, written by the run's own bookkeeping; those are excluded from every number here, as is
 any structure outside the target composition.
+
+
+## S4 The result does not depend on the search budget
+
+The main text reports the Fe/MgO model at a **100-iteration budget**. To test whether the
+*comparison* the paper makes — the island being
+the ground state and the flat basin sitting above it — survives a longer search, the **same
+calculation** was run to 200, 400 and 600 iterations: the run script is identical to the main-text
+one except for the number of iterations, and the reference layer, the two perturbation generators and
+the acquisition parameter are unchanged. 6, 7 and 4 searches completed at 200, 400 and 600 iterations
+respectively.
+
+**Method.** The primary evidence is a **per-run truncation**: each search is cut at a budget *k*
+(100, then its own full budget) and the flat/island quantities recomputed, so the 100-iteration and
+full-budget numbers come from the *same trajectory* and need no cross-run normalisation. The
+flat/island split is ΔZ ≤ 1.0 Å and only iterations ≥ 10 are used, as in the main text. Each arm is
+tested against its own budget, and searches that stopped early are excluded.
+
+**Table S4.** Flat-basin minimum ΔE/N (eV/atom), pooled per arm at each budget (the main-text
+definition: relative to the arm's own global minimum). The main-text model is the 100-iteration
+reference.
+
+| Budget | completed searches | k = 100 | k = 200 | k = 400 | k = 600 |
+|---|---|---|---|---|---|
+| 200 iterations | 6 | 0.1901 | 0.1901 | — | — |
+| 400 iterations | 7 | 0.1624 | 0.1645 | 0.1662 | — |
+| 600 iterations | 4 | 0.1807 | 0.1932 | 0.1966 | 0.1978 |
+| main text (13 searches, 100 it) | 13 | **0.1888** | | | |
+
+**Figure S7.** (a) the absolute ground-state energy of each search against the budget, showing that
+the search is still improving in absolute terms; (b) the flat–island separation of each search
+against the budget, showing that it does not shrink; (c) the per-search change in the flat-basin
+minimum from 100 iterations to the full budget.
+
+**The island remains the ground state at every budget.** In all 17 searches the lowest-energy
+structure is an island at both the 100-iteration cut and the full budget. *(MT-1)*
+
+**The flat–island separation does not shrink with a longer search.** Per run, the separation is
+unchanged in 5 of the 17 searches and larger in the other 12 — it never decreases — by a median of
+**+0.0104 eV/atom** (range 0 to **+0.0268**). Pooled per arm it rises from 0.1901 to 0.1901 (200
+iterations), 0.1624 to 0.1662 (400) and 0.1807 to 0.1978 eV/atom (600). A longer search therefore
+does not bring the flat basin closer to the ground state; if anything it leaves it relatively higher.
+*(SI-9)*
+
+**The absolute minimum is not converged at 100 iterations.** 12 of the 17 searches find a lower
+island with more budget, by a median of **0.0013 eV/atom** (range 0 to 0.0071). It is the
+*comparison* that is budget-insensitive, not the absolute energy — which is why the main text reports
+separations at a stated budget rather than converged absolute values.
+
+**The flat basin is a smaller fraction of the sampled set at longer budgets** (0.165 at 100
+iterations falling to 0.05–0.11 at 600). This is descriptive: longer searches keep finding better
+islands, so the flat basin occupies a smaller share of the sampled structures. As everywhere in this
+paper, the fraction is a sampling weight of a biased exploration, not a population.
+
+**Cross-check.** The 13 main-text searches, read through this analysis, reproduce the pooled
+flat-basin minimum **0.1888 eV/atom** exactly, so the two analyses agree on the reference value.
+
+**Scope bound.** All runs here are the boron-free Fe/MgO model, so this study bounds the structural
+result (MT-1, MT-2) and the flat–island separation. The boron effect (MT-3) was not re-run at a
+longer budget, and no such data exist.
+
+## S5 The result does not depend on which phase sets the in-plane lattice
+
+The main-text model takes the **Fe lattice constant** for the simulation cell, so the substrate
+carries the in-plane mismatch (compressed 3.6 % against its bulk value) and the film is unstrained —
+the inverse of the experimental stack, where bulk MgO imposes its lattice on a thin film. To test
+whether the structural result depends on this choice, the cell is swept from Fe-matched to
+MgO-matched, *a* = *a*_Fe + *f*·(*a*_MgO/√2 − *a*_Fe), with both the film and the substrate built on
+that cell. At *f* = 0.25 the substrate is compressed
+2.83 % and the film stretched 0.98 %; at *f* = 0.75, −0.94 % and +2.94 %; at *f* = 1.00 the substrate
+sits at the **experimental MgO lattice constant** (4.212 Å as used) and the film is stretched
+3.92 % — the convention of the experimental stack. 10, 10 and 5 searches completed at *f* = 0.25,
+0.75 and 1.00. The paper's own Fe/MgO model (13 searches, cell = a_Fe) is the Fe-matched reference.
+
+**Table S5.** The constraint, the strains it puts on each phase, and the flat-basin minimum
+(pooled, relative to each arm's own global minimum).
+
+| *f* | cell a (Å) | substrate strain | film strain | searches | flat-basin min ΔE/N (eV/atom) | island ground state |
+|---|---|---|---|---|---|---|
+| 0 (main text) | 2.87019 | −3.63 % | 0.00 % | 13 | **0.1888** | yes |
+| 0.25 | 2.89408 | −2.83 % | +0.98 % | 10 | 0.1932 | yes |
+| 0.75 | 2.95025 | −0.94 % | +2.94 % | 10 | 0.1982 | yes |
+| 1.00 | 2.97833 | 0.00 % | +3.92 % | 5 | 0.1907 | yes |
+
+**Figure S8.** (a) the flat-basin minimum against the constraint, pooled per arm with the individual
+searches overlaid; (b) the ΔZ distributions of each arm; (c) the search-to-search spread within each
+arm.
+
+**The island is the ground state under every constraint.** In all 25 searches, at every value of
+*f*, the lowest-energy structure is an island. *(MT-1)*
+
+**The flat-basin minimum is flat against the constraint.** Pooled, it is 0.1932 (*f* = 0.25), 0.1982
+(*f* = 0.75) and 0.1907 eV/atom (*f* = 1.00), against 0.1888 eV/atom for the Fe-matched main-text
+model — a total spread of **0.0094 eV/atom** across the whole sweep. The search-to-search scatter
+within an arm is 0.017–0.031 eV/atom, i.e. 2–3× the entire sweep effect, so no dependence on the
+constraint is resolvable. For scale, the constraint moves the separation by about a quarter of the
+boron effect (0.040 eV/atom). *(SI-10)*
+
+**The physically inverted strain case is therefore calculated for this model.** The far end of the
+sweep places the substrate at the experimental MgO lattice constant and stretches the film — the
+convention of the experimental stack — and the result is unchanged. What is *not* covered is the
+boron-containing model, and the substrate is a single layer, so it is the constraint that is
+inverted, not the full experimental geometry.
+
+**Caveats.** All runs are the boron-free Fe/MgO model, so this bounds the structural result (MT-1,
+MT-2) and the strain-convention limitation, not the boron effect (MT-3). The *f* = 0 and *f* = 0.5
+arms of the sweep are outside the paper's scope, and the sweep's Fe lattice constant (2.866 Å)
+differs from the main text's (2.87019 Å) by 0.15 %, so the Fe-matched reference is the paper's own
+model rather than a sweep arm. Absolute energies are not comparable across arms (the cells differ);
+only the separation within an arm is meaningful.
+
