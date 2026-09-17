@@ -264,3 +264,64 @@ data: `analysis/method_sensitivity.csv`. Supersedes the earlier standalone rattl
 - febmgo/fecobmgo full energy ranges contain unphysical high-energy hits; excluded by the
   iteration filter + per-system global-min normalization.
 - kpts=(1,1,1), single-layer slabs: qualitative/trend-level results only.
+
+## Ensemble / motif investigation (2026-09-17) — `scripts/ensemble_analysis.py` v1.0.0
+
+**Motivation.** The main-text claims rest on two hand-picked structures (single flat-basin
+minimum, single island global minimum). Both PES branches are in fact ensembles: islands of
+many heights (ΔZ 1.0–6.1 Å, no clean height quantisation) and many flat arrangements
+differing only in where B/Co sits.
+
+**Script.** `scripts/ensemble_analysis.py` (agox_v2). Rebuilds `analysis/pes_structures.csv`
+(reproduces the existing file numerically exactly — max |Δ| = 0.0 — and the frozen values
+0.1888 / 0.1493 / 0.1941 / 0.1494), inventories replicas, describes each branch as a
+distribution, and runs a motif test. Outputs `analysis/ensemble_stats.json` (self-describing)
+and `analysis/pes_structures_with_partial.csv`.
+
+**1. Replica inventory (corrects the docs).**
+| system | replica dirs | with data | note |
+|---|---|---|---|
+| femgo | 14 | 13 | + `stop_16` partial run (36 candidates / 27 at iter≥10) |
+| febmgo | 7 | **6** | `seed_6/1_db/db_6.db` is EMPTY (0 candidates) — "7 seeds" was wrong |
+| fecomgo | 5 | 5 | `seed_4` holds only 1 structure at iter≥10 |
+| fecobmgo | 4 | 4 | `seed_3` truncated (max iter 73) |
+
+**2. Dataset-definition inconsistency.** `method_sensitivity.py` globs
+`data/<system>/**/*.db` (recursive → includes `stop_*`); `pes_analysis.py` globs
+`seed_*/` only. The same "femgo baseline" is therefore described two ways:
+main text **1180 structures / 13 replicas / flat fraction 0.165** vs SI baseline
+**1207 / 14 / 0.181**. Including `stop_16` leaves the flat minimum unchanged (0.1888) but
+raises the flat fraction 0.165 → 0.181. One definition must be chosen (see Paper status).
+
+**3. Branch distributions (per-replica flat minima — the independent unit).**
+| system | replicas | per-replica flat min, median (sd) | structures within +0.02 of the flat min |
+|---|---|---|---|
+| Fe | 13 | 0.2185 (0.021) | 5 |
+| Fe-B | 6 | 0.1834 (0.037) | 4 |
+| Fe-Co | 5 | 0.2086 (0.026) | 10 |
+| Fe-Co-B | 4 | 0.1766 (0.118) | 3 |
+Every replica independently reaches the low-flat window, so the flat minimum is NOT one
+seed's accident — but the per-replica spread overlaps between systems.
+
+**4. Motif test** (AGOX global Fingerprint = radial+angular distribution functions, invariant
+under permutation/translation/rotation; "same motif" calibrated against the branch's
+random-pair distance scale). Low-energy sets are only 1.4–2.4× tighter than random pairs
+(ratio 0.32–0.72) and split into 2–4 (flat) / 1–3 (island) single-linkage clusters — they do
+not collapse to one structure. However, the lowest flat structures do favour a recurring
+motif: femgo's 5 lowest flat structures (from 5 different replicas) fall into 2 clusters, with
+4 replicas in the dominant one. **Caveat:** the descriptor is computed on the whole
+template+film slab, so the 50 fixed MgO atoms dominate and compress all distances; a
+film-resolved descriptor/RMSD would be sharper.
+
+**5. Statistical power — the real vulnerability.** Effects as shifts of the flat branch,
+resampling replicas (the independent unit), permutation test on per-replica minima:
+| comparison | per-replica min A vs B | min-of-min shift | perm-p |
+|---|---|---|---|
+| B in Fe host (Fe vs Fe-B) | 0.2171 vs 0.1882 | **+0.0395** | **0.005** |
+| B in Fe-Co host (Fe-Co vs Fe-Co-B) | 0.2140 vs 0.2257 | **+0.0447** | **0.744** |
+| Co alone (Fe vs Fe-Co) | 0.2171 vs 0.2140 | −0.0053 | 0.726 |
+MT-3 (B lowers the flat energy in the Fe host) survives replica-level resampling
+(p = 0.005). MT-5 (Co alone has little effect) is confirmed (p = 0.73, shift ≈ 0).
+**MT-4 (B in the Fe-Co host) is NOT statistically resolvable** at 5 vs 4 replicas (p = 0.74;
+median shift CI95 spans zero, driven by one Fe-Co-B replica whose flat minimum is 0.400).
+

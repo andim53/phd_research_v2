@@ -106,7 +106,7 @@ hosts (MTJ / CoFeB relevance)
   high-energy structures; the iteration filter + per-system global-min normalization
   window these out.
 - Co systems have fewer seeds (fecomgo 5, fecobmgo 4) than the Fe systems (femgo 13,
-  febmgo 7) — note this when reporting uncertainty.
+  febmgo 6) — note this when reporting uncertainty.
 
 ## Commit discipline
 

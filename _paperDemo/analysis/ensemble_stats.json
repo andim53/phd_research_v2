@@ -1,0 +1,1020 @@
+{
+  "description": {
+    "name": "ensemble_stats",
+    "version": "1.0.0",
+    "produced_by": "scripts/ensemble_analysis.py",
+    "purpose": "Describe the flat/island PES as ensembles rather than two hand-picked structures: replica inventory, branch distributions, and a motif test asking whether a branch's low-energy structures are one recurring structural motif or a degenerate manifold.",
+    "key_definitions": {
+      "dZ": "z(max)-z(min) over Fe+Co film atoms [Angstrom]",
+      "dE_per_atom": "(E - E_globalmin)/n_atoms [eV/atom]; global min per system over replicas",
+      "flat_branch": "dZ <= 1.0 A",
+      "island_branch": "dZ > 1.0 A",
+      "replica": "independent AGOX seed (data/<system>/seed_*/1_db/db_*.db)",
+      "motif_distance": "AGOX global Fingerprint (radial+angular distribution functions, 720-d) Euclidean distance; invariant under permutation/translation/rotation, so no alignment needed",
+      "ratio_within_over_random": "mean pairwise fingerprint distance among the low-energy structures of a branch, divided by the same quantity for random pairs in that branch. <<1 => one recurring motif; ~1 => degenerate manifold",
+      "n_clusters_at_p05_cut": "single-linkage clusters of the low-energy set, cut at the 5th percentile of the branch random-pair distance",
+      "statistics_note": "structures within one replica are correlated, so the replica (seed) is the independent unit; effects are resampled over replicas, not structures"
+    },
+    "caveats": [
+      "The search is BIASED (LCB exploration seeded from a flat layer), so structure counts in an energy window are exploration densities, not a density of states. They support qualitative statements, not thermodynamic entropies.",
+      "Structures are not DFT-converged (surrogate relaxation + 1 GPAW step).",
+      "flat/island split at dZ <= 1.0 A is a chosen threshold.",
+      "Replica counts differ across systems and some replicas are truncated."
+    ],
+    "inputs": {
+      "dbs_glob": "data/{system}/seed_*/1_db/db_*.db (+ stop_* for the partial variant)",
+      "n_structures_canonical": 2408
+    },
+    "schema": {
+      "systems": "per-system branch distributions + motif tests",
+      "replica_inventory": "db/replica accounting per system",
+      "partial_run_effect": "effect of including data/<system>/stop_* partial runs",
+      "dataset_definition_check": "same system described with two different replica sets (main text seed_* only vs SI recursive glob)",
+      "effects": "flat-branch shifts, resampled over replicas (median CI + perm p)"
+    }
+  },
+  "version": "1.0.0",
+  "constants": {
+    "flat_dZ": 1.0,
+    "min_iteration": 10,
+    "b_o_cutoff": 2.6,
+    "random_pairs_per_branch": 300
+  },
+  "replica_inventory": {
+    "femgo": {
+      "n_replica_dirs_on_disk": 14,
+      "n_seed_dbs_loaded": 13,
+      "replicas": [
+        "seed_10",
+        "seed_11",
+        "seed_12",
+        "seed_13",
+        "seed_14",
+        "seed_15",
+        "seed_3",
+        "seed_4",
+        "seed_5",
+        "seed_6",
+        "seed_7",
+        "seed_8",
+        "seed_9"
+      ],
+      "n_replicas_with_data": 13,
+      "n_structures": 1180,
+      "empty_replica_dirs": [],
+      "partial_replicas_on_disk": [
+        "stop_16"
+      ],
+      "replicas_used_with_partial": [
+        "seed_10",
+        "seed_11",
+        "seed_12",
+        "seed_13",
+        "seed_14",
+        "seed_15",
+        "seed_3",
+        "seed_4",
+        "seed_5",
+        "seed_6",
+        "seed_7",
+        "seed_8",
+        "seed_9",
+        "stop_16"
+      ],
+      "n_structures_with_partial": 1207
+    },
+    "febmgo": {
+      "n_replica_dirs_on_disk": 7,
+      "n_seed_dbs_loaded": 7,
+      "replicas": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3",
+        "seed_4",
+        "seed_5"
+      ],
+      "n_replicas_with_data": 6,
+      "n_structures": 543,
+      "empty_replica_dirs": [
+        "seed_6"
+      ],
+      "partial_replicas_on_disk": [],
+      "replicas_used_with_partial": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3",
+        "seed_4",
+        "seed_5"
+      ],
+      "n_structures_with_partial": 543
+    },
+    "fecomgo": {
+      "n_replica_dirs_on_disk": 5,
+      "n_seed_dbs_loaded": 5,
+      "replicas": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3",
+        "seed_4"
+      ],
+      "n_replicas_with_data": 5,
+      "n_structures": 355,
+      "empty_replica_dirs": [],
+      "partial_replicas_on_disk": [],
+      "replicas_used_with_partial": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3",
+        "seed_4"
+      ],
+      "n_structures_with_partial": 355
+    },
+    "fecobmgo": {
+      "n_replica_dirs_on_disk": 4,
+      "n_seed_dbs_loaded": 4,
+      "replicas": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3"
+      ],
+      "n_replicas_with_data": 4,
+      "n_structures": 330,
+      "empty_replica_dirs": [],
+      "partial_replicas_on_disk": [],
+      "replicas_used_with_partial": [
+        "seed_0",
+        "seed_1",
+        "seed_2",
+        "seed_3"
+      ],
+      "n_structures_with_partial": 330
+    }
+  },
+  "partial_run_effect": {
+    "femgo": {
+      "n_structures_without": 1180,
+      "n_structures_with": 1207,
+      "extra_replicas": [
+        "stop_16"
+      ],
+      "global_min_eV_without": -436.909329426727,
+      "global_min_eV_with": -436.909329426727,
+      "flat_min_without": 0.18882193067997757,
+      "flat_min_with_renorm": 0.18882193067997757,
+      "flat_fraction_without": 0.1652542372881356,
+      "flat_fraction_with": 0.18061309030654515
+    }
+  },
+  "dataset_definition_check": {
+    "si_baseline_row": {
+      "setting": "baseline (1.5/2.3)",
+      "n_structures": "1207",
+      "n_seeds": "14",
+      "flat_fraction": "0.181"
+    },
+    "main_text_definition": {
+      "n_structures": 1180,
+      "n_replicas": 13,
+      "flat_fraction": 0.1652542372881356
+    },
+    "with_partial_definition": {
+      "n_structures": 1207,
+      "n_replicas": 14,
+      "flat_fraction": 0.18061309030654515
+    },
+    "consistent": true,
+    "note": "method_sensitivity.py loads data/<system>/**/*.db (recursive), which includes stop_* partial runs; pes_analysis.py loads only seed_*/. The same \"femgo baseline\" is therefore reported with different replica counts and a different flat fraction."
+  },
+  "systems": {
+    "femgo": {
+      "n_structures": 1180,
+      "n_replicas": 13,
+      "global_min_dZ": 3.6520651425913826,
+      "island": {
+        "n": 985,
+        "min": 0.0,
+        "median": 0.08637193668224427,
+        "p10": 0.032332995223515806,
+        "dZ_median": 3.0236448409873145,
+        "n_within_0.02_of_island_min": 46,
+        "per_replica_min": [
+          0.0,
+          0.0009511187789219851,
+          0.015167293584360475,
+          0.015487611054782064,
+          0.02125871389940888,
+          0.026392844110614534,
+          0.040344020809942926,
+          0.04050154956843698,
+          0.046779589172741304,
+          0.04865934024382492,
+          0.06845064011641398,
+          0.06890291078854413,
+          0.08591357282274506
+        ],
+        "per_replica_min_median": 0.040344020809942926,
+        "per_replica_min_sd": 0.026805475841380075,
+        "n_replicas_with_branch": 13
+      },
+      "flat": {
+        "n": 195,
+        "fraction": 0.1652542372881356,
+        "min": 0.18882193067997757,
+        "median": 0.2636913549008212,
+        "p10": 0.23465893216394762,
+        "max": 0.4984554014353254,
+        "n_within_0.01_of_flat_min": 3,
+        "n_within_0.02_of_flat_min": 5,
+        "n_within_0.04_of_flat_min": 15,
+        "per_replica_min": [
+          0.18882193067997757,
+          0.19013792035726435,
+          0.19614535701245284,
+          0.2029739764964044,
+          0.20366028087588803,
+          0.21192202347095568,
+          0.21852551385897187,
+          0.2192487982794167,
+          0.22111486538493788,
+          0.22553728392770456,
+          0.24274895906946845,
+          0.24880872260204265,
+          0.2522306383067174
+        ],
+        "per_replica_min_median": 0.21852551385897187,
+        "per_replica_min_sd": 0.0211425686153265,
+        "n_replicas_with_branch": 13
+      },
+      "motif": {
+        "flat": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 5,
+          "low_set_gmin": 0.18882193067997757,
+          "within_low_mean": 1.1097608330694984,
+          "within_low_max": 1.3887841952539484,
+          "random_pair_scale_mean": 2.677593436590881,
+          "random_pair_scale_p05": 1.029093224295053,
+          "ratio_within_over_random": 0.41446203815111254,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_12",
+              "seed_15",
+              "seed_4",
+              "seed_7"
+            ],
+            "2": [
+              "seed_11"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 4,
+            "2": 1
+          },
+          "replicas_in_low_set": [
+            "seed_11",
+            "seed_12",
+            "seed_15",
+            "seed_4",
+            "seed_7"
+          ],
+          "mean_dZ_low_set": 0.8292783004761031,
+          "sd_dZ_low_set": 0.1615525068565929
+        },
+        "flat_0.04": {
+          "window_eV_per_atom": 0.04,
+          "n_low": 15,
+          "low_set_gmin": 0.18882193067997757,
+          "within_low_mean": 1.4127996975477821,
+          "within_low_max": 2.6295180999524645,
+          "random_pair_scale_mean": 2.747140333190532,
+          "random_pair_scale_p05": 1.0131901586052259,
+          "ratio_within_over_random": 0.5142801335914845,
+          "n_clusters_at_p05_cut": 4,
+          "cluster_replicas": {
+            "1": [
+              "seed_10",
+              "seed_13",
+              "seed_15",
+              "seed_4",
+              "seed_6",
+              "seed_8"
+            ],
+            "2": [
+              "seed_11",
+              "seed_12",
+              "seed_15",
+              "seed_4",
+              "seed_5",
+              "seed_7"
+            ],
+            "3": [
+              "seed_11"
+            ],
+            "4": [
+              "seed_10"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 7,
+            "2": 6,
+            "3": 1,
+            "4": 1
+          },
+          "replicas_in_low_set": [
+            "seed_10",
+            "seed_11",
+            "seed_12",
+            "seed_13",
+            "seed_15",
+            "seed_4",
+            "seed_5",
+            "seed_6",
+            "seed_7",
+            "seed_8"
+          ],
+          "mean_dZ_low_set": 0.6742916424156253,
+          "sd_dZ_low_set": 0.24943181425879102
+        },
+        "island": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 46,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 0.6722938371369241,
+          "within_low_max": 1.5848988065586997,
+          "random_pair_scale_mean": 1.6185547073561943,
+          "random_pair_scale_p05": 0.6624261960973518,
+          "ratio_within_over_random": 0.41536676769799963,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_13",
+              "seed_14",
+              "seed_7",
+              "seed_9"
+            ],
+            "2": [
+              "seed_9"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 40,
+            "2": 6
+          },
+          "replicas_in_low_set": [
+            "seed_13",
+            "seed_14",
+            "seed_7",
+            "seed_9"
+          ],
+          "mean_dZ_low_set": 3.443571843483052,
+          "sd_dZ_low_set": 0.32159185290825626
+        },
+        "island_0.05": {
+          "window_eV_per_atom": 0.05,
+          "n_low": 208,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 0.8997843638166998,
+          "within_low_max": 2.680520201317603,
+          "random_pair_scale_mean": 1.601944522497096,
+          "random_pair_scale_p05": 0.699963650154714,
+          "ratio_within_over_random": 0.5616825996034647,
+          "n_clusters_at_p05_cut": 5,
+          "cluster_replicas": {
+            "1": [
+              "seed_14"
+            ],
+            "2": [
+              "seed_9"
+            ],
+            "3": [
+              "seed_12",
+              "seed_13",
+              "seed_14",
+              "seed_15",
+              "seed_3",
+              "seed_5",
+              "seed_6",
+              "seed_7",
+              "seed_8",
+              "seed_9"
+            ],
+            "4": [
+              "seed_3"
+            ],
+            "5": [
+              "seed_9"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 1,
+            "2": 1,
+            "3": 204,
+            "4": 1,
+            "5": 1
+          },
+          "replicas_in_low_set": [
+            "seed_12",
+            "seed_13",
+            "seed_14",
+            "seed_15",
+            "seed_3",
+            "seed_5",
+            "seed_6",
+            "seed_7",
+            "seed_8",
+            "seed_9"
+          ],
+          "mean_dZ_low_set": 3.4277028926225106,
+          "sd_dZ_low_set": 0.4510555775859221
+        }
+      }
+    },
+    "febmgo": {
+      "n_structures": 543,
+      "n_replicas": 6,
+      "global_min_dZ": 3.767210467011699,
+      "island": {
+        "n": 430,
+        "min": 0.0,
+        "median": 0.14487948290648142,
+        "p10": 0.03622862610669124,
+        "dZ_median": 2.5813486023272354,
+        "n_within_0.02_of_island_min": 10,
+        "per_replica_min": [
+          0.0,
+          0.01178128306251872,
+          0.012741991542370466,
+          0.031182947980714568,
+          0.055285574350404994,
+          0.2966149526295112
+        ],
+        "per_replica_min_median": 0.021962469761542515,
+        "per_replica_min_sd": 0.11368369660005452,
+        "n_replicas_with_branch": 6
+      },
+      "flat": {
+        "n": 113,
+        "fraction": 0.20810313075506445,
+        "min": 0.14933757536728692,
+        "median": 0.2304695110205575,
+        "p10": 0.18222556650053098,
+        "max": 0.7256658051506114,
+        "n_within_0.01_of_flat_min": 2,
+        "n_within_0.02_of_flat_min": 4,
+        "n_within_0.04_of_flat_min": 26,
+        "per_replica_min": [
+          0.14933757536728692,
+          0.15344977592954917,
+          0.18177712239382407,
+          0.18497522666599217,
+          0.2113906799450073,
+          0.24809810029069668
+        ],
+        "per_replica_min_median": 0.18337617452990812,
+        "per_replica_min_sd": 0.03713516875597689,
+        "n_replicas_with_branch": 6
+      },
+      "motif": {
+        "flat": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 4,
+          "low_set_gmin": 0.14933757536728692,
+          "within_low_mean": 1.0162512920251512,
+          "within_low_max": 1.4265484060731595,
+          "random_pair_scale_mean": 2.4844728870849315,
+          "random_pair_scale_p05": 0.9248085899732059,
+          "ratio_within_over_random": 0.4090410071721627,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_4"
+            ],
+            "2": [
+              "seed_5"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 2
+          },
+          "replicas_in_low_set": [
+            "seed_4",
+            "seed_5"
+          ],
+          "mean_dZ_low_set": 0.4889345183545841,
+          "sd_dZ_low_set": 0.14665128609567282
+        },
+        "flat_0.04": {
+          "window_eV_per_atom": 0.04,
+          "n_low": 26,
+          "low_set_gmin": 0.14933757536728692,
+          "within_low_mean": 1.3278824090338455,
+          "within_low_max": 2.8199170777013705,
+          "random_pair_scale_mean": 2.6599199498612145,
+          "random_pair_scale_p05": 0.9951698908962858,
+          "ratio_within_over_random": 0.4992189366838389,
+          "n_clusters_at_p05_cut": 1,
+          "cluster_replicas": {
+            "1": [
+              "seed_0",
+              "seed_1",
+              "seed_4",
+              "seed_5"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 26
+          },
+          "replicas_in_low_set": [
+            "seed_0",
+            "seed_1",
+            "seed_4",
+            "seed_5"
+          ],
+          "mean_dZ_low_set": 0.32568769174079126,
+          "sd_dZ_low_set": 0.23691113379353265
+        },
+        "island": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 10,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.0594472802137778,
+          "within_low_max": 1.6309724767817595,
+          "random_pair_scale_mean": 2.423279046267883,
+          "random_pair_scale_p05": 0.9768103398807444,
+          "ratio_within_over_random": 0.4371957417968201,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_1"
+            ],
+            "2": [
+              "seed_2",
+              "seed_4"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 8
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_4"
+          ],
+          "mean_dZ_low_set": 3.8701019630722655,
+          "sd_dZ_low_set": 0.804658657273737
+        },
+        "island_0.05": {
+          "window_eV_per_atom": 0.05,
+          "n_low": 72,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.040027919337929,
+          "within_low_max": 2.1967071664043423,
+          "random_pair_scale_mean": 2.5291855793172204,
+          "random_pair_scale_p05": 0.9493572787127538,
+          "ratio_within_over_random": 0.4112105999033472,
+          "n_clusters_at_p05_cut": 1,
+          "cluster_replicas": {
+            "1": [
+              "seed_1",
+              "seed_2",
+              "seed_4",
+              "seed_5"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 72
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_4",
+            "seed_5"
+          ],
+          "mean_dZ_low_set": 3.669261754848476,
+          "sd_dZ_low_set": 0.8801300974557771
+        }
+      }
+    },
+    "fecomgo": {
+      "n_structures": 355,
+      "n_replicas": 5,
+      "global_min_dZ": 2.7515472833740553,
+      "island": {
+        "n": 279,
+        "min": 0.0,
+        "median": 0.11386432070328738,
+        "p10": 0.03452662200545107,
+        "dZ_median": 2.425580736313508,
+        "n_within_0.02_of_island_min": 8,
+        "per_replica_min": [
+          0.0,
+          0.01192666784896725,
+          0.018333209511439085,
+          0.05817946042274116
+        ],
+        "per_replica_min_median": 0.015129938680203167,
+        "per_replica_min_sd": 0.025217867178985085,
+        "n_replicas_with_branch": 4
+      },
+      "flat": {
+        "n": 76,
+        "fraction": 0.2140845070422535,
+        "min": 0.1940992000748012,
+        "median": 0.24108310623344703,
+        "p10": 0.21184917558953048,
+        "max": 0.38315066149670657,
+        "n_within_0.01_of_flat_min": 2,
+        "n_within_0.02_of_flat_min": 10,
+        "n_within_0.04_of_flat_min": 29,
+        "per_replica_min": [
+          0.1940992000748012,
+          0.19517389482379108,
+          0.20855952713385628,
+          0.21498470628919145,
+          0.2573800231695509
+        ],
+        "per_replica_min_median": 0.20855952713385628,
+        "per_replica_min_sd": 0.02580141026145785,
+        "n_replicas_with_branch": 5
+      },
+      "motif": {
+        "flat": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 10,
+          "low_set_gmin": 0.1940992000748012,
+          "within_low_mean": 2.883413562988654,
+          "within_low_max": 3.7178898313599453,
+          "random_pair_scale_mean": 4.249654445303943,
+          "random_pair_scale_p05": 2.309827460197937,
+          "ratio_within_over_random": 0.6785054173463337,
+          "n_clusters_at_p05_cut": 3,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_1",
+              "seed_2",
+              "seed_3"
+            ],
+            "3": [
+              "seed_2"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 7,
+            "3": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 0.6726150630028839,
+          "sd_dZ_low_set": 0.19381389253700856
+        },
+        "flat_0.04": {
+          "window_eV_per_atom": 0.04,
+          "n_low": 29,
+          "low_set_gmin": 0.1940992000748012,
+          "within_low_mean": 2.9623498527039542,
+          "within_low_max": 5.282368405193294,
+          "random_pair_scale_mean": 4.10404431415125,
+          "random_pair_scale_p05": 2.150415758809498,
+          "ratio_within_over_random": 0.721812345565911,
+          "n_clusters_at_p05_cut": 4,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_0",
+              "seed_1",
+              "seed_2",
+              "seed_3"
+            ],
+            "3": [
+              "seed_0"
+            ],
+            "4": [
+              "seed_0"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 25,
+            "3": 1,
+            "4": 1
+          },
+          "replicas_in_low_set": [
+            "seed_0",
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 0.5506565917055696,
+          "sd_dZ_low_set": 0.33601594103415783
+        },
+        "island": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 8,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.989830102967688,
+          "within_low_max": 2.909196570886874,
+          "random_pair_scale_mean": 3.430117567295834,
+          "random_pair_scale_p05": 1.7508970081036785,
+          "ratio_within_over_random": 0.5801055106505838,
+          "n_clusters_at_p05_cut": 3,
+          "cluster_replicas": {
+            "1": [
+              "seed_3"
+            ],
+            "2": [
+              "seed_1"
+            ],
+            "3": [
+              "seed_2"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 6,
+            "2": 1,
+            "3": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 2.940988455757373,
+          "sd_dZ_low_set": 0.3418098265698344
+        },
+        "island_0.05": {
+          "window_eV_per_atom": 0.05,
+          "n_low": 40,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 2.2879697726098116,
+          "within_low_max": 4.216707687581006,
+          "random_pair_scale_mean": 3.493685615393515,
+          "random_pair_scale_p05": 1.6964131452690758,
+          "ratio_within_over_random": 0.6548871376774134,
+          "n_clusters_at_p05_cut": 4,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_2"
+            ],
+            "3": [
+              "seed_3"
+            ],
+            "4": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 6,
+            "2": 1,
+            "3": 12,
+            "4": 21
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2",
+            "seed_3"
+          ],
+          "mean_dZ_low_set": 2.7730574123436664,
+          "sd_dZ_low_set": 0.5230938043408162
+        }
+      }
+    },
+    "fecobmgo": {
+      "n_structures": 330,
+      "n_replicas": 4,
+      "global_min_dZ": 3.451423426907011,
+      "island": {
+        "n": 250,
+        "min": 0.0,
+        "median": 0.1977727811647339,
+        "p10": 0.05906344982905413,
+        "dZ_median": 2.508496978046308,
+        "n_within_0.02_of_island_min": 7,
+        "per_replica_min": [
+          0.0,
+          0.03530476126381957,
+          0.07170010667202667,
+          0.41903271937157893
+        ],
+        "per_replica_min_median": 0.05350243396792312,
+        "per_replica_min_sd": 0.1939045001657272,
+        "n_replicas_with_branch": 4
+      },
+      "flat": {
+        "n": 80,
+        "fraction": 0.24242424242424243,
+        "min": 0.14937640437488223,
+        "median": 0.2541248080024021,
+        "p10": 0.20361486667708675,
+        "max": 0.4462218164305043,
+        "n_within_0.01_of_flat_min": 2,
+        "n_within_0.02_of_flat_min": 3,
+        "n_within_0.04_of_flat_min": 4,
+        "per_replica_min": [
+          0.14937640437488223,
+          0.15369194943836614,
+          0.19956456274116277,
+          0.4000158164695889
+        ],
+        "per_replica_min_median": 0.17662825608976446,
+        "per_replica_min_sd": 0.11843353948745379,
+        "n_replicas_with_branch": 4
+      },
+      "motif": {
+        "flat": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 3,
+          "low_set_gmin": 0.14937640437488223,
+          "within_low_mean": 2.230182782188971,
+          "within_low_max": 2.9647988735970716,
+          "random_pair_scale_mean": 3.970940481351894,
+          "random_pair_scale_p05": 1.8980339985707908,
+          "ratio_within_over_random": 0.5616258396876582,
+          "n_clusters_at_p05_cut": 2,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2"
+          ],
+          "mean_dZ_low_set": 0.8557625906685159,
+          "sd_dZ_low_set": 0.02269499460559609
+        },
+        "flat_0.04": {
+          "window_eV_per_atom": 0.04,
+          "n_low": 4,
+          "low_set_gmin": 0.14937640437488223,
+          "within_low_mean": 2.673326630460659,
+          "within_low_max": 3.783482672469572,
+          "random_pair_scale_mean": 3.7853488693791046,
+          "random_pair_scale_p05": 1.814718605807481,
+          "ratio_within_over_random": 0.7062299203347019,
+          "n_clusters_at_p05_cut": 3,
+          "cluster_replicas": {
+            "1": [
+              "seed_2"
+            ],
+            "2": [
+              "seed_1"
+            ],
+            "3": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 2,
+            "2": 1,
+            "3": 1
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2"
+          ],
+          "mean_dZ_low_set": 0.8902276150973738,
+          "sd_dZ_low_set": 0.06284752033100699
+        },
+        "island": {
+          "window_eV_per_atom": 0.02,
+          "n_low": 7,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.5452640706866199,
+          "within_low_max": 2.090115366866889,
+          "random_pair_scale_mean": 4.785645030743681,
+          "random_pair_scale_p05": 2.0229480724915083,
+          "ratio_within_over_random": 0.3228956725289106,
+          "n_clusters_at_p05_cut": 1,
+          "cluster_replicas": {
+            "1": [
+              "seed_1"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 7
+          },
+          "replicas_in_low_set": [
+            "seed_1"
+          ],
+          "mean_dZ_low_set": 3.285067862508836,
+          "sd_dZ_low_set": 0.3162175668609593
+        },
+        "island_0.05": {
+          "window_eV_per_atom": 0.05,
+          "n_low": 21,
+          "low_set_gmin": 0.0,
+          "within_low_mean": 1.6505900155549074,
+          "within_low_max": 2.7567320120223155,
+          "random_pair_scale_mean": 4.778756590165155,
+          "random_pair_scale_p05": 2.211546993677419,
+          "ratio_within_over_random": 0.3454015672093193,
+          "n_clusters_at_p05_cut": 1,
+          "cluster_replicas": {
+            "1": [
+              "seed_1",
+              "seed_2"
+            ]
+          },
+          "cluster_sizes": {
+            "1": 21
+          },
+          "replicas_in_low_set": [
+            "seed_1",
+            "seed_2"
+          ],
+          "mean_dZ_low_set": 3.147451720612187,
+          "sd_dZ_low_set": 0.45880689066807295
+        }
+      }
+    }
+  },
+  "effects": {
+    "B_in_Fe_host": {
+      "n_replicas_a": 13,
+      "n_replicas_b": 6,
+      "per_replica_min_a": 0.21706740540940014,
+      "per_replica_min_b": 0.18817141343205937,
+      "min_shift_eV_per_atom": 0.03948435531269065,
+      "median_shift_eV_per_atom": 0.03514933932906375,
+      "mean_shift_eV_per_atom": 0.028895991977340774,
+      "median_ci95": [
+        -0.013562686981940048,
+        0.06766508945538871
+      ],
+      "median_same_sign_fraction": 0.934,
+      "mean_ci95": [
+        -0.0009918772481798744,
+        0.05648330368875053
+      ],
+      "mean_same_sign_fraction": 0.9695,
+      "perm_p_mean_min": 0.005
+    },
+    "B_in_FeCo_host": {
+      "n_replicas_a": 5,
+      "n_replicas_b": 4,
+      "per_replica_min_a": 0.21403947029823817,
+      "per_replica_min_b": 0.22566218325600002,
+      "min_shift_eV_per_atom": 0.044722795699918966,
+      "median_shift_eV_per_atom": 0.031931271044091825,
+      "mean_shift_eV_per_atom": -0.01162271295776185,
+      "median_ci95": [
+        -0.1914562893357326,
+        0.08075176707978643
+      ],
+      "median_same_sign_fraction": 0.6955,
+      "mean_ci95": [
+        -0.1316891596220506,
+        0.0686279563421205
+      ],
+      "mean_same_sign_fraction": 0.6025,
+      "perm_p_mean_min": 0.7438
+    },
+    "Co_alone": {
+      "n_replicas_a": 13,
+      "n_replicas_b": 5,
+      "per_replica_min_a": 0.21706740540940014,
+      "per_replica_min_b": 0.21403947029823817,
+      "min_shift_eV_per_atom": -0.005277269394823619,
+      "median_shift_eV_per_atom": 0.009965986725115589,
+      "mean_shift_eV_per_atom": 0.003027935111161978,
+      "median_ci95": [
+        -0.038854509310579016,
+        0.027764252780277
+      ],
+      "median_same_sign_fraction": 0.7705,
+      "mean_ci95": [
+        -0.021248203284858866,
+        0.02425269909825049
+      ],
+      "mean_same_sign_fraction": 0.6175,
+      "perm_p_mean_min": 0.7264
+    }
+  }
+}

@@ -20,7 +20,9 @@ TBD — format-agnostic (no venue selected).
 - Flat/island basins separated by ΔZ ≤ 1.0 Å.
 
 ## Systems (4)
-femgo Fe/MgO (13 seeds) | febmgo Fe-B/MgO (7) | fecomgo Fe-Co/MgO (5) | fecobmgo Fe-Co-B/MgO (4)
+femgo Fe/MgO (13 replicas with data) | febmgo Fe-B/MgO (6) | fecomgo Fe-Co/MgO (5) | fecobmgo Fe-Co-B/MgO (4)
+(Replica counts verified 2026-09-17 by `scripts/ensemble_analysis.py`: febmgo has 7 `seed_*`
+dirs but `seed_6`'s db is EMPTY, so 6 carry data. femgo also has a `stop_16` partial run.)
 
 ## Supplementary Material: Method-parameter sensitivity
 One SI study covering three method parameters of the biased-exploration scheme, all on
@@ -91,6 +93,29 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 ## Reference PDFs (papers/)
 - `papers/confusion_greer1993.pdf` — Greer, "Confusion by design," Nature 366, 303 (1993).
   Used for the confusion-principle discussion (§3.2). Citation `greer1993` in references.bib.
+
+## Ensemble / motif investigation (2026-09-17) — see experiment_log.md for the full entry
+
+Script: `scripts/ensemble_analysis.py` v1.0.0 → `analysis/ensemble_stats.json`,
+`analysis/pes_structures_with_partial.csv`. Rebuilds `analysis/pes_structures.csv`
+numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 reproduced).
+
+- **Replica counts corrected:** femgo 13 (+ `stop_16` partial run), **febmgo 6** (not 7 —
+  `seed_6`'s db is empty), fecomgo 5 (`seed_4` has 1 structure), fecobmgo 4 (`seed_3` truncated).
+- **Dataset-definition inconsistency:** the main text (seed_* only) uses 1180 structures /
+  13 replicas / flat fraction **0.165**, while the SI baseline (`method_sensitivity.py`'s
+  recursive glob, which picks up `stop_16`) uses **1207 / 14 / 0.181** for the same femgo
+  baseline. The flat minimum is unaffected (0.1888). **One definition must be chosen.**
+- **Flat minimum is not an accident:** every replica independently reaches the low-flat
+  window (per-replica flat min: Fe 0.2185±0.021, Fe-B 0.1834±0.037, Fe-Co 0.2086±0.026,
+  Fe-Co-B 0.1766±0.118), and femgo's 5 lowest flat structures (5 different replicas) cluster
+  into 2 motifs with 4 replicas in the dominant one.
+- **Statistical power (replica-resampled, permutation test on per-replica minima):**
+  - MT-3 B in Fe host: min-of-min +0.0395, **p = 0.005** → holds.
+  - MT-5 Co alone: −0.0053, **p = 0.73** → confirmed ("little effect").
+  - **MT-4 B in Fe-Co host: +0.0447 but p = 0.74 → NOT resolvable** at 5 vs 4 replicas.
+- **Decision needed:** whether MT-4 is reported as an unresolved trend, or more replicas are
+  run for fecomgo/fecobmgo before the claim is written as a result.
 
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
