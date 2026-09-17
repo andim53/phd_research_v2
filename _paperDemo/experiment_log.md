@@ -244,8 +244,10 @@ data: `analysis/method_sensitivity.csv`. Supersedes the earlier standalone rattl
 - **Phase D:** 6 citations verified in `references.bib` (agox2020, gofee2017, oganov2011,
   gpaw2014, pbe1996, greer1993). 3 MTJ placeholders still UNVERIFIED in `03_discussion.md`.
 - **Phase E:** `01_methods.md` APPROVED · `02_results.md` APPROVED ·
-  `03_discussion.md` drafted v2 (awaiting review; §3.2 includes the Greer confusion principle).
-  Block-and-wait before `04_introduction.md`.
+  `03_discussion.md` revised to v3 (2026-09-17, awaiting review): the §3.2 confusion-principle
+  claim is now restricted to the B addition (Co alone raises the flat energy, so element count
+  is not the driver), the unsupported "bulk-like" d-centre comparison was removed, and the
+  unequal-seed-count limitation was added to §3.5. Block-and-wait before `04_introduction.md`.
 - **Phase F/G:** not started.
 - Reference PDFs: `papers/confusion_greer1993.pdf` (Greer, Nature 366, 303, 1993 → `greer1993`).
 

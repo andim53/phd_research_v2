@@ -77,7 +77,12 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
 - [x] sections/01_methods.md  (APPROVED 2026-09-16)
 - [x] sections/02_results.md  (APPROVED 2026-09-16)
-- [~] sections/03_discussion.md  (DRAFTED v2 — awaiting scientist review; includes Greer confusion-principle §3.2)
+- [~] sections/03_discussion.md  (REVISED v3 2026-09-17 — awaiting scientist review)
+      v3 changes: §3.2 confusion-principle claim restricted to the B addition (Co alone
+      raises the flat energy → element count is not the driver); §3.1 unsupported
+      "bulk-like" comparison removed and registry wording made precise (interface atoms
+      25/25 → 9/25, d-centre +0.51/+0.60 eV); §3.2 B–MgO bound restored (1 of 72);
+      §3.5 unequal-seed-count limitation added. No MT/SI claim changed.
 - [ ] sections/04_introduction.md
 - [ ] sections/05_conclusion.md
 - [ ] sections/06_abstract.md
@@ -92,5 +97,12 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - [x] Claim list frozen (`CLAIMS.md` v1).
 - [x] sections/01_methods.md approved (2026-09-16).
 - [x] sections/02_results.md approved (2026-09-16).
-- NEXT: scientist reviews `sections/03_discussion.md` (v2); on approval → draft `sections/04_introduction.md`.
+- NEXT: scientist reviews `sections/03_discussion.md` (v3); on approval → draft `sections/04_introduction.md`.
+- RESOLVED 2026-09-17 (review of 03 v2): the §3.2 confusion-principle sentence had claimed the
+  flat energy falls along Fe → FeCo → FeCoB. It does not — Co alone raises it (MT-5). §3.2 is
+  now restricted to the B addition, and the CLAIMS discussion-only entry carries the same
+  bound. No MT/SI claim changed; CLAIMS v1 remains frozen.
+- Open for the scientist: §3.1 no longer calls the island d-band centre "+0.5–0.6 eV, bulk-like"
+  (unsupported — no bulk Fe d-centre reference exists in the repo). If the bulk comparison is
+  wanted, a bulk-Fe reference calculation is needed.
 - Citations: 6 verified; MTJ/PMA refs (cofebmgo_mtj, cofebmgo_pma, b_diffusion_mtj) still UNVERIFIED.

@@ -89,11 +89,17 @@ claims to MT/SI and do not change the frozen list.
 - **Flat ↔ amorphous, island ↔ crystalline mapping.** The flat film is read as the
   disordered/amorphous-like configuration and the island as the ordered/crystalline-like
   one.
-- **Greer confusion principle** \cite{greer1993}: the Fe → FeCo → FeCoB progression
-  (increasing compositional complexity) is claimed to *explain the trend* of flat-state
-  stabilisation — more elements frustrate crystallisation and favour the flat/disordered
-  configuration. Honest bound retained: even FeCoB keeps the island as ground state, so the
-  principle stabilises but does not fully suppress the ordered configuration in these models.
+- **Greer confusion principle** \cite{greer1993}: the flat/disordered configuration is
+  claimed to be stabilised by added elements, in the spirit of the confusion principle
+  (more elements frustrate crystallisation and favour the disordered configuration).
+  **Data bound (added 2026-09-17; Discussion-only wording, no MT/SI claim changed):** the
+  supported driver is the *presence of boron*, not the element count. Adding Co alone
+  raises the flat-basin energy (MT-5, 0.1888 → 0.1941 eV/atom), and the two two-element
+  systems differ more from each other (Fe-B 0.1493 vs Fe-Co 0.1941) than Fe-Co does from
+  three-element Fe-Co-B (0.1494). The principle is retained as acting through the added
+  metalloid, not through complexity counting. Honest bound retained: even the boron-bearing
+  models keep the island as ground state, so the principle stabilises but does not fully
+  suppress the ordered configuration in these models.
 
 ## Sign-off
 
