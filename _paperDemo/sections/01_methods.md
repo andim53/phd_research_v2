@@ -11,7 +11,9 @@
 
 We study the metal-on-oxide interface relevant to magnetic tunnel junctions: a thin
 metal film deposited on the MgO(001) surface. Four compositions were considered, differing
-in the film constitution:
+in the film constitution (Table 1).
+
+**Table 1.** The four interface models: film constitution and total atom count.
 
 | Model | Composition | Film species | N atoms |
 |-------|-------------|--------------|---------|
@@ -27,9 +29,8 @@ in-plane lattice of the simulation cell is the DFT-optimised Fe lattice constant
 onto that geometry: the substrate is assembled on the Fe(001) surface cell with the oxygen
 sublattice placed directly above the metal sites (a √2 rotation relative to the bulk MgO cell),
 so the MgO in-plane parameter is forced to 2.870 Å. Compared with the bulk value
-(a_MgO/√2 = 2.978 Å) this means the **MgO is compressed in-plane by 3.6 %**, i.e. the
-**mismatch (3.77 % when expressed relative to the Fe value) is accommodated by the substrate,
-not by the film** — the Fe film remains at its own equilibrium lattice constant and is not
+(a_MgO/√2 = 2.978 Å) this means the **MgO is compressed in-plane by 3.6 %**, i.e. the mismatch is accommodated by the substrate,
+not by the film — the Fe film remains at its own equilibrium lattice constant and is not
 strained in-plane. The substrate is then **held fixed in that compressed state** and only the
 film is allowed to relax.
 
@@ -47,9 +48,11 @@ perturbation scale. All four models combine a **small-scale** heterostructure-aw
 atoms, rattle amplitude 2.3). The **Fe-Co model uses a third generator in addition**: a
 **species-permutation** generator that swaps the Fe and Co species (swap count equal to the
 number of film atoms, rattle strength 0.3), and it correspondingly splits its large-scale
-budget between rattling and permutation. The schedules are therefore:
+budget between rattling and permutation. The schedules are given in Tables 2 and 3.
 
-*Fe/MgO, Fe-B/MgO and Fe-Co-B/MgO* — two generators:
+**Table 2.** Candidate-generation schedule for Fe/MgO, Fe-B/MgO and Fe-Co-B/MgO: two generators,
+a small-scale heterostructure-aware randomiser and a large-scale rattle generator. The number
+of candidates generated per phase is N.
 
 | Phase | Iterations | Small-scale | Large-scale | Total N |
 |-------|-----------|-------------|-------------|---------|
@@ -57,7 +60,8 @@ budget between rattling and permutation. The schedules are therefore:
 | **II** | 10 ≤ i < 25 | 10 | 10 | 20 |
 | **III** | 25 ≤ i | 0 | 20 | 20 |
 
-*Fe-Co/MgO* — three generators:
+**Table 3.** Candidate-generation schedule for Fe-Co/MgO: as Table 2, with an additional
+species-permutation generator, which splits the large-scale budget of phases II and III.
 
 | Phase | Iterations | Small-scale | Large-scale | Permutation | Total N |
 |-------|-----------|-------------|-------------|-------------|---------|
@@ -66,7 +70,8 @@ budget between rattling and permutation. The schedules are therefore:
 | **III** | 25 ≤ i | 0 | 10 | 10 | 20 |
 
 The per-phase candidate total is 20 in every model; what differs between models is the
-generator mix, not the number of candidates generated.
+generator mix, not the number of candidates generated. The resulting workflow is summarised in
+Fig. 1.
 
 ```mermaid
 flowchart TD
@@ -107,13 +112,15 @@ flowchart TD
     DB -->|i + 1| D1
 ```
 
-Each phase generates N candidates, which are optimised against the GPR surrogate, ranked
-by the LCB acquisition, and the M selected candidates are evaluated with DFT and stored in
-the database; the iteration counter advances and the phase is re-selected. The early phases
-favour the small-scale (structure-aware) generator, which preserves the layer-resolved
-character of the flat reference basin, while the later phases shift to the large-scale rattle
-generator — and, in the Fe-Co model, to the species-permutation generator — for broader
-exploration.
+**Figure 1.** The biased-exploration loop. Each iteration selects a phase from the counter *i*,
+generates N candidates with that phase's generator mix (Tables 2 and 3), optimises them against
+the GPR surrogate, ranks them with the LCB acquisition, evaluates the selected candidates with
+DFT and stores them in the database; the counter then advances and the phase is re-selected.
+
+The early phases favour the small-scale (structure-aware) generator, which preserves the
+layer-resolved character of the flat reference basin, while the later phases shift to the
+large-scale rattle generator — and, in the Fe-Co model, to the species-permutation generator —
+for broader exploration.
 
 **Bias.** The exploration is deliberately **biased**: the search is seeded from a **flat**
 metal layer — the reference film geometry, a single-monolayer-thick film rather than a random

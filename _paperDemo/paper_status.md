@@ -124,6 +124,36 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - Note: the pre-existing keys `agox2020` / `gofee2017` carry year 2022 in the `.bib` (the key
   convention is surname+year, so the keys are stale) — left as-is because the sections cite them.
 
+## Float numbering (established 2026-09-17)
+
+All tables and figures are numbered **sequentially in order of appearance** across the drafted
+section sequence (`01` → `06`), and are cited in the running text:
+
+| Float | Location | Content |
+|---|---|---|
+| **Table 1** | `01_methods.md` §1.1 | the four interface models: film constitution, atom counts |
+| **Table 2** | `01_methods.md` §1.2 | candidate-generation schedule, two generators (Fe/MgO, Fe-B/MgO, Fe-Co-B/MgO) |
+| **Table 3** | `01_methods.md` §1.2 | candidate-generation schedule, three generators (Fe-Co/MgO) |
+| **Figure 1** | `01_methods.md` §1.2 | the biased-exploration loop (mermaid workflow diagram) |
+| **Table 4** | `02_results.md` §2.1 | the two phases in each model |
+| **Table 5** | `02_results.md` §2.2 | flat-basin minimum dE/N, 2 × 2 additive design |
+| **Figure S1** | `SI.md` §S1 | exploration-performance panels (separate `S` series) |
+
+Caption style throughout: `**Table N.** …` / `**Figure N.** …` above tables and below figures.
+
+⚠ **Assumption to revisit:** numbering follows the *drafting* order, in which Methods is section
+01 and therefore takes the low numbers. If the final layout puts an Introduction (currently
+`04`) first **and** it introduces floats of its own, every number below shifts. Cheapest fix at
+port time is to renumber once, after the section order for the venue is fixed.
+
+⚠ **Open: the main-text figures are not yet wired in.** `experiment_log.md` lists three
+main-text figure files — `figures/pes_four_systems.png`, `figures/flat_state_summary.png` and
+`figures/flat_vs_ground_preview.png` — but **no section currently cites any of them**, so the
+main text has one figure (the Methods workflow diagram) and `02_results.md` §2.1/§2.2 describe
+the two-phase landscape and the additive comparison in prose only. Wiring them in would make
+them **Figure 2** (PES maps, §2.1), **Figure 3** (flat-state summary, §2.2) and possibly
+**Figure 4** (side views). Awaiting the scientist's decision on which belong in the main text.
+
 ## Model geometry — strain is on the MgO, not the film (verified 2026-09-17)
 
 Verified from the construction code and from the stored structures (not inferred from the text):
@@ -185,7 +215,8 @@ result at RT is therefore the outlier in the literature, not ours.
       2026-09-17 — needs re-approval**) — §1.1 now states the strain direction (cell = Fe
       lattice constant; MgO compressed 3.6 % relative to bulk; substrate frozen compressed;
       film unstrained), §1.3 now states that the Fe–O separation is a construction parameter
-      rather than a computed quantity.
+      rather than a computed quantity, and the three tables plus the workflow diagram are now
+      numbered floats cited in the text (Tables 1–3, Figure 1).
       Earlier v3: §1.2 exploration schedule stated per model (Fe-Co uses a third,
       species-permutation generator); mermaid made generator-count-agnostic; "Bias"
       paragraph states the reference-layer composition per model; seed count 7 → 6.

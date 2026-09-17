@@ -24,9 +24,9 @@ and energetic comparisons; the number of structures in a basin is a descriptive 
 the sampled database, not a physical population.
 
 Across the four models the search returns 2408 structures spanning ΔZ from 0.001 to 6.10 Å,
-with both phases populated in every model (Table 1).
+with both phases populated in every model (Table 4).
 
-**Table 1 — the two phases in each model** (ΔZ ≤ 1.0 Å = flat/wetting; ΔZ > 1.0 Å = island).
+**Table 4.** The two phases in each model (ΔZ ≤ 1.0 Å = flat/wetting; ΔZ > 1.0 Å = island).
 
 | Model | Structures | Island | Flat | Global-min ΔZ (Å) | Flat-basin min dE/N (eV/atom) |
 |-------|-----------|--------|------|-------------------|-------------------------------|
@@ -37,7 +37,7 @@ with both phases populated in every model (Table 1).
 
 **The island is the ground state in every model, despite the flat bias.** The lowest-energy
 structure found is an island in all four models, with its global minimum at ΔZ = 2.75–3.77 Å
-(Table 1, column 5) — a three-dimensional cluster rather than a flat film. This result is
+(Table 4, column 5) — a three-dimensional cluster rather than a flat film. This result is
 *against* the direction of the bias: every search was seeded from a flat reference layer and,
 in the early phases, perturbed only at small scale from it, so the flat configuration had a
 systematic head start. The search nevertheless left the flat basin and converged on an island in
@@ -46,7 +46,7 @@ structures were built — it is genuinely higher in energy than the island. (MT-
 
 **The flat configuration is a distinct, higher-energy basin.** Taking for each model the
 lowest-energy structure with ΔZ ≤ 1.0 Å isolates the flat basin's best member. In every model
-it lies above the global minimum, by 0.149–0.194 eV/atom (Table 1, column 6). The flat film is
+it lies above the global minimum, by 0.149–0.194 eV/atom (Table 4, column 6). The flat film is
 thus a separate basin of the landscape, not merely the high-ΔZ tail of a single minimum.
 (MT-2)
 
@@ -81,10 +81,10 @@ by kinetics, so the correspondence is between structural configurations, not bet
 ## 2.2 The flat (wetting) phase under Co, B and CoB
 
 With the two phases established, we compare how the parameter series — Co, B and CoB added to
-the Fe film — shifts the flat basin. Table 2 gives the flat-basin minimum dE/N for the four
+the Fe film — shifts the flat basin. Table 5 gives the flat-basin minimum dE/N for the four
 models, arranged as a 2 × 2 design in the two additives.
 
-**Table 2 — flat-basin minimum dE/N (eV/atom).**
+**Table 5.** Flat-basin minimum dE/N (eV/atom), arranged as a 2 × 2 design in the two additives.
 
 | Host | without B | with B | B effect |
 |------|-----------|--------|----------|
@@ -126,13 +126,13 @@ searches of that model are the natural way to settle it.
 ## 2.3 The island (dewetting) phase and the separation between phases
 
 The same parameter series leaves the *island* phase qualitatively similar across models. In all
-four models the lowest-energy structure is an island at ΔZ = 2.75–3.77 Å (Table 1), and the
+four models the lowest-energy structure is an island at ΔZ = 2.75–3.77 Å (Table 4), and the
 island branch spans the same broad range of heights (ΔZ ≈ 1–6 Å, median 2.4–3.0 Å) whether or
 not Co or B is present. Adding Co, B or CoB does not change what the dewetted state looks like;
 it changes how far above it the flat, wetting state sits.
 
 Because each model is referenced to its own lowest energy, the quantity that compares the two
-phases across models is the **separation between them** — the flat-basin minimum of Table 2 —
+phases across models is the **separation between them** — the flat-basin minimum of Table 5 —
 and that separation is exactly what boron reduces. The present data do not resolve
 *how* boron reduces it: a lower flat-basin energy could equally arise from stabilising the flat
 phase or from destabilising the island, and distinguishing the two would require the island

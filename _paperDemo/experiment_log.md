@@ -637,6 +637,44 @@ again, so it is marked as needing re-approval.**
   MgO(001) and extend to film thicknesses beyond the complete coverage of the substrate."* —
   consistent with the framing already written.
 
+## Float numbering (2026-09-17)
+
+Scientist's instruction: promote the tables and the mermaid diagram in `01_methods.md` to
+**numbered, captioned floats cited in the running text**, and renumber the counters across the
+manuscript (the Results tables were already labelled "Table 1"/"Table 2", which collided).
+
+Now numbered sequentially in order of appearance across the drafted section sequence:
+
+| Float | Location | Content | Was |
+|---|---|---|---|
+| **Table 1** | `01_methods.md` §1.1 | four interface models: film constitution, atom counts | unnumbered, uncited |
+| **Table 2** | `01_methods.md` §1.2 | generation schedule, two generators | unnumbered, uncited |
+| **Table 3** | `01_methods.md` §1.2 | generation schedule, three generators (Fe-Co) | unnumbered, uncited |
+| **Figure 1** | `01_methods.md` §1.2 | biased-exploration loop (mermaid workflow) | unnumbered, uncited |
+| **Table 4** | `02_results.md` §2.1 | the two phases in each model | "Table 1" |
+| **Table 5** | `02_results.md` §2.2 | flat-basin minimum dE/N | "Table 2" |
+| **Figure S1** | `SI.md` §S1 | exploration-performance panels | unchanged (separate `S` series) |
+
+Caption style unified to `**Table N.** …` (above tables) and `**Figure N.** …` (below figures);
+`02_results.md`'s earlier em-dash captions were converted. Every float is now cited in text:
+Table 1 in §1.1; Tables 2–3 and Fig. 1 in §1.2 (the Figure 1 caption carries the workflow
+sentence that previously appeared in the body text, which was then removed to avoid
+duplication); Table 4 in §2.1 (three citations); Table 5 in §2.2 and §2.3.
+
+Verified gapless: Tables 1–5 and Figure 1 each have exactly one caption, and no stale
+"Table 1"/"Table 2" references remain in `02_results.md`.
+
+⚠ **Numbering assumption:** it follows the **drafting** order, in which Methods is section `01`
+and therefore takes the low numbers. If the final layout puts the Introduction (currently `04`)
+first *and* it introduces floats of its own, every number shifts — renumber once at port time.
+
+⚠ **Still open:** the three main-text figure files (`pes_four_systems.png`,
+`flat_state_summary.png`, `flat_vs_ground_preview.png`) are **not cited by any section**.
+Wiring them in would make them Figure 2 (PES maps, §2.1), Figure 3 (flat-state summary, §2.2)
+and possibly Figure 4. Awaiting the scientist's decision.
+
+**`01_methods.md` remains awaiting re-approval** (edited after approval, again).
+
 ## Model geometry correction — the strain sits on the MgO, not the film (2026-09-17)
 
 Scientist's correction: the cell uses the **Fe-optimised lattice constant**, so **MgO** is the
