@@ -1,6 +1,6 @@
-# CLAIMS.md — FROZEN claim list (v9)
+# CLAIMS.md — FROZEN claim list (v10)
 
-**Status: FROZEN (v9, 2026-09-17).** Supersedes v8, v7, v6, v5, v4, v3, v2 and v1.
+**Status: FROZEN (v10, 2026-09-17).** Supersedes v9, v8, v7, v6, v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
 
 **Scope of the paper (v9): the Fe host only — Fe/MgO and Fe-B/MgO.** The Fe-Co/MgO and Fe-Co-B/MgO
@@ -27,9 +27,26 @@ list as fully accepted.
    The scientist confirmed the Greer wording stays on the boron-only argument (see
    "Discussion-only interpretations").
 3. **NEW v9 — application framing.** The CoFeB/MgO stack is the device-relevant system, while the
-   paper now studies Fe/MgO only. `03_discussion.md` §3.4 currently mentions "the CoFeB/MgO stack
-   used in devices"; whether the application framing stays general ("MgO-based magnetic tunnel
-   junctions") or is cut outright needs the scientist's call. Either way, no Co *host* is discussed.
+   paper now studies Fe/MgO only. `03_discussion.md` §3.3 no longer names CoFeB — it says "MgO-based
+   tunnel junctions" — so this is live: restore a CoFeB sentence (with a genuine reference) or keep
+   the general framing. Either way, no Co *host* is discussed.
+4. **NEW v10 — SI-9 and SI-10 need sign-off** (the iteration-budget and lattice-constraint
+   studies, both boron-free by design).
+5. **NEW v10 — how to word the convergence bound in the sections.** The item held since v4 ("the
+   searches are still improving at iteration 100") is now answered with numbers by SI-9, and it is
+   written into the Limitations as evidence. Whether §1.6 and §3.4 should *state* it (with the SI
+   reference), and in what form, is the scientist's call — Options: (a) one sentence in §1.6 plus a
+   pointer to §S4; (b) also a sentence in §3.4; (c) leave the sections as they are and rely on the SI.
+
+## RESOLVED by v10
+
+- **The convergence caveat held since v4 is answered** by SI-9 and now written into the Limitations:
+  the *absolute* reference energy is still improving at 100 iterations, while the *comparison*
+  (island ground state, flat–island separation) is unchanged or slightly reinforced at 200–600
+  iterations. What remains open is only the wording in the sections (OPEN item 5).
+- **The physically inverted strain case** is no longer "not calculated" for the boron-free model:
+  SI-10's far end puts the substrate at the experimental MgO lattice constant and stretches the
+  film 3.92 %, and the result is unchanged.
 
 ## RESOLVED by v9 (items held open in v8)
 
@@ -42,6 +59,76 @@ list as fully accepted.
   under-powered at 4 vs 3 completed searches (p = 0.092, floor 0.029). It is archived with its host;
   the resolution limit it ran into does not apply to any surviving comparison (MT-3's 13 vs 6 admits
   27 132 partitions, floor p = 3.7×10⁻⁵).
+
+## v10 changelog (2026-09-17) — two new robustness studies in the SI (SI-9, SI-10)
+
+Scientist's instruction: *"I've included new data. extraIteration and latt_conc. Include their
+analysis into the Supplementary Material. It was testing the impact of additional Iteration onto the
+over the MT finding, and also, the impact of the constraint, where previously, we match to the Fe,
+but now, we also match it to the MgO (not that it's an experimental MgO lattice)."*
+
+Two new Fe/MgO studies, both **boron-free**, so both bound the structural result (MT-1, MT-2) and the
+project's stated limitations rather than the boron effect (MT-3). New analysis:
+`scripts/iteration_budget.py`, `scripts/lattice_constraint.py`; outputs
+`analysis/iteration_budget.{json,csv}`, `analysis/lattice_constraint.{json,csv}`; figures
+`figures/iteration_budget.png`, `figures/lattice_constraint.png`.
+
+### SI-9 — the comparison does not depend on the search budget
+
+`data/extraIteration/{0_200Iter,1_400Iter,2_600Iter}` is the **same calculation** as the main-text
+Fe/MgO model — `diff data/femgo/main.py extraIteration/0_200Iter/main.py` is a single line,
+`N_iterations` 100 → 200 — run to 200, 400 and 600 iterations. 6 + 7 + 4 completed searches.
+
+- **The island is the ground state in all 17 searches at the 100-iteration cut and in all 17 at the
+  full budget.**
+- **The flat–island separation never shrinks with a longer budget:** it is unchanged in 5 of 17
+  searches and larger in 12, by a median of **+0.0104 eV/atom** (range 0 to **+0.0268**). Pooled per
+  arm it goes 0.1901 → 0.1901 (200 it), 0.1624 → 0.1662 (400 it), 0.1807 → 0.1978 eV/atom (600 it).
+- **The absolute minimum is *not* converged at 100 iterations:** 12 of 17 searches find a lower
+  island with more iterations, by a median of **0.0013 eV/atom** (range 0 to 0.0071). It is the
+  *comparison* that is budget-insensitive, not the absolute energy.
+- The per-run 100-iteration windows reproduce the main-text reference exactly (pooled flat-basin
+  minimum **0.1888 eV/atom**, island ground state) when the same 13 completed searches are read
+  through this script.
+
+### SI-10 — the result does not depend on which phase sets the in-plane lattice
+
+`data/latt_conc/{3_latt_025,2_latt_075,4_latt_100}` moves the constraint,
+`a_custom = a_Fe + f·(a_MgO/√2 − a_Fe)`, with both the film and the substrate built on `a_custom`:
+at *f* = 0.25 the substrate is compressed 2.83 % and the film stretched 0.98 %; at *f* = 0.75,
+−0.94 % / +2.94 %; at *f* = 1.00 the substrate is at the experimental MgO lattice constant
+(4.212 Å as used) and the film is stretched 3.92 %. 10 + 10 + 5 completed searches.
+
+- **The island is the ground state in all 25 searches**, and in every arm.
+- **The flat-basin minimum is flat against the constraint:** pooled, 0.1932 (f = 0.25), 0.1982
+  (f = 0.75), 0.1907 eV/atom (f = 1.00), against **0.1888 eV/atom** for the main-text Fe-matched
+  model — a total spread of **0.0094 eV/atom** across the whole sweep. The within-arm search-to-search
+  scatter is 0.017–0.031 eV/atom, i.e. 2–3× the entire sweep effect.
+- **Scope:** boron-free, so this bounds MT-1/MT-2 and the strain-convention limitation. For scale,
+  the constraint moves the separation by about a quarter of the boron effect (0.040 eV/atom).
+
+### The held convergence caveat is now written in
+
+Since v4 an item has been *held, not written in*: "the searches are still improving at iteration
+100, so the per-model reference energies are not converged with respect to search length." SI-9
+answers the part of it that matters for this paper and it is now a stated limitation with numbers:
+the absolute reference energy keeps drifting (median 0.0013 eV/atom over a doubling of the budget),
+while the flat–island comparison is unchanged or slightly reinforced. **The scientist's decision on
+how to word this in §1.6/§3.4 is still needed** — see OPEN.
+
+### Out of scope in these studies
+
+- The **f = 0 and f = 0.5 arms** of the constraint sweep: f = 0 is a reference arm the scientist does
+  not want in the paper (`_archive/latt_conc/0_latt_0`), and `_archive/latt_conc/1_latt_1` is an
+  empty directory, so the sweep is reported at 0.25 / 0.75 / 1.00 with the paper's own Fe/MgO model
+  as the Fe-matched reference.
+- **The a_Fe difference:** the sweep uses `a_Fe = 2.866 Å`, while the main-text model uses
+  `2.87019 Å`. The two are therefore not the same run set and differ by 0.15 % in the cell; this is
+  stated with the reference point rather than smoothed over.
+- **a_MgO = 4.212 Å is the experimental MgO lattice constant** (4.2112 Å nominal) used as a fixed
+  reference — not a computed value, and not a claim that the model reproduces an experimental stack.
+- Runs that stopped early are excluded in both studies (constraint arm: `seed_113` at 12 and 40
+  iterations, `seed_107` at 10, `seed_109` at 62; the budget arms had none).
 
 ## v9 changelog (2026-09-17) — the Co host is archived; the paper becomes Fe/MgO vs Fe-B/MgO
 
@@ -386,12 +473,29 @@ number of distinct structures.
 | **SI-5** *(evidence restated v7)* | The result is **robust to the LCB kappa** — and **no setting is distinguishable from another** | per-seed best **0.0321–0.0395 eV/atom** across kappa ∈ {1,2,3,4} (completed searches only, 100 iterations); the whole range spans 0.0074 eV/atom, far inside the SDs (0.019–0.026), so **no kappa is identified as best** | `analysis/method_sensitivity.csv` | strong |
 | **SI-6** | The result is **robust to the dipole correction** | per-seed best **0.03683 ± 0.02575** (no dipole) → **0.03770 ± 0.02436** (dipole xy) — a difference of 0.0009 eV/atom, far inside the SD (completed searches only) | `analysis/method_sensitivity.csv` | weak (outcome-level only) |
 | **SI-7** *(evidence restated v7)* | **Reducing the rattle strength degrades the search ~7×** and under-samples the flat basin | per-seed best **0.03683 ± 0.02575 → 0.26073 / 0.25583 eV/atom (7.1× / 7.0×)**; flat fraction **0.165 → 0.023 / 0.017** (completed searches only). **Caveat:** the reduced-rattle arms retain only **2 and 4** completed searches | `analysis/method_sensitivity.csv` | strong (direction), weak (magnitude — arms of n = 2 and 4) |
+| **SI-9** *(v10)* | **The main-text comparison does not depend on the search budget** — a longer search leaves the island the ground state and does not shrink the flat–island separation, although the absolute energy keeps improving | same calculation at 200 / 400 / 600 iterations (`N_iterations` is the only difference): **island ground state in 17 of 17 searches** at both the 100-iteration cut and the full budget; separation **unchanged in 5, larger in 12** of 17 (median **+0.0104**, range 0 to **+0.0268** eV/atom); pooled per arm **0.1901 → 0.1901**, **0.1624 → 0.1662**, **0.1807 → 0.1978** eV/atom. Absolute minimum **still improving**: 12 of 17 searches find a lower island (median **0.0013**, range 0 to 0.0071 eV/atom) | `analysis/iteration_budget.json`, `analysis/iteration_budget.csv`, `figures/iteration_budget.png` | strong (Fe/MgO, boron-free; n = 6 / 7 / 4) |
+| **SI-10** *(v10)* | **The structural result does not depend on which phase sets the in-plane lattice** — moving the mismatch off the substrate and onto the film leaves the island the ground state and the flat-basin minimum unchanged | cell `a = a_Fe + f(a_MgO/√2 − a_Fe)` (substrate strain / film strain): f = 0.25 (**−2.83 % / +0.98 %**), 0.75 (**−0.94 % / +2.94 %**), 1.00 (**0.00 % / +3.92 %**). **Island ground state in 25 of 25 searches.** Flat-basin minimum pooled per arm: **0.1932 / 0.1982 / 0.1907 eV/atom** against **0.1888** for the main-text Fe-matched model — total spread **0.0094 eV/atom**, against a within-arm search-to-search SD of 0.017–0.031 eV/atom | `analysis/lattice_constraint.json`, `analysis/lattice_constraint.csv`, `figures/lattice_constraint.png` | strong (Fe/MgO, boron-free; n = 10 / 10 / 5) |
 | **SI-8** *(v4; signed off 2026-09-17)* | **The onset of relaxation is the pivot of the biased search**: the pre-relaxation iterations provide almost no ranking information, and roughly half the total descent occurs at the first relaxed iteration | best-known ΔE/N: 0.494 (i=1) → 0.435 (i=9; 12 % of the descent) → **0.250 (i=10; 49 %)**; per-search drop across the onset median 0.165 (range 0.084–0.233) eV/atom; 84 % of the descent by i=30, 94 % by i=50; global minimum first reached at i=77; 10 of 13 searches end within 0.05 eV/atom of it, 4 within 0.02 | `analysis/exploration_performance.json` | strong (Fe/MgO only) |
 
 **Paired caveat for SI-8 (must travel with the claim).** Fe/MgO only, and the quantities are
 properties of the *search scheme*, not of any individual structure: the energies are single GPAW
 steps on surrogate-relaxed candidates (residual forces ~1–2 eV/Å), the search is biased (seeded
 from a flat reference layer), and iteration is an AGOX counter rather than a computational cost.
+
+**Paired caveat for SI-9 (must travel with the claim).** Fe/MgO **and boron-free**: this bounds the
+structural result (MT-1, MT-2), not the boron effect (MT-3), for which no longer-budget run exists.
+The budget arms are independent run sets rather than truncations of one another — the same seed can
+follow a different trajectory in different arms (checked: only 2 of 7 seeds share their first-100
+trajectory across arms) — so the arm-level numbers carry that mixture while the **per-run**
+100-versus-full comparison does not. Run counts are unequal (6 / 7 / 4).
+
+**Paired caveat for SI-10 (must travel with the claim).** Fe/MgO **and boron-free**, for the same
+reason as SI-9. The sweep is measured at 0.25 / 0.75 / 1.00 with the paper's own Fe/MgO model as the
+Fe-matched reference: the f = 0 and f = 0.5 arms are out of scope by decision (`1_latt_1` is an empty
+directory), and the sweep's `a_Fe = 2.866 Å` differs from the main-text `2.87019 Å` by 0.15 %. The
+far end of the sweep places the substrate at the **experimental** MgO lattice constant (4.212 Å as
+used), the convention of the experimental stack; the substrate is still a single layer and the film
+about one monolayer, so it is the constraint that is inverted, not the full experimental geometry.
 
 **Note on SI-7 (v2):** SI-7 still uses the flat fraction, and deliberately so. Unlike
 withdrawn MT-6, it compares **one system against itself under a changed method parameter**
@@ -474,6 +578,12 @@ the 2×2 can be restored as written in v8, with MT-4/MT-5 reinstated from this b
 - Level of theory: GPAW LCAO/PBE, kpts (1,1,1), vacuum 20 Å (main search).
 - **Systems (v9): Fe/MgO and Fe-B/MgO only** — 13 and 6 completed searches, 1723 structures.
   Fe-Co/MgO and Fe-Co-B/MgO are archived (see "ARCHIVED — out of scope").
+- **Supplementary method studies (all Fe/MgO, 100-iteration budget unless stated):** the
+  exploration-performance study (§S1, the main-text searches), the PDOS/interface study (§S2),
+  the parameter families rattle / kappa / dipole (§S3, `data/param_ratt*`, `data/femgo_kappa/*`,
+  `data/femgo_dip`), the **iteration-budget study (§S4, v10; `data/extraIteration/*` at 200/400/600
+  iterations)** and the **lattice-constraint study (§S5, v10; `data/latt_conc/*` at f = 0.25/0.75/
+  1.00)**. The last two are boron-free and bound MT-1/MT-2, not MT-3.
 
 ## Limitations (must appear with the claims)
 
@@ -493,12 +603,17 @@ the 2×2 can be restored as written in v8, with MT-4/MT-5 reinstated from this b
   \cite{larsen2009}, which shifts absolute geometric parameters (e.g. the computed Fe–O
   separation, 2.30–2.33 Å, sits at the upper end of the experimental/calculated 2.0–2.3 Å
   range \cite{urano1988,butler2001}). Quantities are compared at fixed settings.
-- **Strain convention is the inverse of the experimental stack (v6):** the simulation cell takes
-  the Fe lattice constant and the **substrate** is compressed to match it (MgO 3.6 % relative to
-  bulk, held fixed), so **the Fe film is unstrained in-plane**. In a real junction the bulk MgO
-  imposes its lattice on a thin Fe film, which absorbs the mismatch and relieves it through
-  interfacial dislocations \cite{yuasa2004}. The model does not represent the strained-film
-  situation, and the physically inverted case has **not** been calculated.
+- **Strain convention is the inverse of the experimental stack (v6; now tested for the boron-free
+  model — v10).** The simulation cell takes the Fe lattice constant and the **substrate** is
+  compressed to match it (MgO 3.6 % relative to bulk, held fixed), so **the Fe film is unstrained
+  in-plane**. In a real junction the bulk MgO imposes its lattice on a thin Fe film, which absorbs
+  the mismatch and relieves it through interfacial dislocations \cite{yuasa2004}. **The physically
+  inverted case has now been calculated for the boron-free Fe/MgO model:** the constraint sweep
+  (SI-10) carries the cell from Fe-matched to MgO-matched, the far end placing the substrate at the
+  experimental MgO lattice constant with the film stretched 3.92 % — and the island remains the
+  ground state in every search, with the flat-basin minimum moving by only 0.0094 eV/atom across
+  the whole sweep. What is *not* covered is the boron-containing model (and the substrate is a single
+  layer, so it is the constraint that is inverted, not the full experimental geometry).
 - **The Fe-atop-O registry is partly inherited (v6):** `build_mgo_stack` places the substrate
   oxygen directly above the metal sites, so the flat film's registry follows from the
   construction as well as agreeing with the measured LEED I–V registry \cite{urano1988}. It is a
@@ -522,6 +637,22 @@ the 2×2 can be restored as written in v8, with MT-4/MT-5 reinstated from this b
   present scope, an effect of the added element as such cannot be separated from an effect of boron.
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold.
 - kpts = (1,1,1), single-layer slabs → qualitative/trend-level.
+- **The absolute reference energy is not converged with respect to search length (v10; written in
+  at last).** The question held open since v4 is answered by SI-9 and becomes a stated limitation:
+  with the same calculation run to 200–600 iterations, the **absolute** minimum is still improving at
+  100 iterations (12 of 17 searches find a lower island with more budget, median 0.0013, up to
+  0.0071 eV/atom). What *is* budget-insensitive is the **comparison**: the island stays the ground
+  state in all 17 searches and the flat–island separation is unchanged or larger (median +0.0104,
+  up to +0.0268 eV/atom). Reported separations are therefore comparisons at a stated budget, not
+  converged absolute energies. **The boron-containing model was not re-run at a longer budget**
+  (no such data), so this bound does not transfer to MT-3 by measurement.
+- **The flat-basin reference carries a run-set spread of order 0.02 eV/atom (v10).** Independent
+  run sets of the same boron-free system at the same 100-iteration budget give a pooled flat-basin
+  minimum between **0.1624 and 0.1901 eV/atom** (`analysis/iteration_budget.json`), against the
+  0.1888 eV/atom reported for the main-text 13 searches. The search-to-search spread within an arm
+  is 0.017–0.031 eV/atom. Comparisons of size ~0.04 eV/atom (the boron effect) are therefore above
+  this scatter but not by a large factor, which is one reason the boron result is reported with a
+  search-level permutation test rather than on the pooled value alone.
 - **Sensitivity families contain unfinished searches (v7; superseded by the v8 rule):** several
   runs were stopped early (iteration max 6–90 vs 100 for a completed search) and their per-seed
   best is systematically worse, and the unfinished runs are not distributed evenly across settings.
@@ -588,12 +719,24 @@ claims to MT/SI and do not change the frozen list.
 - [x] **v9: archive mechanics** — raw data to `data/_archive/`, records to `_archive/cofe/`;
       analysis scripts keep their four-system capability but default to the Fe-host scope — scientist
 - [x] **v9: no new searches run; the two-system paper is written from existing data** — scientist
+- [x] **v10: the two new robustness studies are included in the Supplementary Material as §S4
+      (iteration budget) and §S5 (lattice constraint), each with its own claim** — scientist
+- [x] **v10: both studies stay boron-free, so they bound the structural result (MT-1, MT-2) and the
+      stated limitations rather than the boron effect (MT-3)** — scientist
+- [x] **v10: the f = 0 and f = 0.5 arms of the constraint sweep stay out of the paper; the sweep is
+      reported at 0.25 / 0.75 / 1.00 with the paper's own Fe/MgO model as the Fe-matched reference**
+      — scientist
+- [x] **v10: `a_MgO = 4.212 Å` is the experimental MgO lattice constant used as a fixed reference**
+      — scientist
+- [ ] **v10: SI-9 and SI-10** — awaiting sign-off
+- [ ] **v10: the wording of the convergence bound in §1.6 / §3.4** — awaiting the scientist
+      (OPEN item 5)
 - [ ] **v9: the rewritten contribution sentence** — awaiting the scientist's re-sign-off
 - [ ] **v9: application framing** — `03_discussion.md` §3.4's "CoFeB/MgO stack used in devices":
       keep the application discussion generic ("MgO-based magnetic tunnel junctions") or cut it?
 - [ ] **Acceptance of the permutation-test fix (v8)** — still open, now reduced to MT-3 alone
 
-**Status: FROZEN (v9, 2026-09-17), scope Fe/MgO + Fe-B/MgO.** This list is frozen for drafting. Any
+**Status: FROZEN (v10, 2026-09-17), scope Fe/MgO + Fe-B/MgO.** This list is frozen for drafting. Any
 new result or claim requires an explicit update to this file before it enters a section.
 **Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
 v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle ·
@@ -612,4 +755,9 @@ halves of MT-7/MT-8; contribution rewritten host-independently-free; SI unaffect
 Fe/MgO-only); third-element-control scope bound added; v8's permutation-resolution limitation and
 strain-convention confound both resolved by the scope restriction; MT-6's secondary reason reworded;
 the significance test made exact and scope-independent (MT-3 p = 0.0444; the v8 Monte-Carlo value
-moved with the RNG stream).
+moved with the RNG stream) · v10 (2026-09-17) two new boron-free Fe/MgO robustness studies added to
+the SI: SI-9 (iteration budget — the comparison survives 200/400/600 iterations while the absolute
+energy keeps improving) and SI-10 (lattice constraint — sweeping the cell from Fe-matched to
+MgO-matched moves the flat-basin minimum by 0.0094 eV/atom); the convergence caveat held since v4
+written into the Limitations; the inverted-strain case now calculated for the boron-free model; a new
+limitation for the run-set spread of the flat-basin reference.
