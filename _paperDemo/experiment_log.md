@@ -1573,3 +1573,48 @@ and "Next step" is updated. `AGENTS.md` — Phase D key list and the Phase E ent
 four entries in a new dated block. The scratch extraction `.txt` files were removed; the four PDFs
 remain in `papers/` (untracked, as the directory has been).
 
+## 2026-09-18 — `04_introduction.md` v3: phase-controlled design as a core reason, and the GOFEE/LCB justification
+
+Two additions at the scientist's request, and a new GOFEE reference.
+
+**1. The phase-controlled two-phase design is now a core methodological reason.** The paragraph that
+opens "what we do" was split. It now states that the flat film is a single, well-defined geometry
+while the dewetted family is a continuous set of cluster sizes and heights rather than one low-energy
+structure, so exhaustively enumerating its potential-energy surface is not the goal; instead the
+search is designed to resolve the two phases the wetting question is about and to compare their
+relative energies under a controlled change of composition. This is the sentence the scientist
+approved verbatim, promoted from an aside to the leading motivation of the search design.
+
+**2. The GOFEE choice is justified through its lower-confidence-bound property.** A new paragraph
+explains why GOFEE is the right engine for this design: a Gaussian-process surrogate trained on the
+fly from single-point DFT energies selects candidates with the lower confidence bound
+**LCB(r) = E(r) − κσ(r)** — predicted energy E(r) penalised by predicted uncertainty σ(r), κ = 2. The
+two terms pull in opposite directions (exploitation vs exploration), so the acquisition keeps probing
+uncertain regions even after a low basin is found; that is what lets the search be seeded from a flat
+reference film and still reach the island global minimum. This is framed as "guided toward the global
+minimum" — a heuristic property, not a guarantee — and is grounded in the two GOFEE references.
+
+**3. The new reference.** The scientist added `papers/gofee_Bisbo2022.pdf` and
+`papers/gofee_Hamamoto2023.pdf`. The first is the **original GOFEE paper**, already cited as
+`gofee2017` (Bisbo & Hammer, PRB 105, 245404) — no second key. The second is genuinely new:
+**`hamamoto2023`** — Hamamoto, Pham, Bisbo, Hammer & Morikawa, *Phys. Rev. Mater.* **7**, 124002
+(2023), "Machine-learned search for the stable structures of silicene on Ag(111)", a GOFEE
+application whose methods section states the LCB rule (E − κσ, κ typically 2). Verified by DOI
+content negotiation and confirmed in a second index (APS + ResearchGate + Google Scholar); added to
+`references.bib` in a dated block noting that the Bisbo PDF duplicates `gofee2017`.
+
+**Scope and claims.** No claim, number or result changed — this is method-framing and literature
+only; `CLAIMS.md` is not bumped. The device wording stays generic and no Co host is discussed
+(verified by scan). The `agox2020` key is no longer cited in the introduction (the search is now
+described as GOFEE) but remains cited in Methods §1.2, so it is not orphaned.
+
+**Verification.** `references.bib` holds **23** entries (21 cited by the main text, 2 by the SI
+only); every `\cite{}` key across the five section files resolves, none orphaned (checked by script).
+§4 cites 16 keys — it dropped `agox2020` (now GOFEE-described, still cited in Methods) and added
+`hamamoto2023` — and its body is free of backticks, paths, identifiers and Co-host terms.
+
+**Doc sync.** `paper_status.md` — B2, the drafting table and "Next step" move to v3; Phase D records
+21/23 keys; a new **E5** item covers `hamamoto2023` (accept or drop) and notes that the Bisbo PDF
+duplicates `gofee2017` (see **E2** for the stale year-in-key). `AGENTS.md` — Phase D key list and the
+Phase E entry. `references.bib` — the `hamamoto2023` entry in a dated block.
+

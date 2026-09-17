@@ -112,13 +112,17 @@ end, so a fresh session does not re-open them.
       is no LaTeX port until all six are approved. The approvals are recorded in each section's head
       block (`APPROVED 2026-09-18`) — any later edit to an approved section voids its approval again,
       per the governing rule.
-- [ ] **B2 · Review `04_introduction.md` — v2, DRAFTED, awaiting review.** The newly opened gate. It
+- [ ] **B2 · Review `04_introduction.md` — v3, DRAFTED, awaiting review.** The newly opened gate. It
       closes on the frozen contribution sentence with the quoted shift and the significance value
-      removed (moved to the Results), and it carries no floats. **v2 adds the recent fabrication
-      trend** (new paragraph + four references). What is new rather than a restatement is listed
-      separately and cannot be answered by an agent: **C7** (the confusion-principle framing now
-      appears in the Introduction), **E3** (three device-side references) and **E4** (four
-      recent-fabrication references).
+      removed (moved to the Results), and it carries no floats. **v2 added the recent fabrication
+      trend** (new paragraph + four references); **v3 made the phase-controlled design a core
+      methodological reason** (the dewetted family is a continuous set, not a single structure, so
+      exhaustive enumeration is not the goal) **and justified the GOFEE choice through its
+      lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) balances exploitation against
+      exploration and guides the search toward the global minimum even when seeded from a flat
+      reference film. What is new rather than a restatement is listed separately and cannot be
+      answered by an agent: **C7** (confusion-principle framing), **E3** (three device references),
+      **E4** (four fabrication references) and **E5** (the GOFEE/LCB reference, accept or drop).
 
 **C. Wording and framing**
 
@@ -215,6 +219,17 @@ end, so a fresh session does not re-open them.
       key and it is a one-line edit in §4 plus its `.bib` entry. Note the **file-name/key mismatch**:
       `papers/fabri_Crina2024.pdf` is **Ghemes et al.** (first author Ghemes), so its citation key is
       `ghemes2024`, not "crina".
+- [ ] **E5 · The GOFEE/LCB reference — accept or drop.** On the scientist's instruction, the
+      Introduction now justifies the choice of GOFEE through its lower-confidence-bound property
+      (LCB(r) = E(r) − κσ(r); balances exploitation against exploration; guides the search toward
+      the global minimum even when seeded from a flat reference), citing two keys: the primary GOFEE
+      paper `gofee2017` and the newly added `hamamoto2023` — Hamamoto, Pham, Bisbo, Hammer &
+      Morikawa, *Phys. Rev. Mater.* 7, 124002 (2023), "Machine-learned search for the stable
+      structures of silicene on Ag(111)", a GOFEE application that states the LCB rule. Verified
+      2026-09-18 by DOI content negotiation and confirmed in a second index. **Note:** the
+      scientist's `papers/gofee_Bisbo2022.pdf` is the **same** paper already cited as `gofee2017`
+      (Bisbo & Hammer, PRB 105, 245404 — the year-in-key mismatch is the pre-existing item **E2**),
+      so it added no second key. Drop `hamamoto2023` and §4 keeps `gofee2017` alone.
 
 **Decided — not open** (listed so they are not re-opened): the Fe-host-only scope (v9); the PES
 panels' shared energy range, anchored to the Fe/MgO ceiling, with 25 Fe-B points off-scale by
@@ -233,7 +248,7 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `02_results.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is). Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | **v2** | **DRAFTED — awaiting review.** v1 was the first draft of the section released when `03` was approved; **v2 added the recent MTJ-fabrication trend** — four new references (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, see **E4**) and a new trend paragraph, with the metal-on-MgO islanding difficulty also anchored to modern device-scale growth (`ichinose2025`). Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, see **E3**). Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
+| `04_introduction.md` | **v3** | **DRAFTED — awaiting review.** v1 was the first draft of the section released when `03` was approved; **v2 added the recent MTJ-fabrication trend** (four references, see **E4**); **v3 made the phase-controlled design a core methodological reason** (the dewetted family is a continuous set, not a single structure — exhaustive enumeration is not the goal) **and justified the GOFEE choice through its lower-confidence-bound property** — LCB(r) = E(r) − κσ(r) guides the search toward the global minimum even when seeded from a flat reference, citing `gofee2017` + `hamamoto2023` (see **E5**). Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`, see **E3**). Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
@@ -244,12 +259,12 @@ The introduction, drafted the same day, is **not** approved.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
-device-side and recent-fabrication references the 13-key set did not contain, so seven were verified
-and added in two batches (`parkin2004`, `djayaprawira2005`, `ikeda2008`; then `scheike2023`,
-`solano2022`, `ichinose2025`, `ghemes2024`; see **E3** and **E4**). `references.bib` now holds **20
-citations for the main text** (22 entries including the two lattice-constant references cited only by
-the SI); every `\cite{}` key in `sections/` resolves and no entry is orphaned — re-checked by script
-over all five section files. **Phase F/G: not started.**
+device-side and recent-fabrication references the 13-key set did not contain, so eight were verified
+and added in three batches (`parkin2004`, `djayaprawira2005`, `ikeda2008`; then `scheike2023`,
+`solano2022`, `ichinose2025`, `ghemes2024`; then `hamamoto2023` for the GOFEE/LCB passage; see **E3**,
+**E4** and **E5**). `references.bib` now holds **21 citations for the main text** (23 entries including
+the two lattice-constant references cited only by the SI); every `\cite{}` key in `sections/` resolves
+and no entry is orphaned — re-checked by script over all five section files. **Phase F/G: not started.**
 
 ## Float numbering (v9)
 
@@ -597,21 +612,22 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**`04_introduction.md` is drafted (v2) and awaiting review (item B2).** v1 was written after Methods v6,
+**`04_introduction.md` is drafted (v3) and awaiting review (item B2).** v1 was written after Methods v6,
 Results v5 and Discussion v5 were approved on 2026-09-18; **v2 added the recent MTJ-fabrication trend**
-at the scientist's request (new paragraph and four references, item **E4**). Four things inside the
-section need the scientist rather than an agent: the confusion-principle framing appears in the
-Introduction although the claim list places it in the Discussion (**C7**), three device-side references
-(**E3**) and four recent-fabrication references (**E4**) were added for the section, and the v9
-contribution sentence it closes on still awaits re-sign-off (A1/A2). Everything else in it restates a
-number already frozen in the approved Results.
+and **v3 made the phase-controlled design a core methodological reason** and **justified GOFEE via its
+lower-confidence-bound property** (both at the scientist's request). Five things inside the section
+need the scientist rather than an agent: the confusion-principle framing appears in the Introduction
+although the claim list places it in the Discussion (**C7**), three device-side references (**E3**),
+four recent-fabrication references (**E4**) and the GOFEE/LCB reference (**E5**) were added for the
+section, and the v9 contribution sentence it closes on still awaits re-sign-off (A1/A2). Everything
+else in it restates a number already frozen in the approved Results.
 
 `SI.md` v8 is the last drafted section still awaiting review. After `04` is approved the order is
 `05_conclusion.md` → `06_abstract.md` → the `paper.tex` port; no LaTeX before all six sections are
 approved.
 
 Everything else that is open is the scientist's, not the agent's: the consolidated decision checklist
-above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–**E4** references) is the one place to
+above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–**E5** references) is the one place to
 work from. The largest open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host
 structures selected, re-relaxation not run).
 

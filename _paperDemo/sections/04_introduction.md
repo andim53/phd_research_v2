@@ -1,4 +1,10 @@
 # 04 — Introduction
+     v3 (2026-09-18): the phase-controlled design is now stated as a core methodological reason
+     (the dewetted family is a continuous set, not a single structure, so exhaustive enumeration is
+     not the goal), and the choice of GOFEE is justified in the introduction through its
+     lower-confidence-bound property — LCB(r) = E(r) − κσ(r) balances exploitation against
+     exploration and so guides the search toward the global minimum even when it is seeded from a
+     flat reference film. New reference: hamamoto2023. No claim or number changed.
      v2 (2026-09-18): four recent MTJ-fabrication references added (scheike2023, solano2022,
      ichinose2025, ghemes2024) with a new paragraph on the recent fabrication trend; the
      metal-on-MgO islanding difficulty is now also anchored to modern device-scale growth
@@ -8,13 +14,14 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v2 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v3 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      Every number here is one already frozen in the approved Results: the two flat-basin minima,
      the shift between them, the island spans, the boron–oxygen window count and the exact
      search-level statistic. Nothing is introduced that is not in the frozen claim list.
      Citation keys for this section: parkin2004, djayaprawira2005, ikeda2008 (device);
-     scheike2023, solano2022, ichinose2025, ghemes2024 (recent fabrication trend). -->
+     scheike2023, solano2022, ichinose2025, ghemes2024 (recent fabrication trend);
+     gofee2017, hamamoto2023 (the GOFEE/LCB method choice). -->
 
 ## Introduction
 
@@ -75,19 +82,37 @@ one, it suggests that boron should lower the energy of the flat configuration re
 Whether it does so, and by how much, is a question for calculation.
 
 We address it by comparing the energies of the two configurations for a single host, with and without
-an added metalloid. The two models are a single Fe layer on a single MgO(001) layer, about one
-monolayer thick — 25 metal atoms on a 5 × 5 substrate cell — built on the computed Fe lattice
-constant with the substrate compressed to match it; the second model differs only by three boron
-atoms in the film, so that the comparison isolates the added species. Each model is sampled with a
-surrogate-driven global optimisation search \cite{agox2020,gofee2017} that is deliberately seeded
-from a flat reference film, so that the flat basin is populated from the outset and any lower-lying
-basin the search finds is populated alongside it, and each model is run from a number of independent
-random seeds. The landscape that results is read as a map of the two phases — film flatness against
-relative energy — and the electronic-structure origin of what the search finds, together with the
-sensitivity of the result to the search's method parameters and to the lattice constraint, is
-reported in the Supplementary Material. The structures compared are not converged minima, and the
-comparison is a trend obtained within a fixed lattice model; the bounds this places on the
-interpretation are set out with the methods.
+an added metalloid. The phase-controlled design follows from the nature of the two configurations
+themselves. The flat film is a single, well-defined geometry, but the dewetted family is not a single
+structure: it spans a continuous range of cluster sizes and heights rather than one low-energy
+geometry, so exhaustively enumerating its potential-energy surface is not the goal. We therefore do
+not attempt that enumeration; instead the search is designed to resolve the two phases that the
+wetting question is about — the flat, well-wetting film and the dewetted island — and to compare
+their relative energies under a controlled change of composition.
+
+We realise this with GOFEE, global optimisation with first-principles energy expressions
+\cite{gofee2017}, a surrogate-driven global search in which a Gaussian-process model of the energy
+landscape, trained on the fly from single-point DFT energies, decides which candidate structures are
+worth evaluating with the full calculation \cite{hamamoto2023}. The selection rule is the lower
+confidence bound, LCB(r) = E(r) − κσ(r): a candidate r is chosen by minimising its predicted energy
+E(r) penalised by its predicted uncertainty σ(r), with κ a fixed constant (κ = 2 here). The two
+terms pull in opposite directions — E(r) favours regions already found to be low in energy, while
+the −κσ(r) term favours regions not yet sampled — so the bound keeps probing the uncertain parts of
+the landscape even after a low basin has been located. That is what lets the search be seeded from a
+flat reference film and still reach the island: the flat basin is populated from the outset, but the
+acquisition continues to explore the territory where a genuinely lower configuration may lie, so the
+search is guided toward the global minimum rather than confined to the reference configuration. Each
+model is run from a number of independent random seeds.
+
+The two models are a single Fe layer on a single MgO(001) layer, about one monolayer thick — 25 metal
+atoms on a 5 × 5 substrate cell — built on the computed Fe lattice constant with the substrate
+compressed to match it; the second model differs only by three boron atoms in the film, so that the
+comparison isolates the added species. The sampled landscape is read as a map of the two phases —
+film flatness against relative energy — and the electronic-structure origin of what the search finds,
+together with the sensitivity of the result to the search's method parameters and to the lattice
+constraint, is reported in the Supplementary Material. The structures compared are not converged
+minima, and the comparison is a trend obtained within a fixed lattice model; the bounds this places on
+the interpretation are set out with the methods.
 
 Both models answer the question of which configuration is preferred in the same way. The
 lowest-energy structure found is an island in each, with a vertical span of about 3.7 Å — a result
