@@ -21,9 +21,8 @@ in the film constitution:
 | Fe-Co-B/MgO | B₂Co₇Fe₁₈Mg₂₅O₂₅ | Fe + Co + B | 77 |
 
 The substrate is a single MgO(001) layer and the film a single
-metal layer, stacked along z with 20 Å of vacuum and periodic boundaries in-plane
-(`pbc = [True, True, False]`). The in-plane lattice was matched by a √2 rotation of the
-MgO cell (a_MgO/√2 = 2.978 Å) to the optimized Fe lattice (a_Fe = 2.870 Å), giving a **3.77 %**
+metal layer, stacked along z with 20 Å of vacuum and periodic boundaries in-plane. The in-plane lattice was matched by a √2 rotation of the
+MgO cell to the optimized Fe lattice (2.870 Å), giving a **3.77 %**
 compressive/tensile mismatch; the substrate was held fixed and only the film was allowed
 to relax. A (5×5×1) in-plane supercell was used throughout.
 
