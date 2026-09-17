@@ -66,12 +66,18 @@ hosts (MTJ / CoFeB relevance)
 ## Drafting status
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
-- **Phase D: PARTIAL** — 6 citations verified in `references.bib` (agox2020, gofee2017,
-  oganov2011, gpaw2014, pbe1996, greer1993). MTJ/PMA refs (cofebmgo_mtj, cofebmgo_pma,
-  b_diffusion_mtj) still UNVERIFIED in 03_discussion.md.
-- **Phase E: IN PROGRESS** — `01_methods.md` **v3 APPROVED (2026-09-17)**, `02_results.md`
-  RECONSTRUCTED v2 and awaiting re-approval, `03_discussion.md` v3 awaiting review.
+- **Phase D: DONE for the main text** — 12 citations verified in `references.bib` (agox2020,
+  gofee2017, oganov2011, gpaw2014, pbe1996, greer1993, urano1988, butler2001, yuasa2004,
+  reitinger2007, fahsold2000, larsen2009). The three MTJ placeholders (cofebmgo_mtj,
+  cofebmgo_pma, b_diffusion_mtj) were **withdrawn** and replaced by `yuasa2004`; **no
+  UNVERIFIED placeholders remain**. Open: the full texts of `fahsold2000` and `reitinger2007`
+  are closed access and are cited from verified abstracts only.
+- **Phase E: IN PROGRESS** — `01_methods.md` **APPROVED (2026-09-17, after three revisions)**,
+  `02_results.md` RECONSTRUCTED v2 awaiting re-approval, `03_discussion.md` v3 awaiting review.
   Block-and-wait: do NOT draft `04_introduction.md` until 03 is approved.
+- **Float numbering:** tables and figures are numbered sequentially in order of appearance
+  across the drafted section sequence. Currently Tables 1–3 + Figure 1 (Methods) and Tables 4–5
+  (Results); the SI uses its own `S` series. See `paper_status.md`.
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 

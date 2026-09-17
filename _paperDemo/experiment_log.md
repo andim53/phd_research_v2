@@ -675,6 +675,32 @@ and possibly Figure 4. Awaiting the scientist's decision.
 
 **`01_methods.md` remains awaiting re-approval** (edited after approval, again).
 
+### Approved (2026-09-17)
+
+The scientist approved `sections/01_methods.md` at the state committed in `c89e1e1`. Approved
+content:
+
+- §1.1 — strain direction: the cell takes the DFT-optimised Fe lattice constant, so the **MgO**
+  is compressed 3.6 % relative to bulk and the substrate is frozen in that state while the
+  **film is unstrained in-plane**.
+- §1.2 — the exploration schedule stated **per model**, with Fe-Co's third
+  (species-permutation) generator in its own table; seed count corrected 7 → 6.
+- §1.3 — the interfacial Fe–O separation stated as a **construction parameter** rather than a
+  computed quantity, with the LCAO basis-set caveat kept as a separate statement.
+- §1.6 — the bcc/bct lattice-model limitation.
+- Floats: **Tables 1–3** and **Figure 1**, numbered, captioned and cited; caption style unified.
+
+**Explicitly *not* covered by this approval** (all still open):
+
+1. the `CLAIMS` **v6** items — restating SI-3's mechanism, reframing SI-4's registry;
+2. the **inverse-strain-convention** limitation (would go in §1.6) — held;
+3. the three **main-text figures** (`pes_four_systems`, `flat_state_summary`,
+   `flat_vs_ground_preview`) — still cited by no section, would become Figures 2–4;
+4. `02_results.md`'s re-approval and `03_discussion.md`'s first review.
+
+So `01_methods.md` is approved as it stands, but a fourth revision is likely once items 1–3 are
+settled — worth batching them into a single pass rather than approving again in between.
+
 ## Model geometry correction — the strain sits on the MgO, not the film (2026-09-17)
 
 Scientist's correction: the cell uses the **Fe-optimised lattice constant**, so **MgO** is the

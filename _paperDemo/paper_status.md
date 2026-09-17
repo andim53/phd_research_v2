@@ -211,15 +211,15 @@ temperature (140 K) or slow deposition on a specially prepared crystal. Urano's 
 result at RT is therefore the outlier in the literature, not ours.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [~] sections/01_methods.md  (APPROVED as revised earlier 2026-09-17; **REVISED again
-      2026-09-17 — needs re-approval**) — §1.1 now states the strain direction (cell = Fe
-      lattice constant; MgO compressed 3.6 % relative to bulk; substrate frozen compressed;
-      film unstrained), §1.3 now states that the Fe–O separation is a construction parameter
-      rather than a computed quantity, and the three tables plus the workflow diagram are now
-      numbered floats cited in the text (Tables 1–3, Figure 1).
-      Earlier v3: §1.2 exploration schedule stated per model (Fe-Co uses a third,
-      species-permutation generator); mermaid made generator-count-agnostic; "Bias"
-      paragraph states the reference-layer composition per model; seed count 7 → 6.
+- [x] sections/01_methods.md  (**APPROVED 2026-09-17** — third revision)
+      Approved content: §1.1 strain direction (cell = Fe lattice constant; MgO compressed
+      3.6 % relative to bulk; substrate frozen compressed; film unstrained in-plane), §1.2
+      per-model exploration schedule (Fe-Co uses a third, species-permutation generator;
+      seed count 7 → 6), §1.3 Fe–O separation as a construction parameter, §1.6 bcc/bct
+      lattice-model limitation, and the numbered floats Table 1–3 + Figure 1 with in-text
+      citations and unified captions.
+      **Not** included in this approval (see below): the `CLAIMS` v6 items, the inverse-strain
+      limitation in §1.6, and the main-text figures.
 - [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
       v2: reorganized by PHASE under the revised core framing —
       §2.1 the two-phase landscape (both phases populated; island is the ground state
@@ -308,7 +308,7 @@ numerically identically (max |Δ| = 0.0; frozen 0.1888/0.1493/0.1941/0.1494 repr
 ## Open decisions / next step
 - [x] SCIENTIST: contribution sentence approved (2026-09-16).
 - [x] Claim list frozen (`CLAIMS.md` — now **v5, FROZEN** 2026-09-17).
-- [x] sections/01_methods.md approved (2026-09-16) — revised twice; **APPROVED as revised 2026-09-17**.
+- [x] sections/01_methods.md approved (2026-09-16) — revised three times; **APPROVED 2026-09-17**.
 - [ ] **OPEN — full texts of the two islanding references.** `fahsold2000` (PRB 61, 8475) and
       `reitinger2007` (JAP 102, 034310) are cited from their **verified abstracts only**; both
       are closed access (Semantic Scholar `openAccessPdf.status = CLOSED`) and no institutional
