@@ -88,9 +88,11 @@ eV/atom.
       currently appears as a single bracket label.
 - [ ] **`pes_2_systems.png`:** 1×2 side by side, or stacked vertically for a single-column layout?
       Should the flat window (ΔZ ≤ 1.0 Å) shading stay?
-- [ ] **No section cites any main-text figure yet** (`paper_status.md`: Tables 1–3 + Figure 1 are in
-      Methods; the PES maps are uncited). Figure numbering is unassigned — decide whether the PES
-      maps become Figure 2 and the summary Figure 3 before the LaTeX port.
+- [ ] **Figure numbering — assigned 2026-09-18 by order of appearance** (`paper_status.md` →
+      "Float numbering"): the PES maps are **Figure 2** (§2.1) and the flat-basin summary is
+      **Figure 3** (§2.2); both are captioned and called out in `02_results.md` v5, so no main-text
+      float is uncited. Still open: whether the side-view render (`flat_vs_ground_preview.png`)
+      becomes a **Figure 4** in §2.1 — it is a 200 dpi preview and would need a 300 dpi re-render.
 - [ ] **`exploration_performance_femgo.png` and `method_sensitivity_*.png`** are SI figures and are
       untouched by the Co archive (they are all `femgo`-based). They keep their own `S` numbering.
 - [ ] **`iteration_budget.png` (new, §S4, SI-9).** Three panels: (a) the absolute ground state still

@@ -105,11 +105,13 @@ end, so a fresh session does not re-open them.
 
 **B. Section approvals — the block-and-wait gate**
 
-- [ ] **B1 · Review the four drafted sections: `01_methods.md` v6, `02_results.md` v4,
-      `03_discussion.md` v5, `SI.md` v8. No section is approved** — the one Methods approval was
-      voided by the re-scope and the code-stripping edit, so nothing survives. **03 is the gate for
-      `04_introduction.md`**; `05_conclusion.md` / `06_abstract.md` are not started, and there is no
-      LaTeX port until all six are approved.
+- [x] **B1 · Methods, Results and Discussion APPROVED 2026-09-18.** `01_methods.md` v6,
+      `02_results.md` v5 and `03_discussion.md` v5 were reviewed by the scientist and approved
+      **as-is**, so **the gate for `04_introduction.md` is open**. `SI.md` v8 is the only drafted
+      section still awaiting review; `05_conclusion.md` / `06_abstract.md` are not started, and there
+      is no LaTeX port until all six are approved. The approvals are recorded in each section's head
+      block (`APPROVED 2026-09-18`) — any later edit to an approved section voids its approval again,
+      per the governing rule.
 
 **C. Wording and framing**
 
@@ -134,10 +136,14 @@ end, so a fresh session does not re-open them.
 
 **D. Figures** — detail and reasoning: `figures/INSTRUCTION.md` → open questions
 
-- [ ] **D1 · Figure numbering and citation.** The main-text figures are cited by no section — the
-      Results prose describes the landscape without pointing at `pes_2_systems.png`,
-      `flat_state_summary.png` or `flat_vs_ground_preview.png`, and Tables 3–4 are likewise never
-      called out. Assign Figure 2 (§2.1), Figure 3 (§2.2), possibly Figure 4, and wire the call-outs.
+- [ ] **D1 · Figure numbering and citation — DRAFTED 2026-09-18, awaiting acceptance.** The
+      call-outs and captions are written: **Figure 2** (the sampled two-phase landscape) in
+      `02_results.md` §2.1 and **Figure 3** (the flat-basin comparison) in §2.2, so no main-text
+      float is left uncited; `02_results.md` is now **v5**. Two things still need the scientist: the
+      numbering itself (assigned by order of appearance, which is why the flat-basin figure is
+      Figure 3 rather than the "Figure 3 candidate" row it held before), and whether
+      `figures/flat_vs_ground_preview.png` should be promoted to a **Figure 4** in §2.1 — it is a
+      200 dpi preview and would need a 300 dpi re-render first.
 - [ ] **D2 · `flat_state_summary.png` redesign** — the figure most in need of it: is a two-bar chart
       still right with one host, or should it become a two-panel (flat / island) comparison or a
       ΔE/N-shift plot showing the per-replica spread? The headline −0.040 eV/atom is currently a
@@ -173,13 +179,17 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 
 | Section | Draft | Approval state |
 |---|---|---|
-| `01_methods.md` | **v6** | **No approval.** v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, so nothing survives. |
-| `02_results.md` | **v4** | **No approval.** Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4). |
-| `03_discussion.md` | **v5** | **Awaiting review — the gate for `04_introduction.md`.** The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v8** | **Awaiting review.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | — | **BLOCKED** on 03 approval. |
+| `01_methods.md` | **v6** | **APPROVED 2026-09-18** (reviewed as-is). v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
+| `02_results.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is). Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
+| `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
+| `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
+| `04_introduction.md` | — | **UNBLOCKED 2026-09-18** (03 approved) — **not yet drafted.** |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
+
+**Approvals (2026-09-18).** `01_methods.md` v6, `02_results.md` v5 and `03_discussion.md` v5 are
+approved as-is; each carries `APPROVED 2026-09-18` in the head block of its file. Editing an approved
+section voids its approval and requires re-review (this is how the v3/v4 Methods approval was lost).
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: DONE** for the main text (13 citations verified, every
@@ -197,6 +207,8 @@ shifted the Results floats.
 | **Figure 1** | `01_methods.md` §1.2 | the biased-exploration loop (mermaid workflow diagram) |
 | **Table 3** | `02_results.md` §2.1 | the two phases in each model |
 | **Table 4** | `02_results.md` §2.2 | flat-basin minimum dE/N with and without boron |
+| **Figure 2** | `02_results.md` §2.1 | the sampled two-phase landscape (one panel per model) |
+| **Figure 3** | `02_results.md` §2.2 | flat-basin comparison with and without boron |
 | **Figure S1** | `SI.md` §S1 | exploration-performance panels (separate `S` series) |
 
 The section draft versions in the table above live in a `<!-- DRAFT vN -->` comment at the head of
@@ -213,9 +225,9 @@ are manuscript text, the mapping from each float to the file that produces it li
 | Table 2 (generation schedule) | — | `data/{femgo,febmgo}/main.py` (`num_candidates`, rattle amplitudes) |
 | Table 3 (phases per model) | — | `analysis/pes_structures.csv` |
 | Table 4 (flat-basin min dE/N) | — | `analysis/pes_structures.csv`, `analysis/ensemble_stats.json` |
-| Figure 2 candidate (PES maps) | `figures/pes_2_systems.png` | `analysis/pes_structures.csv` |
-| Figure 3 candidate (flat-basin summary) | `figures/flat_state_summary.png` | same |
-| Figure 4 candidate (side views) | `figures/flat_vs_ground_preview.png` | `analysis/flat_structures/*.xsf` |
+| Figure 2 (PES maps, §2.1) | `figures/pes_2_systems.png` | `analysis/pes_structures.csv` |
+| Figure 3 (flat-basin summary, §2.2) | `figures/flat_state_summary.png` | same |
+| Figure 4 candidate (side views, uncited) | `figures/flat_vs_ground_preview.png` | `analysis/flat_structures/*.xsf` |
 | Figure S1 (exploration performance) | `figures/exploration_performance_femgo.png` | `analysis/exploration_performance.json` |
 | Table S1 (DOS metrics) | — | `analysis/pdos_metrics.csv` |
 | Figure S2 (flat vs island DOS) | `figures/pdos_flat_vs_island.png` | `data/dos_femgo_flatngs/` |
@@ -240,11 +252,15 @@ one energy range anchored to the boron-free Fe/MgO model, (−0.01, 0.636) eV/at
 drawn**. This is a figure property only — no analysis, claim or table value is affected. Recorded
 with the reasoning in `figures/INSTRUCTION.md`.
 
-⚠ **The main-text figures are cited by no section.** `figures/pes_2_systems.png` (PES maps),
-`figures/flat_state_summary.png` (flat-basin comparison) and `figures/flat_vs_ground_preview.png`
-(side views) exist and are regenerated against the v9 data, but Results §2.1/§2.2 describes the
-landscape in prose only. Wiring them in would make them **Figure 2** (§2.1), **Figure 3** (§2.2)
-and possibly **Figure 4**. Open in `figures/INSTRUCTION.md`.
+**Figure/table citation status (2026-09-18).** Every float of the main text is now called out from the
+prose: Tables 1–2 and Figure 1 from `01_methods.md`, Tables 3–4 and Figures 2–3 from `02_results.md` —
+`02_results.md` v5 added the two figure captions and their call-outs, so no main-text float is left
+uncited. One candidate remains deliberately uncited: `figures/flat_vs_ground_preview.png` (side views
+of the flat and island ground states, 2 systems) is a **200 dpi preview**; promoting it to a
+manuscript **Figure 4** in §2.1 requires a 300 dpi re-render and the scientist's decision — see
+`figures/INSTRUCTION.md`. (Figure numbering follows the governing convention of order of appearance
+across the drafted sections, which is why the flat-basin figure moved from the "Figure 3 candidate"
+row it occupied before the call-outs were written.)
 
 ## Method note
 
@@ -524,7 +540,14 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-Nothing here is blocked on agent work except the drafts themselves. The paper is ready for the
-scientist to review `01_methods.md` v6, `02_results.md` v4, `03_discussion.md` v5 and `SI.md` **v8**
-(which now carries §S4, §S5 and §S6) — 03 is the gate for `04_introduction.md`. The consolidated
-decision checklist is the OPEN section above; it is the one place to work from.
+**The gate is open: `04_introduction.md` can be drafted.** `01_methods.md` v6, `02_results.md` v5 and
+`03_discussion.md` v5 were approved as-is on 2026-09-18, so the block-and-wait gate has moved on.
+`SI.md` v8 is the one drafted section still awaiting review — reviewing it does **not** block the
+introduction (the gate for `04` was `03`, now approved), but nothing else in the paper can be
+finalised until it is signed off. After `04`, the order is `05_conclusion.md` → `06_abstract.md` →
+the `paper.tex` port; no LaTeX before all six sections are approved.
+
+Everything else that is open is the scientist's, not the agent's: the consolidated decision checklist
+above (A1–A4 claims sign-off, C1–C6 wording, D1–D6 figures, E1–E2 references) is the one place to work
+from. The largest open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host
+structures selected, re-relaxation not run).

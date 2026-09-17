@@ -1383,3 +1383,91 @@ the largest open *work* item rather than a decision.
 
 No claim, number, section or figure changed: documentation only.
 
+## 2026-09-18 — the main-text figures are cited: `02_results.md` v5
+
+Checklist item **D1**, on the scientist's instruction ("draft the figure/table call-outs so it stops
+being uncited"). The earlier claim that *no* float was cited was too broad: the **tables** were
+already called out — `Table 3` in §2.1 (three places) and `Table 4` in §2.2 — and `Figure 1` from
+Methods. What was genuinely uncited was every **figure** of the Results: `pes_2_systems.png`,
+`flat_state_summary.png` and the side-view render appeared nowhere in any section.
+
+**Numbering.** Assigned by the governing convention (sequential in order of appearance across the
+drafted sections), which the call-outs now fix in place: **Figure 2** = the sampled two-phase
+landscape, `pes_2_systems.png`, in §2.1; **Figure 3** = the flat-basin comparison,
+`flat_state_summary.png`, in §2.2. This moves the flat-basin figure off the "Figure 3 candidate" row
+it held in `paper_status.md` before the call-outs existed — it is now the third figure to appear by
+construction rather than by an earlier plan, and §2.1 ends up carrying both Figure 2 and Table 3. The
+side-view render stays deliberately uncited: it is a **200 dpi preview** (`figures/INSTRUCTION.md`
+sets 300 dpi for manuscript figures), so promoting it to a **Figure 4** in §2.1 needs a re-render and
+the scientist's design decision.
+
+**Text added to `sections/02_results.md` (v5).** Two call-out sentences and two captions:
+
+- §2.1, after the structures/Table 3 sentence: "Fig. 2 draws that landscape …" — the figure is the
+  map the search was designed to produce, the points form a continuous band descending from the flat
+  window to an island minimum near ΔZ = 3.7 Å, and the two panels share one energy scale.
+- §2.1: caption for Figure 2 (the flat window shading, the star and diamond markers, the common
+  scale).
+- §2.2: "… and Fig. 3 places the two values side by side with the change between them marked", plus
+  the Figure 3 caption (flat-window minima and the shift produced by boron).
+- The context sentence for Figure 2 states plainly that the two panels share an energy scale, which
+  is what the 2026-09-18 shared-range change made true — so the caption and the figure agree.
+
+**Style.** The call-outs use the abbreviation the manuscript already uses elsewhere ("summarised in
+Fig. 1" in Methods; "descends to zero (Fig. S1)" in the SI), while captions keep the full
+"**Figure N.**" form — matching the existing table practice of "(Table 3)" in prose against
+"**Table 3.**" captions. No code identifier, path or filename entered the prose (verified by scan);
+the file-level mapping stayed in `paper_status.md`.
+
+**Verified.** Scripted check over the four drafted sections: every main-text float now has both a
+caption and at least one inline call-out; the caption order gives Tables 1–4 and Figures 1–3, each
+series sequential by appearance. No claim, number, table value or figure was altered — this is
+citation scaffolding only.
+
+**Doc sync.** `paper_status.md` — Float numbering gains the Figure 2/3 rows, the traceability table
+drops the "candidate" labels for them, the "cited by no section" warning is replaced by a citation
+status note, the drafting table and checklist B1 move to v5, and D1 records the drafting as awaiting
+acceptance. `AGENTS.md` — float list now reads Tables 1–2 + Figure 1 (Methods), Tables 3–4 + Figures
+2–3 (Results), with the Figure 4 candidate and its 300 dpi condition. `figures/INSTRUCTION.md` — the
+numbering question is closed to a note, with the side-view promotion left open.
+
+**Noticed but not acted on:** in `SI.md` only **Figure S1** is called out from the text; Figures
+S2–S9 and Tables S4–S6 stand on their captions alone, which is normal Supplementary practice but
+inconsistent with the main text's new state. Whether to add SI call-outs is the scientist's call —
+it would touch `SI.md` (v8 → v9) and so belongs inside the block-and-wait gate.
+
+## 2026-09-18 — Methods, Results and Discussion approved; the gate to `04_introduction.md` opens
+
+The scientist reviewed the three drafted sections of the main text and approved all three **as-is**:
+`01_methods.md` v6, `02_results.md` v5 (including the figure captions and call-outs added earlier the
+same day) and `03_discussion.md` v5. No revision was requested, so no section text changed — this entry
+is a state change only.
+
+**Why it matters.** `03_discussion.md` was the block-and-wait gate for `04_introduction.md`; with it
+approved, `04` is unblocked and is the next drafting step. `SI.md` v8 is now the **only** drafted
+section still awaiting review — reviewing it does not hold up `04` (its gate was `03`), but the paper
+cannot be finalised, and no LaTeX port can start, until it is signed off.
+
+**Approval tracking.** Each approved section carries `APPROVED 2026-09-18` in the editorial head block
+of its file, replacing the "awaiting review" / "TO BE REVIEWED" status line. The governing consequence
+is unchanged and now restated in `AGENTS.md`: **any later edit to an approved section voids that
+approval and requires re-review** — exactly how the earlier `01_methods.md` v3 approval was lost to the
+v4 edit.
+
+**Two housekeeping fixes folded in:**
+
+- `01_methods.md` carried a **stale version marker**: its head comment read `<!-- DRAFT v5 -->` while
+  both its own changelog block and `paper_status.md` had it at **v6**. The marker now reads v6. No
+  section content changed.
+- `AGENTS.md`'s drafting summary still described `02_results.md` as **v4** and Phase E as "no section is
+  approved"; both are corrected, and the summary date moved 2026-09-17 → 2026-09-18.
+
+**Doc sync.** `paper_status.md` — checklist **B1 checked off** with the residual (`SI.md` v8) called
+out, the Phase E table rewritten with the approval state per section and `04_introduction.md` marked
+**UNBLOCKED**, a new "Approvals (2026-09-18)" note recording the void-on-edit rule, and "Next step"
+rewritten around the open gate. `AGENTS.md` — Phase E block and head-block rule as above. No claim,
+number, table, figure or section body was altered.
+
+**Committed together** with the still-pending 2026-09-18 v5 figure-call-out work, which had been left
+uncommitted in the working tree.
+

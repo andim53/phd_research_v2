@@ -1,9 +1,12 @@
 # 02 — Results
+     v5 (2026-09-18): the two main-text figures are now cited and captioned — Figure 2 (the sampled
+     two-phase landscape, §2.1) and Figure 3 (the flat-basin comparison, §2.2). No claim, number or
+     table changed. APPROVED 2026-09-18.
      v4 (2026-09-17): re-scoped to the Fe host (CLAIMS v9). All Co/CoB results, the 2 x 2 design
      and the MT-4/MT-5 paragraphs are out of the paper; the p-value is now the exact 0.0444 of
      CLAIMS v9 §4; Tables 4-5 became Tables 3-4. TO BE RE-APPROVED — no prior approval survives.
 
-<!-- DRAFT v4 · section 02 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v5 · section 02 of the manuscript (markdown-first, pre-LaTeX)
      Fe/MgO and Fe-B/MgO only (CLAIMS v9). The biased search yields an EXPLORATION density over
      the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the weights
      are not physical. Organized by phase, not by additive.
@@ -26,7 +29,12 @@ and energetic comparisons; the number of structures in a basin is a descriptive 
 the sampled database, not a physical population.
 
 Across the two models the search returns 1723 structures spanning ΔZ from 0.001 to 5.57 Å,
-with both phases populated in each (Table 3).
+with both phases populated in each (Table 3). Fig. 2 draws that landscape: every structure is
+placed at its own vertical span and at its energy above the model's lowest, so the figure is the map
+the search was designed to produce rather than a selection of representative structures. The points
+form a continuous band that descends from the flat window into an island minimum near ΔZ = 3.7 Å in
+both models, and the two panels share one energy scale, so a given height means the same relative
+energy in either.
 
 **Table 3.** The two phases in each model (ΔZ ≤ 1.0 Å = flat/wetting; ΔZ > 1.0 Å = island).
 
@@ -34,6 +42,12 @@ with both phases populated in each (Table 3).
 |-------|-----------|--------|------|-------------------|-------------------------------|
 | Fe/MgO | 1180 | 985 | 195 | 3.65 | 0.1888 |
 | Fe-B/MgO | 543 | 430 | 113 | 3.77 | 0.1493 |
+
+**Figure 2.** The sampled two-phase landscape of the metal film on MgO. Each point is one structure
+from the Fe/MgO (left) and Fe-B/MgO (right) searches, plotted as its relative energy dE/N above the
+model's own lowest energy against the vertical span of the film, ΔZ. The shaded band is the flat
+window (ΔZ ≤ 1.0 Å); the star marks the model's lowest-energy structure and the diamond the best
+member of its flat basin. Both panels use the same energy scale.
 
 **The island is the ground state in both models, despite the flat bias.** The lowest-energy
 structure found is an island in each model, with its global minimum at ΔZ = 3.65 Å (Fe/MgO) and
@@ -97,7 +111,8 @@ extrapolated to thick films.
 
 With the two phases established, we compare how adding boron to the Fe film shifts the flat basin.
 Table 4 gives the flat-basin minimum dE/N for the two models, i.e. the same host with and without
-the metalloid.
+the metalloid, and Fig. 3 places the two values side by side with the change between them
+marked.
 
 **Table 4.** Flat-basin minimum dE/N (eV/atom) for the same Fe host with and without boron.
 
@@ -105,6 +120,10 @@ the metalloid.
 |------|-------------------------------|----------|
 | Fe | 0.1888 | — |
 | Fe-B | 0.1493 | **−0.040** |
+
+**Figure 3.** Flat-basin minimum relative energy for the same Fe host with and without boron. A bar
+is the lowest energy found among the structures of the flat window (ΔZ ≤ 1.0 Å), in eV/atom above
+the model's own lowest energy, and the bracket gives the shift produced by boron.
 
 **Boron lowers the flat-state energy.** Adding boron lowers the flat basin's best member by
 0.040 eV/atom — from 0.1888 to 0.1493 eV/atom — a 21 % reduction of the flat–island separation.

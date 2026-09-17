@@ -135,7 +135,7 @@ Corrected in v9: `01_methods.md` (excluded-run names) and six places in `section
 ## Drafting status
 
 **Approval state is authoritative in `paper_status.md`** — read its "Drafting progress" table before
-drafting or revising anything. Summary as of 2026-09-17:
+drafting or revising anything. Summary as of 2026-09-18:
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
 - **Phase D: DONE for the main text** — 13 citations verified in `references.bib` (agox2020,
@@ -144,24 +144,29 @@ drafting or revising anything. Summary as of 2026-09-17:
   orphaned. The three MTJ placeholders were **withdrawn** and replaced by `yuasa2004`; no UNVERIFIED
   placeholders remain. Open: `fahsold2000`, `reitinger2007` and `torelli2009` are closed access and
   cited from verified abstracts only.
-- **Phase E: IN PROGRESS — no section is approved.**
+- **Phase E: IN PROGRESS — Methods, Results and Discussion APPROVED 2026-09-18.**
   - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
-    of code identifiers → needs review.
-  - `02_results.md` **v4** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
-    p = 0.0444) → needs review.
-  - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains.
-    **This is the gate: do NOT draft `04_introduction.md` until 03 is approved.**
+    of code identifiers → **APPROVED 2026-09-18**.
+  - `02_results.md` **v5** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
+    p = 0.0444) and Figures 2–3 cited and captioned → **APPROVED 2026-09-18**.
+  - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains →
+    **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; **the gate is now open.**
   - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
       budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
-      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. Awaiting review.
-  - `04`–`06` not drafted; no LaTeX until all sections are approved.
+      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. **Awaiting review — the only section left.**
+  - `04_introduction.md` **not yet drafted** (unblocked 2026-09-18); `05`/`06` not started; no LaTeX
+    until all sections are approved.
+  - **Editing an approved section voids its approval** and requires re-review — that is how the
+    earlier `01_methods.md` v3 approval was lost.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
   `a_Fe` (`interpolation_factor` = 0), so the confound that threatened the cross-host comparison no
   longer exists in scope. The **absolute** convention (inverse of the experimental stack) remains a
   stated limitation in §1.6/§3.4. History: `CLAIMS.md` → "RESOLVED by v9".
 - **float numbering:** sequential in order of appearance across the drafted sections.
-  Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 (Results); the SI has its own `S` series
+  Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 + Figures 2–3 (Results); the SI has its own `S` series
     (Tables S1–S6, Figures S1–S9 — S4/S5/S6 and S7/S8/S9 are the v10/v11 robustness studies). See `paper_status.md`.
+  Figures 2–3 are cited and captioned as of 2026-09-18; the side-view render is an uncited Figure 4
+  candidate (a 200 dpi preview — it would need a 300 dpi re-render to become a manuscript figure).
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 

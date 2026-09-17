@@ -1,14 +1,14 @@
 # 01 — Methods
      v6 (2026-09-17): the excluded searches are described in prose (iteration reached, structures
      missing) instead of by directory name, and the selection rule is no longer referred to by its
-     filename. Awaiting re-approval.
+     filename. APPROVED 2026-09-18.
 
      v5 (2026-09-17): re-scoped to the Fe host (CLAIMS v9) — the two Co-containing models, their
      generator schedule (former Table 3) and their excluded runs are out of the paper. Float
      renumbering follows: the Results tables become Tables 3 and 4. TO BE RE-APPROVED — no prior
      approval survives this edit.
 
-<!-- DRAFT v5 · section 01 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v6 · section 01 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v4 (2026-09-17): §1.2 gained the completed-search rule and the list of excluded runs (then
