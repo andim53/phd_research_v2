@@ -108,7 +108,7 @@ Corrected in v9: `01_methods.md` (excluded-run names) and six places in `section
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v10 (2026-09-17; supersedes v1–v9).** Drafting must not
+- **The claim list is FROZEN in `CLAIMS.md` v11 (2026-09-17; supersedes v1–v10).** Drafting must not
   introduce claims outside the list, and must not drop the paired caveats. Any new claim requires
   bumping `CLAIMS.md` to the next version first. The per-version history is in its changelogs; the
   standing content rules are:
@@ -151,9 +151,9 @@ drafting or revising anything. Summary as of 2026-09-17:
     p = 0.0444) → needs review.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains.
     **This is the gate: do NOT draft `04_introduction.md` until 03 is approved.**
-  - `SI.md` **v7** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 adds **§S4 (iteration
-    budget, SI-9)** and **§S5 (lattice constraint, SI-10)**, two new boron-free Fe/MgO robustness
-    studies. Awaiting review.
+  - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
+      budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
+      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. Awaiting review.
   - `04`–`06` not drafted; no LaTeX until all sections are approved.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
   `a_Fe` (`interpolation_factor` = 0), so the confound that threatened the cross-host comparison no
@@ -161,8 +161,7 @@ drafting or revising anything. Summary as of 2026-09-17:
   stated limitation in §1.6/§3.4. History: `CLAIMS.md` → "RESOLVED by v9".
 - **float numbering:** sequential in order of appearance across the drafted sections.
   Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 (Results); the SI has its own `S` series
-    (Tables S1–S5, Figures S1–S8 — S4/S5 and S7/S8 are the v10 robustness studies). See
-    `paper_status.md`.
+    (Tables S1–S6, Figures S1–S9 — S4/S5/S6 and S7/S8/S9 are the v10/v11 robustness studies). See `paper_status.md`.
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
 
@@ -182,6 +181,12 @@ drafting or revising anything. Summary as of 2026-09-17:
       4_latt_100}` (lattice constraint, §S5). Each arm is tested against **its own** budget via
       `run_selection`; scratch `trash/`/`_trash/` excluded. `_archive/latt_conc/0_latt_0` (f = 0) and
       the empty `1_latt_1` (f = 0.5) are out of scope.
+        - **Inverted stack (v11, QUALIFIED finding):** `data/mgofe` — an MgO film on an Fe substrate
+          (Fe25Mg25O25, cell = a_Fe = 2.866 Å experimental, 100 iterations, 5 completed searches). The
+          lowest structure found is a flat MgO film (the opposite of Fe-on-MgO), but the search does not
+          converge at 100 iterations (per-seed best spans ~0.8 eV/atom; only 1 of 5 searches reaches the
+          flat film), so SI-11 is a weak/negative result, not a clean claim. Flatness is over the
+          deposited film in each stack (Fe for femgo, MgO for mgofe).
   - **Rattle-strength study** (same femgo scheme): `param_ratt05` (rattle −0.5),
     `param_ratt1` (rattle −1.0).
   - **Method-parameter study:** `femgo_kappa/{1_k1,0_k3,2_k4}` (LCB kappa = 1/3/4),

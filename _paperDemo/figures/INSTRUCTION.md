@@ -14,6 +14,7 @@ $PY scripts/export_flat_xsf.py          # analysis/flat_structures/*.xsf
 $PY scripts/preview_flat_xsf.py         # flat_vs_ground_preview.png
 $PY scripts/iteration_budget.py         # figures/iteration_budget.png (SI-9, §S4)
 $PY scripts/lattice_constraint.py       # figures/lattice_constraint.png (SI-10, §S5)
+$PY scripts/mgo_on_fe.py                # figures/mgo_on_fe.png (SI-11, §S6 — qualified finding)
 ```
 
 ## Styling conventions (do not change silently)
@@ -63,6 +64,11 @@ the look of the figures, so they are listed for review.
       from 100 to the full budget. Panel (c) is the primary evidence. Open: whether to add the
       pooled-per-arm curve to (c), and whether the per-run lines in (a)/(b) should be thinned (17
       lines is busy) — e.g. show the median ± range per arm instead.
+- [ ] **`mgo_on_fe.png` (new, §S6, SI-11 — qualified finding).** Three panels: (a) per-seed best
+      energy of the inverted stack (shows the 59 eV spread), (b) the MgO film's ΔZ at each search's
+      best against the 1.0 Å threshold, (c) the flat-basin fraction per search. Open: whether a
+      fourth panel comparing the two stacks' film-ΔZ distributions would make the inversion clearer
+      than Table S6 does.
 - [ ] **`lattice_constraint.png` (new, §S5, SI-10).** Three panels: (a) separation vs the constraint
       with per-search scatter, (b) ΔZ distributions per arm, (c) per-search spread. Open: whether
       the main-text reference (f = 0) should be a distinct marker in (a) — it currently is the leftmost

@@ -1,7 +1,12 @@
 # Supplementary Material
+     v8 (2026-09-17): §S6 (the inverted stack, MgO on Fe) added as a QUALIFIED finding (SI-11,
+     CLAIMS v11) — the lowest structure found is a flat MgO film, the opposite of Fe-on-MgO, but
+     the search does not converge at 100 iterations (only 1 of 5 searches reaches it). New floats:
+     Table S6 + Figure S9 (§S6). Awaiting review.
+
      v7 (2026-09-17): §S4 (iteration budget, SI-9) and §S5 (lattice constraint, SI-10) added —
      two new boron-free Fe/MgO robustness studies (CLAIMS v10). New floats: Table S4 + Figure S7
-     (§S4), Table S5 + Figure S8 (§S5). Awaiting review.
+     (§S4), Table S5 + Figure S8 (§S5).
 
      v6 (2026-09-17): no code in the section — figure captions no longer carry file paths, the two
      perturbation generators, the reference-construction routine and the 2.3 Å construction distance
@@ -19,13 +24,14 @@
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
      S3 numbers purged to completed searches only.
 
-<!-- DRAFT v7 · supplementary document (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v10 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
+<!-- DRAFT v8 · supplementary document (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [drafted here]
        S3  Method-parameter sensitivity (rattle / kappa / dipole) [drafted here]
        S4  Iteration budget — does the comparison survive a longer search?  [drafted here, v10]
        S5  Lattice constraint — which phase sets the in-plane lattice?  [drafted here, v10]
+       S6  The inverted stack (MgO on Fe) — QUALIFIED finding  [drafted here, v11]
      SI figures are flagged [SI]; SI claims are prefixed [SI] in paper_status.md.
      S1's claim is CLAIMS SI-8 (v4; signed off 2026-09-17).
      S2 drafted 2026-09-17 (CARRIES the v6 reframing: the island's gain is reduced forced
@@ -35,6 +41,9 @@
      S3 drafted 2026-09-17. Claims SI-5 (kappa), SI-6 (dipole), SI-7 (rattle).
      S4 drafted 2026-09-17 (v10). Claim SI-9 (iteration budget). Fe/MgO, boron-free.
      S5 drafted 2026-09-17 (v10). Claim SI-10 (lattice constraint). Fe/MgO, boron-free.
+     S6 drafted 2026-09-17 (v11). Claim SI-11 — QUALIFIED/weak: the inverted stack (MgO film on
+     Fe substrate) finds a flat MgO film lowest (the opposite of Fe-on-MgO) but the search does
+     not converge at 100 iterations (only 1 of 5 searches reaches it). Boron-free.
      Only completed searches (100 iterations) are used, everywhere in this paper. See CLAIMS v8:
      unfinished runs biased the original comparison, and "kappa = 1 is best" was retracted as an
      artefact of one such run sitting in the baseline. -->
@@ -388,5 +397,54 @@ MT-2) and the strain-convention limitation, not the boron effect (MT-3). The *f*
 arms of the sweep are outside the paper's scope, and the sweep's Fe lattice constant (2.866 Å, the
 experimental value) differs from the main text's computed value (2.87019 Å) by 0.15 %, so the
 Fe-matched reference is the paper's own model rather than a sweep arm. Absolute energies are not
-comparable across arms (the cells differ); only the separation within an arm is meaningful.
+comparison across arms (the cells differ); only the separation within an arm is meaningful.
+
+
+## S6 The inverted stack: an MgO film on an Fe substrate
+
+The main text studies Fe deposited on MgO, and finds an island ground state. Here we ask whether the
+wetting of the deposited layer is **symmetric** — whether a film behaves the same way when it is the
+oxide that is deposited. The **inverted stack** was run: an **MgO film on an Fe substrate**, the same
+system and the same scheme (Fe25Mg25O25, 100 iterations, κ = 2, the same two perturbation generators,
+cell at the experimental Fe lattice constant, 2.866 Å), with 5 completed searches.
+
+**Method.** The flatness is measured over the **deposited film** in each stack — Fe for Fe-on-MgO,
+MgO (Mg + O) for MgO-on-Fe — so the comparison is apples-to-apples on wetting. (ΔZ over Fe in the
+inverted stack would measure the substrate, which is flat by construction.) The flat/island split is
+ΔZ ≤ 1.0 Å of the film, and only iterations ≥ 10 are used. Completed searches only; a sixth search
+that stopped at iteration 26 is excluded.
+
+**Table S6.** The inverted stack, per search, with the Fe-on-MgO model for contrast.
+
+| Stack | Searches | Ground state found | ΔZ of the film at the ground state | Flat fraction | Per-seed best spread |
+|---|---|---|---|---|---|
+| Fe on MgO (main text) | 13 | island | 3.65 Å | 0.165 | 0.086 eV/atom |
+| **MgO on Fe (inverted)** | 5 | **flat film** | **0.39 Å** | 0.092 | **0.79 eV/atom** |
+
+**Figure S9.** (a) the best energy of each of the 5 searches of the inverted stack, showing the
+spread between them; (b) the MgO film's ΔZ at each search's best structure, against the 1.0 Å
+flat/island threshold; (c) the flat-basin fraction sampled by each search.
+
+**The lowest structure found is a flat MgO film — the opposite of Fe-on-MgO.** In the inverted stack
+the global minimum found is a **flat MgO film** (ΔZ = 0.39 Å), lying **0.016 eV/atom below** the best
+island found. For Fe-on-MgO the ordering is reversed: the island is the ground state and the flat
+film sits 0.189 eV/atom above it. The sign of the wetting preference is therefore inverted between
+the two stacks. *(SI-11)*
+
+**But the inverted-stack result is not converged, and the contrast is not robust.** The 5 searches
+disagree with each other far more than the Fe-on-MgO searches do: their best energies span
+**59 eV (~0.8 eV/atom)**, against ~0.09 eV/atom across the 13 Fe-on-MgO searches. The structures are
+physically sound (the smallest interatomic distance is 1.6–2.0 Å in every case), so this is a failure
+to converge at the 100-iteration budget rather than a broken calculation — and only **one** of the
+five searches reaches the flat film at all; the other four terminate in island configurations 25–59 eV
+higher. The flat-film-is-lowest statement therefore rests on a single search and a marginal energy
+gap, and it should be read as an indication that the wetting preference may invert with the stack,
+not as an established result. Establishing it would require searches run to convergence, or an
+understanding of why four of the five searches diverge.
+
+**Caveats.** Both stacks here are boron-free, so this bounds the structural result only; the boron
+effect was not studied in the inverted stack. The inverted stack has fewer completed searches (5
+against 13), and the film in each case is about one monolayer, so the comparison is between
+monolayer films on single-layer substrates.
+
 
