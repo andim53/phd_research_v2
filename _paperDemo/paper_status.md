@@ -107,11 +107,17 @@ end, so a fresh session does not re-open them.
 
 - [x] **B1 · Methods, Results and Discussion APPROVED 2026-09-18.** `01_methods.md` v6,
       `02_results.md` v5 and `03_discussion.md` v5 were reviewed by the scientist and approved
-      **as-is**, so **the gate for `04_introduction.md` is open**. `SI.md` v8 is the only drafted
+      **as-is**, so **the gate for the introduction (section 04) is open**. `SI.md` v8 is the only drafted
       section still awaiting review; `05_conclusion.md` / `06_abstract.md` are not started, and there
       is no LaTeX port until all six are approved. The approvals are recorded in each section's head
       block (`APPROVED 2026-09-18`) — any later edit to an approved section voids its approval again,
       per the governing rule.
+- [ ] **B2 · Review `04_introduction.md` v1 — DRAFTED 2026-09-18, awaiting review.** The newly
+      opened gate. It closes on the frozen contribution sentence with the quoted shift and the
+      significance value removed (moved to the Results), and it carries no floats. Two things inside
+      it are new rather than restatements, and are listed separately below as **C7** (the
+      confusion-principle framing now appears in the Introduction) and **E3** (three device-side
+      references were added for it). Neither can be answered by an agent.
 
 **C. Wording and framing**
 
@@ -133,6 +139,13 @@ end, so a fresh session does not re-open them.
       Results §2.1 (v9) rather than adding an S4. Draft one later if it is wanted in print.
 - [ ] **C6 · The `<!-- DRAFT vN -->` comment at the head of each section** is the last version
       reference inside a section file (it is stripped at the port). Move it here, or leave it?
+- [ ] **C7 · The confusion-principle framing now appears in the Introduction.** `04_introduction.md`
+      §4 uses it as *motivation* — that added species stabilise disordered configurations
+      (`greer1993`), applied to the flat/disordered-like film against the island/ordered-like cluster —
+      and points forward to the Discussion for the reading itself. The claim list places this
+      interpretation in the **Discussion only** ("Discussion-only interpretations"), so its appearance
+      in §4 is a **placement extension** and the scientist's call: keep it as motivation, drop
+      the sentence, or reduce it to a forward pointer with no reading stated.
 
 **D. Figures** — detail and reasoning: `figures/INSTRUCTION.md` → open questions
 
@@ -165,6 +178,22 @@ end, so a fresh session does not re-open them.
       close this.
 - [ ] **E2 · Stale `.bib` keys.** `agox2020` / `gofee2017` carry year 2022 in the `.bib` while the
       keys are surname+year. Left as-is so far because the sections cite them.
+- [ ] **E3 · Three device-side references added for the Introduction — accept or drop.** The 13-key
+      set contained nothing for the *device* motivation, so `sections/04_introduction.md` cites three
+      new keys, each verified 2026-09-18 by DOI content negotiation and confirmed in a second index:
+
+      | key | what it is cited for |
+      |---|---|
+      | `parkin2004` | the second, independent report of giant room-temperature magnetoresistance with a crystalline MgO(100) barrier |
+      | `djayaprawira2005` | boron-bearing amorphous electrode as the condition under which the MgO barrier grows (001)-textured |
+      | `ikeda2008` | barrier (001) orientation and stress relaxation developing on annealing |
+
+      All three are CoFeB/MgO device papers. The prose names no CoFeB and discusses no Co host — it
+      says "boron-bearing amorphous electrodes" and "MgO-based magnetic tunnel junctions" — so citing
+      them is not a scope breach, but the scientist may prefer to drop them (the two AIP papers in
+      particular) and leave the device motivation to `yuasa2004` + `butler2001` alone. Dropping a key
+      is a one-line edit in §4 plus its `.bib` entry; `references.bib` now holds **18** keys and every
+      one is cited by some section (no orphans).
 
 **Decided — not open** (listed so they are not re-opened): the Fe-host-only scope (v9); the PES
 panels' shared energy range, anchored to the Fe/MgO ceiling, with 25 Fe-B points off-scale by
@@ -183,22 +212,28 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 | `02_results.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is). Approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4 — Co results and the 2×2 design removed; Tables 4–5 → 3–4), figures cited (v5 — Figures 2–3 captioned and called out; no number changed). |
 | `03_discussion.md` | **v5** | **APPROVED 2026-09-18** (reviewed as-is) — **the gate for `04_introduction.md` is open.** The cobalt section is deleted; no sentence about the Co host remains. |
 | `SI.md` | **v8** | **Awaiting review — the only section left.** v4–v6 were scope/history/code cleanups with no content change; v7 added §S4 (SI-9) and §S5 (SI-10); **v8 adds §S6 (the inverted stack, MgO on Fe, SI-11) as a QUALIFIED finding** (CLAIMS v11). §S1–§S3 unchanged. |
-| `04_introduction.md` | — | **UNBLOCKED 2026-09-18** (03 approved) — **not yet drafted.** |
+| `04_introduction.md` | **v1** | **DRAFTED 2026-09-18 — awaiting review.** The first draft of the section that was released when `03` was approved. Continuous prose with no subsections; no floats. Closes on the frozen contribution sentence with the quoted shift and the significance value removed, and cites three new device-side keys (`parkin2004`, `djayaprawira2005`, `ikeda2008`) — see **E3**. Carries the confusion-principle framing as motivation, which the claim list places in the Discussion only — see **C7**. |
 | `05_conclusion.md`, `06_abstract.md` | — | Not started. |
 | E2 port to `paper.tex` | — | Not started; no LaTeX until all sections are approved. |
 
 **Approvals (2026-09-18).** `01_methods.md` v6, `02_results.md` v5 and `03_discussion.md` v5 are
 approved as-is; each carries `APPROVED 2026-09-18` in the head block of its file. Editing an approved
 section voids its approval and requires re-review (this is how the v3/v4 Methods approval was lost).
+The introduction, drafted the same day, is **not** approved.
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
-been rewritten, see OPEN). **Phase D: DONE** for the main text (13 citations verified, every
-`\cite{}` key resolves, none orphaned). **Phase F/G: not started.**
+been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
+device-side references the 13-key set did not contain, so three were verified and added
+(`parkin2004`, `djayaprawira2005`, `ikeda2008`; see **E3**). `references.bib` now holds **16 citations
+for the main text** (18 entries including the two lattice-constant references cited only by the SI);
+every `\cite{}` key in `sections/` resolves and no entry is orphaned — re-checked by script over all
+five section files. **Phase F/G: not started.**
 
 ## Float numbering (v9)
 
 Sequential in order of appearance across the drafted sections. Deleting the Fe-Co generator table
-shifted the Results floats.
+shifted the Results floats. **The Introduction (v1) carries no float** and introduces none, so the
+numbering below is unchanged by it.
 
 | Float | Location | Content |
 |---|---|---|
@@ -540,14 +575,22 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**The gate is open: `04_introduction.md` can be drafted.** `01_methods.md` v6, `02_results.md` v5 and
-`03_discussion.md` v5 were approved as-is on 2026-09-18, so the block-and-wait gate has moved on.
-`SI.md` v8 is the one drafted section still awaiting review — reviewing it does **not** block the
-introduction (the gate for `04` was `03`, now approved), but nothing else in the paper can be
-finalised until it is signed off. After `04`, the order is `05_conclusion.md` → `06_abstract.md` →
-the `paper.tex` port; no LaTeX before all six sections are approved.
+**`04_introduction.md` v1 is drafted and awaiting review (item B2).** It was written after Methods v6,
+Results v5 and Discussion v5 were approved on 2026-09-18. Two things inside it need the scientist
+rather than an agent: the confusion-principle framing appears in the Introduction although the claim
+list places it in the Discussion (**C7**), and three device-side references were added for the section
+(**E3**). Everything else in it restates a number already frozen in the approved Results.
+
+`SI.md` v8 is the last drafted section still awaiting review. After `04` is approved the order is
+`05_conclusion.md` → `06_abstract.md` → the `paper.tex` port; no LaTeX before all six sections are
+approved.
 
 Everything else that is open is the scientist's, not the agent's: the consolidated decision checklist
-above (A1–A4 claims sign-off, C1–C6 wording, D1–D6 figures, E1–E2 references) is the one place to work
+above (A1–A4 claims sign-off, C1–C7 wording, D1–D6 figures, E1–E3 references) is the one place to work
 from. The largest open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host
 structures selected, re-relaxation not run).
+
+**One internal inconsistency left for the sign-off, not fixed here:** the contribution sentence in
+`CLAIMS.md` still quotes "two-sided permutation p = 0.045", the v8 Monte-Carlo value, while MT-3 in the
+same file and the approved Results both carry the v9 exact value **0.0444** (item A1/A2). The
+Introduction deliberately avoids quoting either. Fixing it is part of re-signing the sentence.

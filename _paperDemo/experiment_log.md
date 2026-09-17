@@ -1471,3 +1471,66 @@ number, table, figure or section body was altered.
 **Committed together** with the still-pending 2026-09-18 v5 figure-call-out work, which had been left
 uncommitted in the working tree.
 
+## 2026-09-18 — `04_introduction.md` v1 drafted; three device-side references verified and added
+
+The first section drafted against an open gate. Written after the block-and-wait gate moved on
+(Methods v6, Results v5, Discussion v5 approved the same day), so it could be framed against a known
+ending rather than in parallel with the analysis.
+
+**Framing, settled with the scientist before drafting.**
+
+- **Device wording stays generic.** The Introduction says "MgO-based magnetic tunnel junctions" and
+  "boron-bearing amorphous electrodes"; it names no CoFeB and discusses no Co *host*, matching the
+  approved §3.3 (open item C2).
+- **The closing sentence carries no numbers.** The frozen contribution sentence of `CLAIMS.md` v11 is
+  reproduced with its quoted shift (~0.04 eV/atom) and its significance value removed; both belong to
+  the Results, where they are already stated. The wording is otherwise verbatim.
+- **Citation scope was re-opened** (Phase D) rather than written inside the existing set — see below.
+
+**The argument.** Five paragraphs: (1) MgO barriers give very large room-temperature tunnel
+magnetoresistance and the effect's first-principles account was given for an *ideal* flat interface,
+while the device requires a (001)-oriented barrier and a flat, continuous film; (2) at monolayer
+coverage, however, growth experiments find the film dewetting into 3D islands, with a flat
+pseudomorphic monolayer obtained only by slow deposition — so two configurations compete, the
+experiments constrain their *kinetics* rather than their relative energies, and interface models
+assume the flat geometry by construction; that gap is the paper's question. (3) The electrodes are
+boron-bearing and amorphous as deposited, and added species are understood to stabilise disordered
+configurations — the confusion-principle reading, explicitly deferred to the Discussion. (4) What was
+done: two models differing only by the boron, sampled with a deliberately flat-biased search, with
+the mechanistic and robustness work in the SI, and the non-convergence caveat stated here rather than
+left to the Methods. (5) What was found, closing on the contribution sentence.
+
+**Every number in it is already frozen** — the two flat-basin minima (0.1888 / 0.1493 eV/atom), the
+0.040 eV/atom shift and its 21 % reading of the separation, the island spans (~3.7 Å), the exact
+search-level statistic (p = 0.0444 over all 27 132 partitions, floor 3.7 × 10⁻⁵, 19 searches), and
+the windowed boron–oxygen count (1 of 72). Nothing in §4 is a claim outside the frozen list, so
+`CLAIMS.md` was **not** bumped. No float is introduced, so the float numbering is unchanged.
+
+**Phase D re-opened: three references verified and added.** The 13-key set contained nothing that
+could carry the device motivation, so three were fetched by DOI content negotiation and confirmed in a
+second index (publisher page plus ADS/ResearchGate/IBM Research):
+
+| key | DOI | cited for |
+|---|---|---|
+| `parkin2004` | 10.1038/nmat1256 | the second, independent report of giant room-temperature magnetoresistance with a crystalline MgO(100) barrier |
+| `djayaprawira2005` | 10.1063/1.1871344 | boron-bearing amorphous electrode as the condition under which the MgO barrier grows (001)-textured |
+| `ikeda2008` | 10.1063/1.2976435 | barrier (001) orientation and stress relaxation improving on annealing |
+
+`references.bib` holds **18** keys, all cited, none orphaned; every `\cite{}` key across the five
+section files resolves (checked by script). All three are CoFeB/MgO device papers — citing them is not
+a scope breach (the prose names no alloy and no Co host), but they are flagged for the scientist to
+accept or drop (**E3**).
+
+**Two items the section raises that no agent can settle** (both added to the checklist):
+**C7** — the confusion-principle framing now appears in the Introduction as motivation, whereas the
+claim list assigns that interpretation to the Discussion only; **E3** — the three new references above.
+**A third is recorded but deliberately not fixed:** the contribution sentence in `CLAIMS.md` still
+quotes the v8 Monte-Carlo p = 0.045 while MT-3 in the same file and the approved Results carry the v9
+exact 0.0444; the Introduction quotes neither. Fixing it belongs with re-signing the sentence (A1/A2).
+
+**Doc sync.** `paper_status.md` — B2/C7/E3 added to the checklist, the drafting table gains the
+`04_introduction.md` v1 row, the Phase D line records the re-open and the new key count, the float
+section notes that the Introduction carries no float, and "Next step" is rewritten around B2.
+`AGENTS.md` — Phase D key list, Phase E block and the float-numbering line. `references.bib` — the
+three entries in a new dated block.
+

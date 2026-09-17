@@ -138,24 +138,32 @@ Corrected in v9: `01_methods.md` (excluded-run names) and six places in `section
 drafting or revising anything. Summary as of 2026-09-18:
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
-- **Phase D: DONE for the main text** — 13 citations verified in `references.bib` (agox2020,
+- **Phase D: DONE for the main text** — 16 citations verified in `references.bib` (agox2020,
   gofee2017, oganov2011, gpaw2014, pbe1996, greer1993, urano1988, butler2001, yuasa2004,
-  reitinger2007, fahsold2000, larsen2009, torelli2009); every `\cite{}` key resolves and none is
-  orphaned. The three MTJ placeholders were **withdrawn** and replaced by `yuasa2004`; no UNVERIFIED
-  placeholders remain. Open: `fahsold2000`, `reitinger2007` and `torelli2009` are closed access and
-  cited from verified abstracts only.
-- **Phase E: IN PROGRESS — Methods, Results and Discussion APPROVED 2026-09-18.**
+  reitinger2007, fahsold2000, larsen2009, torelli2009, plus the three added 2026-09-18 for the
+  Introduction: **parkin2004, djayaprawira2005, ikeda2008** — device-side, see `paper_status.md`
+  item **E3**); every `\cite{}` key resolves and none is orphaned. The three MTJ placeholders were
+  **withdrawn** and replaced by `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`,
+  `reitinger2007` and `torelli2009` are closed access and cited from verified abstracts only.
+- **Phase E: IN PROGRESS — Methods, Results and Discussion APPROVED 2026-09-18; the Introduction
+  drafted and awaiting review.**
   - `01_methods.md` **v6** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**.
   - `02_results.md` **v5** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
     p = 0.0444) and Figures 2–3 cited and captioned → **APPROVED 2026-09-18**.
   - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains →
     **APPROVED 2026-09-18.** It was the gate for `04_introduction.md`; **the gate is now open.**
+  - `04_introduction.md` **v1** — **DRAFTED 2026-09-18, awaiting review.** Continuous prose, no
+    subsections, no floats. Closes on the frozen contribution sentence with the quoted shift and the
+    significance value removed (they belong to the Results). Cites three new device-side keys; the
+    device material is referred to generically and no Co host is discussed. Two items inside it are
+    the scientist's call and are recorded in `paper_status.md`: **C7** (the confusion-principle
+    framing appears in the Introduction, which the claim list places in the Discussion only) and
+    **E3** (the three new references, accept or drop).
   - `SI.md` **v8** — §S1, §S2, §S3 are Fe/MgO and content-unchanged; v7 added **§S4 (iteration
       budget, SI-9)** and **§S5 (lattice constraint, SI-10)**; v8 adds **§S6 (the inverted stack,
-      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. **Awaiting review — the only section left.**
-  - `04_introduction.md` **not yet drafted** (unblocked 2026-09-18); `05`/`06` not started; no LaTeX
-    until all sections are approved.
+      MgO on Fe, SI-11)** as a **QUALIFIED/weak** finding. **Awaiting review.**
+  - `05`/`06` not started; no LaTeX until all sections are approved.
   - **Editing an approved section voids its approval** and requires re-review — that is how the
     earlier `01_methods.md` v3 approval was lost.
 - **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
@@ -163,7 +171,8 @@ drafting or revising anything. Summary as of 2026-09-18:
   longer exists in scope. The **absolute** convention (inverse of the experimental stack) remains a
   stated limitation in §1.6/§3.4. History: `CLAIMS.md` → "RESOLVED by v9".
 - **float numbering:** sequential in order of appearance across the drafted sections.
-  Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 + Figures 2–3 (Results); the SI has its own `S` series
+  Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 + Figures 2–3 (Results); the Introduction
+    carries no float; the SI has its own `S` series
     (Tables S1–S6, Figures S1–S9 — S4/S5/S6 and S7/S8/S9 are the v10/v11 robustness studies). See `paper_status.md`.
   Figures 2–3 are cited and captioned as of 2026-09-18; the side-view render is an uncited Figure 4
   candidate (a 200 dpi preview — it would need a 300 dpi re-render to become a manuscript figure).

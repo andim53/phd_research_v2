@@ -2,7 +2,7 @@
      v5 (2026-09-17): re-scoped to the Fe host (CLAIMS v9) — the cobalt section is deleted (no
      sentence about the Co host anywhere), the host-independence argument and the element-count
      data bound are gone, §3.5 renumbered to §3.4 and its search-count paragraph rewritten for
-     the exact test. APPROVED 2026-09-18 — the gate for `04_introduction.md` is open.
+     the exact test. APPROVED 2026-09-18 — the gate for the introduction is open.
 
 <!-- DRAFT v5 · section 03 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). All \cite{} keys resolve against
