@@ -7,10 +7,15 @@
        S3  Method-parameter sensitivity (rattle / kappa / dipole) [documented in experiment_log.md]
      SI figures are flagged [SI]; SI claims are prefixed [SI] in paper_status.md.
      S1's claim is CLAIMS SI-8 (v4; signed off 2026-09-17).
-     S2, when drafted, MUST carry the v6 reframing: the island's gain is reduced forced
-     interfacial coupling plus restored metal cohesion (SI-3 — NOT lattice-strain relief), and
-     the Fe-atop-O registry is inherited from the reference construction and is a consistency
-     check against the measured registry (SI-4), not a search prediction. -->
+     S2 drafted 2026-09-17 (CARRIES the v6 reframing: the island's gain is reduced forced
+     interfacial coupling plus restored metal cohesion — NOT lattice-strain relief; the
+     Fe-atop-O registry is inherited from the reference construction and is a consistency
+     check, not a search prediction). Claims SI-1 … SI-4.
+     S3 NOT drafted — blocked on a data-integrity finding: every sensitivity family except
+     kappa=1 contains truncated searches (iteration max < 100) whose per-seed best is a
+     severe outlier (0.23-0.35 eV/atom vs ~0.03-0.09), which inflates the mean and SD of the
+     family it sits in, and the contamination is not uniform across settings (see
+     experiment_log.md, "Truncated searches in the method-sensitivity families"). -->
 
 ## S1 Performance of the biased exploration in finding the global minimum
 
@@ -63,3 +68,102 @@ individual structure. Iteration is an AGOX counter, not a computational cost: ea
 generates 20 candidates and evaluates a fixed number of them. The search is biased — it is seeded
 from a flat reference layer — so the curve is a performance characteristic of this scheme rather
 than an unbiased global-optimisation benchmark, and the quantities are specific to Fe/MgO.
+
+## S2 Electronic-structure origin of the flat → island transition
+
+Section 3.1 attributes the island ground state to the loss of forced interfacial coupling. Here
+we test that reading directly, by comparing the **flat reference monolayer** (ΔZ = 0.000 Å) with
+the **island ground state** (ΔZ = 3.652 Å) of the Fe/MgO model in the *same* projection set, so
+the two are directly comparable (GPAW LCAO/dzp, PBE, kpts (12, 12, 1), 2000 points,
+width 0.15 eV, Fermi-shifted). Projections are per atom: Fe `dz2` (l = 2, m = 2) and O `pz`
+(l = 1, m = 0). d-band moments are taken over [−5, +3] eV around E_F. All numbers in this section
+trace to `analysis/pdos_metrics.csv` and `analysis/interface_analysis.csv`.
+
+**Figure S2.** `figures/pdos_flat_vs_island.png` — total DOS, Fe-dz2 and O-pz for the flat
+monolayer (blue) and the island ground state (red).
+
+**Table S1.** Density-of-states metrics for the two configurations. *[SI-1, SI-2]*
+
+| Quantity | Flat | Island | Δ (island − flat) |
+|---|---|---|---|
+| d-band centre (eV) | −0.2294 | +0.6013 | **+0.83 (up)** |
+| d-band width (eV) | 1.4171 | 1.3139 | −0.10 (narrower) |
+| Fe-dz2 integral | 31.7136 | 33.8763 | +2.16 (more filled) |
+| O-pz integral | 43.8799 | 42.3738 | −1.51 (−3.4 %) |
+| Spin polarisation | 5.8050 | 4.3695 | −1.44 (less magnetic) |
+| DOS at E_F | 103.9621 | 78.0885 | **−25.9 (−25 %)** |
+
+**Islanding reduces Fe–O hybridisation.** *[SI-1]* Going flat → island, the Fe d-band centre rises
+by **+0.83 eV** while the O-pz integral falls by 3.4 % and the Fe-dz2 manifold becomes slightly
+narrower (−0.10 eV) and more filled (+2.16). The flat monolayer is therefore the more strongly
+Fe–O hybridised of the two: it mixes more O-p character and its Fe d-states sit lower, whereas the
+island's d-states shift up and localise. We note explicitly that **no bulk-Fe reference was
+computed**, so this shift is not calibrated against bulk Fe and no "bulk-like" comparison is made;
+the claim is the direction and magnitude of the change between the two configurations, nothing
+more.
+
+**Islanding weakens the magnetic and electronic activity at E_F.** *[SI-2]* The spin polarisation
+falls from 5.81 to 4.37 and the DOS at the Fermi level drops by 25 % (104.0 → 78.1). The flat
+monolayer is the electronically "hotter" configuration; the island is quieter.
+
+**Defining the interface by geometry, not by height.** An early version of this analysis split the
+Fe atoms into bottom-8 and top-8 by z. That split is arbitrary — the island is a buckled cluster,
+not a stack of layers — and it is superseded here by a geometric criterion: **interface Fe := Fe
+with a nearest O within 2.8 Å**, i.e. Fe actually in contact with the oxide. By this criterion the
+flat monolayer is 25/25 interface atoms and the island only 9/25.
+
+**Figure S3.** `figures/interface_registry_topview.png` — top view of the interface, showing the
+metal atoms registered directly above the substrate oxygen on the MgO(001) lattice.
+
+**Table S2.** Site-resolved d-band metrics and the Fe-on-O registry, by geometric group. The last
+two columns are the mean **nearest**-O distance and the mean in-plane offset from the nearest
+substrate atom (0 = directly atop); for groups that include non-contacting Fe these are not bond
+lengths. *[SI-3, SI-4]*
+
+| Structure | Group | n | d-centre (eV) | width (eV) | ∫ | ⟨nearest d_Fe–O⟩ (Å) | ⟨offset⟩ (Å) |
+|---|---|---|---|---|---|---|---|
+| Flat | interface (= all) | 25 | **−0.2294** | 1.4171 | 31.7136 | 2.3000 | 0.0000 |
+| Island | interface (d_Fe–O < 2.8 Å) | 9 | **+0.5106** | 1.5165 | 12.2134 | 2.3311 | 0.3722 |
+| Island | non-interface | 16 | +0.6524 | 1.1815 | 21.6629 | 4.3462 | 0.4726 |
+| Island | all | 25 | +0.6013 | 1.3139 | 33.8763 | 3.6208 | 0.4365 |
+
+**The island's true interface Fe are not flat-like.** *[SI-3]* Restricting the comparison to the
+9 Fe atoms genuinely in O contact does not recover the flat signature: their d-band centre is
+**+0.5106 eV**, against −0.2294 eV for the flat monolayer — a difference of 0.74 eV, larger than
+the spread between the island's interface (+0.5106) and non-interface (+0.6524) groups. Two
+features of the model matter here. First, the two groups sit at essentially the **same nearest-O
+distance** (2.3311 Å island vs 2.3000 Å flat), and that distance is the construction parameter
+`dist_fe2o = 2.3 Å` surviving relaxation (§1.3) rather than an emergent quantity — so the
+electronic difference **cannot** be a per-bond-length effect. Second, the flat layer's registry is
+perfect (offset 0.0000 Å) and uniform, whereas the island's 9 contacts are buckled (offset
+0.3722 Å) and only a third of the film. The flat monolayer's strong Fe–O coupling is therefore a
+**collective** property of all 25 metal atoms being registry-locked in one plane, not a property
+of an individual Fe–O bond.
+
+**The Fe-atop-O registry is a consistency check.** *[SI-4]* Every in-contact Fe sits directly atop
+an oxygen — 25/25 in the flat monolayer and 9/9 in the island — and **none** atop Mg. This is the
+registry determined experimentally for the first monolayer of Fe on MgO(001) by LEED I–V analysis
+\cite{urano1988} and used in first-principles models of the Fe|MgO|Fe interface \cite{butler2001},
+and it is also the registry the reference layer is built with: `build_mgo_stack` places the
+substrate oxygen directly above the metal sites, so the flat film's registry follows from the
+construction as much as from the physics. It is reported here as a **consistency check, not as a
+prediction of the search**. What the search does add is the island's behaviour: the Fe that remain
+in contact keep O as their nearest in-plane neighbour (9/9) rather than switching to Mg, so the
+island reduces the *number* of Fe–O contacts (25 → 9) without abandoning their character.
+
+**Combined picture.** The flat monolayer maximises Fe–O coupling by locking every metal atom into
+one registered plane, at the cost of the three-dimensional Fe–Fe coordination available to a
+cluster; the island reverses that trade, retaining strong individual Fe–O bonds for the third of
+its atoms that remain in contact while restoring metal cohesion for the rest. This is the
+mechanism stated in §3.1 as **reduced forced interfacial coupling plus restored metal cohesion**.
+It is explicitly **not** a lattice-strain effect: the in-plane mismatch of this interface is
+carried by the substrate, which is held fixed, and the metal film sits at its own equilibrium
+lattice constant (§1.1, §3.5).
+
+**Caveats.** These are single-point electronic structures on surrogate-relaxed, non-converged
+geometries (residual forces ~1–2 eV/Å), and a DOS carries no total energy — the energy ordering
+between the two configurations comes from the search energies, not from these curves, and a
+quantitative claim would require re-relaxed geometries. The d-band moments depend on the
+[−5, +3] eV window, which is a convention. The analysis is for Fe/MgO only; the other three models
+were not recomputed. `analysis/pdos_site_metrics.csv` and `figures/pdos_sites.png` come from the
+superseded bottom-8/top-8 split and should not be used; Table S2 supersedes them.

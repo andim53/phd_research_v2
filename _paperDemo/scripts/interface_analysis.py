@@ -98,14 +98,20 @@ def main():
             if r is None:
                 continue
             c, w, area, up, dn = r
-            print(f"    {gname:14s} n={len(idx):3d}  d-centre={c:+.3f} eV  width={w:.3f}  int={area:.2f}")
-            rows_out.append([name, gname, len(idx), f"{c:.4f}", f"{w:.4f}", f"{area:.4f}"])
+            mdO = float(np.mean([info[i]['dO'] for i in idx]))
+            moff = float(np.mean([info[i]['offset'] for i in idx]))
+            print(f"    {gname:14s} n={len(idx):3d}  d-centre={c:+.3f} eV  width={w:.3f}  int={area:.2f}"
+                  f"  d_Fe-O={mdO:.3f}  offset={moff:.3f}")
+            rows_out.append([name, gname, len(idx), f"{c:.4f}", f"{w:.4f}", f"{area:.4f}",
+                             f"{mdO:.4f}", f"{moff:.4f}"])
         rows_out.append([name, 'REGISTRY', len(iface), f"on_O={n_on_O}", f"on_Mg={n_on_Mg}",
-                         f"mean_offset={np.mean(offsets):.3f}"])
+                         f"mean_offset={np.mean(offsets):.3f}",
+                         f"{np.mean(dOs):.4f}", f"{np.mean(offsets):.4f}"])
 
     with open('analysis/interface_analysis.csv', 'w', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['case','group','n','d_band_centre_eV','d_band_width_eV','integral'])
+        w.writerow(['case','group','n','d_band_centre_eV','d_band_width_eV','integral',
+                    'mean_nearest_d_FeO_A','mean_inplane_offset_A'])
         w.writerows(rows_out)
     print('\nwrote analysis/interface_analysis.csv')
 

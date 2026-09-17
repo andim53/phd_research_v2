@@ -1,8 +1,8 @@
-case,group,n,d_band_centre_eV,d_band_width_eV,integral
-FLAT,interface,25,-0.2294,1.4171,31.7136
-FLAT,all,25,-0.2294,1.4171,31.7136
-FLAT,REGISTRY,25,on_O=25,on_Mg=0,mean_offset=0.000
-ISLAND,interface,9,0.5106,1.5165,12.2134
-ISLAND,non-interface,16,0.6524,1.1815,21.6629
-ISLAND,all,25,0.6013,1.3139,33.8763
-ISLAND,REGISTRY,9,on_O=9,on_Mg=0,mean_offset=0.372
+case,group,n,d_band_centre_eV,d_band_width_eV,integral,mean_nearest_d_FeO_A,mean_inplane_offset_A
+FLAT,interface,25,-0.2294,1.4171,31.7136,2.3000,0.0000
+FLAT,all,25,-0.2294,1.4171,31.7136,2.3000,0.0000
+FLAT,REGISTRY,25,on_O=25,on_Mg=0,mean_offset=0.000,2.3000,0.0000
+ISLAND,interface,9,0.5106,1.5165,12.2134,2.3311,0.3722
+ISLAND,non-interface,16,0.6524,1.1815,21.6629,4.3462,0.4726
+ISLAND,all,25,0.6013,1.3139,33.8763,3.6208,0.4365
+ISLAND,REGISTRY,9,on_O=9,on_Mg=0,mean_offset=0.372,2.3311,0.3722

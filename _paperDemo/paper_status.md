@@ -61,6 +61,51 @@ Key numbers: pre-relaxation (i = 1–9) descends only 12 % of the total (0.494 �
 i = 57, 0.005 at i = 72; **the global minimum is first found at i = 77**; only 10 / 13 searches
 end within 0.05 eV/atom and 4 / 13 within 0.02 (median final best 0.040).
 
+## Supplementary Material: S2 drafted / S3 BLOCKED on a data-integrity finding (2026-09-17)
+
+**§S2 — electronic-structure origin of the flat → island transition** is drafted in
+`sections/SI.md`, carrying the v6 mechanism wording (no "bulk-like" comparison — no bulk-Fe
+reference exists; registry presented as a construction-inherited consistency check).
+New floats: **Table S1** (`analysis/pdos_metrics.csv`, claims SI-1/SI-2), **Table S2**
+(`analysis/interface_analysis.csv`, claims SI-3/SI-4), **Figure S2**
+(`figures/pdos_flat_vs_island.png`), **Figure S3** (`figures/interface_registry_topview.png`).
+Every number verified against the two CSVs (38/38 checks).
+The superseded bottom-8/top-8 split (`analysis/pdos_site_metrics.csv`, `figures/pdos_sites.png`)
+is explicitly marked as not to be used.
+**Traceability closed:** `scripts/interface_analysis.py` now writes `mean_nearest_d_FeO_A` and
+`mean_inplane_offset_A` into the CSV (2.300/0.000 flat; 2.331/0.372 island interface); rerun with
+all pre-existing columns numerically identical.
+
+**§S3 — method-parameter sensitivity is NOT drafted.** `method_sensitivity.load_setting` counts
+every non-trash db, including **searches that stopped early**. Every family except `kappa=1`
+contains at least one truncated search, and the truncated search always has the **worst** per-seed
+best (0.23–0.35 vs ~0.03–0.09 eV/atom), so it inflates the mean and SD of whichever family it sits
+in — **and the contamination is not uniform across settings**, which biases the comparison itself:
+
+| setting | as-reported | full-only | common window ≤ 37 |
+|---|---|---|---|
+| baseline (kappa=2) | 0.0503 ± 0.0545 | 0.0368 ± 0.0258 | 0.1438 ± 0.0523 |
+| kappa=1 | 0.0395 ± 0.0237 | 0.0395 ± 0.0237 | 0.1634 ± 0.0531 |
+| kappa=3 | 0.0550 ± 0.0662 | 0.0351 ± 0.0218 | 0.1610 ± 0.0481 |
+| kappa=4 | 0.0563 ± 0.0749 | 0.0321 ± 0.0187 | 0.1614 ± 0.0628 |
+| dipole xy | 0.0563 ± 0.0659 | 0.0377 ± 0.0244 | 0.1613 ± 0.0492 |
+| rattle reduced-0.5 | 0.2902 ± 0.0566 | 0.2607 ± 0.0680 | 0.3259 ± 0.0081 |
+| rattle reduced-1.0 | 0.2740 ± 0.1243 | 0.2558 ± 0.1329 | 0.3392 ± 0.0824 |
+
+- **SI-7 (rattle) holds** in direction/significance, but the factor is treatment-dependent:
+  ~5.4× as-reported, ~7× full-only, ~2.3× on an equal budget.
+- **SI-5 (kappa robustness) holds**, but the log's "**Best: kappa = 1**" does **not** — it is an
+  artefact of `kappa=1` being the only family with no truncated outlier. Full-only favours
+  `kappa=4`; equal-budget favours the baseline `kappa=2`. The CLAIMS "0.039–0.056" range mixes
+  treatments.
+- **SI-6 (dipole) holds**, and is cleaner under full-only.
+- **Seed accounting:** the sensitivity baseline's "14 seeds" = 13 full searches + truncated
+  `stop_16`, whereas the main text and §S1 use **13**.
+- **Open decision (scientist):** (a) report as-is + disclosure caveat, (b) recompute on a common
+  iteration budget and bump CLAIMS to v7, or (c) as-is primary with the common-budget comparison
+  alongside. Probes: `scripts/probe_stop16_bias.py`, `probe_family_seeds.py`,
+  `probe_truncation_effect.py`.
+
 ✅ **SIGNED OFF:** `SI-8` is frozen in **`CLAIMS.md` v5** — *"the onset of relaxation is the
 pivot of the biased search: the pre-relaxation iterations provide almost no ranking
 information, and roughly half the total descent occurs at the first relaxed iteration."*

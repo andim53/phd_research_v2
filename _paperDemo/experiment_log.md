@@ -811,3 +811,75 @@ untouched; this is a re-description plus a citation addition.
 **Ordering note (housekeeping):** the "Growth mode at 1 ML" block was inserted mid-file rather
 than appended; it has been relocated to the end of this log so entries stay chronological in time.
 Content unchanged.
+
+## S2 drafted; truncated searches found in the method-sensitivity families (2026-09-17)
+
+**S2 written** (`sections/SI.md`) — *Electronic-structure origin of the flat -> island
+transition*, carrying the v6 mechanism wording. Adds Table S1 (`pdos_metrics.csv`, claims SI-1 /
+SI-2) and Table S2 (`interface_analysis.csv`, claims SI-3 / SI-4), plus Figure S2
+(`pdos_flat_vs_island.png`) and Figure S3 (`interface_registry_topview.png`). The superseded
+bottom-8/top-8 split (`pdos_site_metrics.csv`, `pdos_sites.png`) is explicitly marked as not to be
+used. **Every number in S2 was verified against the two CSVs (38/38 checks passed).** S2 is
+written so that no "bulk-like" comparison is made (no bulk-Fe reference exists) and the registry
+is presented as construction-inherited consistency check, per v6.
+
+**Traceability gap closed.** `scripts/interface_analysis.py` now also writes
+`mean_nearest_d_FeO_A` and `mean_inplane_offset_A` into `analysis/interface_analysis.csv` — the
+Fe-O distance (2.300/2.331 A) and the in-plane offset (0.000/0.372 A) were previously only printed
+to stdout while CLAIMS SI-3/SI-4 cited the CSV for them. Re-ran; **all pre-existing columns
+numerically identical**, registry rows unchanged.
+
+**S3 NOT drafted — data-integrity finding.** `method_sensitivity.load_setting` counts every
+non-trash db under a family root, *including searches that stopped early*. Every family except
+`kappa=1` contains at least one truncated search, and in every case the truncated search has the
+**worst per-seed best by a wide margin** (0.23-0.35 eV/atom vs ~0.03-0.09):
+
+| family | setting | seeds | truncated search (iteration max -> per-seed best eV/atom) |
+|--------|---------|-------|------------------------------------------------------------|
+| rattle | baseline (`data/femgo`) | 14 | `stop_16` @37 -> 0.22541 |
+| rattle | reduced-0.5 (`param_ratt05`) | 4 | `plus1_db` @90 -> 0.32608; `seed_5` @60 -> 0.31315 |
+| rattle | reduced-1.0 (`param_ratt1`) | 5 | `seed_7` @37 -> 0.34660 |
+| kappa | kappa=2 (baseline) | 14 | `stop_16` @37 -> 0.22541 |
+| kappa | kappa=1 (`1_k1`) | 16 | **none — all run to 100** |
+| kappa | kappa=3 (`0_k3`) | 11 | `seed_13` @25 -> 0.25371 |
+| kappa | kappa=4 (`2_k4`) | 10 | `seed_12` @11 -> 0.27451 |
+| dipole | no dipole (baseline) | 14 | `stop_16` @37 -> 0.22541 |
+| dipole | dipole xy (`femgo_dip`) | 12 | `seed_14` @12 -> 0.26066 |
+
+Because the truncation is **not uniform across settings**, it biases the comparison itself. Three
+treatments of the same data (probe: `scripts/probe_truncation_effect.py`), per-seed best in
+eV/atom:
+
+| setting | as-reported (current CSV) | full-only (truncated dropped) | common window <= 37 |
+|---------|---------------------------|-------------------------------|---------------------|
+| baseline (kappa=2, no dipole) | 0.05030 +- 0.05454 | 0.03683 +- 0.02575 | 0.14375 +- 0.05225 |
+| rattle reduced-0.5 | 0.29017 +- 0.05659 (n=4) | 0.26073 +- 0.06804 (n=2) | 0.32588 +- 0.00812 |
+| rattle reduced-1.0 | 0.27399 +- 0.12427 (n=5) | 0.25583 +- 0.13287 (n=4) | 0.33923 +- 0.08238 |
+| kappa=1 | 0.03947 +- 0.02371 (n=16) | 0.03947 +- 0.02371 (n=16) | 0.16336 +- 0.05313 |
+| kappa=3 | 0.05497 +- 0.06620 (n=11) | 0.03509 +- 0.02182 (n=10) | 0.16097 +- 0.04814 |
+| kappa=4 | 0.05633 +- 0.07486 (n=10) | 0.03209 +- 0.01872 (n=9) | 0.16140 +- 0.06280 |
+| dipole xy | 0.05628 +- 0.06589 (n=12) | 0.03770 +- 0.02436 (n=11) | 0.16129 +- 0.04922 |
+
+**What survives and what does not:**
+
+- **SI-7 (reduced rattle degrades the search): holds** in direction and significance under all
+  three treatments. The *factor* is treatment-dependent: ~5.4x as-reported, ~7x full-only, ~2.3x
+  on an equal iteration budget. The CLAIMS wording "~5x" is therefore not treatment-independent.
+- **SI-5 (result robust to kappa): holds** under all three (all four settings within ~25 %
+  full-only, ~14 % equal-budget, SDs overlapping). However **the log's "Best: kappa = 1 (lowest
+  and most consistent per-seed best)" does NOT survive** — it is an artefact of kappa=1 being the
+  only family with no truncated outlier. Full-only favours kappa=4 (0.0321); on an equal budget
+  the baseline kappa=2 is nominally best (0.1438). The CLAIMS v5 evidence cell
+  "per-seed best 0.039-0.056 eV/atom across kappa in {1,2,3,4}" is a mixed-treatment range.
+- **SI-6 (dipole negligible): holds**, and is cleaner under full-only (0.0368 vs 0.0377, within SD).
+- **Seed accounting inconsistency:** the sensitivity baseline's "14 seeds" = 13 full searches +
+  the truncated `stop_16`, whereas the main text and SI S1 use **13**. The sensitivity baseline is
+  therefore not the same population as the rest of the paper.
+
+**Decision needed from the scientist before S3 is drafted** (all three options change no structure,
+only the statistic): (a) report as-is with a disclosure caveat, (b) recompute on a common
+iteration budget and bump CLAIMS to v7 with sign-off, or (c) report as-is as the primary number
+with the common-budget comparison alongside.
+
+Probes added: `scripts/probe_stop16_bias.py`, `scripts/probe_family_seeds.py`,
+`scripts/probe_truncation_effect.py`.
