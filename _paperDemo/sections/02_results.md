@@ -5,7 +5,7 @@
      Co/B/CoB are the parameter series, and the biased search yields an EXPLORATION density
      over the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the
      weights are not physical. Organized by phase, not by additive.
-     Grounded in CLAIMS.md v3. MT-6 is WITHDRAWN and no flat-fraction comparison appears here;
+     Grounded in CLAIMS.md v5. MT-6 is WITHDRAWN and no flat-fraction comparison appears here;
      MT-8 is claimed in §2.1; MT-4 is reported as a trend (flagged CHALLENGED in CLAIMS v3).
      Every number traces to analysis/pes_structures.csv or analysis/ensemble_stats.json. -->
 
@@ -62,6 +62,21 @@ The fingerprint is computed on the whole template-plus-film structure, so the fi
 template compresses the pair distances and the motif count is a **lower bound** on the
 structural diversity present; a film-resolved descriptor would be sharper. Detailed motif
 analysis is given in the Supplementary Material.
+
+**Experimental correspondence.** The two basins we map correspond to the two growth outcomes
+reported for Fe on MgO(001). At room temperature the observed growth is three-dimensional:
+He-atom scattering shows **3D metal island growth** of Fe on MgO(001), suppressed only when the
+film is deposited at low temperature (140 K), where a monolayer almost completely covers the
+substrate \cite{fahsold2000}; grazing-incidence small-angle X-ray scattering on five monolayers
+evaporated at room temperature likewise identifies **Volmer–Weber growth** with spherical
+islands \cite{reitinger2007}. A flat, continuous film is obtained instead by low-temperature
+deposition \cite{fahsold2000} or by slow deposition onto a cleaved, oxygen-annealed crystal,
+where the first monolayer grows pseudomorphically and layer by layer \cite{urano1988}. Our two
+basins map onto exactly these two outcomes — the flat basin onto the experimentally realised
+pseudomorphic monolayer and the island basin onto the experimentally observed 3D clusters — and
+the energy ordering we find places the flat, wetting configuration above the island. This is a
+consistency check rather than a prediction: the growth mode observed in experiment is also set
+by kinetics, so the correspondence is between structural configurations, not between energies.
 
 ## 2.2 The flat (wetting) phase under Co, B and CoB
 

@@ -1,7 +1,7 @@
 # 01 — Methods
 
 <!-- DRAFT v3 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v3. Citations verified and in references.bib
+     Grounded in CLAIMS.md v5. Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v3 (2026-09-17): exploration schedule stated per model (§1.2) — Fe-Co uses a third,
      species-permutation generator; seed count corrected 7 -> 6; reference-layer composition
@@ -134,6 +134,13 @@ Hund's rule coupling enabled; a Pulay mixer and a fixed convergence criterion
 modest computational setup (single-layer slab, Γ-point sampling): the study targets
 **trends across compositions**, not converged absolute energies (see §1.6).
 
+The LCAO basis set is appreciably less complete than a plane-wave or real-space representation
+\cite{larsen2009}, which propagates into absolute geometric parameters. At the same settings,
+this treatment gives an interfacial Fe–O separation of 2.30 Å (flat) and 2.33 Å (island), at
+the upper end of the 2.0–2.3 Å range spanned by LEED analyses and earlier calculations of this
+interface \cite{urano1988,butler2001}. Geometric and energetic quantities are therefore
+compared between models at fixed settings, not interpreted as converged absolute values.
+
 ## 1.4 Flatness and energy metrics
 
 Two quantities describe each sampled structure:
@@ -170,3 +177,10 @@ qualitatively (trends across compositions). The flat configuration is therefore 
 as a *higher-energy flat basin*, not as a metastable state — establishing metastability
 would require converged relaxations, a Hessian (no imaginary modes) and a barrier between
 basins. A full re-relaxation of representative structures is necessary for this purpose.
+
+The models additionally build both phases on a body-centred-cubic Fe lattice, whereas the
+experimentally reported structure of ultrathin Fe on MgO(001) is body-centred **tetragonal**
+below about 10 Å, changing to bcc only above that thickness \cite{urano1988}. The island branch
+spans ΔZ ≈ 1–6 Å, so the structures compared here lie in the thickness regime in which the
+experimental film is not bcc. The flat–island comparison should therefore be read as a trend
+obtained within a fixed lattice model, not as a prediction of absolute structural parameters.

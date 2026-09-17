@@ -1,7 +1,7 @@
 # 03 — Discussion
 
 <!-- DRAFT v3 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v3. MTJ-context citations are placeholders (UNVERIFIED) —
+     Grounded in CLAIMS.md v5. MTJ-context citations are placeholders (UNVERIFIED) —
      to be fetched in Phase D before the LaTeX port. -->
 
 ## 3.1 Why the island is the ground state
@@ -9,8 +9,10 @@
 The search finds an island ground state in every model, with the flat film sitting
 0.15–0.19 eV/atom higher. The electronic-structure analysis (Supplementary Material)
 indicates why. In the flat monolayer every metal atom is registry-locked directly atop an
-oxygen of the MgO surface, maximising Fe–O orbital overlap and pushing the Fe d-band centre
-down to −0.23 eV. That registry, however, is bought at the cost of a 3.77 % in-plane
+oxygen of the MgO surface — the registry determined experimentally for the first monolayer of
+Fe on MgO(001) by LEED I–V analysis \cite{urano1988} and used in first-principles models of the
+Fe|MgO|Fe interface \cite{butler2001} — maximising Fe–O orbital overlap and pushing the Fe
+d-band centre down to −0.23 eV. That registry, however, is bought at the cost of a 3.77 % in-plane
 lattice mismatch. The island relieves this strain by abandoning the registry: the number
 of metal atoms registered directly atop an oxygen drops from 25 (of 25) to 9 (of 25), the
 island's interface Fe d-band centre rises to +0.51 eV (+0.60 eV averaged over all island
@@ -18,7 +20,10 @@ Fe), and the film becomes electronically "quieter" (lower DOS at the Fermi level
 spin polarisation). The energy gain of the island is therefore dominated by **strain
 relief** — metal atoms leave the strained registry rather than deepen it — and not by any
 interfacial re-hybridisation benefit; the flat layer is over-coupled to the oxide at a
-strain cost it cannot repay.
+strain cost it cannot repay. This is consistent with the weak Fe–MgO coupling found in
+first-principles treatments of the interface \cite{butler2001}, and with the experimental
+observation that a flat monolayer requires low-temperature or slow deposition while room-
+temperature growth gives 3D islands \cite{fahsold2000,reitinger2007}.
 
 ## 3.2 Why boron stabilises the flat film
 

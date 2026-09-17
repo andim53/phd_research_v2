@@ -1,8 +1,32 @@
-# CLAIMS.md — FROZEN claim list (v4 DRAFT)
+# CLAIMS.md — FROZEN claim list (v5 DRAFT)
 
-**Status: v4 DRAFT (2026-09-17) — the v3 content remains frozen; only the new `SI-8` entry
-awaits sign-off.** Supersedes v3, v2 and v1.
+**Status: v5 DRAFT (2026-09-17) — the v3 content remains frozen; `SI-8` (v4) and the v5 changes
+await sign-off.** Supersedes v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
+
+## v5 changelog (2026-09-17)
+
+- **New limitation added — lattice model.** Both phases are built on a **bcc** Fe lattice,
+  whereas experiment reports **bct** Fe on MgO(001) below ≈10 Å (converting to bcc above)
+  \cite{urano1988}. The island branch spans ΔZ ≈ 1–6 Å, i.e. inside that regime. The
+  flat–island comparison is a trend within a fixed lattice model, not a prediction of absolute
+  structural parameters. (Applies to MT-1 … MT-5, MT-8.)
+- **New discussion-only interpretation — experimental correspondence.** The two basins are
+  mapped onto the two experimentally realised growth outcomes: 3D islands at room-temperature
+  deposition, suppressed only at 140 K \cite{fahsold2000}, and Volmer–Weber clusters at 5 ML
+  \cite{reitinger2007}; the flat pseudomorphic monolayer obtained by slow deposition on a
+  cleaved, oxygen-annealed crystal \cite{urano1988}. Framed as a **consistency check between
+  structural configurations, not between energies** — the observed growth mode is also set by
+  kinetics.
+- **Citation status:** six Fe/MgO references fetched and verified via DOI content negotiation
+  (Crossref) and added to `references.bib`: `urano1988`, `butler2001`, `yuasa2004`,
+  `reitinger2007`, `fahsold2000`, `larsen2009`. **Note:** none of the first three supplied
+  papers reports island formation; `urano1988` reports the opposite (layer-by-layer), and its
+  role in the paper is the **Fe-atop-O registry** and the **bct result**.
+- `larsen2009` supports the LCAO basis-set discussion in Methods §1.3 (LCAO is less complete
+  than plane waves, affecting absolute geometric parameters).
+- Everything else unchanged: MT-1 … MT-5, MT-7, MT-8 and SI-1 … SI-8 as in v3/v4; MT-6 withdrawn
+  (v2); MT-4 flagged CHALLENGED (v3).
 
 ## v4 changelog (2026-09-17)
 
@@ -159,6 +183,13 @@ remains a *method-quality* claim on Fe/MgO only.
 - **Structures are NOT DFT-converged** — surrogate relaxation + **1 GPAW step**; residual
   forces ~1–2 eV/Å. "Lowest energy"/"basin" = lowest DFT energy *found*.
 - Unequal seed counts across systems (13 / 7 / 5 / 4) and across parameter settings.
+- **Lattice model (v5):** both phases are built on a **bcc** Fe lattice, but experiment reports
+  **bct** Fe on MgO(001) below ≈10 Å \cite{urano1988}; the island branch (ΔZ ≈ 1–6 Å) lies in
+  that regime. The comparison is a trend within a fixed lattice model.
+- **Basis-set completeness (v5):** LCAO basis sets are less complete than plane waves
+  \cite{larsen2009}, which shifts absolute geometric parameters (e.g. the computed Fe–O
+  separation, 2.30–2.33 Å, sits at the upper end of the experimental/calculated 2.0–2.3 Å
+  range \cite{urano1988,butler2001}). Quantities are compared at fixed settings.
 - ΔZ ≤ 1.0 Å flat cutoff is a chosen threshold.
 - kpts = (1,1,1), single-layer slabs → qualitative/trend-level.
 
@@ -189,6 +220,14 @@ claims to MT/SI and do not change the frozen list.
   separation is consistent with either. Resolving it would require an absolute (cross-system)
   energy reference and/or a converged treatment of both basins. Permitted in Results §2.3 and
   Discussion §3.2; it is wording, not a results claim.
+- **Experimental correspondence (added 2026-09-17, v5).** The flat and island basins are mapped
+  onto the two growth outcomes reported for Fe on MgO(001): room-temperature deposition gives
+  3D islands (suppressed only at 140 K) \cite{fahsold2000} and Volmer–Weber clusters at 5 ML
+  \cite{reitinger2007}, whereas a flat pseudomorphic monolayer is obtained by slow deposition on
+  a cleaved, oxygen-annealed crystal \cite{urano1988}. **Scope bound (must travel with it):**
+  this is a correspondence between *structural configurations*, not between energies — the
+  experimental growth mode is also governed by kinetics, so the experiment neither confirms nor
+  refutes the calculated energy ordering.
 
 ## Sign-off
 
@@ -204,10 +243,13 @@ claims to MT/SI and do not change the frozen list.
       2026-09-17) — scientist
 - [x] **Discussion-only: phase-separation wording** (v3, 2026-09-17) — scientist
 - [ ] **SI-8: performance of the biased exploration** (v4, 2026-09-17) — **AWAITING SIGN-OFF**
+- [ ] **v5: bcc/bct lattice-model limitation, basis-set limitation, experimental-correspondence
+      framing, six verified Fe/MgO references** (2026-09-17) — **AWAITING SIGN-OFF**
 
-**Status: v4 DRAFT (2026-09-17).** v3 remains frozen; the only outstanding item is SI-8. Once
-signed off, v4 becomes the frozen list. Any further new result or claim requires another
-explicit update to this file.
+**Status: v5 DRAFT (2026-09-17).** v3 remains frozen; the outstanding items are SI-8 (v4) and the
+v5 additions. Once signed off, v5 becomes the frozen list. Any further new result or claim
+requires another explicit update to this file.
 **Version history:** v1 (2026-09-16) initial frozen list · v2 (2026-09-17) MT-6 withdrawn ·
 v3 (2026-09-17) MT-8 added, MT-4 flagged challenged, exploration-density principle ·
-v4 (2026-09-17) SI-8 added, pending sign-off.
+v4 (2026-09-17) SI-8 added · v5 (2026-09-17) lattice-model + basis-set limitations,
+experimental-correspondence framing, six verified Fe/MgO references.

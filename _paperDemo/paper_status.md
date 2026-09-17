@@ -107,20 +107,48 @@ forces ~1–2 eV/Å) — see the relaxation caveat below and `relaxation/`.
 - Planned fix: full DFT re-relaxation of low-force distinct structures (`relaxation/`).
 
 ## Citations (Phase D)
-- 6 verified & in `references.bib`: agox2020, gofee2017, oganov2011, gpaw2014, pbe1996,
-  greer1993. All `\cite{}` keys in 01_methods.md and 03_discussion.md (greer1993) resolve.
+- **12 verified & in `references.bib`**: agox2020, gofee2017, oganov2011, gpaw2014, pbe1996,
+  greer1993, plus the six added 2026-09-17 for the Fe/MgO literature — **urano1988, butler2001,
+  yuasa2004, reitinger2007, fahsold2000, larsen2009** — all verified via DOI content negotiation
+  (Crossref). Every `\cite{}` key in `sections/` resolves except the three placeholders below.
+- **`yuasa2004` is verified but currently uncited** — it is the canonical giant-TMR
+  single-crystal Fe/MgO/Fe MTJ reference and is a candidate to discharge the `cofebmgo_mtj`
+  placeholder, though it is Fe/MgO/Fe rather than a CoFeB alloy.
 - UNVERIFIED placeholders in 03_discussion.md: cofebmgo_mtj, cofebmgo_pma, b_diffusion_mtj
   (MTJ context) — fetch before the LaTeX port.
+- Note: the pre-existing keys `agox2020` / `gofee2017` carry year 2022 in the `.bib` (the key
+  convention is surname+year, so the keys are stale) — left as-is because the sections cite them.
+
+## Literature verification — Fe/MgO experiment (2026-09-17)
+
+Three PDFs added by the scientist (`papers/mgofe_{urano1988,butler2001,yuasa2004}.pdf`); the
+Urano scan had no text layer and was OCR'd (tesseract; install recorded in the session log).
+
+| Reference | What it actually reports | Relation to our results |
+|---|---|---|
+| **Urano & Kanaji 1988** (JPSJ 57, 3403; LEED I–V + AES) | Fe on MgO(001) **grows layer by layer**, pseudomorphic at 1 ML, Fe **just above O at ~2.0 Å**; **bct → bcc at ≈10 Å** | **No islanding** — the opposite. Supports our **Fe-atop-O registry** (SI-4) and supplies the **bct limitation** |
+| **Butler et al. 2001** (PRB 63, 054416; first-principles TMR) | Fe atop O per LEED; Fe–O **2.169 Å** (calc) / 2.0 Å (LEED) / 2.3 Å (earlier FLAPW); **~3.5 % mismatch**; *"only weak interactions"* between Fe and MgO | Supports the **registry** and **weak coupling**; not a growth-mode paper |
+| **Yuasa et al. 2004** (Nat. Mater. 3, 868; MBE MTJ) | Giant TMR; **flatness** of epitaxial Fe is the quality criterion; RT top-Fe growth gives higher dislocation density than 200 °C | Neither islanding nor a structural validation — motivates the flat-interface requirement |
+| **Fahsold et al. 2000** (PRB 61, 8475; He-atom scattering) — *added by us* | **3D metal island growth** of Fe on MgO(001) at room temperature, **suppressed only at 140 K** where a monolayer almost covers the substrate | **The genuine islanding validation**, and it is at ≈1 ML coverage |
+| **Reitinger et al. 2007** (JAP 102, 034310; GISAXS) — *added by us* | **Volmer–Weber growth** at RT on **five** monolayers, spherical superparamagnetic islands | Second islanding reference; note the coverage is **5 ML**, not 1 ML |
+
+**Consequence for the paper:** the three supplied papers cannot be cited for island formation.
+The islanding support comes from `fahsold2000` (RT, ≈1 ML) and `reitinger2007` (RT, 5 ML); the
+flat/wetting basin corresponds to the pseudomorphic monolayer obtained by slow deposition
+(`urano1988`) or by low-temperature deposition (`fahsold2000`). This is framed as a
+**correspondence between structural configurations, not between energies** (CLAIMS v5,
+discussion-only), because the experimental growth mode is also kinetically controlled.
+
+**Convergence of the literature:** RT deposition → 3D islands; 2D layer-by-layer requires low
+temperature (140 K) or slow deposition on a specially prepared crystal. Urano's layer-by-layer
+result at RT is therefore the outlier in the literature, not ours.
 
 ## Drafting progress (Phase E — markdown-first, block-and-wait)
-- [x] sections/01_methods.md  (REVISED v3 2026-09-17; **RE-APPROVED as v3, 2026-09-17**)
-      v3: §1.2 exploration schedule stated per model (Fe-Co uses a third, species-permutation
-      generator); mermaid made generator-count-agnostic; "Bias" paragraph states the
-      reference-layer composition per model; seed count 7 → 6. No claim changed.
-      Scientist edits folded in: §1.1 drops the `pbc` flag and the matched MgO lattice
-      constant (the 3.77 % strain stays — recorded in `data/*/*/0_result/latt_log.md`);
-      §1.3 drops the `dzp` code from the basis description; §1.6 "is prepared for" →
-      "is necessary for", now consistent with §3.5.
+- [~] sections/01_methods.md  (APPROVED as v3 2026-09-17; **REVISED again 2026-09-17 — needs re-approval**)
+      New 2026-09-17 additions: §1.3 LCAO basis-set completeness note (Fe–O separation
+      2.30/2.33 Å at the upper end of the 2.0–2.3 Å experimental/calculated range;
+      \cite{larsen2009,urano1988,butler2001}); §1.6 new lattice-model limitation (bcc
+      model vs experimentally reported bct below ≈10 Å; \cite{urano1988}).
 - [~] sections/02_results.md  (APPROVED 2026-09-16; RECONSTRUCTED v2 2026-09-17 — needs re-approval)
       v2: reorganized by PHASE under the revised core framing —
       §2.1 the two-phase landscape (both phases populated; island is the ground state
