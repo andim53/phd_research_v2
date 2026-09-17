@@ -1,10 +1,28 @@
 # AGENTS.md — Governing Rules for AI Agents Working on This Project
 
-**Project:** Effect of Boron insertion on metal-film wetting on MgO — pure-Fe vs Fe-Co
-hosts (MTJ / CoFeB relevance)
+**Project:** Effect of boron insertion on metal-film wetting of Fe on MgO — with and without
+boron (MgO-tunnel-junction relevance). *Scope narrowed 2026-09-17: the Fe-Co host is archived;
+see "Scope" below.*
 **Root:** `/home/think/Desktop/research/_paperDemo`
 **Venue:** TBD (format-agnostic)
 **Workflow skill:** `scientific-paper-writing` (Phase 0 → A → B → C → D → E → F → G)
+
+## Scope (CLAIMS v9, 2026-09-17) — the Fe host only
+
+**The paper studies `femgo` (Fe/MgO, 13 completed searches) and `febmgo` (Fe-B/MgO, 6).** The
+Fe-Co and Fe-Co-B models are **archived out of scope**: raw data in `data/_archive/`, record in
+`_archive/cofe/README.md`, frozen values in `CLAIMS.md` → "ARCHIVED — out of scope". **No section may
+cite them.** This is not a refutation — the host was dropped because it is not a clean
+counterfactual (different strain convention, 4 vs 3 searches cannot reach p < 0.029, and
+`data/fecomgo/main.py` adds a third `PermutationGenerator`).
+
+- Scope is enforced in code by **`scripts/scope.py`** (`SYSTEMS_IN_SCOPE`, `db_glob()`). Import it;
+  never hard-code `data/<system>/…`. `--all-systems` restores the four-system capability.
+- Dropping the Co host also **removed the v8 strain-convention confound** from the paper (both
+  surviving models sit on `a_Fe`), and it costs the paper its third-element control — recorded as a
+  limitation in §1.6 and §3.4.
+- It also **moved the reported p-value**: the permutation test was scope-dependent (shared RNG) and
+  is now an **exact enumeration of all partitions** (MT-3 p = 0.0444). See `CLAIMS.md` v9 §4.
 
 ## Governing workflow rules
 
@@ -18,9 +36,10 @@ hosts (MTJ / CoFeB relevance)
 
 ## Paper scope (what goes where)
 
-- **Main text:** the PES / wetting study across the four systems — island ground state,
-  the B effect on the flat-film energy (~−0.04 eV/atom, both hosts), Co's negligible effect,
-  and B not bonding to MgO.
+- **Main text:** the PES / wetting study across the two Fe-host models — island ground state,
+  the B effect on the flat-film energy (0.1888 → 0.1493 eV/atom, −0.040), and B not bonding to MgO.
+  (The Co-host counterpart of the B effect, and "Co alone does little", are **archived** with the
+  Co host — `_archive/cofe/README.md`.)
 - **Supplementary Material (SI):** everything mechanistic / methodological:
   - PDOS origin-of-island analysis (d-band shift, spin polarisation) + interface registry
   - Method-parameter sensitivity (rattle strength, LCB kappa, dipole correction)
@@ -55,7 +74,7 @@ hosts (MTJ / CoFeB relevance)
   unsupported statements.
 - Every number in the draft must be re-verified against its raw source file before port.
 - Flag any claim without evidence as `[VERIFY]`; do not write it as a result.
-- **The claim list is FROZEN in `CLAIMS.md` v8 (2026-09-17; supersedes v1–v7).** Drafting must not
+- **The claim list is FROZEN in `CLAIMS.md` v9 (2026-09-17; supersedes v1–v8).** Drafting must not
   introduce claims outside the list, and must not drop the paired caveats. Any new claim requires
   bumping `CLAIMS.md` to the next version first. The per-version history is in its changelogs; the
   standing content rules are:
@@ -70,12 +89,14 @@ hosts (MTJ / CoFeB relevance)
 - **Only completed searches are used (v8): a search counts only if it reached the full 100-iteration
   budget.** The rule lives in `scripts/run_selection.py` and is imported by every analysis script; it
   is detected from the **iteration number in the database, not the directory name**, because a
-  `seed_*` directory can stop early. Reported counts are therefore **13 / 6 / 4 / 3** completed
-  searches for Fe / Fe-B / Fe-Co / Fe-Co-B.
+  `seed_*` directory can stop early. Reported counts are therefore **13 completed searches for
+  Fe/MgO and 6 for Fe-B/MgO** (the two Co exclusions moved to the archive with the host).
 - **Search-level significance comes from the two-sided permutation test in `ensemble_analysis.py`**,
-  whose resolution is bounded by `perm_n_partitions` in `analysis/ensemble_stats.json`. Check that
-  bound before reading any p-value close to the floor (4 vs 3 searches admit only 35 partitions, so
-  p >= 0.029 there).
+  which now **enumerates every partition exactly** when the pool is small enough (it records
+  `perm_method`, `perm_n_partitions` and `perm_resolution` in `analysis/ensemble_stats.json`). The
+  in-scope comparison is 13 vs 6 → 27 132 partitions, floor p = 3.7×10⁻⁵, and the headline value is
+  **p = 0.0444**. Each effect also seeds its own bootstrap generator, so no reported statistic
+  depends on which systems the script was asked to analyse.
 
 ## Drafting status
 
@@ -89,20 +110,20 @@ drafting or revising anything. Summary as of 2026-09-17:
   orphaned. The three MTJ placeholders were **withdrawn** and replaced by `yuasa2004`; no UNVERIFIED
   placeholders remain. Open: `fahsold2000`, `reitinger2007` and `torelli2009` are closed access and
   cited from verified abstracts only.
-- **Phase E: IN PROGRESS — no section is currently approved.**
-  - `01_methods.md` **v4** — approval **VOIDED** (edited after approval; §1.6 then §1.2) → re-approval.
-  - `02_results.md` **v3** — needs re-approval (reconstructed, then extended).
-  - `03_discussion.md` **v4** — awaiting first review. **This is the gate: do NOT draft
-    `04_introduction.md` until 03 is approved.**
-  - `SI.md` **v3** — §S1, §S2, §S3 drafted, awaiting review.
+- **Phase E: IN PROGRESS — no section is approved.**
+  - `01_methods.md` **v5** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) → needs review.
+  - `02_results.md` **v4** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
+    p = 0.0444) → needs review.
+  - `03_discussion.md` **v5** — the cobalt section is deleted; no Co sentence remains.
+    **This is the gate: do NOT draft `04_introduction.md` until 03 is approved.**
+  - `SI.md` **v4** — a scope note only; §S1, §S2, §S3 are Fe/MgO and unchanged, awaiting review.
   - `04`–`06` not drafted; no LaTeX until all sections are approved.
-- **BEFORE publishing §1.1 or §3.1 as they stand, read `paper_status.md` → "Open decisions":** the
-  Fe/Fe-B models sit on `a_Fe` (substrate strained) while the Fe-Co/Fe-Co-B models sit on
-  `a_MgO/√2` (**film stretched 4.9 %**) — `interpolation_factor` 0 vs 1. Both sections currently
-  describe one convention for all four models, and the cross-host comparison is confounded by this.
-  **Unresolved; awaiting the scientist.**
+- **The v8 strain-convention warning is CLOSED for this paper:** both surviving models sit on
+  `a_Fe` (`interpolation_factor` = 0), so the confound that threatened the cross-host comparison no
+  longer exists in scope. The **absolute** convention (inverse of the experimental stack) remains a
+  stated limitation in §1.6/§3.4. History: `CLAIMS.md` → "RESOLVED by v9".
 - **float numbering:** sequential in order of appearance across the drafted sections.
-  Currently Tables 1–3 + Figure 1 (Methods), Tables 4–5 (Results); the SI has its own `S` series
+  Currently Tables 1–2 + Figure 1 (Methods), Tables 3–4 (Results); the SI has its own `S` series
   (Tables S1–S3, Figures S1–S6). See `paper_status.md`.
 - **Phase F/G: not started.**
 - Reference PDFs live in `papers/` (e.g. `papers/confusion_greer1993.pdf` → `greer1993`).
@@ -115,8 +136,9 @@ drafting or revising anything. Summary as of 2026-09-17:
 ## Data & scope
 
 - Raw data lives in `data/` (AGOX/**GOFEE** structure-search databases):
-  - **Four main systems:** `femgo` (Fe/MgO), `febmgo` (Fe-B/MgO), `fecomgo` (Fe-Co/MgO),
-    `fecobmgo` (Fe-Co-B/MgO).
+  - **The two systems in scope:** `femgo` (Fe/MgO), `febmgo` (Fe-B/MgO).
+  - **Archived:** `fecomgo` (Fe-Co/MgO), `fecobmgo` (Fe-Co-B/MgO) — under `data/_archive/`;
+    read them through `scope.db_glob()` or `--all-systems`, never by a hard-coded path.
   - **Rattle-strength study** (same femgo scheme): `param_ratt05` (rattle −0.5),
     `param_ratt1` (rattle −1.0).
   - **Method-parameter study:** `femgo_kappa/{1_k1,0_k3,2_k4}` (LCB kappa = 1/3/4),
@@ -134,15 +156,16 @@ drafting or revising anything. Summary as of 2026-09-17:
   generator N=20; Phase II (10 ≤ i < 25) small 10 + large 10; Phase III (25 ≤ i) large-scale
   N=20. Small-scale = `HeteroStructRandomize` (rattle 1.5), large-scale = `RattleGenerator`
   (rattle 2.3). Matches `num_candidates={0:[20,0],10:[10,10],25:[0,20]}` in `main.py`.
-- Flatness metric: **ΔZ = z(metal_max) − z(metal_min)** over all metal film atoms (Fe+Co)
-  [Å]; ΔZ ≈ 0 = flat film (wet), ΔZ large = island (dewet).
+- Flatness metric: **ΔZ = z(metal_max) − z(metal_min)** over the film's **metal** atoms
+  (`pes_analysis.METAL = ('Fe','Co')`; boron is not part of the metric, and in scope the film metal
+  is Fe) [Å]; ΔZ ≈ 0 = flat film (wet), ΔZ large = island (dewet).
 - PES coordinate: **dE/N = (E_i − E_globalmin)/N_atoms** [eV/atom], global min = 0,
   computed per system over the iteration>=10 set. Flat/island basins split at ΔZ ≤ 1.0 Å.
-- The `febmgo` / `fecobmgo` energy ranges contain relaxation artifacts / unphysical
-  high-energy structures; the iteration filter + per-system global-min normalization
-  window these out.
-- Co systems have fewer seeds (fecomgo 5, fecobmgo 4) than the Fe systems (femgo 13,
-  febmgo 6) — note this when reporting uncertainty.
+- The `febmgo` energy range contains relaxation artifacts / unphysical high-energy structures;
+  the iteration filter + per-system global-min normalisation windows these out.
+- The two in-scope systems have **unequal** completed-search counts (13 vs 6) — the smaller group
+  sets the width of the permutation null, so note it when reporting uncertainty. The permutation
+  test itself is **exact**, so the reported p is not limited by Monte-Carlo noise.
 
 ## Commit discipline
 

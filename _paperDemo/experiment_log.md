@@ -1097,3 +1097,99 @@ Methods S1.3. It is a *different* quantity: it is passed as `hetero_slab_dist` t
 `HeteroStructRandomize` (the initial deposition-slab offset), whereas the Fe-O construction distance
 is `build_mgo_stack(dist_fe2o=2.3)` (`femgo/scripts/build_mgo_stack.py:6`), which `main.py` calls
 without overriding. S1.3's claim stands. The naming is a trap for future readers.
+
+---
+
+## 2026-09-17 — CLAIMS v9: the Co host is archived; the paper becomes Fe/MgO vs Fe-B/MgO
+
+### The instruction
+
+> *"archive the current CoFe host results, considering it has so many problem. For now, write the
+> main and supplementary based on the Fe host, with and without B."*
+
+Four follow-up decisions, all from the scientist: (1) MT-4/MT-5 go to a new **"ARCHIVED — out of
+scope"** block, *not* to "NOT claimed"; (2) **no Co sentence anywhere in the manuscript**; (3) the
+Greer framing stays as it is, on the boron-only argument; (4) the Co data moves to
+`data/_archive/`, the records to `_archive/cofe/`, and the analysis scripts keep their four-system
+capability but default to the Fe-host scope. No new searches are run.
+
+### What was archived, and why it is not a refutation
+
+See `_archive/cofe/README.md` for the full record. In one line: the Co host is not a clean
+counterfactual — it sat on a different strain convention (`a_MgO/√2`, film stretched 4.9 %, vs
+`a_Fe`, substrate compressed 3.6 %), 4 vs 3 completed searches cannot reach p < 0.029 however the
+data fall, and `data/fecomgo/main.py:75,172–175` adds a third `PermutationGenerator`. MT-4 (p =
+0.092 then, 0.0857 exact now) is **under-powered, not absent**; MT-5 (p = 0.245 / 0.2357 exact) was
+never a demonstrated null. The frozen values, the two effect blocks, both branch/motif sets and both
+replica inventories are preserved in `_archive/cofe/cofe_evidence.json`, and the 627 Co rows of the
+canonical CSV in `_archive/cofe/pes_structures_cofe.csv`.
+
+### A new defect found while re-running the analysis: the permutation p was scope-dependent
+
+The first re-run of `ensemble_analysis.py` under the new scope **reproduced** every frozen number
+(0.1888 / 0.1493 eV/atom, 13 vs 6 searches, global-min ΔZ 3.65 / 3.77 Å, flat fraction 0.165,
+motif counts) but gave **p = 0.046** where CLAIMS recorded 0.0452. The cause was not the scope
+change as such: the bootstrap CIs and the Monte-Carlo permutation p drew from the **module-level
+shared RNG**, whose stream position depends on how many systems were processed before them. So
+analysing the two archived Co systems first moved a number the manuscript reports:
+
+| run | p for the Fe-host boron effect |
+|---|---|
+| Fe host alone (in scope) | 0.0452 |
+| all four systems (`--all-systems`) | 0.0480 |
+
+**Fix, in two parts.** Each effect now seeds its own bootstrap generator (`EFFECT_SEEDS`), and the
+permutation test **enumerates all partitions of the pool exactly** instead of sampling 5 000 of
+them — 27 132 for 13 vs 6, 35 for 4 vs 3, 2 380 for 13 vs 4. The result is deterministic, seedless,
+and reaches the resolution `perm_resolution` advertises. `analysis/ensemble_stats.json` v1.2.0
+records `perm_method` per comparison. **Verified:** the Fe-host p is byte-identical in scope and
+with `--all-systems`.
+
+| comparison | v8 (Monte-Carlo) | v9 (exact) |
+|---|---|---|
+| B in the Fe host — MT-3, 13 vs 6 | 0.0452 (0.0480 if the Co systems were loaded) | **0.04438** |
+| B in the Fe-Co host — archived MT-4 | 0.0924 | 0.08571 |
+| Co alone — archived MT-5 | 0.2454 | 0.23571 |
+
+This is the **third** revision of the significance test: the v1 test drew two independent
+permutations instead of one split (fixed in v8), the v8 test was Monte-Carlo from a shared RNG
+(fixed here), and the test is now exact. The v8 changelog's 0.045 / 0.092 / 0.245 stand as the
+record of what v8 reported.
+
+### What changed in the repository
+
+- **Claims:** `CLAIMS.md` **v9** — MT-4, MT-5 and the combined 2×2 statement archived; MT-1, MT-2,
+  MT-7 and MT-8 restricted to the two systems; the contribution rewritten (it no longer claims host
+  independence); a new limitation for the lost third-element control; the permutation-resolution
+  limitation and the strain-convention confound both resolved by the scope restriction; MT-6 stays
+  withdrawn on its primary reason only. SI-1…SI-8 are untouched.
+- **Code:** `scripts/scope.py` added as the single scope switch; `pes_analysis.py`,
+  `ensemble_analysis.py` (v1.2.0), `plot_pes_figure.py`, `export_flat_xsf.py`,
+  `preview_flat_xsf.py`, `check_forces.py`, `probe_forces_dist.py`, `probe_geometry_all.py` and
+  `relaxation/select_structures.py` now import it. `probe_truncated_seed_effect.py` deliberately
+  still spans all four systems — it is this project's v8 audit record.
+- **Artifacts:** `analysis/pes_structures.csv` 2350 → **1723 rows**; `figures/pes_2_systems.png`
+  replaces `pes_four_systems.png`; four `analysis/flat_structures/*` XSFs and the old four-system
+  PES figure moved to `_archive/cofe/`. `.gitignore` re-enables `_archive/cofe/` against the repo
+  root's blanket `_archive/` and `*.csv` rules (verified with `git check-ignore`).
+- **Sections:** `01_methods.md` **v5**, `02_results.md` **v4**, `03_discussion.md` **v5**,
+  `SI.md` **v4** (a scope note only). Tables 4–5 became 3–4 after the Fe-Co generator table was
+  deleted; the dangling "motif analysis is in the Supplementary Material" pointer was removed
+  rather than adding an S4.
+- **Docs:** `paper_status.md` rewritten as a v9 resume file; `AGENTS.md` scope/claims/systems
+  updated; `_archive/cofe/README.md`, `data/_archive/README.md` and `figures/INSTRUCTION.md` added.
+
+### Reproduction check after the change
+
+0.1888 / 0.1493 eV/atom; 13 vs 6 completed searches; global-min ΔZ 3.652 / 3.767 Å; MT-7's 1-of-72
+in-window and 101-of-471 outside; motif counts 2/2 and 2/2 with within/random 0.41–0.44;
+`method_sensitivity.csv` and `exploration_performance.json` **byte-identical** (md5 unchanged,
+confirming the SI is untouched); `pes_analysis.py` and `ensemble_analysis.py` numerically identical
+to 0.0 on every column (row order differs — already true before v9).
+
+### Still open after this session
+
+The rewritten contribution needs re-signing; the application framing (§3.3 no longer names CoFeB)
+needs a decision; the exact test needs formal acceptance; the three re-scoped sections need review
+(03 is the gate for the introduction); the main-text figures are still cited by no section.
+

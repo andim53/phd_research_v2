@@ -6,6 +6,12 @@
 > has never been executed, so no structure in this paper rests on a converged DFT minimum. The
 > convergence limitation in the draft is a consequence of this.
 >
+> **Scope (CLAIMS v9, 2026-09-17): the paper is Fe/MgO + Fe-B/MgO, so 81 of these 116 structures are
+> in scope** — femgo 53 + febmgo 28. The 35 Co-containing entries (`fecomgo` 18, `fecobmgo` 17) are
+> out of scope with the rest of the Fe-Co host; they are left in `selected/` rather than deleted, and
+> a fresh run of `select_structures.py` (now scope-aware, `--all-systems` for all four) regenerates
+> the manifest with the same per-system counts minus those two.
+>
 > Verified 2026-09-17: the selection contains **no structures from the runs excluded by the v8
 > completed-search rule** (no `fecomgo/seed_4`, no `fecobmgo/seed_3`), so re-running it is not
 > required by that rule. A fresh selection would still need the rule applied.
