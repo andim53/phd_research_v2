@@ -5,6 +5,81 @@
 > pre-v9 narrative is **not** repeated here — it lives in `experiment_log.md` (append-only) and in
 > the `CLAIMS.md` version changelogs (v1–v8), which are unchanged. Anything below is current.
 
+## FULL-DRAFT RE-REVIEW OPEN (2026-09-18) — no section is approved
+
+At the scientist's request the **whole draft is re-opened for review** (Methods, Results, Discussion,
+Introduction, Conclusion, Abstract). The five sections already voided by the editorial/setup passes
+(`01`, `02`, `03`, `04`, `SI`) stay void, and `05_conclusion.md` v2 and `06_abstract.md` v1 — the only
+two that were still approved — are **voided by this review as well**. **No section text changed**; each
+section head block now carries a `FULL-DRAFT RE-REVIEW OPENED 2026-09-18` entry recording the state, and
+no draft version was bumped. In the same pass the stale `<!-- DRAFT vN -->` markers were repaired (they
+read v6 / v6 / v5 / v11 / v10 while the changelogs read v8 / v8 / v7 / v12 / v13) and the
+"Grounded in CLAIMS.md v9" note in them corrected to v11.
+
+**The LaTeX port is PROVISIONAL.** `paper.tex` / `latex/*.tex` / `SI.tex` and the compiled `paper.pdf`
+(13 pp) and `SI.pdf` (9 pp) still carry the pre-review text. They must be re-ported once the sections
+change — after any section edit the PDFs are stale, not current.
+
+### The five papers supplied 2026-09-18 (19:59) — for the Discussion
+
+Metadata verified 2026-09-18 by DOI content negotiation (Crossref) and/or the arXiv API.
+
+| file | record | what it actually says |
+|---|---|---|
+| `island_ernult2003.pdf` | Ernult, Mitani, Nagano & Takanashi, *Sci. Technol. Adv. Mater.* **4**, 383–389 (2003); DOI `10.1016/S1468-6996(03)00050-0` | Fe on MgO(001) grows by **3D Volmer–Weber**; the cause given is **the large surface-energy difference between Fe (2.9 J/m²) and MgO (1.16 J/m²)** — the paper's own numbers — while the Fe/MgO **lattice mismatch is only 3.7 %** (contrasted with the much larger Fe/Mg mismatch). |
+| `surfFreeEnery_dezsi2011.pdf` | Dézsi et al., **arXiv:1109.4811** (22 Sep 2011) — **preprint**; no `journal_ref` and no DOI exist (arXiv API), so no published version to cite | CEMS of ultrathin Fe on cleaved and polished MgO(100): **no Fe–O²⁻ interaction** at the MgO/Fe interface; states the growth picture explicitly — "since the surface free energy of Fe is considerably larger than for MgO, 3D Fe islands form on MgO surface (Volmer–Weber mechanism)". Carries a **5.8 %** Fe/MgO mismatch figure that disagrees with Ernult's 3.7 % and with our 3.6 % — **do not reuse that number**. |
+| `island_jamal2024.pdf` | Jamal & Kumar, **arXiv:2401.05091** (10 Jan 2024) — **preprint**, not a journal article | Epitaxial Fe on ion-beam-sputtered MgO(001), RHEED + transport in situ: **Volmer–Weber**, islands impinge and coalesce into a continuous film at **~1.8 nm**; **no interfacial Fe-oxide** up to 300 °C. |
+| `lattMiss_mahato2012.pdf` | **Published as** Mahato et al., *Appl. Phys. Lett.* **100**, 263117 (2012); DOI `10.1063/1.4731777`. The PDF is the **author manuscript** (file title says *Nanotechnology*) | Textbook statement of the **strain route**: "the VW mode describes island formation directly on a substrate, in heteroepitaxial systems with different lattice constants … the islands are inherently strained"; island shape follows from minimising E/V, i.e. **trading surface energy against strain energy**. |
+| `lattMiss_kang2015.pdf` | Kang et al., *Sci. Rep.* **5**, 10151 (2015); DOI `10.1038/srep10151` | Different system (piezoelectric NKN on Nb:STO / STO), but supplies the **mismatch-selection rule**: coherent 3D island growth is preferred **when the elastic relaxation energy exceeds the film's free surface energy**, and a **larger mismatch gives VW** while a smaller one gives Stranski–Krastanov nanorods. |
+
+### The argument the scientist wants added (restated — confirm before drafting)
+
+Two origins are conventionally assigned to Volmer–Weber islanding of a metal on an oxide:
+**(i) elastic strain energy from the lattice mismatch** (`mahato2012`, `kang2015`) and **(ii) the
+surface-free-energy difference**, γ_film > γ_substrate so that covering the substrate costs energy
+(`ernult2003`, `dezsi2011`). For Fe on MgO(001) both are present in an experiment and cannot be
+separated. **This model removes route (i) for the film by construction**: the cell is set to the Fe
+lattice constant, so the Fe film sits at its own equilibrium in-plane lattice constant and is
+**unstrained**, while the MgO is the compressed component, held fixed (verified 2026-09-17 from the
+construction code and the database cells; §1.1, §3.1, §3.4). An island that forms in this construction
+therefore **cannot be strain relief** — which is exactly the frozen content rule for SI-3 — and the
+remaining driver is the surface/interface-energy route, whose atomistic content is what §S2 already
+reports (reduced forced interfacial coupling + restored metal cohesion, registry-locked atoms 25/25 →
+9/25).
+
+**Already half-made internally — and it should be cited in the same paragraph.** The lattice-constraint
+study (§S5, SI-10) moves the constraint *off* the substrate and *onto* the film
+(`a = a_Fe + f(a_MgO/√2 − a_Fe)`: f = 0.25 / 0.75 / 1.00 → film strain **+0.98 / +2.94 / +3.92 %**).
+The island stays the ground state in **25 of 25** searches and the pooled flat-basin minimum moves by
+only **0.0094 eV/atom**, 2–3× *inside* the within-arm search-to-search SD of 0.017–0.031. The island
+therefore neither appears nor disappears when the film **is** strained — that is independent,
+already-computed evidence for the same conclusion, and it is the strongest internal support the new
+literature can be attached to.
+
+**Wording bounds that must travel with it.** (a) The mismatch is **not removed** — only the *film's*
+in-plane strain is; the substrate carries the 3.6 %. (b) The strain convention is the **inverse** of the
+experimental stack, so the model does not represent the strained-film situation (§3.4). (c) No surface
+or interface **energy is computed** anywhere in this repo, so the argument is one of elimination inside
+one fixed lattice model, not a measurement of γ. (d) **the mismatch percentages must be defined when quoted**: our §3.1/§1.1 "3.6 %" is
+`(a_MgO/√2 − a_Fe)/a_MgO/√2` = 3.61 % (the *substrate* compression, the quantity that belongs to this
+construction), while the same mismatch referred to the film is 3.75 % ≈ Ernult's "3.7 %"; Dézsi's
+"5.8 %" is neither and must not be reused. (e) `kang2015` and `mahato2012` are **different
+materials systems** (oxide-on-oxide, silicide-on-Si) cited for the *mechanism attribution*, not for
+Fe/MgO numbers.
+
+### Proposed placement (to be confirmed)
+
+| where | what | why |
+|---|---|---|
+| **Discussion §3.1** (core) | extend the existing "It is not a lattice-strain effect." paragraph with the two-route attribution and the by-construction elimination, citing `mahato2012`, `kang2015`, `ernult2003`, `dezsi2011` | §3.1 is where the strain question is already decided; the new literature is the external basis for that decision |
+| **Introduction** (one sentence, motivation only) | name the two candidate origins, no verdict | keeps the *reading* in the Discussion, per the claim list's "Discussion-only" placement rule |
+| **Results §2.1** (optional, citation only) | add `jamal2024` to the existing experimental-islanding citations (`fahsold2000`, `torelli2009`, `reitinger2007`) | it is a further direct VW observation at 1–2 ML on MgO(001) |
+| **SI §S2** | no change needed | SI-3 already carries the atomistic content of the surface/interface route |
+
+**Required first: a `CLAIMS.md` bump (v11 → v12).** AGENTS.md forbids drafting a claim outside the frozen
+list, and the two-route attribution is a new **Discussion-only interpretation**. It goes in that list with
+the wording bounds (a)–(e) above. Item **A5** below.
+
 ## Scope (CLAIMS v9) — the Fe host only
 
 **The paper studies Fe/MgO and Fe-B/MgO.** The Fe-Co/MgO and Fe-Co-B/MgO models are archived out of
@@ -103,6 +178,14 @@ end, so a fresh session does not re-open them.
       searches do not converge at the 100-iteration budget. Detail: "SI-11 / §S6" below. Running the
       inverted stack to convergence is what would make it a clean result.
 
+- [ ] **A5 · Bump `CLAIMS.md` v11 → v12 for the Volmer–Weber-origin discussion.** The five papers the
+      scientist supplied on 2026-09-18 add a **Discussion-only interpretation**: VW islanding is
+      conventionally attributed to (i) lattice-mismatch strain and (ii) the surface-free-energy
+      difference, and this construction removes the film's in-plane strain, so the island cannot be
+      strain relief. A claim outside the frozen list requires the bump *before* drafting. The five
+      references, the wording bounds (a)–(e) and the proposed placement: the "FULL-DRAFT RE-REVIEW OPEN"
+      section at the top of this file.
+
 **B. Section approvals — the block-and-wait gate**
 
 - [x] **B1 · All drafted sections APPROVED 2026-09-18.** `01_methods.md` v6 and `03_discussion.md` v5
@@ -138,15 +221,15 @@ end, so a fresh session does not re-open them.
       sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No
       citations, no code identifiers, no claim outside the frozen list. **All six sections were
       approved** — the `paper.tex` port (E2) can begin.
-- [ ] **B7 · Re-review the five sections edited by the editorial + setup passes.** The scientist
-      asked for two style passes. (1) *Editorial:* figure titles removed from the figures; the LaTeX
-      set one-column; bold mid-paragraph emphasis removed; bold-lead sentences promoted to sub-sub
-      headings; the Results "Summary" written as prose; title and authors fixed. (2) *Setup:*
-      abbreviations given their long name at first use (DFT, AGOX, GOFEE, LCB, LCAO, PBE, LEED, bcc,
-      DOS); the §1.2 heading drops "(AGOX / GOFEE)" and §3.3 drops "MTJ"; tables set to full text
-      width; sub-sub headings numbered. Together these edited `01_methods.md` (v6→v8),
-      `02_results.md` (v6→v7), `03_discussion.md` (v5→v7), `04_introduction.md` (v11→v12) and
-      `SI.md` (v10→v12), voiding their approvals. No number or claim changed. Re-approve the five.
+- [ ] **B7 · Re-review the WHOLE draft — all six sections (opened 2026-09-18).** The scientist
+      re-opened Methods, Results, Discussion, Introduction, Conclusion and Abstract together, so
+      `05_conclusion.md` v2 and `06_abstract.md` v1 are void *along with* the five sections the
+      editorial/setup/tag-removal passes had already voided (`01_methods.md` v8, `02_results.md` v8,
+      `03_discussion.md` v7, `04_introduction.md` v12, `SI.md` v13). **No section is approved.** Part of
+      the review is a content addition — the **origin of the Volmer–Weber islanding** goes into the
+      Discussion (item **A5**; five new references and the proposed placement in the FULL-DRAFT
+      RE-REVIEW section at the top of this file). Re-approve section by section as before; the LaTeX
+      port must be redone once the text changes.
 
 **C. Wording and framing**
 
@@ -258,6 +341,15 @@ end, so a fresh session does not re-open them.
       (Bisbo & Hammer, PRB 105, 245404 — the year-in-key mismatch is the pre-existing item **E2**),
       so it added no second key. Drop `hamamoto2023` and §4 keeps `gofee2017` alone.
 
+- [ ] **E6 · Five references supplied 2026-09-18 — verified, not yet cited.** `ernult2003`,
+      `dezsi2011`, `jamal2024`, `mahato2012`, `kang2015`, PDFs in `papers/`, metadata verified by DOI
+      content negotiation / arXiv API (table at the top of this file). Three things to decide before
+      they are cited: `jamal2024` (arXiv:2401.05091) and `dezsi2011` (arXiv:1109.4811) are **preprints
+      with no published version** — the first such citations in this bibliography; `mahato2012` is
+      **published in *Appl. Phys. Lett.* and the PDF is only the author manuscript, so it must be keyed
+      to APL **100**, 263117 (2012); `kang2015` is a different materials system (piezoelectric
+      oxide-on-oxide) and is the weakest fit for an Fe/MgO argument.
+
 **Decided — not open** (listed so they are not re-opened): the Fe-host-only scope (v9); the PES
 panels' shared energy range, anchored to the Fe/MgO ceiling, with 25 Fe-B points off-scale by
 decision (2026-09-18); the f = 0 and f = 0.5 constraint arms out of the paper; a_MgO = 4.212 Å as the
@@ -301,23 +393,23 @@ Fe-host structures selected, re-relaxation **not** run). It is the only path tha
 
 | Section | Draft | Approval state |
 |---|---|---|
-| `01_methods.md` | **v8** | **APPROVAL VOIDED 2026-09-18** — v6 was approved that day; two edit passes since void it (v7: bold-lead paragraphs → sub-sub headings, inline bold removed; v8: AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc long names at first use, §1.2 heading trimmed). Re-approval pending. v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
-| `02_results.md` | **v8** | **APPROVAL VOIDED 2026-09-18** — v6 was approved that day; edit passes since void it (v7: bold-lead → sub-sub headings, inline bold removed, §2.4 summary rewritten as prose; v8: claim tags (MT-n) removed from the text). Re-approval pending. v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2), which voided the v5 approval; the scientist re-approved it (B3). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4), figures cited (v5). |
-| `03_discussion.md` | **v7** | **APPROVAL VOIDED 2026-09-18** — v5 was approved that day (it opened the `04_introduction.md` gate); two edit passes since void it (v6: bold-lead → sub-sub headings, inline bold removed; v7: DOS expanded, §3.3 heading spelled out from "MTJ"). Re-approval pending. The cobalt section is deleted; no sentence about the Co host remains. |
-| `SI.md` | **v13** | **APPROVAL VOIDED 2026-09-18** — v10 was approved that day; v11 (bold-lead → sub-sub headings, inline bold removed), v12 (GPAW/LCAO/PBE, DOS, LEED, GOFEE/GPR/LCB expanded) and v13 (claim tags [SI-n]/(SI-n)/(MT-n) removed from the text and captions) void the approval. Re-approval pending. v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat; v10 removed all remaining caveats from the section text. No number or claim changed. |
-| `04_introduction.md` | **v12** | **APPROVAL VOIDED 2026-09-18** — v11 was approved that day (B2); the abbreviation pass made v12 (density functional theory (DFT) at first use), voiding the approval. Re-approval pending. v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..."; **v11** dropped "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing was accepted by the v11 approval (**C7**). |
-| `05_conclusion.md` | **v2** | **APPROVED 2026-09-18** (B5). v1 was the first draft (three paragraphs); v2 removed the third paragraph (scope and future work) at the scientist's instruction, so the conclusion ends on the MTJ-relevance paragraph. Final-manuscript section V (matches the Introduction's roadmap). Cites `greer1993`. No new claim. |
-| `06_abstract.md` | **v1** | **APPROVED 2026-09-18** (B6). Written last, as a summary of the finished argument. ~165 words; mirrors the frozen contribution sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations, no code identifiers, no claim outside the frozen list. Final-manuscript Abstract (first element of the paper). |
-| E2 port to `paper.tex` | **v3** | **DONE 2026-09-18.** v1: all six sections ported to LaTeX in final-manuscript order (`paper.tex` + `latex/*.tex` + `SI.tex`), compiled with **tectonic 0.17.0**, no errors; `\cite{}` keys carried over byte-for-byte (all resolve). Floats: Figure 1 (TikZ flowchart), Figures 2–3 (PNG), Tables 1–4; SI Figures S1–S9, Tables S1–S6. **v2 (editorial pass):** one-column document; title = "Effect of boron insertion on metal-film wetting of Fe on MgO"; authors = Andi Muhammad Nur Fitrah Syamsul (first) and Kohji Nakamura, shared affiliation; mid-paragraph `\textbf` removed; bold-lead paragraphs → `\subsubsection` headings; Results summary list → prose; figure titles removed from the PNGs. **v3 (abbreviation pass):** all tables set to full text width (`tabular*` + `\extracolsep{\fill}`); sub-sub headings **numbered** (`secnumdepth`=3; SI `\thesubsubsection` = `S<n>.<k>`); AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc/DFT/DOS expanded at first use; §1.2 heading trimmed, §3.3 heading spelled out. `paper.pdf` 13 pp, `SI.pdf` 9 pp, no overfull boxes. Venue class still not fixed. |
+| `01_methods.md` | **v8** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Voided 2026-09-18 — v6 was approved that day; two edit passes since void it (v7: bold-lead paragraphs → sub-sub headings, inline bold removed; v8: AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc long names at first use, §1.2 heading trimmed). Re-approval pending. v3 was approved at `c89e1e1`, then voided by the v4 edit; v5 re-scoped to the Fe host and v6 removed the code identifiers, and that pair is what was approved. |
+| `02_results.md` | **v8** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Voided 2026-09-18 — v6 was approved that day; edit passes since void it (v7: bold-lead → sub-sub headings, inline bold removed, §2.4 summary rewritten as prose; v8: claim tags (MT-n) removed from the text). Re-approval pending. v5 was approved as-is, then edited on the scientist's instruction to explain what p means in plain terms (§2.2), which voided the v5 approval; the scientist re-approved it (B3). History: approved 2026-09-16, reconstructed (v2), extended (v3), re-scoped (v4), figures cited (v5). |
+| `03_discussion.md` | **v7** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Voided 2026-09-18 — v5 was approved that day (it opened the `04_introduction.md` gate); two edit passes since void it (v6: bold-lead → sub-sub headings, inline bold removed; v7: DOS expanded, §3.3 heading spelled out from "MTJ"). Re-approval pending. The cobalt section is deleted; no sentence about the Co host remains. |
+| `SI.md` | **v13** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Voided 2026-09-18 — v10 was approved that day; v11 (bold-lead → sub-sub headings, inline bold removed), v12 (GPAW/LCAO/PBE, DOS, LEED, GOFEE/GPR/LCB expanded) and v13 (claim tags [SI-n]/(SI-n)/(MT-n) removed from the text and captions) void the approval. Re-approval pending. v4–v6 were scope/history/code cleanups; v7 added §S4 (SI-9) and §S5 (SI-10); v8 added §S6 (SI-11); v9 removed the SI-6 dipole caveat; v10 removed all remaining caveats from the section text. No number or claim changed. |
+| `04_introduction.md` | **v12** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Voided 2026-09-18 — v11 was approved that day (B2); the abbreviation pass made v12 (density functional theory (DFT) at first use), voiding the approval. Re-approval pending. v1 released the section when `03` was approved; v2–v8 built the fabrication trend, the phase-controlled/GOFEE-LCB justification, the plain-terms p-value, the full narrative, and the example-style achievement+roadmap; **v9** was the scientist's edit (Discussion forward pointer removed); **v10** added the reasoning paragraph before "In this work, ..."; **v11** dropped "amorphous-like". No floats. Cites device (`parkin2004`, `djayaprawira2005`, `ikeda2008`, **E3**), fabrication (`scheike2023`, `solano2022`, `ichinose2025`, `ghemes2024`, **E4**) and GOFEE/LCB (`gofee2017`, `hamamoto2023`, **E5**) keys; the confusion-principle framing was accepted by the v11 approval (**C7**). |
+| `05_conclusion.md` | **v2** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Was APPROVED 2026-09-18 (B5); no edit was made to the section. v1 was the first draft (three paragraphs); v2 removed the third paragraph (scope and future work) at the scientist's instruction, so the conclusion ends on the MTJ-relevance paragraph. Final-manuscript section V (matches the Introduction's roadmap). Cites `greer1993`. No new claim. |
+| `06_abstract.md` | **v1** | **NOT APPROVED — full-draft re-review open 2026-09-18.** Was APPROVED 2026-09-18 (B6); no edit was made to the section. Written last, as a summary of the finished argument. ~165 words; mirrors the frozen contribution sentence and the approved Results/Discussion/Conclusion; uses the exact p = 0.0444. No citations, no code identifiers, no claim outside the frozen list. Final-manuscript Abstract (first element of the paper). |
+| E2 port to `paper.tex` | **v3** | **DONE 2026-09-18 — PROVISIONAL.** The port, `paper.pdf` (13 pp) and `SI.pdf` (9 pp) carry the **pre-review** text and go stale as soon as a section is edited. v1: all six sections ported to LaTeX in final-manuscript order (`paper.tex` + `latex/*.tex` + `SI.tex`), compiled with **tectonic 0.17.0**, no errors; `\cite{}` keys carried over byte-for-byte (all resolve). Floats: Figure 1 (TikZ flowchart), Figures 2–3 (PNG), Tables 1–4; SI Figures S1–S9, Tables S1–S6. **v2 (editorial pass):** one-column document; title = "Effect of boron insertion on metal-film wetting of Fe on MgO"; authors = Andi Muhammad Nur Fitrah Syamsul (first) and Kohji Nakamura, shared affiliation; mid-paragraph `\textbf` removed; bold-lead paragraphs → `\subsubsection` headings; Results summary list → prose; figure titles removed from the PNGs. **v3 (abbreviation pass):** all tables set to full text width (`tabular*` + `\extracolsep{\fill}`); sub-sub headings **numbered** (`secnumdepth`=3; SI `\thesubsubsection` = `S<n>.<k>`); AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc/DFT/DOS expanded at first use; §1.2 heading trimmed, §3.3 heading spelled out. `paper.pdf` 13 pp, `SI.pdf` 9 pp, no overfull boxes. Venue class still not fixed. |
 
-**Approvals (2026-09-18).** Only `05_conclusion.md` v2 and `06_abstract.md` v1 remain approved
+**Approvals (2026-09-18) — none stand (re-opened later the same day).** Before the re-review, only `05_conclusion.md` v2 and `06_abstract.md` v1 remained approved
 (B5/B6). Two further edit passes the same day — an **editorial pass** (bold-lead sentences → sub-sub
 headings, inline bold removed, Results summary → prose, figure titles removed, one-column LaTeX,
 title/authors fixed) and a **setup pass** (abbreviations expanded, §1.2/§3.3 headings trimmed/spelled
 out, tables full width, sub-sub headings numbered, claim tags `(MT-n)`/`[SI-n]` removed from the text)
 — edited five sections: `01_methods.md` (v6→v8), `02_results.md` (v6→v8), `03_discussion.md` (v5→v7),
 `04_introduction.md` (v11→v12) and `SI.md` (v10→v13). Under the standing rule their approvals are
-**VOIDED** and they need re-review (item **B7**). No number, claim, table or figure changed.
+**VOIDED** and they need re-review (item **B7**). No number, claim, table or figure changed. **The scientist then re-opened the whole draft on 2026-09-18, which voids `05` and `06` as well — no section is approved (see the top of this file).**
 
 **Phase A: DONE** (contribution + claim list signed off 2026-09-16 — but the contribution has since
 been rewritten, see OPEN). **Phase D: re-opened and DONE again 2026-09-18** — the Introduction needed
@@ -674,23 +766,26 @@ substitution table is a governing rule in `AGENTS.md`. Sections bumped: `01_meth
 
 ## Next step
 
-**The `paper.tex` port (E2) is DONE (after the editorial + setup + tag-removal passes) — re-review
-the five edited sections (item B7).** The passes edited `01_methods.md` (v8), `02_results.md` (v8),
-`03_discussion.md` (v7), `04_introduction.md` (v12) and `SI.md` (v13), voiding their approvals; only
-`05_conclusion.md` v2 and `06_abstract.md` v1 remain approved. The LaTeX is one column, retitled, with
-numbered sub-sub headings, full-width tables, expanded abbreviations, figures without in-figure
-titles and no internal `(MT-n)`/`[SI-n]` tags — `paper.pdf` (13 pp) and `SI.pdf` (9 pp), no errors, no
-overfull boxes. **Next:** re-approve the five edited sections; the target-venue class is still open;
-then Phase F (self-review, claim verification) and Phase G (submission prep).
+**The whole draft is re-opened (2026-09-18) — no section is approved.** Review order is the scientist's;
+the concrete work waiting on the agent is:
 
-**Two things still need the scientist before/around the port:**
-- **A1/A2 — the claims sign-off** is not covered by the section approvals: `CLAIMS.md`'s contribution
-  sentence is still the not-re-signed v9 rewrite, and it still quotes "p = 0.045" (v8 Monte-Carlo)
-  while MT-3 and the approved Results carry the exact 0.0444.
-- **Roadmap numbering** — the Introduction's roadmap uses final-manuscript section numbers
-  (II=Methods … V=Conclusion), which must be reconciled with the draft's internal §1/§2/§3 at the
-  LaTeX port.
+1. **Item A5 first:** bump `CLAIMS.md` v11 → v12 with the new Discussion-only interpretation (the two
+   origins of Volmer–Weber islanding) and its wording bounds — the scientists' new references cannot be
+   drafted into a section before that.
+2. **Then the §3.1 addition** (the two-route attribution and the by-construction elimination), plus the
+   optional one-sentence Introduction motivation and the `jamal2024` citation in §2.1 — placement table
+   in the FULL-DRAFT RE-REVIEW section at the top of this file. Draft only after the scientist confirms
+   the intent, the placement and the preprints question (item **E6**).
+3. **Re-approve all six sections**, then **re-port to LaTeX** — the current `paper.tex`, `paper.pdf`
+   (13 pp) and `SI.pdf` (9 pp) are the pre-review text and go stale on the first edit.
 
-Everything else that is open is recorded in the checklist above (A1–A4, C1–C6, D1–D6). The largest
-open *work* item remains the relaxation pipeline (`relaxation/`, 81 Fe-host structures selected,
-re-relaxation not run).
+**Also still open (unchanged):**
+- **A1/A2 — the claims sign-off**: `CLAIMS.md`'s contribution sentence is still the not-re-signed v9
+  rewrite, and it still quotes "p = 0.045" (v8 Monte-Carlo) while MT-3 and the Results carry the exact
+  0.0444.
+- **Roadmap numbering** — the Introduction's roadmap uses final-manuscript numbers (II=Methods …
+  V=Conclusion), to be reconciled with the draft's §1/§2/§3 at the port.
+
+Everything else is in the checklist above (A1–A5, B7, C1–C6, D1–D6, E1–E6). The largest open *work*
+item remains the relaxation pipeline (`relaxation/`, 81 Fe-host structures selected, re-relaxation not
+run).

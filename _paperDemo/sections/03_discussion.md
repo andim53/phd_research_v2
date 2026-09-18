@@ -1,4 +1,10 @@
 # 03 — Discussion
+     **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
+     re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
+     together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
+     This entry records a review state, not an edit: no text, number, claim, table or figure
+     changed and no draft version is bumped. **Every earlier approval recorded below is VOID
+     for the duration of this review; each section needs re-approval.**
      v7 (2026-09-18): abbreviation pass requested by the scientist — DOS and the §3.3 heading
      ("Implications for MTJ stacks" → "Implications for magnetic tunnel junction stacks"). No number
      or claim changed. **APPROVAL VOIDED** (v5 was approved 2026-09-18); re-approval pending.
@@ -12,8 +18,8 @@
      data bound are gone, §3.5 renumbered to §3.4 and its search-count paragraph rewritten for
      the exact test. APPROVED 2026-09-18 — the gate for the introduction is open.
 
-<!-- DRAFT v5 · section 03 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). All \cite{} keys resolve against
+<!-- DRAFT v7 · section 03 of the manuscript (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). All \cite{} keys resolve against
      references.bib; the three MTJ placeholders were replaced by yuasa2004 (verified) when the
      CoFeB-specific assertions were dropped.
      v4 note: §3.1 mechanism rewritten (no lattice-strain relief; strain sits on the substrate). -->

@@ -137,6 +137,19 @@ Corrected in v9: `01_methods.md` (excluded-run names) and six places in `section
 **Approval state is authoritative in `paper_status.md`** — read its "Drafting progress" table before
 drafting or revising anything. Summary as of 2026-09-18:
 
+> **OPEN RE-REVIEW (2026-09-18): NO SECTION IS APPROVED.** The scientist re-opened the whole draft —
+> Methods, Results, Discussion, Introduction, Conclusion, Abstract — so the five sections the
+> editorial/setup/tag-removal passes had voided and the two that were still approved (`05`
+> v2, `06` v1) are all under review (item **B7**). Each section head block records this. **The
+> `paper.tex` port is PROVISIONAL** — `paper.pdf` (13 pp) and `SI.pdf` (9 pp) are the pre-review text.
+> The review includes one **content addition**: the origin of the Volmer–Weber islanding goes into the
+> Discussion, from five papers the scientist supplied 2026-09-18 (`ernult2003`, `dezsi2011`,
+> `jamal2024`, `mahato2012`, `kang2015` — verified metadata, wording bounds and the proposed placement
+> in `paper_status.md` → "FULL-DRAFT RE-REVIEW OPEN"). **The addition needs a `CLAIMS.md` bump
+> (v11 → v12) first** — item **A5** — because it is a new Discussion-only interpretation.
+> The five references are recorded as item **E6**; two of them are **preprints with no published
+> version**.
+
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
 - **Phase D: DONE for the main text** — 21 citations verified in `references.bib` (agox2020,
   gofee2017, oganov2011, gpaw2014, pbe1996, greer1993, urano1988, butler2001, yuasa2004,
@@ -147,7 +160,7 @@ drafting or revising anything. Summary as of 2026-09-18:
   key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
   `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
   `torelli2009` are closed access and cited from verified abstracts only.
-- **Phase E: DONE — all six sections approved 2026-09-18; three style passes then edited five of them (B7, re-review pending); the LaTeX port (E2) is DONE.**
+- **Phase E: NOT DONE — re-review open (2026-09-18).** All six sections were approved on 2026-09-18, then three style passes voided five of them; the scientist then re-opened the whole draft, so **no section is approved** (B7). The LaTeX port (E2) was completed but is **provisional** pending the re-review. Per-section history below.
   - `01_methods.md` **v8** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**; **v7/v8 = editorial + setup passes** (bold-lead →
     sub-sub headings, inline bold removed; AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc expanded, §1.2 heading
@@ -180,7 +193,7 @@ drafting or revising anything. Summary as of 2026-09-18:
   - `06_abstract.md` **v1** — **APPROVED 2026-09-18** (B6). Final-manuscript Abstract, ~165 words;
     written last as a summary of the finished argument; mirrors the frozen contribution sentence;
     no citations, no code identifiers, no claim outside the frozen list.
-  - **E2 port to LaTeX — DONE 2026-09-18 (first compile).** All six sections ported in final order:
+  - **E2 port to LaTeX — DONE 2026-09-18 (first compile); PROVISIONAL since the re-review opened** (the PDFs carry the pre-review text and must be re-ported after any section edit). All six sections ported in final order:
     `paper.tex` (Abstract, I Introduction, II Methods, III Results, IV Discussion, V Conclusion)
     `\input`s `latex/abstract.tex`, `latex/introduction.tex`, `latex/methods.tex`,
     `latex/results.tex`, `latex/discussion.tex`, `latex/conclusion.tex`; the Supplementary is the

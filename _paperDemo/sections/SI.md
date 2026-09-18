@@ -1,4 +1,10 @@
 # Supplementary Material
+     **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
+     re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
+     together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
+     This entry records a review state, not an edit: no text, number, claim, table or figure
+     changed and no draft version is bumped. **Every earlier approval recorded below is VOID
+     for the duration of this review; each section needs re-approval.**
      v13 (2026-09-18): claim tags removed from the section text — the inline [SI-1]…[SI-7] and
      (SI-9)/(SI-10)/(SI-11)/(MT-1) markers and the *[SI-x]* tags in the table captions. They are
      internal traceability to CLAIMS.md and should not reach the reader. No number, claim, table or
@@ -54,7 +60,7 @@
      v3 (2026-09-17): S2 (PDOS / island origin) and S3 (method-parameter sensitivity) added;
      S3 numbers purged to completed searches only.
 
-<!-- DRAFT v10 · supplementary document (markdown-first, pre-LaTeX)
+<!-- DRAFT v13 · supplementary document (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Planned structure:
        S1  Performance of the biased exploration in finding the global minimum  [drafted here]
        S2  PDOS — origin of island formation (flat vs island)   [drafted here]

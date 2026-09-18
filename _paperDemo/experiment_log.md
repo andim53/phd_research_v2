@@ -2108,3 +2108,49 @@ approval-voided. No number, claim, table or figure changed.
 
 **Doc sync.** `paper_status.md` (rows, Approvals note, E2 row, Next step), `AGENTS.md` (Phase E).
 Bibliography unchanged.
+
+## 2026-09-18 — Whole draft re-opened by the scientist; five papers supplied for the VW-origin discussion
+
+**State change (no section text edited).** The scientist asked to re-review the whole draft — Methods,
+Results, Discussion, Introduction, Conclusion, Abstract. The five sections voided by the style passes
+stay void and `05_conclusion.md` v2 / `06_abstract.md` v1, the only two still approved, are voided by
+this review as well. **No section is approved.** Each section head block gained a
+`FULL-DRAFT RE-REVIEW OPENED 2026-09-18` entry recording that this is a review state, not an edit; no
+draft version was bumped. In the same pass the **stale `<!-- DRAFT vN -->` markers were repaired**
+(they read v6 / v6 / v5 / v11 / v10 against changelogs of v8 / v8 / v7 / v12 / v13) and their
+"Grounded in CLAIMS.md v9" note corrected to v11.
+
+**Five papers supplied (19:59).** `island_ernult2003.pdf`, `island_jamal2024.pdf`,
+`lattMiss_kang2015.pdf`, `lattMiss_mahato2012.pdf`, `surfFreeEnery_dezsi2011.pdf`. Metadata verified the
+same day by DOI content negotiation (Crossref) and the arXiv API:
+
+| key (proposed) | record | content |
+|---|---|---|
+| `ernult2003` | Ernult et al., *Sci. Technol. Adv. Mater.* **4**, 383 (2003), DOI 10.1016/S1468-6996(03)00050-0 | Fe on MgO(001) by **3D Volmer–Weber**; cause given = **surface-energy difference Fe 2.9 J/m² vs MgO 1.16 J/m²**; Fe/MgO mismatch only **3.7 %** |
+| `dezsi2011` | Dézsi et al., **arXiv:1109.4811** — preprint, no journal version (no `journal_ref`, no DOI) | CEMS, ultrathin Fe on MgO(100): **no Fe–O²⁻ interaction**; "since the surface free energy of Fe is considerably larger than for MgO, 3D Fe islands form (VW)". Its **5.8 %** mismatch figure disagrees with the 3.7 % / 3.6 % used here — not to be reused |
+| `jamal2024` | Jamal & Kumar, **arXiv:2401.05091** — preprint | Epitaxial Fe/MgO(001): **VW**, islands coalesce at **~1.8 nm**; no interfacial Fe-oxide to 300 °C |
+| `mahato2012` | **published as** *Appl. Phys. Lett.* **100**, 263117 (2012), DOI 10.1063/1.4731777 (PDF is the author manuscript) | the **strain route** stated generally: VW = islands on a substrate in heteroepitaxy with different lattice constants, islands inherently strained; shape from minimising E/V, surface energy traded against strain energy |
+| `kang2015` | Kang et al., *Sci. Rep.* **5**, 10151 (2015), DOI 10.1038/srep10151 | different system (piezoelectric NKN): 3D islanding preferred when **elastic relaxation energy exceeds the film's surface energy**; **larger mismatch → VW**, smaller → Stranski–Krastanov |
+
+**The argument to be added (Discussion).** Two origins are conventionally assigned to VW islanding —
+lattice-mismatch strain (`mahato2012`, `kang2015`) and the film/substrate surface-free-energy difference
+(`ernult2003`, `dezsi2011`). In an experiment on Fe/MgO both act together. **This construction removes
+the film's in-plane strain by construction** (cell at a_Fe; the MgO is the compressed component, held
+fixed — verified 2026-09-17), so the island the search finds cannot be strain relief, which is the
+frozen SI-3 rule; the surviving driver is the surface/interface-energy route, whose atomistic content
+§S2 already reports. Proposed placement: **Discussion §3.1** (core), an optional one-sentence
+motivation in the Introduction, and `jamal2024` added to the §2.1 experimental-islanding citations; SI
+unchanged. Wording bounds recorded in `paper_status.md`: the mismatch is not removed (only the film's
+strain is), the strain convention is the inverse of experiment, no γ is computed anywhere, and two of
+the five sources are non-Fe/MgO systems.
+
+**Required first.** A `CLAIMS.md` bump **v11 → v12** with the new Discussion-only interpretation (item
+**A5**) — AGENTS.md forbids drafting a claim outside the frozen list. The five references are recorded
+as item **E6**; `jamal2024` and `dezsi2011` are preprints, and `mahato2012` must be keyed to the
+published APL record.
+
+**Doc sync.** `paper_status.md` (new "FULL-DRAFT RE-REVIEW OPEN" section, drafting-table rows,
+Approvals note, A5, B7 rewritten, E6, Next step), `AGENTS.md` (Drafting status warning block, Phase E
+headline, E2 row marked provisional), the six section head blocks. **Bibliography unchanged** — the five
+papers are verified but not yet cited, so nothing was added to `references.bib`. The LaTeX port is
+**provisional**: `paper.pdf` (13 pp) and `SI.pdf` (9 pp) carry the pre-review text.

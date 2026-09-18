@@ -1,4 +1,10 @@
 # 04 — Introduction
+     **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
+     re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
+     together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
+     This entry records a review state, not an edit: no text, number, claim, table or figure
+     changed and no draft version is bumped. **Every earlier approval recorded below is VOID
+     for the duration of this review; each section needs re-approval.**
      v12 (2026-09-18): abbreviation pass requested by the scientist — "density-functional theory" now
      reads "density functional theory (DFT)" at its first use. No number or claim changed.
      **APPROVAL VOIDED** by this edit (v11 was approved 2026-09-18); re-approval pending.
@@ -60,7 +66,7 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v11 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v12 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      As of v8 this section carries no numbers: the detailed findings (flat-basin minima, the shift,
      the p-value) live in Results §2. The motivation cites the growth/islanding literature and the

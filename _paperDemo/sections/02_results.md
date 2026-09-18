@@ -1,4 +1,10 @@
 # 02 — Results
+     **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
+     re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
+     together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
+     This entry records a review state, not an edit: no text, number, claim, table or figure
+     changed and no draft version is bumped. **Every earlier approval recorded below is VOID
+     for the duration of this review; each section needs re-approval.**
      v8 (2026-09-18): claim tags removed from the section text (the (MT-1)/(MT-2)/(MT-3)/(MT-7)/(MT-8)
      markers at the end of the relevant paragraphs) at the scientist's request — they are internal
      traceability to CLAIMS.md and should not reach the reader. No number or claim changed.
@@ -19,7 +25,7 @@
      and the MT-4/MT-5 paragraphs are out of the paper; the p-value is now the exact 0.0444 of
      CLAIMS v9 §4; Tables 4-5 became Tables 3-4. TO BE RE-APPROVED — no prior approval survives.
 
-<!-- DRAFT v6 · section 02 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v8 · section 02 of the manuscript (markdown-first, pre-LaTeX)
      Fe/MgO and Fe-B/MgO only (CLAIMS v9). The biased search yields an EXPLORATION density over
      the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the weights
      are not physical. Organized by phase, not by additive.

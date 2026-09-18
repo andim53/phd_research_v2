@@ -1,4 +1,10 @@
 # 05 — Conclusion
+     **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
+     re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
+     together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
+     This entry records a review state, not an edit: no text, number, claim, table or figure
+     changed and no draft version is bumped. **Every earlier approval recorded below is VOID
+     for the duration of this review; each section needs re-approval.**
      v2 (2026-09-18): the third paragraph (scope and future work — trend-level / non-converged
      structures, re-relaxation, the no-third-element-control bound) is removed at the scientist's
      instruction. The conclusion now ends on the MTJ-relevance paragraph. No number or claim changed.

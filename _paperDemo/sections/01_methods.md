@@ -1,4 +1,10 @@
 # 01 — Methods
+     **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
+     re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
+     together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
+     This entry records a review state, not an edit: no text, number, claim, table or figure
+     changed and no draft version is bumped. **Every earlier approval recorded below is VOID
+     for the duration of this review; each section needs re-approval.**
      v8 (2026-09-18): abbreviation pass requested by the scientist — AGOX, GOFEE, LCB, LCAO, PBE,
      LEED and bcc now carry their long name at first use; the §1.2 heading drops the "(AGOX / GOFEE)"
      parenthetical. No number or claim changed. **APPROVAL VOIDED** (v6 was approved 2026-09-18);
@@ -17,8 +23,8 @@
      renumbering follows: the Results tables become Tables 3 and 4. TO BE RE-APPROVED — no prior
      approval survives this edit.
 
-<!-- DRAFT v6 · section 01 of the manuscript (markdown-first, pre-LaTeX)
-     Grounded in CLAIMS.md v9 (scope: Fe/MgO + Fe-B/MgO). Citations verified and in references.bib
+<!-- DRAFT v8 · section 01 of the manuscript (markdown-first, pre-LaTeX)
+     Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Citations verified and in references.bib
      (Phase D done for this section). -->
 <!-- v4 (2026-09-17): §1.2 gained the completed-search rule and the list of excluded runs (then
      13 / 6 / 4 / 3).
