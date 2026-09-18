@@ -25,3 +25,33 @@
 *.fdb_latexmk
 *.synctex.gz
 *.log
+
+# === data/ — the AGOX result databases, tracked on the scientist's instruction (2026-09-18) ======
+# Reversal of the previous rule ("the data tree is not part of paper commits"). The repo root
+# ignores *.db / *.out / *.txt / *.xsf / *.csv as regenerable artifacts; the set of *root* ignores
+# is harmless, but the structure databases are NOT regenerable - they are the search output every
+# reported number comes from - so they are re-enabled here, together with the run code that
+# produced them.
+!data/
+!data/**/
+!data/**/*.db
+!data/**/*.py
+!data/**/*.sh
+
+# Still ignored (ask if wanted): *.xsf, *.traj, *.csv, *.txt and *.out under data/. The GPAW
+# console/text dumps alone are 36 638 files / ~3.9 GB of regenerable output and carry no number
+# that analysis/*.csv + the .db do not already carry.
+
+# Scratch/bookkeeping trees inside the runs stay excluded, in git as in the analysis.
+data/**/trash/
+data/**/_trash/
+
+# These run-directory script snapshots carry a copy of their OWN git repository (a nested .git
+# directory). Git cannot descend into a directory that contains one -- it would record a bare
+# gitlink instead of the files -- so they are excluded until those nested .git copies are removed.
+# The databases and the run configuration (main.py) of these same runs ARE tracked; only the
+# helper-script copies are held back.
+data/dos_femgo_flatngs/scripts/
+data/febmgo/scripts/
+data/febmgo_v2/scripts/
+data/mgofe/scripts/
