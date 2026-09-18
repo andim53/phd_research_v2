@@ -2154,3 +2154,50 @@ Approvals note, A5, B7 rewritten, E6, Next step), `AGENTS.md` (Drafting status w
 headline, E2 row marked provisional), the six section head blocks. **Bibliography unchanged** — the five
 papers are verified but not yet cited, so nothing was added to `references.bib`. The LaTeX port is
 **provisional**: `paper.pdf` (13 pp) and `SI.pdf` (9 pp) carry the pre-review text.
+
+## 2026-09-18 — CLAIMS v12 (VW-origin interpretation) and the three section edits drafted
+
+**Placement decided by the scientist:** Discussion §3.1 as the core, one motivation sentence in the
+Introduction, and the `jamal2024` citation in Results §2.1; the SI is unchanged. Both supplied
+preprints are cited as preprints; the claims bump was made before drafting.
+
+**1. `CLAIMS.md` v11 → v12.** A new **Discussion-only interpretation** added: *origin of the
+Volmer–Weber islanding — two conventional routes, one removed by construction*. It states the two
+attributions (mismatch strain from the general heteroepitaxy literature; film/substrate surface-energy
+difference for Fe/MgO), the by-construction elimination of the strain route for the film, and the
+paired bounds (a)–(e): the mismatch is not removed, only the film's in-plane strain is; the strain
+convention is the inverse of experiment; **no surface or interface energy is computed anywhere**, so the
+argument is one of elimination inside one fixed lattice model; mismatch percentages must be defined when
+quoted (3.6 % substrate compression vs 3.75 % referred to the film = Ernult's 3.7 %; Dézsi's 5.8 % is
+neither and is not used); and `mahato2012`/`kang2015` are different materials systems, cited for the
+mechanism attribution only. Header, OPEN index (A1–E6) and the version history updated; no MT/SI results
+claim touched.
+
+**2. `references.bib` — five entries added** (23 → 28), verified 2026-09-18 by DOI content negotiation
+and the arXiv API: `ernult2003` (STAM 4, 383; 10.1016/S1468-6996(03)00050-0), `mahato2012` (APL 100,
+263117; 10.1063/1.4731777 — the PDF is the author manuscript), `kang2015` (Sci. Rep. 5, 10151;
+10.1038/srep10151), and two `@misc` arXiv preprints with a `note = {preprint; no published version}`:
+`dezsi2011` (1109.4811), `jamal2024` (2401.05091). **All 28 keys are cited and none is orphaned.**
+
+**3. Section edits (all inside the open re-review; no number, claim, table or figure changed).**
+- `03_discussion.md` **v7 → v8** (§3.1): a new opening paragraph giving the two conventional origins of
+  dewetting — mismatch strain \cite{mahato2012,kang2015}, and the film/substrate surface-energy
+  difference with the 2.9 vs 1.16 J/m² numbers \cite{ernult2003,dezsi2011}; an elimination sentence in
+  the existing "It is not a lattice-strain effect here" paragraph; and a closing paragraph on the §S5
+  constraint sweep (the film stretched in plane by up to 3.9 %, the island ground state in all 25
+  searches, the flat-basin minimum moving 0.0094 eV/atom) ending on the "no surface energy is measured"
+  bound.
+- `04_introduction.md` **v12 → v13**: one motivation sentence naming the two origins, **no verdict**.
+- `02_results.md` **v8 → v9**: the in-situ RHEED + transport observation of VW islands coalescing at
+  about 1.8 nm \cite{jamal2024} added to the §2.1 experimental-islanding citations.
+
+**Checks run.** Every `\cite{}` key in `sections/` resolves against `references.bib`; no entry is
+orphaned; no code span in any modified section; new text re-wrapped to the file's ~100-column style.
+
+**The LaTeX port is now behind the markdown by these three edits** — it is not re-ported until the
+sections are re-approved (block-and-wait). `paper.pdf` / `SI.pdf` therefore do not show the new
+Discussion text.
+
+**Doc sync.** `paper_status.md` (drafting rows 02/03/04, A5 closed, E6 closed, Citations section,
+"FULL-DRAFT RE-REVIEW OPEN" gains the drafted-edits table, Next step), `AGENTS.md` (warning block,
+Phase D reference inventory rewritten, Phase E rows for 02/03/04).

@@ -145,36 +145,44 @@ drafting or revising anything. Summary as of 2026-09-18:
 > The review includes one **content addition**: the origin of the Volmer–Weber islanding goes into the
 > Discussion, from five papers the scientist supplied 2026-09-18 (`ernult2003`, `dezsi2011`,
 > `jamal2024`, `mahato2012`, `kang2015` — verified metadata, wording bounds and the proposed placement
-> in `paper_status.md` → "FULL-DRAFT RE-REVIEW OPEN"). **The addition needs a `CLAIMS.md` bump
-> (v11 → v12) first** — item **A5** — because it is a new Discussion-only interpretation.
-> The five references are recorded as item **E6**; two of them are **preprints with no published
-> version**.
+> in `paper_status.md` → "FULL-DRAFT RE-REVIEW OPEN"). **The `CLAIMS.md` bump to v12 is DONE** (item
+> **A5** — the two-route attribution is now a frozen Discussion-only interpretation with its paired
+> bounds) and the five references are in `references.bib` (28 entries, all cited, none orphaned —
+> item **E6**); two of them are **preprints with no published version**. **The addition is drafted and
+> awaiting review:** `03_discussion.md` **v8** (§3.1 — the substantive edit), `04_introduction.md`
+> **v13** (one motivation sentence) and `02_results.md` **v9** (one §2.1 citation). The LaTeX port is
+> now behind the markdown by those three edits.
 
 - **Phase A: DONE** (contribution + claim list signed off 2026-09-16).
-- **Phase D: DONE for the main text** — 21 citations verified in `references.bib` (agox2020,
+- **Phase D: DONE for the main text** — `references.bib` holds **28 entries, all 28 cited, none
+  orphaned** (checked by script, 2026-09-18). They are: the **13** of the original set (agox2020,
   gofee2017, oganov2011, gpaw2014, pbe1996, greer1993, urano1988, butler2001, yuasa2004,
-  reitinger2007, fahsold2000, larsen2009, torelli2009; plus eight added 2026-09-18 for the
+  reitinger2007, fahsold2000, larsen2009, torelli2009); **eight** added 2026-09-18 for the
   Introduction — device-side **parkin2004, djayaprawira2005, ikeda2008** (item **E3**), the
   recent-fabrication trend **scheike2023, solano2022, ichinose2025, ghemes2024** (item **E4**), and
-  the GOFEE/LCB reference **hamamoto2023** (item **E5**) — see `paper_status.md`); every `\cite{}`
-  key resolves and none is orphaned. The three MTJ placeholders were **withdrawn** and replaced by
-  `yuasa2004`; no UNVERIFIED placeholders remain. Open: `fahsold2000`, `reitinger2007` and
-  `torelli2009` are closed access and cited from verified abstracts only.
+  the GOFEE/LCB reference **hamamoto2023** (item **E5**); **five** added 2026-09-18 for the
+  Volmer–Weber-origin discussion (item **E6**) — `ernult2003`, `mahato2012`, `kang2015`
+  (DOI-verified) and `dezsi2011`, `jamal2024` (**arXiv preprints with no published version**, cited
+  as preprints, the first such citations here); and the **two** lattice-constant references cited only
+  by the SI (`pietrokowsky1966`, `swanson1953`). Every `\cite{}` key resolves. The three MTJ
+  placeholders were **withdrawn** and replaced by `yuasa2004`; no UNVERIFIED placeholders remain.
+  Open: `fahsold2000`, `reitinger2007` and `torelli2009` are closed access and cited from verified
+  abstracts only.
 - **Phase E: NOT DONE — re-review open (2026-09-18).** All six sections were approved on 2026-09-18, then three style passes voided five of them; the scientist then re-opened the whole draft, so **no section is approved** (B7). The LaTeX port (E2) was completed but is **provisional** pending the re-review. Per-section history below.
   - `01_methods.md` **v8** — re-scoped to the Fe host (Table 3 deleted, counts 13 / 6) and stripped
     of code identifiers → **APPROVED 2026-09-18**; **v7/v8 = editorial + setup passes** (bold-lead →
     sub-sub headings, inline bold removed; AGOX/GOFEE/LCB/LCAO/PBE/LEED/bcc expanded, §1.2 heading
     trimmed) → **APPROVAL VOIDED, re-review pending (B7)**.
-  - `02_results.md` **v8** — re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
+  - `02_results.md` **v9** — **v9 (2026-09-18) = one experimental citation added to §2.1** (`jamal2024`: VW islands coalescing at ~1.8 nm), part of the VW-origin addition. Prior: **v8** re-scoped (Co results and the 2×2 design removed, Tables 4–5 → 3–4,
     p = 0.0444) with Figures 2–3 cited and captioned, and the p-value explained in plain terms
     (§2.2) → **APPROVED 2026-09-18** (via B3). **v7/v8 = editorial + tag-removal passes** (bold-lead
     → sub-sub headings, inline bold removed, §2.4 summary rewritten as prose; `(MT-n)` tags removed)
     → **APPROVAL VOIDED, re-review pending (B7)**.
-  - `03_discussion.md` **v7** — the cobalt section is deleted; no Co sentence remains →
+  - `03_discussion.md` **v8** — **v8 (2026-09-18) = the VW-origin addition**: §3.1 opens with the two conventional origins of dewetting, states the by-construction elimination of the strain route, and closes on the §S5 constraint sweep as internal support (no surface energy is measured). Prior: **v7** — the cobalt section is deleted; no Co sentence remains →
     **APPROVED 2026-09-18** (it was the gate for `04_introduction.md`). **v6/v7 = editorial + setup
     passes** (bold-lead → sub-sub headings, inline bold removed; DOS expanded, §3.3 heading spelled
     out) → **APPROVAL VOIDED, re-review pending (B7)**.
-  - `04_introduction.md` **v12** — **APPROVED 2026-09-18** (B2) at v11. **v12 = setup pass** (DFT
+  - `04_introduction.md` **v13** — **v13 (2026-09-18) = one motivation sentence** naming the two conventional origins of the dewetting, with no verdict. Prior: **v12** — **APPROVED 2026-09-18** (B2) at v11. **v12 = setup pass** (DFT
     expanded at first use) → **APPROVAL VOIDED, re-review pending (B7)**. Continuous prose, no
     subsections, no floats; the roadmap uses final-manuscript section numbers (II=Methods …
     V=Conclusion). The v11 approval also accepted **C7** (confusion-principle framing) and

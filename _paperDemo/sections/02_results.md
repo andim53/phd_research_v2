@@ -1,4 +1,7 @@
 # 02 — Results
+     v9 (2026-09-18): one experimental citation added to the §2.1 correspondence (the in-situ RHEED +
+     transport observation of Volmer-Weber islands coalescing at about 1.8 nm). No number or claim
+     changed. **APPROVAL VOID / re-review pending.**
      **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
      re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
      together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
@@ -25,7 +28,7 @@
      and the MT-4/MT-5 paragraphs are out of the paper; the p-value is now the exact 0.0444 of
      CLAIMS v9 §4; Tables 4-5 became Tables 3-4. TO BE RE-APPROVED — no prior approval survives.
 
-<!-- DRAFT v8 · section 02 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v9 · section 02 of the manuscript (markdown-first, pre-LaTeX)
      Fe/MgO and Fe-B/MgO only (CLAIMS v9). The biased search yields an EXPLORATION density over
      the flat (wetting) and island (dewetting) phases — not a thermodynamic DoS, so the weights
      are not physical. Organized by phase, not by additive.
@@ -122,9 +125,12 @@ that sub-nanometre Fe grows three-dimensionally on MgO, with island coalescence 
 and 6.5 monolayers and a two-dimensional growth mode reported only above ≈6.5 monolayers
 \cite{torelli2009}; and grazing-incidence small-angle X-ray scattering on five monolayers
 evaporated at room temperature likewise identifies Volmer–Weber growth with spherical
-islands \cite{reitinger2007}. A flat, continuous film is obtained instead by low-temperature
-deposition \cite{fahsold2000} or by slow deposition onto a cleaved, oxygen-annealed crystal,
-where the first monolayer grows pseudomorphically and layer by layer \cite{urano1988}. Our two
+islands \cite{reitinger2007}; and reflection high-energy electron diffraction combined with
+in-situ transport measurements on an epitaxially grown film finds the islands impinging and
+coalescing into a continuous film only at about 1.8 nm \cite{jamal2024}. A flat, continuous
+film is obtained instead by low-temperature deposition \cite{fahsold2000} or by slow deposition
+onto a cleaved, oxygen-annealed crystal, where the first monolayer grows pseudomorphically and
+layer by layer \cite{urano1988}. Our two
 basins therefore map onto the two outcomes that are experimentally accessible at this
 coverage — the flat basin onto the pseudomorphic monolayer and the island basin onto the 3D
 clusters — and the energy ordering we find places the flat, wetting configuration above the

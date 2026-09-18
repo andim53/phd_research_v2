@@ -1,6 +1,6 @@
-# CLAIMS.md — FROZEN claim list (v11)
+# CLAIMS.md — FROZEN claim list (v12)
 
-**Status: FROZEN (v11, 2026-09-17).** Supersedes v10, v9, v8, v7, v6, v5, v4, v3, v2 and v1.
+**Status: FROZEN (v12, 2026-09-18).** Supersedes v11, v10, v9, v8, v7, v6, v5, v4, v3, v2 and v1.
 **Project:** `_paperDemo` · **Venue:** TBD (format-agnostic)
 
 **Scope of the paper (v9): the Fe host only — Fe/MgO and Fe-B/MgO.** The Fe-Co/MgO and Fe-Co-B/MgO
@@ -13,7 +13,7 @@ no longer in scope. Archive: `_archive/cofe/README.md`; raw data under `data/_ar
 
 Items that are **not** settled. They are listed here so a fresh session does not treat the frozen
 list as fully accepted. **The single index of all open decisions is `paper_status.md` → OPEN**
-(consolidated 2026-09-18, items A1–E2); the claim-level items below are A1–A4 and C1–C3 there.
+(consolidated 2026-09-18, items A1–E6); the claim-level items below are A1–A5 and C1–C3 there.
 
 1. **Acceptance of the significance test as it now stands (v8 + v9).** The test has been revised
    twice: v8 replaced two independent permutations of the pooled minima with one split (+1
@@ -730,6 +730,37 @@ claims to MT/SI and do not change the frozen list.
   separation is consistent with either. Resolving it would require an absolute (cross-system)
   energy reference and/or a converged treatment of both basins. Permitted in Results §2.3 and
   Discussion §3.2; it is wording, not a results claim.
+- **Origin of the Volmer–Weber islanding: two conventional routes, one removed by construction
+  (added 2026-09-18, v12).** Dewetting of a film on a substrate is conventionally attributed to two
+  origins — elastic strain energy from the lattice mismatch, and the difference in free surface energy
+  between film and substrate (γ_film > γ_substrate). The general heteroepitaxy statement of the strain
+  route is \cite{mahato2012,kang2015}; for Fe on MgO(001) the surface-energy route is the attribution
+  used in the experimental literature, where the lattice mismatch is small — Fe 2.9 J/m² against MgO
+  1.16 J/m² with a 3.7 % mismatch \cite{ernult2003}, and "since the surface free energy of Fe is
+  considerably larger than for MgO, 3D Fe islands form" \cite{dezsi2011} — and the growth is directly
+  reported as Volmer–Weber at this coverage \cite{fahsold2000,reitinger2007,torelli2009,jamal2024}.
+  In an experiment the two routes act together and cannot be separated; **in this construction the film
+  is unstrained in-plane** (the cell is the Fe lattice constant and the MgO is the compressed component,
+  held fixed), so the island the search finds **cannot be strain relief** — which is the SI-3 rule — and
+  the surviving route is the surface/interface-energy one, whose atomistic content §S2 reports.
+  **Paired bounds, must travel with it:** (a) the mismatch is **not** removed, only the *film's*
+  in-plane strain is; the substrate carries it; (b) the strain convention is the inverse of the
+  experimental stack (§3.4), so the model does not represent a strained film; (c) **no surface or
+  interface energy is computed anywhere in this analysis**, so the argument is one of elimination inside
+  one fixed lattice model, not a measurement of γ; (d) mismatch percentages must be defined when quoted
+  — our 3.6 % is the *substrate compression* (a_MgO/√2 − a_Fe)/a_MgO/√2 = 3.61 %, the same mismatch
+  referred to the film is 3.75 % (Ernult's 3.7 %), and the 5.8 % quoted in \cite{dezsi2011} is neither
+  and is not used; (e) \cite{mahato2012} and \cite{kang2015} are different materials systems
+  (silicide-on-Si, piezoelectric oxide-on-oxide), cited for the mechanism attribution only.
+  **Internal support, already computed:** the lattice-constraint study (§S5, SI-10) puts the constraint
+  on the film instead (+0.98 / +2.94 / +3.92 %) and the island remains the ground state in 25 of 25
+  searches with the flat-basin minimum moving 0.0094 eV/atom, inside the search-to-search SD — the
+  island does not depend on where the strain sits. **Placement:** Discussion §3.1 (core); one motivation
+  sentence in the Introduction stating the two candidate origins with no verdict; \cite{jamal2024}
+  added to the experimental-islanding citations of Results §2.1. **Sources:** \cite{ernult2003},
+  \cite{mahato2012}, \cite{kang2015} (published, DOIs verified 2026-09-18);
+  \cite{dezsi2011,jamal2024} (**arXiv preprints, no published version — cited as preprints**).
+
 - **Experimental correspondence (added 2026-09-17, v5).** The flat and island basins are mapped
   onto the two growth outcomes reported for Fe on MgO(001): room-temperature deposition gives
   3D islands (suppressed only at 140 K) \cite{fahsold2000} and Volmer–Weber clusters at 5 ML
@@ -806,7 +837,12 @@ the SI: SI-9 (iteration budget — the comparison survives 200/400/600 iteration
 energy keeps improving) and SI-10 (lattice constraint — sweeping the cell from Fe-matched to
 MgO-matched moves the flat-basin minimum by 0.0094 eV/atom); the convergence caveat held since v4
 written into the Limitations; the inverted-strain case now calculated for the boron-free model; a new
-limitation for the run-set spread of the flat-basin reference · v11 (2026-09-17) the inverted stack
+limitation for the run-set spread of the flat-basin reference · v12 (2026-09-18) a new Discussion-only interpretation — the origin of the Volmer–Weber islanding:
+two conventional routes (lattice-mismatch strain; film/substrate surface-free-energy difference), of
+which the strain route is removed for the film by construction, so the island cannot be strain relief;
+five references supplied by the scientist the same day (two of them arXiv preprints, no published
+version) with the paired bounds, including the mismatch-denominator rule; the lattice-constraint study
+cited as the internal support; no MT/SI results claim changed · v11 (2026-09-17) the inverted stack
 (MgO on Fe) added as a GROUND-STATE COMPARISON (SI-11, qualified): the inverted stack's ground state
 is a flat MgO film (0.016 eV/atom below the corresponding island), the opposite of Fe-on-MgO whose
 ground state is an island, but the inverted-stack searches do not converge at the 100-iteration

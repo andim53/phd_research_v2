@@ -1,4 +1,8 @@
 # 04 — Introduction
+     v13 (2026-09-18): one motivation sentence added before "Two structural outcomes thus compete
+     ..." naming the two conventional origins of the dewetting, with no verdict (the reading stays in
+     the Discussion, §3.1). Five new references (CLAIMS v12). No number or claim changed.
+     **APPROVAL VOID / re-review pending.**
      **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
      re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
      together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
@@ -66,7 +70,7 @@
      the significance value left to the Results. No Co host is discussed and the device material is
      referred to generically.
 
-<!-- DRAFT v12 · section 04 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v13 · section 04 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). Continuous prose, no subsections.
      As of v8 this section carries no numbers: the detailed findings (flat-basin minima, the shift,
      the p-value) live in Results §2. The motivation cites the growth/islanding literature and the
@@ -118,6 +122,11 @@ monolayer is obtained instead by slow deposition onto a cleaved, oxygen-annealed
 grain-to-grain epitaxial growth of a sub-nanometre ferromagnetic layer on a polycrystalline MgO(001)
 barrier on 300 mm wafers must be performed at cryogenic temperature (100 K), because room-temperature
 deposition lets the metal nucleate as islands and break the film's continuity \cite{ichinose2025}.
+Two origins are conventionally assigned to such dewetting: the elastic strain energy of a
+lattice-mismatched overlayer, which is the general heteroepitaxial description
+\cite{mahato2012,kang2015}, and the difference in free surface energy between film and substrate,
+which is the one the growth literature invokes for Fe on MgO(001), the free surface energy of Fe
+being much the larger of the two and the lattice mismatch small \cite{ernult2003,dezsi2011}.
 Two structural outcomes thus compete at this coverage — a flat, well-wetting film and a dewetted
 island — and the growth experiments constrain their kinetics rather than their relative energies,
 while interface models assume the flat geometry by construction. What is missing is a comparison of

@@ -1,4 +1,9 @@
 # 03 — Discussion
+     v8 (2026-09-18): the Volmer-Weber origin added to §3.1 — the two conventional origins (mismatch
+     strain; film/substrate surface-energy difference) with the strain route removed for the film by
+     construction, the §S5 constraint sweep as internal support, and the no-surface-energy-measured
+     bound. Five new references (CLAIMS v12). No number or claim changed. **APPROVAL VOID / re-review
+     pending.**
      **FULL-DRAFT RE-REVIEW OPENED 2026-09-18.** At the scientist's request the whole draft is
      re-opened for review — Methods, Results, Discussion, Introduction, Conclusion and Abstract
      together — ahead of adding the origin of the Volmer-Weber islanding to the Discussion.
@@ -18,7 +23,7 @@
      data bound are gone, §3.5 renumbered to §3.4 and its search-count paragraph rewritten for
      the exact test. APPROVED 2026-09-18 — the gate for the introduction is open.
 
-<!-- DRAFT v7 · section 03 of the manuscript (markdown-first, pre-LaTeX)
+<!-- DRAFT v8 · section 03 of the manuscript (markdown-first, pre-LaTeX)
      Grounded in CLAIMS.md v11 (scope: Fe/MgO + Fe-B/MgO). All \cite{} keys resolve against
      references.bib; the three MTJ placeholders were replaced by yuasa2004 (verified) when the
      CoFeB-specific assertions were dropped.
@@ -42,14 +47,41 @@ forced interfacial coupling and restored metal cohesion: the registry-locked mon
 its bonding on Fe–O contacts while forgoing the three-dimensional Fe–Fe coordination available
 to a cluster, and the island reverses that trade.
 
-It is not a lattice-strain effect. The in-plane mismatch of this interface (3.6 % of the MgO
+Two origins are conventionally assigned to the dewetting of a film from its substrate. The first is
+the elastic strain energy stored in a mismatched overlayer: in heteroepitaxy the islands that form
+directly on a substrate are inherently strained, and their shape follows from trading that strain
+energy against the surface energy of the island's facets \cite{mahato2012}, with the size of the
+mismatch selecting the growth mode \cite{kang2015}. The second is the difference in free surface
+energy between film and substrate: when the surface energy of the film substantially exceeds that of
+the substrate, covering the substrate costs energy and three-dimensional islands are favoured over a
+wetting film. For Fe on MgO(001) the growth literature uses the second, because the free surface
+energy of Fe, 2.9 J/m², is much larger than that of MgO, 1.16 J/m², while the lattice mismatch
+between the two lattices is small \cite{ernult2003}; the three-dimensional island growth is
+attributed to that surface-energy difference \cite{ernult2003,dezsi2011}. In an experiment the two
+origins act together and cannot be separated.
+
+It is not a lattice-strain effect here. The in-plane mismatch of this interface (3.6 % of the MgO
 lattice against the Fe lattice, §1.1) is carried by the substrate, which is built in that
 compressed state and held fixed, not by the film; the Fe film sits at its own equilibrium lattice
-constant and is not strained in-plane, so there is no film strain for the island to relieve.
-The mechanism is consistent with the weak Fe–MgO coupling found in first-principles treatments
-of the interface \cite{butler2001}, and with the experimental observation that a flat monolayer
-requires low-temperature or slow deposition while room-temperature growth gives 3D islands at
-the same one-monolayer coverage \cite{fahsold2000,torelli2009,reitinger2007}.
+constant and is not strained in-plane, so there is no film strain for the island to relieve. An
+island that forms in this construction therefore cannot be the lowest configuration because it
+relieves the mismatch, and what is left is the balance between surface and interface energy — the
+cost of the registry-locked, strongly coupled flat film that the electronic-structure analysis
+identifies, against the metal cohesion an island recovers by giving that registry up. The mechanism
+is consistent with the weak Fe–MgO coupling found in first-principles treatments of the interface
+\cite{butler2001}, and with the experimental observation that a flat monolayer requires
+low-temperature or slow deposition while room-temperature growth gives 3D islands at the same
+one-monolayer coverage \cite{fahsold2000,torelli2009,reitinger2007}.
+
+The reading does not depend on which phase carries the constraint. In the sweep of the in-plane
+lattice from the Fe-matched cell towards the MgO-matched one (Supplementary Material, §S5), the
+constraint moves off the substrate and onto the film, which is stretched in plane by up to 3.9 %; the
+island remains the ground state in all 25 searches of that study, and the flat-basin minimum moves by
+only 0.0094 eV/atom, well inside the scatter between searches. The island's stability therefore does
+not track the strain of either phase. What this comparison does not do is measure a surface energy:
+the mismatch itself is not removed — the substrate carries it — and because the construction puts the
+in-plane lattice constant on the metal, the strain convention is the inverse of a real junction
+(§3.4). The two origins are separated within one fixed lattice model, not eliminated from it.
 
 ## 3.2 Why boron stabilises the flat film
 
