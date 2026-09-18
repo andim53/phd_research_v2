@@ -255,8 +255,13 @@ drafting or revising anything. Summary as of 2026-09-18:
   - **DOS/PDOS:** `dos_femgo_flatngs` (Fe flat + island), `dos_febmgo_gs` (Fe-B ground state).
   Loaders must **skip scratch `trash/` dbs** and filter to the target composition — the
   `femgo_kappa` dirs contain a `trash/` db with 41 Fe9Mg9O9 structures.
-  This directory is large and is **not** part of paper commits — commit only analysis
-  scripts, the scaffold, and draft files.
+  This directory is large. **Since 2026-09-18 the run data IS tracked** (on the scientist's
+  instruction): the AGOX structure databases (`*.db`), the per-run `main.py` and job scripts, and the
+  run READMEs — 141 databases, ~700 files, ~50 MB. The regenerable bulk stays out: `*.txt`/`*.out`
+  (36 638 files / ~3.9 GB of GPAW console output), `*.xsf`, `*.traj`, `*.csv`. Four run-directory
+  `scripts/` snapshots are held back because they carry a nested `.git` copy (git would record a bare
+  gitlink); remove those `.git` dirs to track them. See `_paperDemo/.gitignore` and the commit
+  `049edc1`/`3e97393`.
 - The runs are GOFEE (GPR surrogate + LCB): a **biased** exploration seeded from a
   reference **flat** metal layer. Only structures with **iteration >= 10** are used
   (relaxation starts at iteration 10).
@@ -280,4 +285,6 @@ drafting or revising anything. Summary as of 2026-09-18:
 
 - Commit after every change/milestone, with a descriptive message.
 - Confirm with the scientist before committing on each milestone.
-- Never commit the `data/` tree or other unrelated changes in the parent `research/` repo.
+- **The `data/` tree is tracked since 2026-09-18** (databases + run code; see "Data & scope") — but
+  never commit the regenerable bulk (`*.txt`/`*.out`/`*.xsf`/`*.traj`/`*.csv` under `data/`) or other
+  unrelated changes in the parent `research/` repo.

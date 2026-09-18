@@ -2201,3 +2201,24 @@ Discussion text.
 **Doc sync.** `paper_status.md` (drafting rows 02/03/04, A5 closed, E6 closed, Citations section,
 "FULL-DRAFT RE-REVIEW OPEN" gains the drafted-edits table, Next step), `AGENTS.md` (warning block,
 Phase D reference inventory rewritten, Phase E rows for 02/03/04).
+
+## 2026-09-18 — papers/ and the run data tracked in git (reversal of the data rule)
+
+On the scientist's instruction the reference library and the run data are now versioned.
+
+- **`papers/` (commit `80ecbf5`)** — all 15 reference PDFs (42 MB), including the five VW-origin
+  papers supplied earlier the same day. First time the reference library is tracked.
+- **`data/` (commits `049edc1` + `3e97393`)** — the AGOX structure databases and run code: **141 `.db`
+  databases** (every non-scratch database; the `trash/`/`_trash/` scratch trees stay excluded, as in the
+  analysis), the per-run `main.py` and job scripts, run READMEs, and 34 figures written by the runs —
+  ~700 files, ~50 MB. `_paperDemo/.gitignore` now re-enables `*.db` under `data/` against the repo-root
+  blanket rule, with the reasoning documented in the file.
+- **Held back deliberately:** the regenerable bulk — `*.txt`/`*.out` (36 638 files / ~3.9 GB of GPAW
+  console output), `*.xsf`, `*.traj`, `*.csv` — and four run-directory `scripts/` snapshots
+  (`dos_femgo_flatngs`, `febmgo`, `febmgo_v2`, `mgofe`) that carry a **nested `.git` copy**: git cannot
+  descend into them without recording a bare gitlink. Removing those `.git` dirs would make the
+  snapshots trackable. `_archive/latt_conc/` (244 MB, the out-of-scope lattice-constraint arms) also
+  stays untracked.
+- **Repo size:** `.git` 107 MB → 193 MB.
+- **Doc sync:** `AGENTS.md` (Data & scope + Commit discipline now state the reversal), `_paperDemo/.gitignore`.
+
