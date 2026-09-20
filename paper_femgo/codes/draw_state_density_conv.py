@@ -1,60 +1,49 @@
 """
 draw_state_density_conv.py — Fig_convStateDens: state-density convergence.
 
-Compares g(E) from a single seed (black) against cumulative distributions
-formed by aggregating seeds sequentially (shades of blue), matching the draft.
+Reads the emitted dataset (analysis/Fig_convStateDens.json) and plots g(E)
+from a single seed (black) against cumulative distributions (shades of blue).
 
-Output: analysis/figures/Fig_convStateDens.png
+Run emit_datasets.py first. Output: analysis/figures/Fig_convStateDens.png
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import sys
+import json
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from scipy.stats import gaussian_kde
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import (apply_style, femgo_db_paths, load_agox_ensemble,
-                    rel_energy_per_atom, ensure_fig_dir, E_LABEL, DENSITY_LABEL)
+from common import apply_style, ANALYSIS_DIR, ensure_fig_dir, E_LABEL, DENSITY_LABEL
 
 E_LIMIT = (0.0 - 0.1, 1.5 + 0.1, 5)
 
 
 def main():
     apply_style()
-    db_paths = femgo_db_paths()
-    if not db_paths:
-        print("No femgo dbs"); return
-
-    # per-seed relative energies
-    per_seed = []
-    for p in db_paths:
-        energies, atoms, _ = load_agox_ensemble([p], start_iter=10)
-        if len(energies) == 0:
-            continue
-        n_atoms = len(atoms[0])
-        per_seed.append(rel_energy_per_atom(energies, n_atoms))
+    json_path = os.path.join(ANALYSIS_DIR, 'Fig_convStateDens.json')
+    if not os.path.exists(json_path):
+        print(f"  MISSING {json_path} — run emit_datasets.py first")
+        return
+    d = json.load(open(json_path))['data']
+    grid = np.array(d['grid'])
+    curves = d['curves']
 
     min_e, max_e = E_LIMIT[0], E_LIMIT[1]
-    grid = np.linspace(min_e, max_e, 200)
-
     fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
 
-    # single seed (seed 0 of the paper = first on disk) in black
-    kde0 = gaussian_kde(per_seed[0])
-    ax.plot(kde0.evaluate(grid), grid, color='black', lw=1.5, label='Seed 0')
+    # single seed in black
+    ax.plot(curves['seed_0'], grid, color='black', lw=1.5, label='Seed 0')
 
-    # cumulative aggregation in shades of blue
-    blues = plt.cm.Blues(np.linspace(0.85, 0.35, len(per_seed)))
-    cum = np.concatenate(per_seed[:1])
-    for i in range(1, len(per_seed)):
-        cum = np.concatenate([cum, per_seed[i]])
-        kde = gaussian_kde(cum)
-        ax.plot(kde.evaluate(grid), grid, color=blues[i], lw=1.2,
-                label=f'Seeds 0-{i}')
+    # cumulative in shades of blue
+    blues = plt.cm.Blues(np.linspace(0.85, 0.35, len(curves) - 1))
+    for i, (name, dens) in enumerate(curves.items()):
+        if name == 'seed_0':
+            continue
+        ax.plot(dens, grid, color=blues[i - 1], lw=1.2, label=name.replace('_', '-'))
 
     ax.set_xlabel(DENSITY_LABEL)
     ax.set_ylabel(E_LABEL)

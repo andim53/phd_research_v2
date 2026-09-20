@@ -24,7 +24,9 @@ paper_femgo/
 ├── codes/               # figure-regeneration scripts (each has __version__)
 ├── analysis/            # regenerated figures + result JSONs
 ├── data/                # raw results (read-only reference)
-│   ├── femgo/           # Fe-on-MgO: seed_3..15 (1_db/db_*.db), stop_16 (truncated)
+│   ├── femgo/           # Fe-on-MgO: seed_3..15 (1_db/db_*.db), stop_16 (truncated, excluded)
+│   ├── femgo_3x3/       # finite-size 3x3 (Fe9Mg9O9) — copied from _analysist/1_result
+│   ├── femgo_4x4/       # finite-size 4x4 (Fe16Mg16O16) — copied from _analysist/1_result
 │   ├── mgofe/           # reverse deposition (SI Fig_mgo): seed_0..5
 │   └── dos_femgo_flatngs/  # DOS CSVs (dos_seed_3.csv, dos_seed_4.csv) + xsf
 └── tmp/draft_paper/     # original finished-draft zips (provenance)

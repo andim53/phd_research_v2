@@ -7,10 +7,10 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 
 ## Main-text claims (MT)
 - **MT-1** Island mode is the ground state of Fe/MgO(001). → Fig_Prog, Fig_ConDen
-- **MT-2** The minimum-ensemble state density g(E) has two high-degeneracy peaks at ~0.074 and ~0.255 eV/atom. → Fig_ConDen
+- **MT-2** The minimum-ensemble state density g(E) has two high-degeneracy peaks at ~0.079 and ~0.259 eV/atom. → Fig_ConDen
 - **MT-3** The flat mode sits ~0.18 eV/atom above the island ground state. → Fig_ConDen
 - **MT-4** Increasing temperature raises the flat-mode Boltzmann probability, but the energy barrier makes thermal fluctuations insufficient to suppress islanding. → Fig_Boltz
-- **MT-5** The ensemble comprises 1,207 DFT-evaluated configurations from 14 independent runs (seeds 0–13). → Fig_convStateDens. **NOTE:** on-disk data = seeds 3–15, 1,180 under iter≥10 filter — flagged, not edited.
+- **MT-5** The ensemble comprises 1,180 DFT-evaluated configurations from 13 independent runs (seeds 3–15, stop_16 excluded). → Fig_convStateDens
 - **MT-6** Island mode is preferred due to localized interfacial Fe 3d orbitals near the Fermi level destabilizing the flat mode. → Fig_dos
 
 ## Supplementary claims (SI)
@@ -26,7 +26,7 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 ## Limitations
 - Only 2 DOS seeds (`dos_seed_3.csv`, `dos_seed_4.csv`) back Fig_dos.
 - `stop_16` (36 configs) and `mgofe/seed_5` (26 configs) are truncated runs — excluded from pooled statistics.
-- Manuscript's stated ensemble size (1,207) does not match on-disk count (1,180 under iter≥10).
+- Finite-size data (3×3/4×4) lives in `data/femgo_3x3` / `data/femgo_4x4` (copied from `_analysist/1_result`).
 
 ## Sign-off
 - [ ] Owner confirms contribution framing

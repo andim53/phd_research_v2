@@ -27,4 +27,4 @@ cd papers/paper1/supplementary && ~/.local/bin/tectonic article.tex   # SI
 ```
 
 ## Data-consistency note
-The manuscript states "seeds 0–13, 1,207 configurations"; on-disk `data/femgo/` holds seeds 3–15 (1,180 under the iter≥10 filter). See the data-consistency report for details.
+The manuscript states "13 independent runs, 1,180 configurations" (seeds 3–15, `stop_16` excluded), matching the on-disk `data/femgo/` ensemble. Peak positions updated to the regenerated values (0.079 / 0.259 eV/atom). Finite-size data lives in `data/femgo_3x3` and `data/femgo_4x4`.

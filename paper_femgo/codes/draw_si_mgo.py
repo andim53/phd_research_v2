@@ -1,27 +1,25 @@
 """
 draw_si_mgo.py — SI Fig_mgo: reverse deposition (MgO-on-Fe).
 
-(a) state density g(E), (b) PCA landscape psi_1d vs E_i-E_glob colored by Δz,
-(c) ground-state structure (side + top view). Uses mgofe dbs (seeds 0-4;
-seed_5 excluded as truncated).
+Reads the emitted dataset (analysis/Fig_mgo.json) and plots (a) state density
+g(E) and (b) PCA landscape psi_1d vs E_i-E_glob colored by Δz.
 
-Output: analysis/figures/Fig_mgo.png
+Run emit_datasets.py first. Output: analysis/figures/Fig_mgo.png
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import sys
+import json
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from scipy.stats import gaussian_kde
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import (apply_style, mgofe_db_paths, load_agox_ensemble,
-                    rel_energy_per_atom, delta_z, pca_psi1d,
-                    ensure_fig_dir, E_LABEL, DENSITY_LABEL, SCATTER_LABEL)
+from common import (apply_style, ANALYSIS_DIR, ensure_fig_dir,
+                    E_LABEL, DENSITY_LABEL, SCATTER_LABEL)
 
 E_LIMIT = (0.0 - 0.1, 1.5 + 0.1, 5)
 Z_LIMIT = (5.85, 0, 5)
@@ -29,22 +27,18 @@ Z_LIMIT = (5.85, 0, 5)
 
 def main():
     apply_style()
-    db_paths = mgofe_db_paths()
-    energies, atoms, _ = load_agox_ensemble(db_paths, start_iter=10)
-    if len(energies) == 0:
-        print("No mgofe ensemble data")
+    json_path = os.path.join(ANALYSIS_DIR, 'Fig_mgo.json')
+    if not os.path.exists(json_path):
+        print(f"  MISSING {json_path} — run emit_datasets.py first")
         return
-
-    n_atoms = len(atoms[0])
-    rel = rel_energy_per_atom(energies, n_atoms)
-    dz = delta_z(atoms, film_symbols=('Mg', 'O'))
-    psi = pca_psi1d(atoms)
+    d = json.load(open(json_path))['data']
+    rel = np.array(d['rel_energy'])
+    dz = np.array(d['delta_z_A'])
+    psi = np.array(d['psi_1d'])
+    grid = np.array(d['kde_grid'])
+    density = np.array(d['kde_density'])
 
     min_e, max_e = E_LIMIT[0], E_LIMIT[1]
-    grid = np.linspace(min_e, max_e, 200)
-    kde = gaussian_kde(rel)
-    density = kde.evaluate(grid)
-
     fig, (ax_dens, ax_scat) = plt.subplots(
         1, 2, figsize=(6, 3), sharey=True,
         gridspec_kw={'width_ratios': [1, 2.5]})

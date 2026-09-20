@@ -12,10 +12,10 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 | Claim | Evidence | Metric & value | Verified? |
 |-------|----------|----------------|-----------|
 | Island mode is ground state | Fig_Prog / Fig_ConDen | E_glob island; ΔZ 2.5–5.0 Å | ✅ regenerated |
-| Two degeneracy peaks | Fig_ConDen | ~0.079 & ~0.259 eV/atom (draft: 0.074/0.255) | ✅ (offset flagged) |
+| Two degeneracy peaks | Fig_ConDen | ~0.079 & ~0.259 eV/atom | ✅ regenerated |
 | Flat mode ~0.18 eV/atom above island | Fig_ConDen | energy penalty | ✅ |
 | Temperature raises flat-mode probability but insufficient | Fig_Boltz | 300–10000 K | ✅ |
-| Ensemble = 1,207 configs (seeds 0–13) | Fig_convStateDens | 1,207 (draft) | **MISMATCH** (disk: 1,180 / 13 seeds) |
+| Ensemble = 1,180 configs (13 runs) | Fig_convStateDens | 1,180 (seeds 3–15, stop_16 excl.) | ✅ matches disk |
 | Island preferred due to localized Fe 3d at Fermi level | Fig_dos | PDOS peak at E_f | ✅ (2 seeds only) |
 
 ## Citations (Phase D)
@@ -32,6 +32,5 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 
 ## Open decisions / next step
 - [ ] Confirm contribution framing with owner
-- [ ] Decide ensemble-number reconciliation (1,207/14-seeds vs 1,180/13-seeds) — currently kept as drafted
-- [ ] Decide peak-position reconciliation (0.074/0.255 vs 0.079/0.259)
-- NEXT: owner review of regenerated figures + contribution framing; then continue writing from the draft.
+- [ ] Owner inspects regenerated figures + emitted datasets
+- NEXT: owner review of regenerated figures + datasets; then continue writing from the draft.

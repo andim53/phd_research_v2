@@ -20,13 +20,13 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, '/home/think/Desktop/research/_analysist')
-from common import apply_style, ANALYSIST_RESULT, ensure_fig_dir
+from common import apply_style, ANALYSIST_RESULT, DATA_DIR, ensure_fig_dir
 from agox.databases import Database
 from scripts.plot_structure import plot_structure
 
 SUPERCELL_ROOTS = {
-    '3x3': os.path.join(ANALYSIST_RESULT, '18_kappa2_iter100_trajNoSave_repSeedDat101'),
-    '4x4': os.path.join(ANALYSIST_RESULT, '20_kappa2_iter100_trajNoSave_repSeedDat0_4x4'),
+    '3x3': os.path.join(DATA_DIR, 'femgo_3x3'),
+    '4x4': os.path.join(DATA_DIR, 'femgo_4x4'),
 }
 
 

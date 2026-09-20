@@ -7,7 +7,7 @@ definition (AGOX iteration >= 10). All figure scripts import from here.
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 Set matplotlib.use('Agg') before importing anything that plots.
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import glob
@@ -69,7 +69,7 @@ def apply_style():
 # Data loading (AGOX databases)
 # ---------------------------------------------------------------------------
 def load_agox_ensemble(db_paths, start_iter=10):
-    """Load (energies, atoms) from AGOX dbs keeping only iteration >= start_iter.
+    """Load (energies, atoms, meta) from AGOX dbs keeping only iteration >= start_iter.
 
     Returns (energies_eV, atoms_list, meta_list). energies are raw total energies.
     """
@@ -115,7 +115,7 @@ def pca_psi1d(atoms_list):
 
 
 def femgo_db_paths():
-    """Fe-on-MgO minimum-ensemble dbs (seeds 3-15; stop_16 excluded as truncated)."""
+    """Fe-on-MgO minimum-ensemble dbs (seeds 3-15; stop_16 excluded by seed_* glob)."""
     return sorted(glob.glob(os.path.join(DATA_DIR, 'femgo', 'seed_*', '1_db', 'db_*.db')))
 
 
@@ -127,3 +127,79 @@ def mgofe_db_paths():
 def ensure_fig_dir():
     os.makedirs(FIG_DIR, exist_ok=True)
     return FIG_DIR
+
+
+# ---------------------------------------------------------------------------
+# Emit → plot: dataset generation (CSV/JSON) before plotting
+# ---------------------------------------------------------------------------
+def emit_combined_csv(system='femgo', start_iter=10, out_name=None):
+    """Write a combined per-configuration CSV for a system.
+
+    Columns: seed, iteration, energy_eV, rel_energy_eV_per_atom, delta_z_A, psi_1d.
+    femgo -> data/femgo/seed_* (stop_16 excluded by seed_* glob)
+    mgofe -> data/mgofe/seed_* (seed_5 truncated, still listed with its count)
+    femgo_3x3 / femgo_4x4 -> data/<system>/seed_*
+
+    Returns the output path.
+    """
+    import csv
+    from agox.databases import Database
+    if system == 'femgo':
+        db_paths = femgo_db_paths()
+    elif system == 'mgofe':
+        db_paths = mgofe_db_paths()
+    else:
+        db_paths = sorted(glob.glob(os.path.join(DATA_DIR, system, 'seed_*', '1_db', 'db_*.db')))
+
+    energies, atoms, meta = load_agox_ensemble(db_paths, start_iter=start_iter)
+    if len(energies) == 0:
+        print(f"  no {system} data")
+        return None
+
+    n_atoms = len(atoms[0])
+    rel = rel_energy_per_atom(energies, n_atoms)
+    dz = delta_z(atoms)
+    psi = pca_psi1d(atoms)
+
+    # per-config seed label, aligned to the iter>=10 filtered subset
+    seed_labels = []
+    for p in db_paths:
+        seed = os.path.basename(os.path.dirname(os.path.dirname(p)))
+        db = Database(filename=p)
+        db.restore_to_memory()
+        data = db.get_all_structures_data()
+        seed_labels.extend([seed] * sum(1 for m in data if m.get('iteration', 0) >= start_iter))
+
+    out_name = out_name or f'dataset_{system}.csv'
+    out_path = os.path.join(ANALYSIS_DIR, out_name)
+    os.makedirs(ANALYSIS_DIR, exist_ok=True)
+    with open(out_path, 'w', newline='') as fh:
+        w = csv.writer(fh)
+        w.writerow(['seed', 'iteration', 'energy_eV', 'rel_energy_eV_per_atom',
+                    'delta_z_A', 'psi_1d'])
+        for i, m in enumerate(meta):
+            w.writerow([seed_labels[i], m.get('iteration', 0),
+                        round(float(energies[i]), 6),
+                        round(float(rel[i]), 6),
+                        round(float(dz[i]), 6),
+                        round(float(psi[i]), 6)])
+    print(f"  -> {out_path} ({len(rel)} configs)")
+    return out_path
+
+
+def emit_figure_json(name, data, description=None):
+    """Write a self-describing per-figure JSON dataset."""
+    import json
+    out_path = os.path.join(ANALYSIS_DIR, f'{name}.json')
+    os.makedirs(ANALYSIS_DIR, exist_ok=True)
+    payload = {
+        'name': name,
+        'version': '1.0.0',
+        'produced_by': f'codes/{name}.py',
+        'description': description or {},
+        'data': data,
+    }
+    with open(out_path, 'w') as fh:
+        json.dump(payload, fh, indent=2)
+    print(f"  -> {out_path}")
+    return out_path

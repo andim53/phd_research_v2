@@ -20,20 +20,26 @@ cd papers/paper1/supplementary
 ```
 Uses `spieman.cls` + `spiejour.bst` + `report.bib`; figures in `figures/`.
 
-## 3. Regenerate figures
-All figure scripts live in `codes/` and run under the `agox_v2` env python. Each reads the AGOX databases in `data/` and writes PNGs to `analysis/figures/`.
+## 3. Regenerate figures (emit → plot)
+All figure scripts live in `codes/` and run under the `agox_v2` env python. **Two-step pattern:** first emit the datasets (CSV + per-figure JSON) you and the owner can inspect, then plot from them.
 
 ```bash
 cd codes
+# Step 1 — emit datasets (CSV + JSON) into analysis/
+/home/think/miniconda3/envs/agox_v2/bin/python emit_datasets.py
+
+# Step 2 — plot from the emitted datasets
 /home/think/miniconda3/envs/agox_v2/bin/python draw_energy_progression.py   # Fig_Prog
 /home/think/miniconda3/envs/agox_v2/bin/python draw_landscape.py            # Fig_ConDen
 /home/think/miniconda3/envs/agox_v2/bin/python draw_boltzmann.py           # Fig_Boltz
 /home/think/miniconda3/envs/agox_v2/bin/python draw_dos.py                  # Fig_dos
 /home/think/miniconda3/envs/agox_v2/bin/python draw_state_density_conv.py   # Fig_convStateDens
-/home/think/miniconda3/envs/agox_v2/bin/python draw_si_env.py               # Fig_env (SI)
-/home/think/miniconda3/envs/agox_v2/bin/python draw_si_supercell.py          # Fig_sup (SI)
 /home/think/miniconda3/envs/agox_v2/bin/python draw_si_mgo.py                # Fig_mgo (SI)
+/home/think/miniconda3/envs/agox_v2/bin/python draw_si_env.py               # Fig_env (SI, structure)
+/home/think/miniconda3/envs/agox_v2/bin/python draw_si_supercell.py          # Fig_sup (SI, structure)
 ```
+
+Emitted datasets: `analysis/dataset_femgo.csv`, `dataset_mgofe.csv`, `dataset_femgo_3x3.csv`, `dataset_femgo_4x4.csv` (columns: seed, iteration, energy_eV, rel_energy_eV_per_atom, delta_z_A, psi_1d) + per-figure JSONs (`Fig_Prog.json`, `Fig_ConDen.json`, `Fig_Boltz.json`, `Fig_dos.json`, `Fig_convStateDens.json`, `Fig_mgo.json`).
 
 ## Figure conventions (match `_analysist`)
 - **rcParams:** serif font 12, ticks-in on all sides, no grid, dpi 300, `figure.autolayout=True`.
