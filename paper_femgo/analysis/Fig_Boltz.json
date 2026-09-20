@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "produced_by": "codes/Fig_Boltz.py",
   "description": {
-    "note": "peak-normalized P(E); 300-10000 K"
+    "note": "peak-normalized P(E); 300-10000 K; tight KDE (bw=0.05)"
   },
   "data": {
     "300": {

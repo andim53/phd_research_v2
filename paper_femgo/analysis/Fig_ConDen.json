@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "produced_by": "codes/Fig_ConDen.py",
   "description": {
-    "note": "13 runs, iteration>=10; peaks are the island/flat basins"
+    "note": "13 runs, iteration>=10; tight KDE (bw=0.05); peaks are the island/flat basins"
   },
   "data": {
     "n_configs": 1180,
@@ -3960,6 +3960,7 @@
     "peaks_eV_per_atom": [
       0.079397,
       0.258794
-    ]
+    ],
+    "kde_bw": null
   }
 }

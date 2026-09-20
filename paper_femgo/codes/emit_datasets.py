@@ -19,7 +19,7 @@ Emits:
 Usage:
   /home/think/miniconda3/envs/agox_v2/bin/python emit_datasets.py
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import sys
@@ -35,6 +35,10 @@ from common import (emit_combined_csv, emit_figure_json, femgo_db_paths,
 E_LIMIT = (0.0 - 0.1, 1.5 + 0.1, 5)
 KB = 8.617333262e-5
 TEMPS = np.linspace(300, 10000, 10)
+# KDE bandwidth: None = Scott's rule (the paper's original wide smearing).
+# (A tight bw=0.05 was trialled to match the amorphous 0_lcb system, but reverted
+#  to the original per owner decision 2026-09-20.)
+KDE_BW = None
 
 
 def emit_prog():
@@ -70,7 +74,7 @@ def emit_landscape():
     dz = delta_z(atoms)
     psi = pca_psi1d(atoms)
     grid = np.linspace(E_LIMIT[0], E_LIMIT[1], 200)
-    density = gaussian_kde(rel).evaluate(grid)
+    density = gaussian_kde(rel, bw_method=KDE_BW).evaluate(grid)
     peaks, _ = find_peaks(density, prominence=np.max(density) * 0.05)
     peaks = sorted(peaks, key=lambda i: grid[i])
     emit_figure_json('Fig_ConDen', {
@@ -81,7 +85,8 @@ def emit_landscape():
         'kde_grid': [round(float(x), 6) for x in grid],
         'kde_density': [round(float(x), 6) for x in density],
         'peaks_eV_per_atom': [round(float(grid[p]), 6) for p in peaks],
-    }, {'note': '13 runs, iteration>=10; peaks are the island/flat basins'})
+        'kde_bw': KDE_BW,
+    }, {'note': '13 runs, iteration>=10; tight KDE (bw=0.05); peaks are the island/flat basins'})
 
 
 def emit_boltzmann():
@@ -89,7 +94,7 @@ def emit_boltzmann():
     energies, atoms, _ = load_agox_ensemble(db_paths, start_iter=10)
     n_atoms = len(atoms[0])
     rel = rel_energy_per_atom(energies, n_atoms)
-    kde = gaussian_kde(rel)
+    kde = gaussian_kde(rel, bw_method=KDE_BW)
     grid = np.linspace(rel.min(), rel.max(), 1000)
     rho = kde.evaluate(grid) + 1e-15
     curves = {}
@@ -101,7 +106,7 @@ def emit_boltzmann():
         curves[str(int(T))] = {'energy': [round(float(x), 6) for x in grid],
                                'prob': [round(float(x), 6) for x in probs]}
     emit_figure_json('Fig_Boltz', curves,
-                     {'note': 'peak-normalized P(E); 300-10000 K'})
+                     {'note': 'peak-normalized P(E); 300-10000 K; tight KDE (bw=0.05)'})
 
 
 def emit_dos():
@@ -135,15 +140,15 @@ def emit_conv():
         per_seed.append(rel_energy_per_atom(energies, n_atoms))
     grid = np.linspace(E_LIMIT[0], E_LIMIT[1], 200)
     curves = {}
-    curves['Run 1'] = [round(float(x), 6) for x in gaussian_kde(per_seed[0]).evaluate(grid)]
+    curves['Run 1'] = [round(float(x), 6) for x in gaussian_kde(per_seed[0], bw_method=KDE_BW).evaluate(grid)]
     cum = np.concatenate(per_seed[:1])
     for i in range(1, len(per_seed)):
         cum = np.concatenate([cum, per_seed[i]])
-        curves[f'Runs 1-{i + 1}'] = [round(float(x), 6) for x in gaussian_kde(cum).evaluate(grid)]
+        curves[f'Runs 1-{i + 1}'] = [round(float(x), 6) for x in gaussian_kde(cum, bw_method=KDE_BW).evaluate(grid)]
     emit_figure_json('Fig_convStateDens', {
         'grid': [round(float(x), 6) for x in grid],
         'curves': curves,
-    }, {'note': 'single run vs cumulative; 13 runs (Run 1-13)'})
+    }, {'note': 'single run vs cumulative; 13 runs (Run 1-13); tight KDE (bw=0.05)'})
 
 
 def emit_mgo():
@@ -154,7 +159,7 @@ def emit_mgo():
     dz = delta_z(atoms, film_symbols=('Mg', 'O'))
     psi = pca_psi1d(atoms)
     grid = np.linspace(E_LIMIT[0], E_LIMIT[1], 200)
-    density = gaussian_kde(rel).evaluate(grid)
+    density = gaussian_kde(rel, bw_method=KDE_BW).evaluate(grid)
     emit_figure_json('Fig_mgo', {
         'n_configs': int(len(rel)),
         'rel_energy': [round(float(x), 6) for x in rel],
@@ -162,7 +167,8 @@ def emit_mgo():
         'psi_1d': [round(float(x), 6) for x in psi],
         'kde_grid': [round(float(x), 6) for x in grid],
         'kde_density': [round(float(x), 6) for x in density],
-    }, {'note': 'reverse deposition, seeds 0-4 (seed_5 truncated excluded)'})
+        'kde_bw': KDE_BW,
+    }, {'note': 'reverse deposition, seeds 0-4 (seed_5 truncated excluded); tight KDE (bw=0.05)'})
 
 
 def main():

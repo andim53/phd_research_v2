@@ -95,3 +95,21 @@
 10. Recompiled main.pdf — builds cleanly.
 
 **Results:** Fig_convStateDens now uses Run 1..13 labels; paper text consistent.
+
+## Session 4 — 2026-09-20 (KDE smearing trial + revert)
+**Goal (user-confirmed via clarify):** trial tight KDE smearing (bw=0.05, matching the amorphous 0_lcb system) on the state-density/Boltzmann figures; inspect the change; then revert to original and state the smearing parameter in Methods.
+
+**Actions taken:**
+1. Found the amorphous system's KDE parameter: `_run/0_lcb/2_analysist/11_bTa/7_fxg_0b/analysis_indices/stage2_landscape.json` → `data.params.kde_bw = 0.05`.
+2. Applied `KDE_BW=0.05` to all state-density KDEs in emit_datasets.py (Fig_ConDen, Fig_Boltz, Fig_convStateDens, Fig_mgo); re-emitted + regenerated.
+3. Inspected: tight KDE split the island basin into 3 peaks (0.054, 0.088, 0.259) — island basin is broad/bimodal (raw histogram 49→90→61 across 0.03–0.12, Δz mean ~3.4 Å). Flat peak unchanged.
+4. **Reverted** KDE_BW to None (Scott's rule) per owner decision — figures back to 2 peaks (0.079, 0.259).
+5. Added the KDE smearing parameter to Methods (03_methods.tex): Scott's rule h = M^{-1/5} σ.
+6. Recompiled main.pdf — builds cleanly.
+
+**Results:** Figures reverted to original wide smearing (2 peaks). Methods now states the KDE bandwidth (Scott's rule).
+
+**Decisions:** Tight KDE (bw=0.05) revealed the island basin is broad/bimodal, but reverted to original per owner. The smearing parameter is documented in Methods.
+
+**Open items:**
+- [ ] Commit Session 4.

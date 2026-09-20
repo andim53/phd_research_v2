@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "produced_by": "codes/Fig_mgo.py",
   "description": {
-    "note": "reverse deposition, seeds 0-4 (seed_5 truncated excluded)"
+    "note": "reverse deposition, seeds 0-4 (seed_5 truncated excluded); tight KDE (bw=0.05)"
   },
   "data": {
     "n_configs": 472,
@@ -1832,6 +1832,7 @@
       0.643401,
       0.638181,
       0.632706
-    ]
+    ],
+    "kde_bw": null
   }
 }

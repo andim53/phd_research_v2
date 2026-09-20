@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "produced_by": "codes/Fig_convStateDens.py",
   "description": {
-    "note": "single run vs cumulative; 13 runs (Run 1-13)"
+    "note": "single run vs cumulative; 13 runs (Run 1-13); tight KDE (bw=0.05)"
   },
   "data": {
     "grid": [
