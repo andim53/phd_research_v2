@@ -3,11 +3,12 @@ draw_energy_progression.py — Fig_Prog: GPR optimization energy progression.
 
 Reads the emitted dataset (analysis/Fig_Prog.json) and plots best-so-far
 relative energy vs evaluated-candidate count for each independent Fe-on-MgO
-seed, in the _analysist plot_energy_progression style.
+run, in the _analysist plot_energy_progression style. Runs are labeled
+Run 1..13 (on-disk seeds 3..15 renumbered).
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Prog.png
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -33,13 +34,13 @@ def main():
     colors = ['#1B70FC', '#E31A1C', '#33A02C', '#FF7F00']
     line_styles = [':', '--', '-', '-.']
 
-    for i, (seed, d) in enumerate(data.items()):
+    for i, (run, d) in enumerate(data.items()):
         x = d['candidate_count']
         y = d['best_rel_energy']
         ax.plot(x, y, linewidth=1.8,
                 linestyle=line_styles[i % len(line_styles)],
                 color=colors[i % len(colors)],
-                label=f'Seed {seed}', zorder=3)
+                label=run, zorder=3)
 
     ax.set_xlabel('Evaluated Candidate Count ($N_i$)')
     ax.set_ylabel(E_LABEL)

@@ -40,6 +40,9 @@ TEMPS = np.linspace(300, 10000, 10)
 def emit_prog():
     db_paths = femgo_db_paths()
     per_seed = {}
+    # renumber on-disk seeds (3..15) as independent runs 1..13
+    run_map = {int(os.path.basename(os.path.dirname(os.path.dirname(p))).replace('seed_', '')):
+               i + 1 for i, p in enumerate(db_paths)}
     for p in db_paths:
         energies, atoms, meta = load_agox_ensemble([p], start_iter=10)
         if len(energies) == 0:
@@ -49,13 +52,14 @@ def emit_prog():
         order = np.argsort([m.get('iteration', 0) for m in meta])
         rel = rel[order]
         best = np.minimum.accumulate(rel)
-        seed = os.path.basename(os.path.dirname(os.path.dirname(p))).replace('seed_', '')
-        per_seed[seed] = {'candidate_count': list(range(1, len(best) + 1)),
-                          'best_rel_energy': [round(float(x), 6) for x in best]}
+        seed = int(os.path.basename(os.path.dirname(os.path.dirname(p))).replace('seed_', ''))
+        run = run_map[seed]
+        per_seed[f'Run {run}'] = {'candidate_count': list(range(1, len(best) + 1)),
+                                  'best_rel_energy': [round(float(x), 6) for x in best]}
     emit_figure_json('Fig_Prog', per_seed,
                      {'x': 'Evaluated Candidate Count (N_i)',
                       'y': 'E_i - E_glob (eV/atom)',
-                      'note': '13 independent runs (seeds 3-15), iteration>=10'})
+                      'note': '13 independent runs (Run 1-13, on-disk seeds 3-15), iteration>=10'})
 
 
 def emit_landscape():

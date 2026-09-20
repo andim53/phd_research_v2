@@ -69,3 +69,19 @@
 **Open items:**
 - [ ] Commit Session 2.
 - [ ] Owner inspects regenerated figures + datasets.
+
+## Session 3 — 2026-09-20 (Fig_Prog Run renumbering)
+**Goal (user-confirmed via clarify):** relabel Fig_Prog from on-disk seeds (3–15) to independent runs (Run 1–13), and update the paper's Fig_Prog mention to reference Run 1.
+
+**Actions taken:**
+1. `emit_datasets.py`: renumber on-disk seeds 3–15 → Run 1–13 in Fig_Prog.json (run_map).
+2. `draw_energy_progression.py` (1.1.0→1.2.0): label lines by the JSON key (Run N) instead of "Seed N".
+3. Re-emitted Fig_Prog.json (keys Run 1..13) + regenerated Fig_Prog.png.
+4. Manuscript: Fig_Prog caption → "13 independent runs (Run 1–13)"; results prose "Seed 0" → "Run 1".
+5. Recompiled main.pdf — builds cleanly.
+
+**Results:** Fig_Prog legend now shows Run 1–13; paper text references Run 1.
+
+**Open items:**
+- [ ] Commit Session 3.
+- [ ] NOTE: Fig_convStateDens caption + convergence prose still use "seed 0 / seeds 0 and 1 / seeds 0 to 2" — flagged, not changed (different figure's discussion).
