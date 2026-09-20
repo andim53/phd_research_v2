@@ -135,15 +135,15 @@ def emit_conv():
         per_seed.append(rel_energy_per_atom(energies, n_atoms))
     grid = np.linspace(E_LIMIT[0], E_LIMIT[1], 200)
     curves = {}
-    curves['seed_0'] = [round(float(x), 6) for x in gaussian_kde(per_seed[0]).evaluate(grid)]
+    curves['Run 1'] = [round(float(x), 6) for x in gaussian_kde(per_seed[0]).evaluate(grid)]
     cum = np.concatenate(per_seed[:1])
     for i in range(1, len(per_seed)):
         cum = np.concatenate([cum, per_seed[i]])
-        curves[f'seeds_0_{i}'] = [round(float(x), 6) for x in gaussian_kde(cum).evaluate(grid)]
+        curves[f'Runs 1-{i + 1}'] = [round(float(x), 6) for x in gaussian_kde(cum).evaluate(grid)]
     emit_figure_json('Fig_convStateDens', {
         'grid': [round(float(x), 6) for x in grid],
         'curves': curves,
-    }, {'note': 'single seed vs cumulative; 13 runs'})
+    }, {'note': 'single run vs cumulative; 13 runs (Run 1-13)'})
 
 
 def emit_mgo():

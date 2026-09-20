@@ -85,3 +85,13 @@
 **Open items:**
 - [ ] Commit Session 3.
 - [ ] NOTE: Fig_convStateDens caption + convergence prose still use "seed 0 / seeds 0 and 1 / seeds 0 to 2" — flagged, not changed (different figure's discussion).
+
+## Session 3 (cont.) — 2026-09-20 (Fig_convStateDens Run renumbering)
+**Actions taken:**
+6. `emit_datasets.py`: renumber Fig_convStateDens curves to Run 1 / Runs 1-2 / ... / Runs 1-13.
+7. `draw_state_density_conv.py` (1.1.0→1.2.0): label curves by Run N.
+8. Re-emitted Fig_convStateDens.json + regenerated PNG.
+9. Manuscript: Fig_convStateDens caption "seed 0"→"Run 1"; convergence prose "seeds 0 and 1 / seeds 0 to 2"→"Runs 1 and 2 / Runs 1 to 3".
+10. Recompiled main.pdf — builds cleanly.
+
+**Results:** Fig_convStateDens now uses Run 1..13 labels; paper text consistent.

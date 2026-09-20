@@ -2,11 +2,12 @@
 draw_state_density_conv.py — Fig_convStateDens: state-density convergence.
 
 Reads the emitted dataset (analysis/Fig_convStateDens.json) and plots g(E)
-from a single seed (black) against cumulative distributions (shades of blue).
+from a single run (black) against cumulative distributions (shades of blue).
+Runs are labeled Run 1..13 (on-disk seeds 3..15 renumbered).
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_convStateDens.png
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -35,15 +36,15 @@ def main():
     min_e, max_e = E_LIMIT[0], E_LIMIT[1]
     fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
 
-    # single seed in black
-    ax.plot(curves['seed_0'], grid, color='black', lw=1.5, label='Seed 0')
+    # single run in black
+    ax.plot(curves['Run 1'], grid, color='black', lw=1.5, label='Run 1')
 
     # cumulative in shades of blue
     blues = plt.cm.Blues(np.linspace(0.85, 0.35, len(curves) - 1))
     for i, (name, dens) in enumerate(curves.items()):
-        if name == 'seed_0':
+        if name == 'Run 1':
             continue
-        ax.plot(dens, grid, color=blues[i - 1], lw=1.2, label=name.replace('_', '-'))
+        ax.plot(dens, grid, color=blues[i - 1], lw=1.2, label=name)
 
     ax.set_xlabel(DENSITY_LABEL)
     ax.set_ylabel(E_LABEL)
