@@ -27,3 +27,17 @@
 - [ ] Commit Milestone 1.
 
 **Time:** 2026-09-20 ~19:30–19:45 JST
+
+## Session 1 (cont.) — 2026-09-20 (Milestone 2: figure regeneration)
+**Actions taken:**
+10. Wrote `codes/common.py` (shared rcParams + AGOX data loading, iter≥10 filter) + 8 figure scripts.
+11. Ran all 8 scripts under `agox_v2`; all produced PNGs in `analysis/figures/`.
+12. Fixed Fig_sup source: `42_amorph_seed_3x3` was a BTa54 system (wrong); corrected to `18_..._repSeedDat101` (Fe9Mg9O9, 3×3) + `20_..._4x4` (Fe16Mg16O16, 4×4).
+
+**Results:** Fig_Prog, Fig_ConDen, Fig_Boltz, Fig_dos, Fig_convStateDens, Fig_mgo, Fig_env, Fig_sup all regenerate. Landscape peaks at 0.079/0.259 eV/atom (vs paper's 0.074/0.255 — KDE bandwidth difference, flagged in report). Fig_sup Δz: 3×3=3.60 Å, 4×4=5.51 Å (matches ~1 Å/area trend).
+
+**Decisions:** Fig_sup finite-size data lives in sibling `_analysist/1_result/` (not `paper_femgo/data/`).
+
+**Open items:**
+- [ ] Milestone 3: data-consistency report.
+- [ ] Commit Milestone 2.
