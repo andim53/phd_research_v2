@@ -1,0 +1,16 @@
+# Build artifacts (regenerable via tectonic)
+*.pdf
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.xdv
+*.synctex.gz
+
+# Regenerable figure outputs (produced by codes/ into analysis/)
+analysis/figures/*.png
+
+# Raw data (large, regenerable) — keep code/docs, exclude data
+data/
+tmp/
