@@ -41,3 +41,13 @@
 **Open items:**
 - [ ] Milestone 3: data-consistency report.
 - [ ] Commit Milestone 2.
+
+## Session 1 (cont.) — 2026-09-20 (Milestone 3: data-consistency report)
+**Actions taken:**
+13. Wrote `analysis/DATA_CONSISTENCY_REPORT.md` flagging all manuscript-vs-data mismatches.
+
+**Results:** Report documents: (1) ensemble 1,207/14-seeds vs disk 1,180/13-seeds; (2) peak positions 0.074/0.255 vs 0.079/0.259; (3) DOS limited to 2 seeds; (4) mgofe seed_5 truncated; (5) finite-size data lives in sibling _analysist/1_result (not paper_femgo/data); (6) Fig_sup source corrected (42_amorph is BTa54, not Fe/MgO).
+
+**Open items:**
+- [ ] Commit Milestone 3.
+- [ ] Owner review: confirm contribution framing, decide on ensemble-number reconciliation.
