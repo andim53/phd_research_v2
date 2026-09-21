@@ -143,6 +143,28 @@ DBs); `filter_select.py` reads in-dir `./data/` (tested on `2_20P`, chosen=2);
 
 **Time:** 2026-09-21 ~20:15–20:35 JST
 
+## Session 2e — 2026-09-21 (select_reopt per-leaf dispatch, like shc)
+**Owner clarification (`/clarify-me` → spec `202609212029-select-reopt-per-leaf`):**
+restructure `select_reopt/` to run **one leaf per submission** (like `shc/`), each
+producing that leaf's single `opt_novel_<leaf>.traj`, with one `.sh` per leaf + a shared
+parameterized template.
+
+**Actions taken:**
+1. Rewrote `job_genkai_mpi.sh` as a shared template reading a `LEAF` env var (fails fast
+   if unset); runs `filter_select.py --leaves <leaf>` then `reopt.py --leaf <leaf>` for
+   that leaf only → one traj per submission.
+2. Added 4 per-leaf wrappers: `job_2_20P.sh`, `job_3_30P.sh`, `job_1_3x3_20P.sh`,
+   `job_2_3x3_30P.sh` — each sets `LEAF=<leaf>` and `exec`s the shared template.
+3. Updated `hpc_runs/README.md` (Run A section + layout tree) to document per-leaf
+   dispatch.
+
+**Verified:** `sh -n` passes on all 5 scripts; template requires `LEAF` (line 32); each
+wrapper exports the correct leaf; `filter_select.py --leaves 2_20P` runs (single-leaf
+mode) producing per-leaf output.
+
+**Time:** 2026-09-21 ~20:30–20:45 JST
+
+
 
 
 
