@@ -1,0 +1,59 @@
+% ****** Start of file main.tex ******
+% Scientific Paper Writing — paper1 main container
+% Venue-neutral starting class (APS RevTeX 4.2), swap at submission (Phase G).
+% Each section lives in sections/NN_*.tex, \input'd here in manuscript order.
+\documentclass[%
+ preprint,
+%superscriptaddress,
+%groupedaddress,
+%unsortedaddress,
+%runinaddress,
+%frontmatterverbose,
+%preprint,
+%preprintnumbers,
+%nofootinbib,
+%nobibnotes,
+%bibnotes,
+ amsmath,amssymb,
+ aps,
+%pra,
+%prb,
+%rmp,
+%prstab,
+%prstper,
+%floatfix,
+]{revtex4-2}
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+% \usepackage{hyperref}% add hypertext capabilities
+% \usepackage[mathlines]{lineno}% Enable numbering of text and display math
+% \linenumbers\relax % Commence numbering lines
+
+\begin{document}
+
+\title{Amorphous Pt(P) from GOFEE/AGOX Global Optimization: Structure, Crystallinity, and Spin Hall Conductivity}
+
+\author{Andi Muhammad Nur Fitrah Syamsul}
+\author{Kohji Nakamura}
+\affiliation{Graduate School of Engineering, Mie University, Tsu, Mie 514-8507, Japan.}
+
+\date{\today}
+
+\begin{abstract}
+\input{sections/01_abstract}
+\end{abstract}
+
+\maketitle
+
+\input{sections/02_introduction}
+\input{sections/03_methods}
+\input{sections/04_results}
+\input{sections/05_conclusion}
+\input{sections/06_ack_dataavail}
+
+\bibliography{references}% Produces the bibliography via BibTeX.
+
+\end{document}
+% ****** End of file main.tex ******
