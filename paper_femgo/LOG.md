@@ -161,3 +161,8 @@
 **Diagnosis:** emit_datasets.py used the shared E_LIMIT (-0.1, 1.6) for the mgo KDE grid, but the Fig_mgo axis cap was raised to 3.7 — so the density curve terminated at 1.6, well below the axis edge.
 **Fix:** emit_mgo now uses a dedicated grid to 3.7 (mgo_e_max), so the density curve reaches the axis edge (density ~0.013 at 3.7). emit_datasets.py 1.2.0→1.3.0.
 **Result:** Fig_mgo state density no longer truncated; regenerated + committed.
+
+## Session 7c — 2026-09-21 (PCA scatter colormap: visible on white)
+**Issue (owner):** PuBu colormap was hard to see against the white background (light flat points vanished).
+**Fix:** switched PCA Δz scatter cmap PuBu→YlGnBu_r (dark blue at low Δz, light yellow at high Δz) in Fig_ConDen + Fig_mgo. draw_landscape.py 1.3.0→1.4.0, draw_si_mgo.py 1.3.0→1.4.0.
+**Result:** flat points now visible on white; both figures regenerated.

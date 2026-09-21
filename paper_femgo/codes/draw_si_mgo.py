@@ -8,7 +8,7 @@ Reads the emitted dataset (analysis/Fig_mgo.json) and plots three panels:
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_mgo.png
 """
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -59,7 +59,7 @@ def main():
 
     # (b) PCA landscape colored by Δz
     norm = mcolors.Normalize(vmin=Z_LIMIT[1], vmax=Z_LIMIT[0])
-    sc = ax_scat.scatter(psi, rel, c=dz, s=10, cmap='PuBu', norm=norm,
+    sc = ax_scat.scatter(psi, rel, c=dz, s=10, cmap='YlGnBu_r', norm=norm,
                          edgecolors='none', alpha=0.8)
     cbar = plt.colorbar(sc, ax=ax_scat, pad=0.02)
     cbar.set_label(r'$\Delta z$ (Å)', fontsize=10)
