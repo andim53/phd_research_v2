@@ -155,3 +155,9 @@
 **Result:** figures updated per spec; SI compiles.
 
 **Decision:** PCA scatter s=10 edgecolors='none'; Fig_Prog viridis 13 colors solid; Fig_mgo cap 3.7.
+
+## Session 7b — 2026-09-21 (fix Fig_mgo state-density KDE cutoff)
+**Issue (owner):** Fig_mgo state-density KDE looked cut off in relative energy.
+**Diagnosis:** emit_datasets.py used the shared E_LIMIT (-0.1, 1.6) for the mgo KDE grid, but the Fig_mgo axis cap was raised to 3.7 — so the density curve terminated at 1.6, well below the axis edge.
+**Fix:** emit_mgo now uses a dedicated grid to 3.7 (mgo_e_max), so the density curve reaches the axis edge (density ~0.013 at 3.7). emit_datasets.py 1.2.0→1.3.0.
+**Result:** Fig_mgo state density no longer truncated; regenerated + committed.

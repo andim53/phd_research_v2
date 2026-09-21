@@ -19,7 +19,7 @@ Emits:
 Usage:
   /home/think/miniconda3/envs/agox_v2/bin/python emit_datasets.py
 """
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -158,7 +158,10 @@ def emit_mgo():
     rel = rel_energy_per_atom(energies, n_atoms)
     dz = delta_z(atoms, film_symbols=('Mg', 'O'))
     psi = pca_psi1d(atoms)
-    grid = np.linspace(E_LIMIT[0], E_LIMIT[1], 200)
+    # state-density KDE grid spans the full displayed axis (cap 3.7 eV/atom) so the
+    # density curve is not truncated well below the axis edge (owner fix, 2026-09-21).
+    mgo_e_max = 3.7
+    grid = np.linspace(E_LIMIT[0], mgo_e_max, 200)
     density = gaussian_kde(rel, bw_method=KDE_BW).evaluate(grid)
 
     # temperature-dependent Boltzmann probability (panel c) for reverse deposition
