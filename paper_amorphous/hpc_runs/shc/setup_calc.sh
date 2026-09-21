@@ -20,10 +20,11 @@
 #   RUN_A_OUT=../select_reopt/out_select_reopt ./setup_calc.sh
 #
 # Then on the HPC node, from the copied shc/ dir:
-#   for t in opt_novel_2_20P.traj opt_novel_3_30P.traj opt_novel_1_3x3_20P.traj \
-#            opt_novel_2_3x3_30P.traj ref_0P_gmin.traj; do
-#     TRAJ=$t pjsub job_genkai_mpi.sh
-#   done
+#   pjsub job_opt_novel_2_20P.sh
+#   pjsub job_opt_novel_3_30P.sh
+#   pjsub job_opt_novel_1_3x3_20P.sh
+#   pjsub job_opt_novel_2_3x3_30P.sh
+#   pjsub job_ref_0P_gmin.sh
 
 set -e
 THIS_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -63,4 +64,4 @@ for t in $TRAJS; do
 done
 
 echo "Done. shc/ is standalone: FLAPW calc files + traj inputs present."
-echo "Copy this dir to the HPC node, then: TRAJ=<leaf.traj> pjsub job_genkai_mpi.sh"
+echo "Copy this dir to the HPC node, then: pjsub job_opt_novel_2_20P.sh (and the other job_*.sh)"

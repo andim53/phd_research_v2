@@ -37,7 +37,9 @@ hpc_runs/
 │   ├── pflapw, opt/       committed FLAPW binaries (pflapw, opt/xoptics) + opticsin
 │   ├── setup_calc.sh      verify calc files + stage traj inputs (idempotent)
 │   ├── make_ref_traj.py   build the 0%-P crystalline reference traj
-│   └── job_genkai_mpi.sh  pjsub: one submission per leaf traj (4 amorphous + 1 ref)
+│   └── job_<traj>.sh      per-traj independent scripts (job_opt_novel_2_20P.sh,
+│                          job_opt_novel_3_30P.sh, job_opt_novel_1_3x3_20P.sh,
+│                          job_opt_novel_2_3x3_30P.sh, job_ref_0P_gmin.sh)
 ├── convert_dose_concentration.py  maps the reference's ion-dose <-> our at% P
 └── xrd_benchmark.py       writes CIFs for the existing XRD pipeline (amorphous vs ref)
 ```
@@ -75,11 +77,12 @@ to verify the calc files and stage the traj inputs (`opt_novel_<leaf>.traj` ×4 
 ```bash
 cd hpc_runs/shc
 ./setup_calc.sh          # verify calc files + stage traj inputs (idempotent)
-# copy this dir to the HPC node, then:
-for t in opt_novel_2_20P.traj opt_novel_3_30P.traj opt_novel_1_3x3_20P.traj \
-         opt_novel_2_3x3_30P.traj ref_0P_gmin.traj; do
-  TRAJ=$t pjsub job_genkai_mpi.sh
-done
+# copy this dir to the HPC node, then (one pjsub per traj):
+pjsub job_opt_novel_2_20P.sh
+pjsub job_opt_novel_3_30P.sh
+pjsub job_opt_novel_1_3x3_20P.sh
+pjsub job_opt_novel_2_3x3_30P.sh
+pjsub job_ref_0P_gmin.sh
 ```
 
 ## Comparison vs reference (Shashank 2025, NPG Asia Materials)

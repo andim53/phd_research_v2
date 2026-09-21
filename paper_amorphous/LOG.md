@@ -199,6 +199,26 @@ dir) is redundant and contradicts the standalone rule.
 
 **Time:** 2026-09-21 ~20:55–21:00 JST
 
+## Session 2h — 2026-09-21 (shc: per-traj independent job scripts)
+**Owner request:** like `select_reopt/`, give `shc/` multiple independent `.sh` files,
+one per traj, each self-contained (own pjsub header, hardcoded TRAJ) — no shared
+`job_genkai_mpi.sh` template.
+
+**Actions taken:**
+1. Added 5 per-traj independent scripts: `job_opt_novel_2_20P.sh`,
+   `job_opt_novel_3_30P.sh`, `job_opt_novel_1_3x3_20P.sh`, `job_opt_novel_2_3x3_30P.sh`,
+   `job_ref_0P_gmin.sh` — each with its own 6-line `#PJM` header (a-batch, 24 procs,
+   120 h), hardcoded `TRAJ=<traj>`, runs `setup_calc.sh` then `main.py --traj <traj>`.
+2. Removed the shared `shc/job_genkai_mpi.sh` template.
+3. Updated `setup_calc.sh` (submit hints) and `hpc_runs/README.md` (layout tree + Run B
+   usage) to reference the per-traj scripts.
+
+**Verified:** `sh -n` passes on all 5; no `exec` to a shared template; each has 6 PJM
+lines + hardcoded TRAJ; no dangling refs to the removed template.
+
+**Time:** 2026-09-21 ~21:00–21:10 JST
+
+
 
 
 

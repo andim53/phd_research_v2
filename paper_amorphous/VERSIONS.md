@@ -17,6 +17,10 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `hpc_runs/shc/setup_calc.sh` | — | Verifies committed FLAPW calc files + stages traj inputs into shc/ (standalone dir; `RUN_A_OUT` env) |
 | `hpc_runs/shc/.gitignore` | — | Ignores `*.traj` (regenerable); pflapw + opt/xoptics are COMMITTED binaries |
 | `hpc_runs/shc/make_ref_traj.py` | 1.0.0 | Build 0%-P +0-cell reference traj |
-| `hpc_runs/shc/job_genkai_mpi.sh` | — | Run B pjsub (per-leaf traj, TRAJ/OUT env) |
+| `hpc_runs/shc/job_opt_novel_2_20P.sh` | — | per-traj independent script (own pjsub header; TRAJ=opt_novel_2_20P.traj) |
+| `hpc_runs/shc/job_opt_novel_3_30P.sh` | — | per-traj independent script (own pjsub header; TRAJ=opt_novel_3_30P.traj) |
+| `hpc_runs/shc/job_opt_novel_1_3x3_20P.sh` | — | per-traj independent script (own pjsub header; TRAJ=opt_novel_1_3x3_20P.traj) |
+| `hpc_runs/shc/job_opt_novel_2_3x3_30P.sh` | — | per-traj independent script (own pjsub header; TRAJ=opt_novel_2_3x3_30P.traj) |
+| `hpc_runs/shc/job_ref_0P_gmin.sh` | — | per-traj independent script (own pjsub header; TRAJ=ref_0P_gmin.traj) |
 | `hpc_runs/convert_dose_concentration.py` | 1.0.0 | Reference ion-dose ↔ our at% P conversion helper |
 | `hpc_runs/xrd_benchmark.py` | 1.0.0 | Write CIF+manifest for the existing XRD pipeline (amorphous vs ref) |
