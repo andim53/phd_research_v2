@@ -166,3 +166,8 @@
 **Issue (owner):** PuBu colormap was hard to see against the white background (light flat points vanished).
 **Fix:** switched PCA Δz scatter cmap PuBu→YlGnBu_r (dark blue at low Δz, light yellow at high Δz) in Fig_ConDen + Fig_mgo. draw_landscape.py 1.3.0→1.4.0, draw_si_mgo.py 1.3.0→1.4.0.
 **Result:** flat points now visible on white; both figures regenerated.
+
+## Session 7d — 2026-09-21 (peak dashed lines: pop over data)
+**Issue (owner):** island/flat dashed lines in Fig_Boltz + Fig_ConDen were hard to see behind the data lines/curves.
+**Fix:** raised peak lines to zorder=20 (outermost) and added a white withStroke shadow (lw 3.5) — same effect as the text labels. draw_landscape.py 1.4.0→1.5.0, draw_boltzmann.py 1.3.0→1.4.0.
+**Result:** peak lines now pop clearly over the graphs; both figures regenerated.

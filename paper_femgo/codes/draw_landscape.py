@@ -7,7 +7,7 @@ Reads the emitted dataset (analysis/Fig_ConDen.json) and plots:
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_ConDen.png
 """
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import sys
@@ -66,8 +66,12 @@ def main():
     labels = ['Island', 'Flat']
     for i, peak_energy in enumerate(peaks):
         for ax in (ax_dens, ax_scat):
-            ax.axhline(y=peak_energy, color='black', linestyle='--',
-                       linewidth=1, alpha=0.5, zorder=1)
+            line = ax.axhline(y=peak_energy, color='black', linestyle='--',
+                              linewidth=1.2, alpha=1.0, zorder=20)
+            # white shadow so the line pops over the data / density curves
+            line.set_path_effects(
+                [patheffects.withStroke(linewidth=3.5, foreground='white')]
+            )
         txt = labels[i] if i < len(labels) else f'Peak {i+1}'
         t = ax_dens.text(0.05, peak_energy + 0.005, f'{txt}: {peak_energy:.3f} eV',
                          fontsize=8, color='black', verticalalignment='bottom', zorder=11)

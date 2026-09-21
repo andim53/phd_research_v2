@@ -6,7 +6,7 @@ temperatures 300-10000 K, color gradient dark blue -> light yellow.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Boltz.png
 """
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -38,7 +38,11 @@ def main():
                 lw=1.0, label=f'{T} K')
 
     for e, lab in [(0.075, 'Islands'), (0.255, 'Flat')]:
-        ax.axvline(x=e, color='black', linestyle='--', linewidth=1, alpha=0.5)
+        vline = ax.axvline(x=e, color='black', linestyle='--',
+                           linewidth=1.2, alpha=1.0, zorder=20)
+        vline.set_path_effects(
+            [patheffects.withStroke(linewidth=3.5, foreground='white')]
+        )
         t = ax.text(e, 0.02, lab, fontsize=8, rotation=90,
                     verticalalignment='bottom', horizontalalignment='right')
         t.set_path_effects([patheffects.withStroke(linewidth=2, foreground='white')])
