@@ -191,3 +191,12 @@
 **Result:** paper2 is a complete independent paper using the regenerated figures + current numbers.
 
 **Decision:** figures referenced directly from analysis/figures/ (single source of truth).
+
+## Session 8b — 2026-09-21 (update current state of work)
+**Goal (owner):** update paper1 + paper2 paper_status.md checkpoints to reflect all work through Session 8.
+
+**Actions taken:**
+1. Rewrote paper1/paper_status.md: current-state section covering style acceptance, figure revisions, Boltzmann density, data-consistency resolution, paper2 fork; claim table verified; open decisions updated.
+2. Rewrote paper2/paper_status.md: current-state section for the current-results fork (figures from analysis/figures/), verified claims, open decisions.
+
+**Result:** both checkpoints now reflect the true current state.
