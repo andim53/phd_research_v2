@@ -8,10 +8,11 @@ A GOFEE/AGOX global-optimization search generates amorphous Pt(P) (P interstitia
 - SI: SPIE class (`spieman.cls` + `spiejour.bst`).
 - Venue template swap deferred to submission (Phase G).
 
-## Current state (updated 2026-09-21, Session 1)
+## Current state (updated 2026-09-21, Session 2)
 - **Project scaffolded** mirroring `paper_femgo`: AGENTS.md, README.md, README.AI.md, LOG.md, TUTORIAL.md, VERSIONS.md, .gitignore, `papers/paper1/` (main.tex + sections/ + figures/ + references.bib + supplementary/), `codes/`, `analysis/`.
 - **Paper1 scaffolded** with empty section stubs (01_abstract … 06_ack_dataavail). No prose yet.
-- **SHC section is a placeholder** — the FLAPW SHC calculation is in progress; no SHC numbers/claims until results land.
+- **SHC pipeline built (`hpc_runs/`, Session 2 spec-driver)**: Run A (novelty+force filter + DFT re-opt → `opt_novel_<leaf>.traj` ×4), Run B (FLAPW SHC), 0%-P reference traj, dose↔at% helper, XRD benchmark adapter. Build-validated locally (filter ran on all 4 leaves; reference traj + XRD probe + SHC parse tested); FLAPW/GPAW run only on HPC.
+- **SHC section is a placeholder** — no SHC numbers/claims until Run B results land.
 - **Data audited:** Pt–P cell families `0_plus5cell` (+5%), `1_plus0cell` (+0%), `2_plus3cell` (+3%); `3_plus10cell` (+10%) **excluded**. `main.py` `SCALE_CELL=1.05` stale for +0/+3.
 
 ## Claim → evidence (Phase B)
@@ -37,7 +38,15 @@ A GOFEE/AGOX global-optimization search generates amorphous Pt(P) (P interstitia
 
 ## Open decisions / next step
 - [ ] Confirm contribution framing with owner (Phase A)
-- [ ] Decide which structures feed the SHC calculation (best-so-far vs representative set vs crystalline reference)
-- [ ] Run the SHC calculation (in progress) and fill the placeholder section
-- [ ] Write `codes/` figure/analysis scripts and produce `analysis/` outputs
-- NEXT: confirm contribution framing with owner, then draft Methods (03_methods.tex).
+- [x] Decide which structures feed the SHC: **3 distinct novel+low-force amorphous minima
+      per leaf (4 leaves) via `hpc_runs/select_reopt/filter_select.py`, DFT re-opted →
+      `opt_novel_<leaf>.traj` ×4; + 0%-P +0-cell crystalline reference traj** (decided
+      Session 2).
+- [ ] Run the SHC calculation on HPC (Run B: `hpc_runs/shc/`, 4 + 1 pjsub) and fill the
+      placeholder section; confirm xoptics SHC parse fields (spec G7).
+- [ ] Run Run A on HPC for real DFT re-opt.
+- [ ] XRD benchmark vs reference (existing `_run/0_lcb` pipeline) — simulated XRD of
+      selected minima vs Shashank 2025 (I220/I111 0.33→3.14).
+- [ ] Write `codes/` figure/analysis scripts and produce `analysis/` outputs.
+- NEXT: submit Run A + Run B on HPC; then draft Methods (03_methods.tex).
+

@@ -14,3 +14,6 @@ analysis/figures/*.png
 # Raw data (large, regenerable) — keep code/docs, exclude data
 data/
 tmp/
+
+# Regenerable HPC inputs (produced by make_ref_traj.py / reopt.py)
+*.traj
