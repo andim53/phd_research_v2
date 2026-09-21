@@ -43,20 +43,21 @@ runs SCF->SOC->optics->xoptics for each structure, parses SHC into
 `shc_out/shc_summary.{json,csv}`. Reference: make `ref_0P_gmin.traj` from the +0 cell 0P
 leaf, run it through the same stage.
 
-The `shc/` dir is a **self-contained FLAPW calc directory**: `flapw.py` (standalone ASE
-calculator, NOT a package — imported from this CWD), `README_MT-default`, `pflapw`, and
-`opt/` all live together. Run `./setup_calc.sh` first to stage the gitignored HPC
-binaries (`pflapw`, `opt/xoptics`) from the FLAPW calc source.
+The `shc/` dir is a **fully standalone FLAPW calc directory** — copy the whole dir to the
+HPC node and run it there independently. It contains everything: `flapw.py` (standalone
+ASE calculator, NOT a package — imported from this CWD), `README_MT-default`, `pflapw`
+and `opt/xoptics` (committed binaries), and the traj inputs. Run `./setup_calc.sh` once
+to verify the calc files and stage the traj inputs (`opt_novel_<leaf>.traj` ×4 +
+`ref_0P_gmin.traj`) from the Run A output dir (`RUN_A_OUT` env overrides).
 
 ```bash
 cd hpc_runs/shc
-export FLAPW_CALC_SRC="/home/think/Desktop/research/paper_amorphous/tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW"
-./setup_calc.sh          # stages pflapw + opt/xoptics (run inside the job too)
-# 4 amorphous leaves + 1 reference:
-for t in ../select_reopt/out_select_reopt/opt_novel_{2_20P,3_30P,1_3x3_20P,2_3x3_30P}.traj; do
+./setup_calc.sh          # verify calc files + stage traj inputs (idempotent)
+# copy this dir to the HPC node, then:
+for t in opt_novel_2_20P.traj opt_novel_3_30P.traj opt_novel_1_3x3_20P.traj \
+         opt_novel_2_3x3_30P.traj ref_0P_gmin.traj; do
   TRAJ=$t pjsub job_genkai_mpi.sh
 done
-TRAJ=ref_0P_gmin.traj pjsub job_genkai_mpi.sh
 ```
 
 ## Comparison vs reference (Shashank 2025, NPG Asia Materials)

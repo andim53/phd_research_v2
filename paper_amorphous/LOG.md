@@ -99,4 +99,25 @@ passes; `./setup_calc.sh` stages `pflapw` + `opt/xoptics`; binaries/traj not in 
 
 **Time:** 2026-09-21 ~19:55–20:05 JST
 
+## Session 2c — 2026-09-21 (shc/ is a fully standalone dir; binaries committed)
+**Owner clarification (`/clarify-me`):** the `shc/` dir must run **independently** on the
+HPC as its own standalone directory — all inputs and necessities inside it.
+
+**Actions taken:**
+1. Committed the large HPC binaries `pflapw` (12M) + `opt/xoptics` (7.3M) to git so the
+   dir is self-contained on any clone/copy (removed them from `shc/.gitignore`; kept
+   `*.traj` ignored as regenerable).
+2. Rewrote `setup_calc.sh`: (a) verifies the committed FLAPW calc files are present
+   (flapw.py, README_MT-default, pflapw, opt/opticsin, opt/xoptics); (b) stages the traj
+   inputs (`opt_novel_<leaf>.traj` ×4 + `ref_0P_gmin.traj`) into `shc/` from the Run A
+   output dir (idempotent — keeps existing trajs). `RUN_A_OUT` env overrides the source.
+3. Updated `job_genkai_mpi.sh` comment (binaries committed, not staged).
+
+**Verified:** `sh -n` passes on both scripts; `./setup_calc.sh` verifies calc files,
+keeps existing `ref_0P_gmin.traj`, warns on the not-yet-generated `opt_novel_*.traj`
+(produced by Run A reopt on HPC); binaries staged in git.
+
+**Time:** 2026-09-21 ~20:05–20:15 JST
+
+
 

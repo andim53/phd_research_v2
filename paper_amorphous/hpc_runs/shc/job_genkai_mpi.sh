@@ -7,9 +7,10 @@
 #         pjsub job_genkai_mpi.sh
 # Repeat for each of the 4 leaves + the 0%-P reference (5 total).
 #
-# Calc dir is SELF-CONTAINED: flapw.py + README_MT-default + pflapw + opt/ all live
-# in this dir (flapw.py is a standalone .py read from CWD, NOT a pip package; pflapw
-# and opt/xoptics are staged by ./setup_calc.sh — never commit the big binaries).
+# Calc dir is SELF-CONTAINED and STANDALONE: flapw.py + README_MT-default + pflapw +
+# opt/ all live in this dir (flapw.py is a standalone .py read from CWD, NOT a pip
+# package; pflapw and opt/xoptics are committed binaries). setup_calc.sh verifies the
+# calc files and stages the traj inputs so the dir runs independently on HPC.
 
 #PJM -L rscgrp=a-batch
 #PJM -L vnode-core=24

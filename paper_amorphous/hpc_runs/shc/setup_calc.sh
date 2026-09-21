@@ -1,41 +1,65 @@
 #!/bin/sh
-# setup_calc.sh — stage the HPC FLAPW calc directory for Run B (shc/).
+# setup_calc.sh — make hpc_runs/shc/ a fully STANDALONE FLAPW calc directory.
 #
-# The FLAPW calc directory is SELF-CONTAINED: it must contain, in this dir,
-#   flapw.py          (the ASE FLAPW calculator — a standalone .py, NOT a package;
-#                      `from flapw import FLAPW` resolves because flapw.py sits in the
-#                      CWD where main.py runs)
-#   README_MT-default (read by flapw.py write_lapwin from CWD)
-#   pflapw            (the FLAPW SCF/SOC binary, run as ./pflapw — large HPC build)
-#   opt/              (xoptics binary + opticsin, read by prepare_optics)
-# The small source/config files (flapw.py, README_MT-default, opt/opticsin) are
-# committed. The large HPC binaries (pflapw, opt/xoptics) are gitignored and staged
-# here from the FLAPW calc source before submit (they are HPC-built artifacts, not
-# committed in git).
+# The shc/ dir is self-contained: it holds everything needed to run the SHC stage on
+# the HPC as its own independent directory — the FLAPW calc files (flapw.py,
+# README_MT-default, pflapw, opt/) AND the traj inputs (opt_novel_<leaf>.traj x4,
+# ref_0P_gmin.traj). Copy the whole shc/ dir to the HPC node and run it there.
 #
-# Usage (on the HPC node / after copying this project up):
-#   export FLAPW_CALC_SRC="/home/think/Desktop/research/paper_amorphous/tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW"
+# What this script does:
+#   1. Verifies the committed FLAPW calc files are present (flapw.py,
+#      README_MT-default, pflapw, opt/opticsin, opt/xoptics). pflapw and opt/xoptics
+#      are committed binaries (standalone on any clone/copy).
+#   2. Stages the traj inputs into shc/ from the Run A output dir (select_reopt) so
+#      the dir has the actual structures to run. If a traj is already present, it is
+#      kept (idempotent).
+#
+# Usage (run once, before copying shc/ to HPC):
 #   ./setup_calc.sh
-#   # then for each leaf:  TRAJ=... pjsub job_genkai_mpi.sh
+#   # optional: point at a different Run A output dir
+#   RUN_A_OUT=../select_reopt/out_select_reopt ./setup_calc.sh
 #
-# If FLAPW_CALC_SRC is unset, falls back to the standard repo tmp path.
+# Then on the HPC node, from the copied shc/ dir:
+#   for t in opt_novel_2_20P.traj opt_novel_3_30P.traj opt_novel_1_3x3_20P.traj \
+#            opt_novel_2_3x3_30P.traj ref_0P_gmin.traj; do
+#     TRAJ=$t pjsub job_genkai_mpi.sh
+#   done
 
 set -e
 THIS_DIR="$(cd "$(dirname "$0")" && pwd)"
-FLAPW_CALC_SRC="${FLAPW_CALC_SRC:-/home/think/Desktop/research/paper_amorphous/tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW}"
+cd "$THIS_DIR"
 
-if [ ! -f "$FLAPW_CALC_SRC/pflapw" ]; then
-  echo "ERROR: FLAPW calc source not found at $FLAPW_CALC_SRC (set FLAPW_CALC_SRC)" >&2
+# --- 1. Verify committed FLAPW calc files -------------------------------------
+MISSING=""
+for f in flapw.py README_MT-default pflapw opt/opticsin opt/xoptics; do
+  if [ ! -f "$f" ]; then
+    MISSING="$MISSING $f"
+  fi
+done
+if [ -n "$MISSING" ]; then
+  echo "ERROR: FLAPW calc files missing in $THIS_DIR:$MISSING" >&2
+  echo "  pflapw and opt/xoptics are committed binaries — re-clone/copy the repo." >&2
   exit 1
 fi
+echo "OK: FLAPW calc files present (flapw.py, README_MT-default, pflapw, opt/)."
 
-echo "Staging FLAPW calc dir from $FLAPW_CALC_SRC into $THIS_DIR"
-cp "$FLAPW_CALC_SRC/pflapw"        "$THIS_DIR/pflapw"
-cp "$FLAPW_CALC_SRC/README_MT-default" "$THIS_DIR/README_MT-default"
-cp "$FLAPW_CALC_SRC/flapw.py"      "$THIS_DIR/flapw.py"
-mkdir -p "$THIS_DIR/opt"
-cp "$FLAPW_CALC_SRC/opt/opticsin"  "$THIS_DIR/opt/opticsin"
-cp "$FLAPW_CALC_SRC/opt/xoptics"   "$THIS_DIR/opt/xoptics"
-chmod +x "$THIS_DIR/pflapw" "$THIS_DIR/opt/xoptics"
-echo "Done. pflapw + opt/xoptics staged; python files present."
-echo "Submit: cd $THIS_DIR && TRAJ=<leaf.traj> pjsub job_genkai_mpi.sh"
+# --- 2. Stage traj inputs into shc/ -------------------------------------------
+RUN_A_OUT="${RUN_A_OUT:-../select_reopt/out_select_reopt}"
+TRAJS="opt_novel_2_20P.traj opt_novel_3_30P.traj opt_novel_1_3x3_20P.traj \
+       opt_novel_2_3x3_30P.traj ref_0P_gmin.traj"
+
+for t in $TRAJS; do
+  if [ -f "$t" ]; then
+    echo "  keep existing $t"
+    continue
+  fi
+  if [ -f "$RUN_A_OUT/$t" ]; then
+    cp "$RUN_A_OUT/$t" "$THIS_DIR/$t"
+    echo "  staged $t from $RUN_A_OUT"
+  else
+    echo "  WARN: $t not found in $RUN_A_OUT (generate via reopt.py / make_ref_traj.py)"
+  fi
+done
+
+echo "Done. shc/ is standalone: FLAPW calc files + traj inputs present."
+echo "Copy this dir to the HPC node, then: TRAJ=<leaf.traj> pjsub job_genkai_mpi.sh"
