@@ -7,8 +7,9 @@
 #         pjsub job_genkai_mpi.sh
 # Repeat for each of the 4 leaves + the 0%-P reference (5 total).
 #
-# Expects to run FROM hpc_runs/shc/ and needs flapw.py + pflapw reachable (the FLAPW
-# executable is copied from CWD into each structure dir by main.py).
+# Calc dir is SELF-CONTAINED: flapw.py + README_MT-default + pflapw + opt/ all live
+# in this dir (flapw.py is a standalone .py read from CWD, NOT a pip package; pflapw
+# and opt/xoptics are staged by ./setup_calc.sh — never commit the big binaries).
 
 #PJM -L rscgrp=a-batch
 #PJM -L vnode-core=24
@@ -21,6 +22,9 @@ source ~/.bashrc
 conda activate gpaw_env
 module load intel
 module load impi
+
+# Stage the FLAPW calc dir (flapw.py, README_MT-default, pflapw, opt/).
+./setup_calc.sh
 
 # Which leaf traj to run (per-leaf, 4 amorphous + 1 reference). Override via env.
 TRAJ="${TRAJ:-opt_novel_1_3x3_20P.traj}"

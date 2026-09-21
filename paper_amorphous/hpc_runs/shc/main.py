@@ -6,6 +6,17 @@ conductivity) -> FLclean — for every structure in a traj, then PARSES the SHC
 conductivity (in (ohm cm)^-1) from the xoptics output into a per-structure
 JSON/CSV so paper1's placeholder SHC section can be filled later.
 
+CALC DIR (self-contained) — run main.py from a directory holding ALL of:
+  flapw.py          standalone ASE FLAPW calculator. `from flapw import FLAPW`
+                    works because flapw.py sits in the CWD (it is NOT a pip
+                    package). Do not move it into site-packages.
+  README_MT-default read by flapw.py write_lapwin from CWD.
+  pflapw            FLAPW SCF/SOC binary (run as ./pflapw). Large HPC build.
+  opt/              xoptics binary + opticsin (read by prepare_optics).
+The small source/config files (flapw.py, README_MT-default, opt/opticsin) are
+committed in this directory; pflapw and opt/xoptics are gitignored binaries staged
+by ./setup_calc.sh from the FLAPW calc source before submit (spec G8 clarification).
+
 Env: gpaw_env on HPC (has gpaw + agox; FLAPW `pflapw` invoked under this env —
 spec C2, `flapw_2` retired). MPI via mpiexec; proc count matches the pjsub header.
 

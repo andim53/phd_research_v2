@@ -1,0 +1,5 @@
+# HPC FLAPW binaries — large, HPC-built, staged by setup_calc.sh (not committed)
+pflapw
+opt/xoptics
+# regenerable input
+*.traj

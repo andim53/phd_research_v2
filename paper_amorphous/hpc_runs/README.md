@@ -13,6 +13,11 @@ hpc_runs/
 │   └── job_genkai_mpi.sh  pjsub: runs both stages (gpaw_env, 24 procs, 120 h)
 ├── shc/                   Run B: FLAPW spin Hall conductivity
 │   ├── main.py            SCF->SOC->optics->xoptics + SHC parsing -> shc_summary.{json,csv}
+│   ├── flapw.py           ASE FLAPW calculator (standalone .py — NOT a package; read
+│   │                      from this CWD by `from flapw import FLAPW`)
+│   ├── README_MT-default  FLAPW input read from CWD by flapw.py
+│   ├── setup_calc.sh      stages HPC binaries pflapw + opt/xoptics (gitignored) from the
+│   │                      FLAPW calc source before submit
 │   ├── make_ref_traj.py   build the 0%-P crystalline reference traj
 │   └── job_genkai_mpi.sh  pjsub: one submission per leaf traj (4 amorphous + 1 ref)
 ├── convert_dose_concentration.py  maps the reference's ion-dose <-> our at% P
@@ -38,8 +43,15 @@ runs SCF->SOC->optics->xoptics for each structure, parses SHC into
 `shc_out/shc_summary.{json,csv}`. Reference: make `ref_0P_gmin.traj` from the +0 cell 0P
 leaf, run it through the same stage.
 
+The `shc/` dir is a **self-contained FLAPW calc directory**: `flapw.py` (standalone ASE
+calculator, NOT a package — imported from this CWD), `README_MT-default`, `pflapw`, and
+`opt/` all live together. Run `./setup_calc.sh` first to stage the gitignored HPC
+binaries (`pflapw`, `opt/xoptics`) from the FLAPW calc source.
+
 ```bash
 cd hpc_runs/shc
+export FLAPW_CALC_SRC="/home/think/Desktop/research/paper_amorphous/tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW"
+./setup_calc.sh          # stages pflapw + opt/xoptics (run inside the job too)
 # 4 amorphous leaves + 1 reference:
 for t in ../select_reopt/out_select_reopt/opt_novel_{2_20P,3_30P,1_3x3_20P,2_3x3_30P}.traj; do
   TRAJ=$t pjsub job_genkai_mpi.sh

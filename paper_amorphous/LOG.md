@@ -74,5 +74,29 @@ XRD benchmark, per spec `202609211704-ptp-shc-stage.md` (v7).
 - [ ] Run the canonical Stage-2 XRD (`xrd_simulate_crystallinity.py`) on our trajs.
 - [ ] Commit Milestone 2 (this session).
 
-**Time:** 2026-09-21 ~16:10–18:45 JST
+**Time:** 2026-09-21 ~16:10–20:05 JST
+
+## Session 2b — 2026-09-21 (fix: Run B calc dir is self-contained FLAPW, not a package)
+**Owner clarification (`/clarify-me`):** `flapw` is NOT an importable package — it is a
+standalone Python file (`flapw.py`, an ASE FileIOCalculator) that must live in the calc
+working dir alongside `pflapw` (binary), `README_MT-default`, and `opt/`. `main.py` does
+`from flapw import FLAPW`, which only resolves because `flapw.py` sits in the CWD.
+
+**Actions taken:**
+1. Inspected `tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW/` — confirmed the calc dir
+   contract: `flapw.py` reads `README_MT-default` from CWD (`Path("README_MT-default")`)
+   and `opt/` via `prepare_optics`; `_run_pflapw` runs `./pflapw`.
+2. Copied the committed source/config into `hpc_runs/shc/`: `flapw.py`,
+   `README_MT-default`, `opt/opticsin`.
+3. Added `hpc_runs/shc/.gitignore` (ignores large HPC binaries `pflapw`, `opt/xoptics`,
+   and `*.traj`) + `setup_calc.sh` (stages `pflapw` + `opt/xoptics` from the FLAPW calc
+   source before submit).
+4. Updated `main.py` docstring (self-contained calc dir contract) and `job_genkai_mpi.sh`
+   (runs `./setup_calc.sh` first).
+
+**Verified:** `from flapw import FLAPW` resolves from `hpc_runs/shc/` CWD; `py_compile`
+passes; `./setup_calc.sh` stages `pflapw` + `opt/xoptics`; binaries/traj not in git.
+
+**Time:** 2026-09-21 ~19:55–20:05 JST
+
 

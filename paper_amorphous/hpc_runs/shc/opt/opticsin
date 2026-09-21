@@ -1,0 +1,81 @@
+*** PHOTO FREQUENCY ***************
+Range in photo energy or set w_low=w_top=0.0 for electric/Hall condictivity
+  w_low:0.0                             !in eV
+  w_top:0.0                             !in eV 
+  w_del:1.0                             !in eV  w_del.gt.0
+*** OPTICAL CAL. ******************
+Intraband:F, Method:P                   !T/F, Empirical/Plasma
+  1/tau:0.272116                        !1/relaxation time, in eV
+  ocp_function:N, width:0.0272116       !Fermi/Gauss/None, in eV
+  Emprical method
+    sigma:4.207                         !in eV
+Interband:T, Method:C                   !T/F, Complex/Sharp with KK
+  e_bound:60.0                          !bound of unoccupied states, in eV
+  ocp_function:F, width:0.0272116       !Fermi/None, in eV
+  Complex method    
+    1/tau:0.272116                      !1/relaxation time in eV
+  Sharp with Kramers-Kronig method      !assumed sharp limit 1/tau=0
+    e_del:0.01                          !interval for KK integral, in eV
+    e_top:60.0                          !upper bound for KK integral, in eV
+Magneto-optics:F                        !T/F, needed intra or/and inter-bands
+Core-Valence:F, Method:S                !Sharp (XAS/XMCD)
+  e_bound:60.0                          !bound of unoccupied states, in eV
+  distribution:L, width:0.0272116       !Gauss/Lorentz/None, in eV
+  states
+    atom:1                              !atom,       all when <0
+    core:4                              !core state, all when <0
+*** NUMERICAL OPTIONS *************
+Fermi Energy
+  smearing:G, width:0.001               !Gauss/Fermi/None, in htr
+Zero energy:0.00001                     !zero between e_u and e_o, in htr
+Delta func:G, width:0.001               !Gauss/None in htr (inter_sgmss.f)
+*** CAL. OPTIONS ******************
+Zval shift:F                            !T/F
+  deviation:0.00                        !(z-z0) in electron number
+Fermi energy shift:F                    !T/F
+  deviation:0.10                        !(e-ef) in eV
+K-dispersion:F                          !T/F
+  ef: 0.299606900212                    !in htr
+  photo frequency:0.0                   !in eV
+Band slice:F                            !T/F for occ-unocc transiton
+  degeneracy:F, e_interval:0.00001      !T:averaged degenerated atates, in eV
+  index:25 26                           !bands
+Berry curvature:F                       !T/F
+  degeneracy:F, e_interval:0.00001      !T:averaged degenerated atates, in eV
+  index:25 -1                           !band, contributed bands(all when <0)
+
+
+## Note
+#Electric conductivity
+#  set intraband with plasma method
+#Hall conductivity
+#  set interband with complex method and 1/tau=0
+#thermal conductivity
+#  set ocp_function with F
+
+## Unit
+time
+  [a.u]=2.41889x10^-17 [s]
+conductivity sgm
+  [a.u.]=4.134133x10^16 [1/s]
+  [1/s] =0.111256x10^-11 [1/(ohm cm)]
+  10^15 [1/s]=1112.56 [(ohm cm)^-1]
+  [eV] =1.52141e15 [1/s] (original)
+  [eV] =1.51925e15 [1/s] (eV*2pi/h)
+spin Hall conductivity sgm
+  10^15 [1/s]=1112.56 [(ohm cm)^-1]
+  10^15 [1/s]=1112.56/2=556.28 [(ohm cm)^-1] befor flapw-4.16
+thermal conductivity alp
+  10^10 [1/s]=1112.56x10^-5 [A/(K cm)]
+
+## emprical Drude term
+                [1/s]     [eV]         [s]              [eV]
+for Ni:  sigD=18.600e+15 12.226 ,tauD=11.300e-15 gammaD=0.0582
+for Fe:        6.400e+15  4.207 ,      9.120e-15        0.0721
+for Co:        5.000e+15  3.286 ,      1.600e-15        0.4108
+
+### photo vecotr in XMCD/XMLD in flapw-4.37 or later
+a+=1/sqrt(2)(ax+iay)
+a-=1/sqrt(2)(ax-iay)
+XMCD=left-right
+XMLD=zplor-(left+right)/2
