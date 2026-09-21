@@ -4,7 +4,7 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 
 | File | Version | Notes |
 |------|---------|-------|
-| `codes/common.py` | 1.1.0 | + emit_combined_csv / emit_figure_json (emit→plot) |
+| `codes/common.py` | 1.2.0 | TRIAL style: owner's sans-serif rcParams (OLD_SOURCE_STYLE kept for revert) |
 | `codes/emit_datasets.py` | 1.1.0 | generates all CSVs + per-figure JSONs; KDE_BW param (None=Scott) |
 | `codes/draw_energy_progression.py` | 1.2.0 | Fig_Prog (reads Fig_Prog.json; Run 1–13 labels) |
 | `codes/draw_landscape.py` | 1.1.0 | Fig_ConDen (reads Fig_ConDen.json) |

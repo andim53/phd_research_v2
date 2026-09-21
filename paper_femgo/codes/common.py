@@ -7,7 +7,7 @@ definition (AGOX iteration >= 10). All figure scripts import from here.
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 Set matplotlib.use('Agg') before importing anything that plots.
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import glob
@@ -30,9 +30,11 @@ FIG_DIR = os.path.join(ANALYSIS_DIR, 'figures')
 ANALYSIST_RESULT = '/home/think/Desktop/research/_analysist/1_result'
 
 # ---------------------------------------------------------------------------
-# Researcher plotting style (mirrors _analysist/run_stage0_style.py + codes/07)
+# Plotting style — TRIAL: owner's sans-serif rcParams (2026-09-20).
+# Pending owner review (accept or reject). To revert, restore the OLD_SOURCE_STYLE
+# dict below (the previous _analysist serif style).
 # ---------------------------------------------------------------------------
-CUSTOM_RC_PARAMS = {
+OLD_SOURCE_STYLE = {
     'font.family': 'serif',
     'font.serif': ['DejaVu Serif', 'Times New Roman', 'Computer Modern'],
     'font.size': 12,
@@ -54,6 +56,25 @@ CUSTOM_RC_PARAMS = {
     'axes.grid': False,
     'figure.autolayout': True,
     'figure.dpi': 300,
+}
+
+CUSTOM_RC_PARAMS = {
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
+    "font.size": 11,
+    "axes.linewidth": 1.0,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "xtick.top": True,
+    "ytick.right": True,
+    "legend.frameon": True,
+    "legend.edgecolor": "black",
+    # kept for good headless output / layout:
+    "axes.edgecolor": "black",
+    "axes.facecolor": "white",
+    "axes.grid": False,
+    "figure.autolayout": True,
+    "figure.dpi": 300,
 }
 
 E_LABEL = r'$E_{i}-E_{glob}$ (eV/atom)'

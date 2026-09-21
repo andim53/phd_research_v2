@@ -113,3 +113,15 @@
 
 **Open items:**
 - [ ] Commit Session 4.
+
+## Session 5 — 2026-09-20 (figure style trial — sans-serif)
+**Goal (user-confirmed via clarify):** test the owner's sans-serif matplotlib rcParams on all figures; owner reviews and accepts/rejects.
+
+**Actions taken:**
+1. Overwrote CUSTOM_RC_PARAMS in common.py with the owner's style: font sans-serif (Helvetica/Arial/DejaVu Sans), size 11, ticks-in, top/right ticks, legend.frameon=True edgecolor black. Kept autolayout + dpi 300 for headless output. Recorded the old _analysist serif style as OLD_SOURCE_STYLE for easy revert.
+2. Bumped common.py 1.1.0→1.2.0.
+3. Regenerated ALL 8 figures (Fig_Prog, Fig_ConDen, Fig_Boltz, Fig_dos, Fig_convStateDens, Fig_mgo, Fig_env, Fig_sup) — verified valid.
+
+**Result:** figures in analysis/figures/ now use the sans-serif style, pending owner review.
+
+**Decision:** TRIAL — revert via OLD_SOURCE_STYLE if rejected.
