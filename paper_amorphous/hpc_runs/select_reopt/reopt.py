@@ -63,11 +63,20 @@ def relax_one(atoms, fmax, directory):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--selroot", required=True, help="filter_select.py --outdir")
-    ap.add_argument("--outdir", required=True)
+    ap.add_argument("--selroot", default=None,
+                    help="filter_select.py --outdir (default: this dir's ./out_select_reopt)")
+    ap.add_argument("--outdir", default=None,
+                    help="output dir (default: this dir's ./out_select_reopt)")
     ap.add_argument("--fmax", type=float, default=0.05)
     ap.add_argument("--leaf", default=None, help="restrict to one leaf key")
     args = ap.parse_args()
+
+    # Standalone: default to this dir's output (all in-dir).
+    here = os.path.dirname(os.path.abspath(__file__))
+    if args.selroot is None:
+        args.selroot = os.path.join(here, "out_select_reopt")
+    if args.outdir is None:
+        args.outdir = os.path.join(here, "out_select_reopt")
 
     Path(args.outdir).mkdir(parents=True, exist_ok=True)
     from ase.io import read as ase_read

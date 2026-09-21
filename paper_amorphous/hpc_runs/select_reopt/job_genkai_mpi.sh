@@ -3,10 +3,11 @@
 # Submit on HPC via pjsub (NEVER run on the laptop).
 # Env: gpaw_env (has BOTH gpaw and agox — spec M2/G1).
 #
-#   pjsub job_genkai_mpi.sh
+# STANDALONE: this dir is self-contained. All inputs (the AGOX DBs under ./data/)
+# and outputs (./out_select_reopt/) live inside this directory — nothing is pulled
+# from outside. Copy the whole select_reopt/ dir to the HPC node and run it there.
 #
-# Expects to be run FROM the hpc_runs/select_reopt/ directory, with the repo path
-# to data/17_PPt available at $PPAP_DATA (or the default below).
+#   pjsub job_genkai_mpi.sh
 
 #PJM -L rscgrp=a-batch
 #PJM -L vnode-core=24
@@ -20,21 +21,15 @@ conda activate gpaw_env
 module load intel
 module load impi
 
-# Location of the raw Pt-P db leaves (read-only). Override if the HPC copy differs.
-PPAP_DATA="${PPAP_DATA:-/home/think/Desktop/research/paper_amorphous/data/17_PPt}"
-
 PY=python
 OUT=./out_select_reopt
 mkdir -p "$OUT"
 
-# Stage 1: novelty + force filter over the 4 amorphous leaves (per-leaf, 3 minima each)
+# Stage 1: novelty + force filter over the 4 amorphous leaves (per-leaf, 3 minima each).
+# Reads the DBs from ./data/ (in-dir, standalone).
 $PY filter_select.py \
   --outdir "$OUT" \
-  --leaves \
-    "$PPAP_DATA/2_plus3cell/2_20P:2_20P" \
-    "$PPAP_DATA/2_plus3cell/3_30P:3_30P" \
-    "$PPAP_DATA/0_plus5cell/1_3x3_20P:1_3x3_20P" \
-    "$PPAP_DATA/0_plus5cell/2_3x3_30P:2_3x3_30P" \
+  --leaves 2_20P 3_30P 1_3x3_20P 2_3x3_30P \
   --n-per-leaf 3 --it-min 10 --e-max 0.5
 
 # Stage 2: DFT re-opt the selected minima to strict fmax, write opt_novel_<leaf>.traj x4

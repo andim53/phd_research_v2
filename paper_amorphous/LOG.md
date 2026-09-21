@@ -119,5 +119,30 @@ keeps existing `ref_0P_gmin.traj`, warns on the not-yet-generated `opt_novel_*.t
 
 **Time:** 2026-09-21 ~20:05–20:15 JST
 
+## Session 2d — 2026-09-21 (hpc_runs STANDALONE rule: every subdir self-contained)
+**Owner clarification (`/clarify-me`):** every directory under `hpc_runs/` must be a
+standalone system — all inputs inside the dir, nothing pulled from outside.
+
+**Actions taken:**
+1. **select_reopt/ standalone:** copied the 15 input AGOX DBs (33M) into `./data/`
+   (per-leaf `seed_*/1_db/db_*.db`); `filter_select.py` now defaults to the in-dir
+   `./data/` root (`--data-root` override) and resolves bare leaf keys against it;
+   `reopt.py` defaults `--selroot`/`--outdir` to in-dir `./out_select_reopt/`; added
+   `setup.sh` (stages DBs, idempotent) + `.gitignore` (out_select_reopt/); job script
+   reads `./data/` (no external `PPAP_DATA`).
+2. **shc/ standalone:** committed `ref_0P_gmin.traj`; `setup_calc.sh` stages the
+   `opt_novel_<leaf>.traj` ×4 from the in-tree select_reopt output (idempotent); shc
+   `.gitignore` now only ignores `shc_out/` + `__pycache__/` (trajs committed).
+3. **Rule codified:** added a top-level `hpc_runs/README.md` "STANDALONE RULE" section
+   stating every subdir is self-contained (all inputs in-dir, no external refs), with
+   per-dir setup + job scripts.
+
+**Verified:** `sh -n` passes on all 4 scripts; `./setup.sh` idempotent (keeps existing
+DBs); `filter_select.py` reads in-dir `./data/` (tested on `2_20P`, chosen=2);
+`py_compile` passes on filter_select.py + reopt.py.
+
+**Time:** 2026-09-21 ~20:15–20:35 JST
+
+
 
 

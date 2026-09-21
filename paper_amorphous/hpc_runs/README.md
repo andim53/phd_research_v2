@@ -1,23 +1,40 @@
 # hpc_runs — SHC / selection pipeline for amorphous Pt(P)
 
 Two-stage HPC pipeline feeding the paper's SHC section, per
-`spec/202609211704-ptp-shc-stage.md` (v7). **Nothing runs on the laptop** — submit via
+`spec/202609211704-ptp-shc-stage.md` (v9). **Nothing runs on the laptop** — submit via
 `pjsub` on the HPC node in the `gpaw_env` conda env (has BOTH gpaw and agox).
+
+## STANDALONE RULE (every subdir)
+**Each directory under `hpc_runs/` is a fully standalone system.** All inputs and
+necessities live inside the dir — nothing is pulled from outside at run time. To run a
+stage on the HPC, copy the whole subdir to the node and run it there independently.
+
+- `select_reopt/` — input AGOX DBs live in `./data/` (staged by `./setup.sh`); outputs
+  in `./out_select_reopt/`. `filter_select.py`/`reopt.py` default to in-dir paths.
+- `shc/` — FLAPW calc files (`flapw.py`, `README_MT-default`, `pflapw`, `opt/`) and the
+  traj inputs (`opt_novel_<leaf>.traj` ×4 + `ref_0P_gmin.traj`) all live in the dir;
+  `pflapw`/`opt/xoptics` are committed binaries. `./setup_calc.sh` verifies calc files
+  and stages traj inputs from the in-tree select_reopt output.
+
+Each subdir ships its own `setup*.sh` (stage inputs, idempotent) and `job_genkai_mpi.sh`
+(submit). Run the setup once, then copy the dir to the HPC node.
 
 ## Layout
 ```
 hpc_runs/
-├── select_reopt/          Run A: novelty+force filter + DFT re-opt
+├── select_reopt/          Run A: novelty+force filter + DFT re-opt (STANDALONE)
+│   ├── data/              input AGOX DBs (staged by ./setup.sh; in-dir)
 │   ├── filter_select.py   stage 1: per-leaf novelty+force filter (~3 distinct minima)
 │   ├── reopt.py           stage 2: GPAW re-opt to strict fmax -> opt_novel_<leaf>.traj x4
+│   ├── setup.sh           stage the input DBs into ./data/ (idempotent)
 │   └── job_genkai_mpi.sh  pjsub: runs both stages (gpaw_env, 24 procs, 120 h)
-├── shc/                   Run B: FLAPW spin Hall conductivity
+├── shc/                   Run B: FLAPW spin Hall conductivity (STANDALONE)
 │   ├── main.py            SCF->SOC->optics->xoptics + SHC parsing -> shc_summary.{json,csv}
 │   ├── flapw.py           ASE FLAPW calculator (standalone .py — NOT a package; read
 │   │                      from this CWD by `from flapw import FLAPW`)
 │   ├── README_MT-default  FLAPW input read from CWD by flapw.py
-│   ├── setup_calc.sh      stages HPC binaries pflapw + opt/xoptics (gitignored) from the
-│   │                      FLAPW calc source before submit
+│   ├── pflapw, opt/       committed FLAPW binaries (pflapw, opt/xoptics) + opticsin
+│   ├── setup_calc.sh      verify calc files + stage traj inputs (idempotent)
 │   ├── make_ref_traj.py   build the 0%-P crystalline reference traj
 │   └── job_genkai_mpi.sh  pjsub: one submission per leaf traj (4 amorphous + 1 ref)
 ├── convert_dose_concentration.py  maps the reference's ion-dose <-> our at% P
@@ -25,16 +42,17 @@ hpc_runs/
 ```
 
 ## Run A — select + re-opt
-Stage 1 (filter_select.py) reads `data/17_PPt` (read-only), force-gates each leaf
-(leaf-adaptive cutoff: 20P ~1.0, 30P ~2.0 eV/A; percentile + fallback), dedups by AGOX
-Fingerprint (calibrated tolerance from the NN-distance distribution), and picks the
-lowest-energy distinct low-force minima. Writes `selected/<leaf>/<rank>.xsf` +
-`selection_<leaf>.json`. Stage 2 (reopt.py) GPAW-relaxes them (lcao/dzp/PBE, fmax 0.05,
-all atoms mobile) into `opt_novel_<leaf>.traj` x4.
+Stage 1 (filter_select.py) reads the input DBs from `./data/` (in-dir, standalone),
+force-gates each leaf (leaf-adaptive cutoff: 20P ~1.0, 30P ~2.0 eV/A; percentile +
+fallback), dedups by AGOX Fingerprint (calibrated tolerance from the NN-distance
+distribution), and picks the lowest-energy distinct low-force minima. Writes
+`selected/<leaf>/<rank>.xsf` + `selection_<leaf>.json`. Stage 2 (reopt.py) GPAW-relaxes
+them (lcao/dzp/PBE, fmax 0.05, all atoms mobile) into `opt_novel_<leaf>.traj` x4.
 
 ```bash
 cd hpc_runs/select_reopt
-pjsub job_genkai_mpi.sh          # runs filter_select.py then reopt.py
+./setup.sh                    # stage the input DBs into ./data/ (idempotent)
+pjsub job_genkai_mpi.sh       # runs filter_select.py then reopt.py (reads ./data/)
 ```
 
 ## Run B — FLAPW SHC

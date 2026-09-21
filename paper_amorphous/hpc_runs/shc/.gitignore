@@ -1,2 +1,3 @@
-# Regenerable inputs (produced by reopt.py / make_ref_traj.py; staged by setup_calc.sh)
-*.traj
+# Regenerable outputs (produced by main.py)
+shc_out/
+__pycache__/

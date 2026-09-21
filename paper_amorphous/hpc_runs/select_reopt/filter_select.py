@@ -275,6 +275,8 @@ def main():
     ap.add_argument("--outdir", required=True)
     ap.add_argument("--leaves", nargs="*", required=True,
                     help="leaf dirs or 'leaf_key:dir' pairs")
+    ap.add_argument("--data-root", default=None, dest="data_root",
+                    help="root holding the leaf DBs (default: this dir's ./data)")
     ap.add_argument("--it-min", type=int, default=10, dest="it_min")
     ap.add_argument("--e-max", type=float, default=0.5, dest="e_max")
     ap.add_argument("--force-pct", type=float, default=25.0, dest="force_pct")
@@ -284,6 +286,10 @@ def main():
                     help="optional explicit per-leaf force cutoff (overrides 20P/30P)")
     args = ap.parse_args()
 
+    # Standalone: default data root is THIS dir's ./data (all inputs in-dir).
+    if args.data_root is None:
+        args.data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+
     Path(args.outdir).mkdir(parents=True, exist_ok=True)
     for spec in args.leaves:
         if ":" in spec:
@@ -291,6 +297,11 @@ def main():
         else:
             directory = spec
             key = os.path.basename(os.path.normpath(directory))
+        # Resolve leaf dir against the in-dir data root if it's a bare leaf key.
+        if not os.path.isdir(directory):
+            candidate = os.path.join(args.data_root, key)
+            if os.path.isdir(candidate):
+                directory = candidate
         chosen, comp, n_total, gate = select_leaf(
             directory, args.it_min, args.e_max, args.force_pct,
             args.n_per_leaf, args.tol, args.force_thr,

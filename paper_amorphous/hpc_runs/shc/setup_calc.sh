@@ -11,8 +11,8 @@
 #      README_MT-default, pflapw, opt/opticsin, opt/xoptics). pflapw and opt/xoptics
 #      are committed binaries (standalone on any clone/copy).
 #   2. Stages the traj inputs into shc/ from the Run A output dir (select_reopt) so
-#      the dir has the actual structures to run. If a traj is already present, it is
-#      kept (idempotent).
+#      the dir has the actual structures to run. If a traj is already present (e.g.
+#      committed), it is kept (idempotent).
 #
 # Usage (run once, before copying shc/ to HPC):
 #   ./setup_calc.sh
@@ -44,6 +44,7 @@ fi
 echo "OK: FLAPW calc files present (flapw.py, README_MT-default, pflapw, opt/)."
 
 # --- 2. Stage traj inputs into shc/ -------------------------------------------
+# Default source is the in-tree select_reopt output (both dirs under hpc_runs/).
 RUN_A_OUT="${RUN_A_OUT:-../select_reopt/out_select_reopt}"
 TRAJS="opt_novel_2_20P.traj opt_novel_3_30P.traj opt_novel_1_3x3_20P.traj \
        opt_novel_2_3x3_30P.traj ref_0P_gmin.traj"
