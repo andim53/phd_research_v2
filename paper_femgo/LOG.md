@@ -177,3 +177,17 @@
 **Fix:** emitter (emit_datasets.py 1.3.0→1.4.0) uses np.trapz over the dense grid for Z (continuous ∫=1 density) instead of sum+/max(); applied to Fig_Boltz and Fig_mgo panel (c). draw_boltzmann.py 1.4.0→1.5.0 and draw_si_mgo.py 1.4.0→1.5.0: ylabel -> "Boltzmann density rho_B(E) (1/eV)", dynamic ylim.
 **Text:** Fig_Boltz caption + results prose -> Boltzmann density with ∫dE=1; SI Fig_mgo(c) caption updated.
 **Result:** every T-density trapezoid-integrates to 1.0; curves comparable across T. Both PDFs recompile.
+
+## Session 8 — 2026-09-21 (paper2: current-results fork)
+**Goal (owner):** create paper2 = same as paper1 but using the current/regenerated graphs and data (main + SI).
+
+**Actions taken:**
+1. Forked papers/paper1 -> papers/paper2 (sections, references.bib, supplementary, CLAIMS, paper_status).
+2. Repointed figure refs: main + sections use ../../analysis/figures/*.png (regenerated); SI uses ../../../analysis/figures/*.png. Fig_flow (hand-drawn) kept in paper2/figures/.
+3. Fixed SI path depth (supplementary/ needs ../../../).
+4. Updated paper2 CLAIMS.md + paper_status.md headers to note it's the current-results fork.
+5. Compiled paper2 main.pdf (983 KB) + article.pdf (1.16 MB) — both build cleanly, all citations resolve.
+
+**Result:** paper2 is a complete independent paper using the regenerated figures + current numbers.
+
+**Decision:** figures referenced directly from analysis/figures/ (single source of truth).

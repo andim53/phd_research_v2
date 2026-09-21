@@ -13,14 +13,15 @@ paper_femgo/
 ├── TUTORIAL.md          # reproduction guide
 ├── VERSIONS.md          # per-file __version__ manifest
 ├── papers/
-│   └── paper1/
-│       ├── main.tex             # RevTeX 4.2 container, \input sections
-│       ├── sections/            # 01_abstract … 06_ack_dataavail (.tex per section)
-│       ├── figures/             # main-manuscript figures (PNG)
-│       ├── references.bib       # main bibliography
-│       ├── CLAIMS.md            # frozen claim list
-│       ├── paper_status.md      # checkpoint/resume handoff
-│       └── supplementary/       # SI: article.tex (SPIE), figures/, report.bib, spieman.cls, spiejour.bst
+│   ├── paper1/            # original draft fork (figures from draft zips)
+│   └── paper2/            # current-results fork — figures from analysis/figures/
+│       ├── main.tex
+│       ├── sections/      # 01_abstract … 06_ack_dataavail (.tex per section)
+│       ├── figures/       # only Fig_flow.png (hand-drawn; other figs from analysis/)
+│       ├── references.bib
+│       ├── CLAIMS.md
+│       ├── paper_status.md
+│       └── supplementary/ # SI: article.tex (SPIE), report.bib, spieman.cls, spiejour.bst
 ├── codes/               # figure-regeneration scripts (each has __version__)
 ├── analysis/            # regenerated figures + result JSONs
 ├── data/                # raw results (read-only reference)
