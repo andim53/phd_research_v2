@@ -6,7 +6,7 @@ temperatures 300-10000 K, color gradient dark blue -> light yellow.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Boltz.png
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -45,7 +45,7 @@ def main():
 
     ax.set_xlabel(E_LABEL)
     ax.set_ylabel('Probability P(E) (peak-normalized)')
-    ax.set_xlim(0, None)
+    ax.set_xlim(0.0, 0.7)  # relative-energy (x) axis capped at 0.7 eV/atom (owner)
     ax.set_ylim(0, 1.05)
     ax.legend(frameon=False, loc='upper right', fontsize=8)
 

@@ -6,7 +6,7 @@ g(E) and (b) PCA landscape psi_1d vs E_i-E_glob colored by Δz.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_mgo.png
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (apply_style, ANALYSIS_DIR, ensure_fig_dir,
                     E_LABEL, DENSITY_LABEL, SCATTER_LABEL)
 
-E_LIMIT = (0.0 - 0.1, 1.5 + 0.1, 5)
+E_LIMIT = (0.0 - 0.1, 0.7, 5)  # relative-energy axis capped at 0.7 eV/atom (owner)
 Z_LIMIT = (5.85, 0, 5)
 
 

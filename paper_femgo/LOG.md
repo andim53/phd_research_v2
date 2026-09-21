@@ -125,3 +125,17 @@
 **Result:** figures in analysis/figures/ now use the sans-serif style, pending owner review.
 
 **Decision:** TRIAL — revert via OLD_SOURCE_STYLE if rejected.
+
+## Session 6 — 2026-09-20 (accept style; remove inner ticks; cap rel-E at 0.7 eV/atom)
+**Goal (owner):** accept the sans-serif style; remove inner (top/right) ticks; cap the relative-energy axis at 0.7 eV/atom.
+
+**Actions taken:**
+1. ACCEPTED the sans-serif style (common.py 1.2.0→1.3.0).
+2. Removed inner ticks: dropped xtick.top / ytick.right from CUSTOM_RC_PARAMS.
+3. Capped relative-energy axis at 0.7 eV/atom in Fig_ConDen (y), Fig_Boltz (x), Fig_convStateDens (y), Fig_mgo (y).
+4. Bumped draw script versions (landscape/boltzmann/si_mgo→1.2.0, state_density_conv→1.3.0).
+5. Regenerated all 8 figures.
+
+**Result:** figures show accepted style, no inner ticks, rel-E axis ≤ 0.7 eV/atom.
+
+**Decision:** style ACCEPTED (no longer a trial).
