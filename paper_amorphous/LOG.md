@@ -184,6 +184,22 @@ lines + hardcoded LEAF; no dangling refs to the removed template. `shc/job_genka
 
 **Time:** 2026-09-21 ~20:45–20:55 JST
 
+## Session 2g — 2026-09-21 (remove redundant setup.sh; data already committed)
+**Owner question:** do we need `setup.sh`? The input DBs are already committed in
+`select_reopt/data/`, so `setup.sh` (which re-copies from `data/17_PPt`, outside the
+dir) is redundant and contradicts the standalone rule.
+
+**Actions taken:**
+1. Removed `hpc_runs/select_reopt/setup.sh` (git rm).
+2. Updated `hpc_runs/README.md` (standalone-rule line, layout tree, Run A usage) and
+   `VERSIONS.md` to drop the setup.sh references; data noted as committed in-dir.
+
+**Verified:** 15 DBs (33M) confirmed committed in `select_reopt/data/`; no remaining
+`setup.sh` references in hpc_runs.
+
+**Time:** 2026-09-21 ~20:55–21:00 JST
+
+
 
 
 

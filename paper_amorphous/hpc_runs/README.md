@@ -9,7 +9,7 @@ Two-stage HPC pipeline feeding the paper's SHC section, per
 necessities live inside the dir — nothing is pulled from outside at run time. To run a
 stage on the HPC, copy the whole subdir to the node and run it there independently.
 
-- `select_reopt/` — input AGOX DBs live in `./data/` (staged by `./setup.sh`); outputs
+- `select_reopt/` — input AGOX DBs live in `./data/` (committed, in-dir); outputs
   in `./out_select_reopt/`. `filter_select.py`/`reopt.py` default to in-dir paths.
 - `shc/` — FLAPW calc files (`flapw.py`, `README_MT-default`, `pflapw`, `opt/`) and the
   traj inputs (`opt_novel_<leaf>.traj` ×4 + `ref_0P_gmin.traj`) all live in the dir;
@@ -24,10 +24,9 @@ copy the dir to the HPC node.
 ```
 hpc_runs/
 ├── select_reopt/          Run A: novelty+force filter + DFT re-opt (STANDALONE)
-│   ├── data/              input AGOX DBs (staged by ./setup.sh; in-dir)
+│   ├── data/              input AGOX DBs (committed, in-dir)
 │   ├── filter_select.py   stage 1: per-leaf novelty+force filter (~3 distinct minima)
 │   ├── reopt.py           stage 2: GPAW re-opt to strict fmax -> opt_novel_<leaf>.traj x4
-│   ├── setup.sh           stage the input DBs into ./data/ (idempotent)
 │   └── job_<leaf>.sh      per-leaf independent scripts (job_2_20P.sh, job_3_30P.sh,
 │                          job_1_3x3_20P.sh, job_2_3x3_30P.sh) → one traj per leaf
 ├── shc/                   Run B: FLAPW spin Hall conductivity (STANDALONE)
@@ -53,7 +52,6 @@ them (lcao/dzp/PBE, fmax 0.05, all atoms mobile) into `opt_novel_<leaf>.traj` x4
 
 ```bash
 cd hpc_runs/select_reopt
-./setup.sh                    # stage the input DBs into ./data/ (idempotent)
 # one leaf per submission (each produces that leaf's opt_novel_<leaf>.traj):
 pjsub job_2_20P.sh
 pjsub job_3_30P.sh

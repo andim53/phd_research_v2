@@ -6,7 +6,6 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 |------|---------|-------|
 | `hpc_runs/select_reopt/filter_select.py` | 1.0.0 | Run A stage 1: per-leaf novelty+force filter → `selected/<leaf>/*.xsf` + selection JSON. Calibrated fingerprint tol; leaf-adaptive force cutoff (20P/30P). Reads in-dir `./data/` (standalone) |
 | `hpc_runs/select_reopt/reopt.py` | 1.0.0 | Run A stage 2: GPAW re-opt (lcao/dzp/PBE, fmax 0.05) → `opt_novel_<leaf>.traj` ×4. Defaults to in-dir `./out_select_reopt/` |
-| `hpc_runs/select_reopt/setup.sh` | — | Stages input AGOX DBs into `./data/` (idempotent; `SRC_ROOT` env) |
 | `hpc_runs/select_reopt/.gitignore` | — | Ignores `out_select_reopt/`, `__pycache__/` |
 | `hpc_runs/select_reopt/job_2_20P.sh` | — | per-leaf independent script (own pjsub header; LEAF=2_20P) |
 | `hpc_runs/select_reopt/job_3_30P.sh` | — | per-leaf independent script (own pjsub header; LEAF=3_30P) |
