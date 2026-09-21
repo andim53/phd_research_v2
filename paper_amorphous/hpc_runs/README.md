@@ -16,8 +16,9 @@ stage on the HPC, copy the whole subdir to the node and run it there independent
   `pflapw`/`opt/xoptics` are committed binaries. `./setup_calc.sh` verifies calc files
   and stages traj inputs from the in-tree select_reopt output.
 
-Each subdir ships its own `setup*.sh` (stage inputs, idempotent) and `job_genkai_mpi.sh`
-(submit). Run the setup once, then copy the dir to the HPC node.
+Each subdir ships its own `setup*.sh` (stage inputs, idempotent) and per-leaf `job_<leaf>.sh`
+submit scripts (each self-contained with its own pjsub header). Run the setup once, then
+copy the dir to the HPC node.
 
 ## Layout
 ```
@@ -27,8 +28,7 @@ hpc_runs/
 │   ├── filter_select.py   stage 1: per-leaf novelty+force filter (~3 distinct minima)
 │   ├── reopt.py           stage 2: GPAW re-opt to strict fmax -> opt_novel_<leaf>.traj x4
 │   ├── setup.sh           stage the input DBs into ./data/ (idempotent)
-│   ├── job_genkai_mpi.sh  pjsub template: ONE leaf per submit (LEAF env)
-│   └── job_<leaf>.sh      per-leaf wrappers (job_2_20P.sh, job_3_30P.sh,
+│   └── job_<leaf>.sh      per-leaf independent scripts (job_2_20P.sh, job_3_30P.sh,
 │                          job_1_3x3_20P.sh, job_2_3x3_30P.sh) → one traj per leaf
 ├── shc/                   Run B: FLAPW spin Hall conductivity (STANDALONE)
 │   ├── main.py            SCF->SOC->optics->xoptics + SHC parsing -> shc_summary.{json,csv}
@@ -55,7 +55,7 @@ them (lcao/dzp/PBE, fmax 0.05, all atoms mobile) into `opt_novel_<leaf>.traj` x4
 cd hpc_runs/select_reopt
 ./setup.sh                    # stage the input DBs into ./data/ (idempotent)
 # one leaf per submission (each produces that leaf's opt_novel_<leaf>.traj):
-pjsub job_2_20P.sh            # or: LEAF=2_20P pjsub job_genkai_mpi.sh
+pjsub job_2_20P.sh
 pjsub job_3_30P.sh
 pjsub job_1_3x3_20P.sh
 pjsub job_2_3x3_30P.sh

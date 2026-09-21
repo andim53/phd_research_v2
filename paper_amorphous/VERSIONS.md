@@ -8,11 +8,10 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `hpc_runs/select_reopt/reopt.py` | 1.0.0 | Run A stage 2: GPAW re-opt (lcao/dzp/PBE, fmax 0.05) → `opt_novel_<leaf>.traj` ×4. Defaults to in-dir `./out_select_reopt/` |
 | `hpc_runs/select_reopt/setup.sh` | — | Stages input AGOX DBs into `./data/` (idempotent; `SRC_ROOT` env) |
 | `hpc_runs/select_reopt/.gitignore` | — | Ignores `out_select_reopt/`, `__pycache__/` |
-| `hpc_runs/select_reopt/job_genkai_mpi.sh` | — | pjsub template: ONE leaf per submit (LEAF env) → filter_select + reopt for that leaf → `opt_novel_<leaf>.traj` |
-| `hpc_runs/select_reopt/job_2_20P.sh` | — | per-leaf wrapper (LEAF=2_20P) |
-| `hpc_runs/select_reopt/job_3_30P.sh` | — | per-leaf wrapper (LEAF=3_30P) |
-| `hpc_runs/select_reopt/job_1_3x3_20P.sh` | — | per-leaf wrapper (LEAF=1_3x3_20P) |
-| `hpc_runs/select_reopt/job_2_3x3_30P.sh` | — | per-leaf wrapper (LEAF=2_3x3_30P) |
+| `hpc_runs/select_reopt/job_2_20P.sh` | — | per-leaf independent script (own pjsub header; LEAF=2_20P) |
+| `hpc_runs/select_reopt/job_3_30P.sh` | — | per-leaf independent script (own pjsub header; LEAF=3_30P) |
+| `hpc_runs/select_reopt/job_1_3x3_20P.sh` | — | per-leaf independent script (own pjsub header; LEAF=1_3x3_20P) |
+| `hpc_runs/select_reopt/job_2_3x3_30P.sh` | — | per-leaf independent script (own pjsub header; LEAF=2_3x3_30P) |
 | `hpc_runs/shc/main.py` | 1.0.0 | Run B: FLAPW SCF→SOC→optics→xoptics + SHC parse → `shc_summary.{json,csv}`. Calc dir is self-contained (flapw.py read from CWD) |
 | `hpc_runs/shc/flapw.py` | (copied) | ASE FLAPW calculator (standalone .py, not a package) — copied from `tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW/` |
 | `hpc_runs/shc/README_MT-default` | (copied) | FLAPW MT-default input, read from CWD by flapw.py |

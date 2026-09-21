@@ -39,4 +39,4 @@ copy_leaf 1_3x3_20P  "0_plus5cell/1_3x3_20P"
 copy_leaf 2_3x3_30P  "0_plus5cell/2_3x3_30P"
 
 echo "Done. select_reopt/ is standalone (DBs in ./data/)."
-echo "Submit: cd $THIS_DIR && pjsub job_genkai_mpi.sh"
+echo "Submit per leaf: cd $THIS_DIR && pjsub job_2_20P.sh (and job_3_30P.sh, job_1_3x3_20P.sh, job_2_3x3_30P.sh)"

@@ -164,6 +164,27 @@ mode) producing per-leaf output.
 
 **Time:** 2026-09-21 ~20:30–20:45 JST
 
+## Session 2f — 2026-09-21 (select_reopt: per-leaf scripts fully independent)
+**Owner correction:** the per-leaf `.sh` files must be **fully independent** — each with
+its own pjsub header and body, leaf hardcoded — NOT `exec`-ing a shared
+`job_genkai_mpi.sh` template.
+
+**Actions taken:**
+1. Rewrote the 4 per-leaf scripts (`job_2_20P.sh`, `job_3_30P.sh`, `job_1_3x3_20P.sh`,
+   `job_2_3x3_30P.sh`) as self-contained: each carries its own 6-line `#PJM` header
+   (a-batch, 24 procs, 120 h), hardcodes `LEAF=<leaf>`, and runs filter_select + reopt
+   for that leaf → one `opt_novel_<leaf>.traj`.
+2. Deleted the shared `select_reopt/job_genkai_mpi.sh` template (no longer used).
+3. Updated `setup.sh` submit hint and `hpc_runs/README.md` (standalone-rule line, layout
+   tree, Run A usage) to reference the per-leaf scripts.
+
+**Verified:** `sh -n` passes on all 4; no `exec` to a shared template; each has 6 PJM
+lines + hardcoded LEAF; no dangling refs to the removed template. `shc/job_genkai_mpi.sh`
+(Run B) untouched.
+
+**Time:** 2026-09-21 ~20:45–20:55 JST
+
+
 
 
 
