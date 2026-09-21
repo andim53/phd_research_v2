@@ -6,7 +6,7 @@ temperatures 300-10000 K, color gradient dark blue -> light yellow.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Boltz.png
 """
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -35,7 +35,7 @@ def main():
     fig, ax = plt.subplots(figsize=(5, 4), dpi=300)
     for i, (T, d) in enumerate(data.items()):
         ax.plot(d['energy'], d['prob'], color=COLORS_PLASMA[i % len(COLORS_PLASMA)],
-                lw=1.5, label=f'{T} K')
+                lw=1.0, label=f'{T} K')
 
     for e, lab in [(0.075, 'Islands'), (0.255, 'Flat')]:
         ax.axvline(x=e, color='black', linestyle='--', linewidth=1, alpha=0.5)

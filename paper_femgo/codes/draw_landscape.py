@@ -7,7 +7,7 @@ Reads the emitted dataset (analysis/Fig_ConDen.json) and plots:
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_ConDen.png
 """
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -49,14 +49,14 @@ def main():
         gridspec_kw={'width_ratios': [1, 2.5]})
     fig.subplots_adjust(wspace=0.1)
 
-    ax_dens.plot(density, grid, color='black', lw=1.5, zorder=4)
+    ax_dens.plot(density, grid, color='black', lw=1.0, zorder=4)
     ax_dens.fill_betweenx(grid, 0, density, color='black', alpha=0.12, zorder=3)
     ax_dens.set_xlabel(DENSITY_LABEL, fontsize=10)
     ax_dens.set_ylabel(E_LABEL, fontsize=10)
 
     norm = mcolors.Normalize(vmin=Z_LIMIT[1], vmax=Z_LIMIT[0])
-    sc = ax_scat.scatter(psi, rel, c=dz, s=5, cmap='PuBu', norm=norm,
-                         edgecolors='black', linewidth=0.5, alpha=0.8, zorder=2)
+    sc = ax_scat.scatter(psi, rel, c=dz, s=10, cmap='PuBu', norm=norm,
+                         edgecolors='none', alpha=0.8, zorder=2)
     cbar = plt.colorbar(sc, ax=ax_scat, pad=0.02)
     cbar.set_label(r'$\Delta z$ (Å)', fontsize=10)
     cbar.set_ticks(list(np.linspace(Z_LIMIT[1], Z_LIMIT[0], Z_LIMIT[2])))

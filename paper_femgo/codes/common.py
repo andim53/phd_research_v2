@@ -7,7 +7,7 @@ definition (AGOX iteration >= 10). All figure scripts import from here.
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 Set matplotlib.use('Agg') before importing anything that plots.
 """
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import glob
@@ -63,8 +63,8 @@ CUSTOM_RC_PARAMS = {
     "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
     "font.size": 11,
     "axes.linewidth": 1.0,
-    "xtick.direction": "in",
-    "ytick.direction": "in",
+    "xtick.direction": "out",
+    "ytick.direction": "out",
     # top/right (inner) ticks removed per owner (2026-09-20)
     "legend.frameon": True,
     "legend.edgecolor": "black",

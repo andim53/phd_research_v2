@@ -139,3 +139,19 @@
 **Result:** figures show accepted style, no inner ticks, rel-E axis ≤ 0.7 eV/atom.
 
 **Decision:** style ACCEPTED (no longer a trial).
+
+## Session 7 — 2026-09-21 (figure revision batch)
+**Goal (user-confirmed via clarify):** 6 figure changes.
+
+**Actions taken:**
+1. common.py 1.4.0: tick direction in→out (outward ticks).
+2. Fig_ConDen + Fig_mgo scatter: s=5→10, edgecolors black→none (color gradient readable).
+3. State-density/Boltzmann/conv line widths: lw 1.5→1.0 (match axis).
+4. Fig_Prog: 13 runs now use 13 distinct viridis colors, single solid linestyle (was 4 colors × 4 styles repeating).
+5. Fig_mgo: rel-energy axis cap 0.7→3.7 eV/atom.
+6. Fig_mgo: added 3rd panel (c) temperature-dependent Boltzmann probability (data emitted in emit_datasets.py 1.2.0); SI caption updated to describe (c) as Boltzmann distribution.
+7. Regenerated all 8 figures; recompiled SI (article.pdf).
+
+**Result:** figures updated per spec; SI compiles.
+
+**Decision:** PCA scatter s=10 edgecolors='none'; Fig_Prog viridis 13 colors solid; Fig_mgo cap 3.7.

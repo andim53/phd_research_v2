@@ -8,7 +8,7 @@ Run 1..13 (on-disk seeds 3..15 renumbered).
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Prog.png
 """
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -31,16 +31,14 @@ def main():
     data = json.load(open(json_path))['data']
 
     fig, ax = plt.subplots(figsize=(5, 4), dpi=300)
-    colors = ['#1B70FC', '#E31A1C', '#33A02C', '#FF7F00']
-    line_styles = [':', '--', '-', '-.']
+    # 13 distinct colors from viridis, single solid linestyle per run
+    viridis = plt.cm.viridis(np.linspace(0.0, 0.9, len(data)))
 
     for i, (run, d) in enumerate(data.items()):
         x = d['candidate_count']
         y = d['best_rel_energy']
-        ax.plot(x, y, linewidth=1.8,
-                linestyle=line_styles[i % len(line_styles)],
-                color=colors[i % len(colors)],
-                label=run, zorder=3)
+        ax.plot(x, y, linewidth=1.4, linestyle='-',
+                color=viridis[i], label=run, zorder=3)
 
     ax.set_xlabel('Evaluated Candidate Count ($N_i$)')
     ax.set_ylabel(E_LABEL)

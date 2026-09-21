@@ -7,7 +7,7 @@ Runs are labeled Run 1..13 (on-disk seeds 3..15 renumbered).
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_convStateDens.png
 """
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -37,14 +37,14 @@ def main():
     fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
 
     # single run in black
-    ax.plot(curves['Run 1'], grid, color='black', lw=1.5, label='Run 1')
+    ax.plot(curves['Run 1'], grid, color='black', lw=1.0, label='Run 1')
 
     # cumulative in shades of blue
     blues = plt.cm.Blues(np.linspace(0.85, 0.35, len(curves) - 1))
     for i, (name, dens) in enumerate(curves.items()):
         if name == 'Run 1':
             continue
-        ax.plot(dens, grid, color=blues[i - 1], lw=1.2, label=name)
+        ax.plot(dens, grid, color=blues[i - 1], lw=0.9, label=name)
 
     ax.set_xlabel(DENSITY_LABEL)
     ax.set_ylabel(E_LABEL)

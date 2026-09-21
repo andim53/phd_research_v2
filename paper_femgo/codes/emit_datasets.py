@@ -19,7 +19,7 @@ Emits:
 Usage:
   /home/think/miniconda3/envs/agox_v2/bin/python emit_datasets.py
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -160,6 +160,20 @@ def emit_mgo():
     psi = pca_psi1d(atoms)
     grid = np.linspace(E_LIMIT[0], E_LIMIT[1], 200)
     density = gaussian_kde(rel, bw_method=KDE_BW).evaluate(grid)
+
+    # temperature-dependent Boltzmann probability (panel c) for reverse deposition
+    kde = gaussian_kde(rel, bw_method=KDE_BW)
+    bg = np.linspace(rel.min(), rel.max(), 1000)
+    rho = kde.evaluate(bg) + 1e-15
+    boltz = {}
+    for T in TEMPS:
+        weights = rho * np.exp(-bg / (KB * T))
+        Z = np.sum(weights)
+        probs = weights / Z
+        probs = probs / probs.max()
+        boltz[str(int(T))] = {'energy': [round(float(x), 6) for x in bg],
+                              'prob': [round(float(x), 6) for x in probs]}
+
     emit_figure_json('Fig_mgo', {
         'n_configs': int(len(rel)),
         'rel_energy': [round(float(x), 6) for x in rel],
@@ -167,8 +181,10 @@ def emit_mgo():
         'psi_1d': [round(float(x), 6) for x in psi],
         'kde_grid': [round(float(x), 6) for x in grid],
         'kde_density': [round(float(x), 6) for x in density],
+        'boltzmann': boltz,
         'kde_bw': KDE_BW,
-    }, {'note': 'reverse deposition, seeds 0-4 (seed_5 truncated excluded); tight KDE (bw=0.05)'})
+    }, {'note': 'reverse deposition, seeds 0-4 (seed_5 truncated excluded); '
+                'panels (a) density (b) landscape (c) temperature-dependent Boltzmann probability'})
 
 
 def main():
