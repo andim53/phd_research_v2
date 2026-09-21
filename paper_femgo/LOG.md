@@ -171,3 +171,9 @@
 **Issue (owner):** island/flat dashed lines in Fig_Boltz + Fig_ConDen were hard to see behind the data lines/curves.
 **Fix:** raised peak lines to zorder=20 (outermost) and added a white withStroke shadow (lw 3.5) — same effect as the text labels. draw_landscape.py 1.4.0→1.5.0, draw_boltzmann.py 1.3.0→1.4.0.
 **Result:** peak lines now pop clearly over the graphs; both figures regenerated.
+
+## Session 7e — 2026-09-21 (Boltzmann: peak-normalized -> true density ∫P dE=1)
+**Goal (owner):** change Fig_Boltz definition from peak-normalized probability to a true Boltzmann density.
+**Fix:** emitter (emit_datasets.py 1.3.0→1.4.0) uses np.trapz over the dense grid for Z (continuous ∫=1 density) instead of sum+/max(); applied to Fig_Boltz and Fig_mgo panel (c). draw_boltzmann.py 1.4.0→1.5.0 and draw_si_mgo.py 1.4.0→1.5.0: ylabel -> "Boltzmann density rho_B(E) (1/eV)", dynamic ylim.
+**Text:** Fig_Boltz caption + results prose -> Boltzmann density with ∫dE=1; SI Fig_mgo(c) caption updated.
+**Result:** every T-density trapezoid-integrates to 1.0; curves comparable across T. Both PDFs recompile.

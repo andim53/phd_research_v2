@@ -19,7 +19,7 @@ Emits:
 Usage:
   /home/think/miniconda3/envs/agox_v2/bin/python emit_datasets.py
 """
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -100,13 +100,13 @@ def emit_boltzmann():
     curves = {}
     for T in TEMPS:
         weights = rho * np.exp(-grid / (KB * T))
-        Z = np.sum(weights)
-        probs = weights / Z
-        probs = probs / probs.max()
+        # continuous Boltzmann density: P(E) dE integrals to 1 over the grid
+        Z = np.trapz(weights, grid)
+        probs = weights / Z if Z > 0 else weights
         curves[str(int(T))] = {'energy': [round(float(x), 6) for x in grid],
                                'prob': [round(float(x), 6) for x in probs]}
     emit_figure_json('Fig_Boltz', curves,
-                     {'note': 'peak-normalized P(E); 300-10000 K; tight KDE (bw=0.05)'})
+                     {'note': 'continuous Boltzmann density P(E) dE=1; 300-10000 K; tight KDE (bw=0.05)'})
 
 
 def emit_dos():
@@ -171,9 +171,9 @@ def emit_mgo():
     boltz = {}
     for T in TEMPS:
         weights = rho * np.exp(-bg / (KB * T))
-        Z = np.sum(weights)
-        probs = weights / Z
-        probs = probs / probs.max()
+        # continuous Boltzmann density: P(E) dE integrals to 1 over the grid
+        Z = np.trapz(weights, bg)
+        probs = weights / Z if Z > 0 else weights
         boltz[str(int(T))] = {'energy': [round(float(x), 6) for x in bg],
                               'prob': [round(float(x), 6) for x in probs]}
 

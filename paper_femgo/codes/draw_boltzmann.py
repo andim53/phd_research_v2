@@ -6,7 +6,7 @@ temperatures 300-10000 K, color gradient dark blue -> light yellow.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Boltz.png
 """
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import sys
@@ -33,9 +33,11 @@ def main():
     data = json.load(open(json_path))['data']
 
     fig, ax = plt.subplots(figsize=(5, 4), dpi=300)
+    max_dens = 0.0
     for i, (T, d) in enumerate(data.items()):
         ax.plot(d['energy'], d['prob'], color=COLORS_PLASMA[i % len(COLORS_PLASMA)],
                 lw=1.0, label=f'{T} K')
+        max_dens = max(max_dens, max(d['prob']))
 
     for e, lab in [(0.075, 'Islands'), (0.255, 'Flat')]:
         vline = ax.axvline(x=e, color='black', linestyle='--',
@@ -48,9 +50,9 @@ def main():
         t.set_path_effects([patheffects.withStroke(linewidth=2, foreground='white')])
 
     ax.set_xlabel(E_LABEL)
-    ax.set_ylabel('Probability P(E) (peak-normalized)')
+    ax.set_ylabel(r'Boltzmann density $\rho_B(E)$ (1/eV)')
     ax.set_xlim(0.0, 0.7)  # relative-energy (x) axis capped at 0.7 eV/atom (owner)
-    ax.set_ylim(0, 1.05)
+    ax.set_ylim(0, max_dens * 1.05)  # dynamic for true density (∫P dE=1)
     ax.legend(frameon=False, loc='upper right', fontsize=8)
 
     out = os.path.join(ensure_fig_dir(), 'Fig_Boltz.png')
