@@ -272,3 +272,12 @@
 3. Verified: both files parse cleanly under headless VESTA (`xvfb-run`), exit 0; fractional coords and 11-field SITET colors confirmed.
 
 **Note:** PNG rendering is the owner's step in VESTA's GUI (no headless capture on this box). The Fig S2 swap in `article.tex` is a separate later step once the owner renders the PNG.
+
+## Session 10 (cont.) — 2026-09-23 (Fig S2 → VESTA: label fix)
+**Owner correction:** the emitted `.vesta` atom labels were wrong — mine read `O     1` (spaces injected by `{n:>6d}` padding) instead of the reference's `O1`/`Mg1`/`Fe1` (element + counter, no space).
+
+**Root cause:** `{n:>6d}` right-padded the per-species counter to width 6, inserting spaces into the label in the STRUC/THERI/SITET blocks.
+
+**Fix:** `codes/emit_fig_sup_vesta.py` (1.0.1) — added `_labels()` helper that concatenates `{el}{n}` with no padding; all three blocks now emit `O1`/`Mg1`/`Fe1`. Regenerated both `.vesta` files; labels now match the reference `relax_dz_2.08.vesta`; both still parse cleanly under headless VESTA (exit 0).
+
+**Prevention:** the vesta-visualization skill's format reference already documents the label as `{El}{n:>6s}` (string, no space) — the emitter had deviated to `{n:>6d}`. Noted in skill to keep labels as element+counter with no padding.

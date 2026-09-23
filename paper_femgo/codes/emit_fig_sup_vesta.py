@@ -13,7 +13,7 @@ Output:
 
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 """
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import os
 import sys
@@ -46,12 +46,25 @@ def ground_state(db_path):
     return min(cands, key=lambda c: c.get_potential_energy())
 
 
+def _labels(atoms):
+    """Per-atom VESTA labels: element symbol + per-species counter, NO space (O1, Mg1, Fe1)."""
+    counters = {}
+    labels = []
+    for atom in atoms:
+        el = atom.symbol
+        n = counters.get(el, 0) + 1
+        counters[el] = n
+        labels.append(f'{el}{n}')
+    return labels
+
+
 def write_vesta(atoms, out_path, title):
     """Write a P1 VESTA 3.5.4 project file (fractional coords, custom colors)."""
     cell = atoms.get_cell()
     a, b, c = cell.lengths()
     alpha, beta, gamma = cell.angles()
     scaled = atoms.get_scaled_positions()
+    labels = _labels(atoms)
 
     lines = []
     lines.append('#VESTA_FORMAT_VERSION 3.5.4')
@@ -86,24 +99,15 @@ def write_vesta(atoms, out_path, title):
     lines.append(f' {a:.6f}  {b:.6f}  {c:.6f}  {alpha:.6f}  {beta:.6f}  {gamma:.6f}')
     lines.append('  0.000000   0.000000   0.000000   0.000000   0.000000   0.000000')
     lines.append('STRUC')
-
-    # Per-species counters for labels (O1.., Mg1.., Fe1..).
-    counters = {}
     for i, atom in enumerate(atoms, start=1):
         el = atom.symbol
-        n = counters.get(el, 0) + 1
-        counters[el] = n
         fx, fy, fz = scaled[i - 1]
-        lines.append(f' {i:3d} {el:<2s} {el}{n:>6d}  1.0000   {fx:.6f} {fy:.6f} {fz:.6f}  1a 1')
+        lines.append(f' {i:3d} {el:<2s} {labels[i-1]}  1.0000   {fx:.6f} {fy:.6f} {fz:.6f}  1a 1')
         lines.append('                           0.000000   0.000000   0.000000  0.00')
     lines.append('  0 0 0 0 0 0 0')
     lines.append('THERI 1')
-    counters = {}
     for i, atom in enumerate(atoms, start=1):
-        el = atom.symbol
-        n = counters.get(el, 0) + 1
-        counters[el] = n
-        lines.append(f' {i:3d} {el}{n:>7d}  0.000000')
+        lines.append(f' {i:3d} {labels[i-1]:>7s}  0.000000')
     lines.append('  0 0 0')
     lines.append('SHAPE')
     lines.append('  0       0       0       0   0.000000  0   192   192   192   192')
@@ -113,14 +117,11 @@ def write_vesta(atoms, out_path, title):
     lines.append('SBOND')
     lines.append('  0 0 0 0')
     lines.append('SITET')
-    counters = {}
     for i, atom in enumerate(atoms, start=1):
         el = atom.symbol
-        n = counters.get(el, 0) + 1
-        counters[el] = n
         r, g, b = COLORS[el]
         rad = RADII[el]
-        lines.append(f' {i:3d} {el}{n:>7d}  {rad:.4f}  {r:3d} {g:3d} {b:3d}  {r:3d} {g:3d} {b:3d}  204  0')
+        lines.append(f' {i:3d} {labels[i-1]:>7s}  {rad:.4f}  {r:3d} {g:3d} {b:3d}  {r:3d} {g:3d} {b:3d}  204  0')
     lines.append('  0 0 0 0 0 0')
     lines.append('STYLE')
     lines.append('DISPF 37753794')
