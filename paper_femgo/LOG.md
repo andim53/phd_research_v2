@@ -200,3 +200,75 @@
 2. Rewrote paper2/paper_status.md: current-state section for the current-results fork (figures from analysis/figures/), verified claims, open decisions.
 
 **Result:** both checkpoints now reflect the true current state.
+
+## Session 9 — 2026-09-21 (integrate _paperDemo → paper2: scope + data copy)
+**Goal (owner, via /clarify-me + /inspect-me):** fold the richer `_paperDemo` discussion/results/SI into paper2, expanding paper2 from Fe/MgO-only to the full two-system (Fe/MgO + Fe-B/MgO) boron-insertion comparison; copy in-scope `_paperDemo` data locally and regenerate all datasets + figures in paper_femgo's own style.
+
+**Spec decisions (owner-confirmed):**
+1. Scope = full boron scope (Fe/MgO + Fe-B/MgO); Fe-Co / Fe-Co-B hosts excluded (`_archive/`, `cofe_v2/`).
+2. Engine = paper2 LaTeX-native `.tex`; block-and-wait, one section at a time.
+3. Numbers: paper2's current-results set governs Fe/MgO + ensemble; DOS + Boltzmann stay Fe/MgO-only.
+4. Flat gap = **mode gap** (flat-branch KDE mode − island-branch KDE mode), collective, pooled; Fe/MgO 0.182 ± 0.004, Fe-B 0.102 ± 0.016 (LOOCV sd), **boron effect −0.080 eV/atom** (decomposes: flat-mode −0.049, island-mode +0.031). No p-value (pooled analysis, LOOCV spread only).
+5. Fe-B canonical data = `febmgo` (not `febmgo_v2`).
+6. Style = `codes/common.py` `CUSTOM_RC_PARAMS` (sans-serif); run naming "Run 1–13".
+7. References: port 7 missing keys + fix `dézsi2011`→`dezsi2011` before prose.
+
+**Actions taken:**
+1. Copied 7 in-scope dirs `_paperDemo/data/` → `paper_femgo/data/`: `febmgo`, `extraIteration`, `femgo_kappa`, `latt_conc`, `param_ratt1`, `param_ratt05`, `femgo_dip` (37,694 files; `dos_febmgo_gs` dropped — Fe-B DOS out of scope).
+2. Verified copy: file counts + sizes match source byte-for-byte.
+3. Verified `febmgo/*.db` restores through AGOX: 543 configs (iter≥10) across 6 completed seeds seed_0–5 (seed_6 empty), matching `_Demo` ensemble_stats.json exactly.
+
+**Result:** step ① (data copy) complete and verified. Next: step ② port scripts → ③ regenerate datasets (CSV/JSON) → ④ regenerate figures (first review gate).
+
+**Open decisions:** m4 threshold finding (Fe-B continuous flat↔island distribution vs Fe/MgO sharp) kept as robustness note, not yet a SI claim (owner to decide).
+
+## Session 9 (cont.) — 2026-09-21 (step ②–④: mode-gap figure)
+**Actions taken:**
+1. Added `common.py` `febmgo_db_paths()` (completion-filtered: max iteration ≥ 100 drops `seed_6`) + `_db_max_iteration()` (sqlite); version 1.4.0 → 1.5.0.
+2. Wrote `codes/emit_wetting_modes.py`: loads femgo + febmgo (iter≥10, completed runs), classifies flat (dZ≤1.0 Å, Fe-only) vs island, computes branch KDE modes + mode gap + LOOCV spread, emits `analysis/Fig_wetModes.json`.
+3. Wrote `codes/draw_wetting_modes.py`: four-curve overlay (flat/island × Fe/MgO solid / Fe-B dashed, peak-normalized) + mode markers + LOOCV bars + gap arrows → `analysis/figures/Fig_wetModes.png`.
+
+**Result (verified against _Demo's precomputed CSV):**
+- Fe/MgO: flat mode 0.2591, island 0.0763 → gap 0.1828 (LOOCV sd 0.0038)
+- Fe-B/MgO: flat mode 0.2094, island 0.1061 → gap 0.1033 (LOOCV sd 0.0153)
+- Boron effect −0.0795 eV/atom (flat −0.0497, island +0.0298)
+- 1180 / 543 configs, 13 / 6 replicas — matches `_Demo` ensemble_stats.json.
+
+**Next:** owner review of Fig_wetModes; then remaining boron figures (pes_2_systems, wetting_metrics, SI: constraint sweep / method sensitivity / iteration budget).
+
+## Session 9 (cont. 2) — 2026-09-21 (drop LOOCV → pooled ensemble)
+**Owner edit:** treat the multi-seed runs as ONE collective sample that populates the PES, not as independent runs. Removed leave-one-replica-out (LOOCV) machinery from both wetting-modes scripts (1.0.0 → 1.1.0).
+
+**Result:** mode-gap numbers unchanged (they were already pooled): Fe/MgO 0.1828, Fe-B 0.1033, boron effect −0.0795 eV/atom. Figure now carries mode markers only, no error bars. No p-value, no LOOCV — pure pooled point estimate.
+
+## Session 9 (cont. 3) — 2026-09-21 (Fig_wetModes annotation + legend-box consistency)
+**Actions taken:**
+1. `draw_wetting_modes.py` (1.2.0): moved the mode-gap arrows from the bottom to just above the peaks, each with a vertical stub dropping onto its peak marker, so the island→flat span is unambiguous; extended ylim.
+2. Applied the framed black legend box (`frameon=True`, edgecolor black from common.py) to the 5 figures that still used `frameon=False`: Fig_Boltz, Fig_mgo, Fig_dos, Fig_Prog, Fig_convStateDens. All legends now match Fig_wetModes.
+3. Regenerated the 6 touched figures.
+
+**Note (pre-existing drift):** `emit_datasets.py` and `draw_boltzmann.py`/`draw_si_mgo.py` file `__version__` had drifted ahead of VERSIONS.md (sibling subagent bumps); VERSIONS.md synced to the file values while editing.
+
+## Session 9 (cont. 4) — 2026-09-21 (Fig_wetLandscape: PCA + Δz landscape)
+**Owner request:** alongside the mode-gap density, show a PCA+Δz landscape revealing how boron moves the flat/island dense regions.
+
+**Technical finding:** AGOX Fingerprint is species-locked — femgo 720-d (Fe/Mg/O), febmgo 1500-d (Fe/B/Mg/O); cross-system application segfaults (IndexError/SIGSEGV). So a shared PC axis is impossible; each system gets its own PC1.
+
+**Actions taken:**
+1. `emit_wetting_modes.py` (1.2.0): `load_system` now returns atoms; added `landscape()` (per-system `pca_psi1d`, sign-aligned so flat sits left) → `analysis/Fig_wetLandscape.json`.
+2. `draw_wet_landscape.py` (1.0.0): two side-by-side panels (Fe/MgO | Fe-B/MgO), ψ₁d vs E, Δz-colored (YlGnBu_r, shared colorbar, E cap 0.7).
+
+**Result:** per-system PC1 separates flat↔island (corr with Δz: Fe/MgO +0.89, Fe-B −0.79); flat cluster at left (ψ ≈ −2.8 / −1.7), island at right (≈ +0.6 / +0.4). Energy axis comparable across panels; ψ axes are per-system structural coordinates (flagged in caption note).
+
+
+
+
+## Session 10 — 2026-09-23 (Fig S2 → VESTA)
+**Owner request (via /clarify-me spec `202609231906-figs2-vesta.md`, approved):** author `.vesta` structure files for the two ground-state configurations shown in Fig S2 (`Fig_sup`) of paper2's supplementary, so the owner can render them to PNG in VESTA and later swap Fig S2.
+
+**Actions taken:**
+1. `codes/emit_fig_sup_vesta.py` (1.0.0): reads the same ground-state candidates as `draw_si_supercell.py` (min-energy of the first db in sorted seed order: 3×3 → seed_101, 4×4 → seed_103) and writes VESTA 3.5.4 project files with the owner's custom colors (Fe green #4C9F38, Mg orange #FF7F0E, O red #D62728) and space-filling model.
+2. Output: `analysis/fig_sup_vesta/fig_sup_3x3_gs.vesta` (27 atoms) and `fig_sup_4x4_gs.vesta` (48 atoms).
+3. Verified: both files parse cleanly under headless VESTA (`xvfb-run`), exit 0; fractional coords and 11-field SITET colors confirmed.
+
+**Note:** PNG rendering is the owner's step in VESTA's GUI (no headless capture on this box). The Fig S2 swap in `article.tex` is a separate later step once the owner renders the PNG.
