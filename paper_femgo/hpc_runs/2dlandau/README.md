@@ -47,6 +47,22 @@ excluded by the `seed_*` glob). These are inputs, not regenerable.
   must load the 13 in-dir DBs, train the GPR, and write `output/g_of_E_dZ.json`.
 
 ## Units / parameters
-Production params (unchanged from `paper_femgo/2dlandau/j_2dlandau.sh`):
+Production params (from `paper_femgo/2dlandau/j_2dlandau.sh`, temperatures
+updated to the fabrication series):
 E bins 35 over [0, 0.7] eV/atom; ΔZ bins 12 over [0, 4.5] Å; relax 100 BFGS
-steps; reference pass 5000; MC 100000 steps; temperatures 100–1000 K.
+steps; reference pass 5000; MC 100000 steps; temperatures 298, 573, 623, 673,
+773 K (critical fabrication temperatures: deposition 298 K + annealing
+573–773 K, from `_run/b_nestedsampling/.../DISCUSSION.md`).
+
+## Fabrication-temperature references
+The `--temperatures 298,573,623,673,773` series maps to the physical
+deposition/annealing temperatures below (source: the b_nestedsampling analysis
+`DISCUSSION.md`):
+
+| T (K) | Process | Reference |
+|---|---|---|
+| ≈298 | Fe/FeCo deposition at room temperature (minimal interdiffusion) | Epitaxial Fe/MgO/Fe(001), 417% TMR at RT — arxiv:2011.08739 |
+| ≈573–673 | CoFeB/MgO crystallization annealing | pmc:5304246 |
+| ≈623 | Pt-capped CoFeB/MgO max-TMR annealing point | pmc:10534786 |
+| ≈673 | High annealing limit (B diffusion / roughening risk) | pmc:5304246 |
+| ≈773 | In situ barrier crystallization under O₂ (500 °C) | mdpi:17(10):2424 |

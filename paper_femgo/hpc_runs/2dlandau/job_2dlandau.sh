@@ -28,7 +28,7 @@ python main.py \
     --relax-steps 100 \
     --reference-steps 5000 \
     --mc-steps 100000 \
-    --temperatures 100,200,300,500,1000 \
+    --temperatures 298,573,623,673,773 \
     --output ./output \
     --use-ray \
     --rng 42
