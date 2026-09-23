@@ -1,0 +1,12 @@
+__pycache__/
+output/
+*.pyc
+
+# The training DBs are INPUTS (not regenerable) and MUST be committed, despite
+# the repo's global `*.db` and `paper_femgo/.gitignore` `data/` rules. These
+# negations re-include them (mirrors paper_amorphous/.../select_reopt/data/).
+!data/
+!data/femgo/
+!data/femgo/seed_*/
+!data/femgo/seed_*/1_db/
+!data/femgo/seed_*/1_db/*.db
