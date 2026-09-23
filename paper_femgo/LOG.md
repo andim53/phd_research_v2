@@ -316,3 +316,8 @@
 1. Re-ran `codes/emit_fig_sup_png.py` (unchanged, 1.0.0) on the new source renders → `analysis/figures/Fig_sup.png` (2034×1024 @ 300 dpi).
 2. `article.tex`: Fig S2 `\includegraphics` height 8.5cm → 7.0cm (slightly smaller).
 3. Rebuilt `supplementary/article.pdf` — 6 pages, clean build (exit 0); page 5 has the new Fig S2 (2034×1024) with the updated caption.
+
+## Session 12 (cont. 2) — 2026-09-23 (Fig S2 caption trim)
+**Owner request:** remove the trailing sentence from the Fig S2 caption (the ΔZ≈1.56/3.53 Å heights + "confirming the island growth mode..." + dashed outlines), keeping only the color-graded-by-height description.
+
+**Action:** `article.tex` — trimmed Fig S2 caption to end at "(darker = higher)". Rebuilt `supplementary/article.pdf` (clean, exit 0); verified the removed sentence is absent from the PDF.
