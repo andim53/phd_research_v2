@@ -334,3 +334,14 @@
 1. `codes/emit_fig_sup_png.py` (2.0.0): now writes separate `analysis/figures/Fig_sup_a.png` (3×3, 1004×1000) and `Fig_sup_b.png` (4×4, 1017×1000), flattened to white, no embedded labels, 300 dpi.
 2. `article.tex`: Fig S2 now a 2-column `tabular` (no lines, `@{}c@{\hspace{0.6cm}}c@{}`) with each panel image (6.0 cm) and `\small (a)` / `\small (b)` centered below.
 3. Rebuilt `supplementary/article.pdf` — 6 pages, clean (exit 0); page 5 has both panel images (1004×1000, 1017×1000) + (a)/(b) text labels + caption.
+
+## Session 14 — 2026-09-23 (canonical VESTA writer)
+**Owner request (via /clarify-me spec `202609232027-vesta-canonical-writer.md`, approved):** codify a single canonical VESTA writer for the project, so future VESTA generation follows one consistent convention (fig_sup_vesta style).
+
+**Actions taken:**
+1. `codes/vesta_writer.py` (1.0.0) — canonical VESTA 3.5.4 writer: standard colors (Fe #4C9F38, Mg #FF7F0E, O #D62728), space-filling MODEL 1, fractional STRUC, O1/Mg1/Fe1 labels, optional opt-in Fe height-darkening (darken_factor 0.8, max_cbar = actual ΔZ). API: `write_vesta(atoms, out_path, title, darken_fe=False)`.
+2. `codes/emit_fig_sup_vesta.py` (2.0.0) — refactored to import canonical writer with `darken_fe=True`; regenerated `fig_sup_{3x3,4x4}_gs.vesta` (byte-identical to before — reproducibility confirmed).
+3. `2dlandau/render_structures.py` (2.0.0) — refactored to canonical writer with `darken_fe=False`; removed its old hand-rolled `_write_vesta` (which used non-standard darker VESTA_DARK colors). Regenerated all `relax_dz_*.vesta` (now standard colors O=214/39/40, Mg=255/127/14), VESTA parse-check clean.
+4. README.md: added "VESTA generation (canonical writer)" note; VERSIONS.md updated.
+
+**Result:** one canonical writer; both emitters consolidated. Future VESTA generation imports `codes/vesta_writer.py`.

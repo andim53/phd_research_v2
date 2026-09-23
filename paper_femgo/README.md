@@ -20,6 +20,13 @@ This project initializes the `scientific-paper-writing` workflow on a finished d
 | Numbers | Manuscript's stated numbers kept as-is; discrepancies flagged in report only |
 | Fig_flow schematic | Excluded from regeneration (hand-drawn, reused from draft) |
 
+## VESTA generation (canonical writer)
+Any VESTA `.vesta` structure file emitted for this project MUST go through
+**`codes/vesta_writer.py`** — the single canonical writer (custom colors
+Fe #4C9F38 / Mg #FF7F0E / O #D62728, space-filling `MODEL 1`, fractional coords,
+`O1`/`Mg1`/`Fe1` labels, optional opt-in Fe height-darkening). Do not
+hand-roll a `.vesta`. Example: `write_vesta(atoms, path, "title", darken_fe=True)`.
+
 ## Build
 ```bash
 cd papers/paper1 && ~/.local/bin/tectonic main.tex          # main manuscript
