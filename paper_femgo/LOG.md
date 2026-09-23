@@ -298,3 +298,13 @@
 **Fix (owner-confirmed):** `codes/emit_fig_sup_vesta.py` (1.1.1) — darken_factor 0.4→0.8, and max_cbar rescaled to each structure's actual ΔZ (z_max − z_min) so the top Fe atom is fully darkened (shade = 1 − 0.8 = 0.2). Regenerated both `.vesta` files.
 
 **Result:** 3×3 Fe now spans (76,159,56) base → (15,32,11) top (80% darker); 4×4 spans (66,137,48) → (31,65,23). Both parse cleanly under headless VESTA (exit 0).
+
+## Session 12 — 2026-09-23 (Fig S2 → supplementary: composite + render)
+**Owner request (via /clarify-me spec `202609231952-figs2-supp-include.md`, approved):** include the VESTA-rendered Fig S2 PNGs into the supplementary, replacing the old Fig_sup.png, with (a)/(b) labels, updated caption, and render the supplementary PDF.
+
+**Actions taken:**
+1. `codes/emit_fig_sup_png.py` (1.0.0): composites the two VESTA renders (`fig_sup_3x3_gs1.png`, `fig_sup_4x4_gs1.png`) side-by-side — (a) 3×3 left / (b) 4×4 right — flattened to white, upscaled to 300 dpi, saved to `analysis/figures/Fig_sup.png` (2028×1024).
+2. Updated Fig S2 caption in `papers/paper2/supplementary/article.tex`: explains height-darkening (darker = higher, ΔZ = Z_Fe,top − Z_Fe,bottom) and states heights (3×3 ΔZ≈1.56 Å, 4×4 ΔZ≈3.53 Å).
+3. Rebuilt `supplementary/article.pdf` with tectonic — 7 pages, builds cleanly (exit 0); page 6 has the new Fig S2 with caption text confirmed. (Overfull hbox warnings are pre-existing, from the wide Fig_mgo image.)
+
+**Note:** Fig S2 now uses the VESTA ground-state renders with strong (0.8) height-darkening. The small source renders (73×72, 76×76) were upscaled per owner approval (slight softness accepted).
