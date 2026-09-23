@@ -1,41 +1,42 @@
 """
-emit_fig_sup_png.py — composite Fig S2 (Fig_sup) from the two VESTA renders.
+emit_fig_sup_png.py — Fig S2 (Fig_sup) panel images from the VESTA renders.
 
-Combines the owner's VESTA-rendered ground-state PNGs (3x3 and 4x4) into the
-single side-by-side Fig_sup figure used by paper2's supplementary, with (a)/(b)
-panel labels, upscaled to high-DPI white output.
+Flattens the owner's VESTA-rendered ground-state PNGs (3x3 and 4x4) to white and
+writes TWO separate high-DPI panel images, so the supplementary can place them
+in adjacent table cells with (a)/(b) labels as text below each (no labels drawn
+inside the images).
 
 Input (owner's VESTA renders):
   analysis/fig_sup_vesta/fig_sup_3x3_gs1.png   (a, 3x3)
   analysis/fig_sup_vesta/fig_sup_4x4_gs1.png   (b, 4x4)
 
 Output:
-  analysis/figures/Fig_sup.png
+  analysis/figures/Fig_sup_a.png   (3x3 panel)
+  analysis/figures/Fig_sup_b.png   (4x4 panel)
 
 Environment: any python with Pillow.
 """
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 import os
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 SRC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                        '..', 'analysis', 'fig_sup_vesta')
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                   '..', 'analysis', 'figures', 'Fig_sup.png')
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       '..', 'analysis', 'figures')
 
 PANELS = [
-    ('fig_sup_3x3_gs1.png', 'a'),
-    ('fig_sup_4x4_gs1.png', 'b'),
+    ('fig_sup_3x3_gs1.png', 'Fig_sup_a.png'),
+    ('fig_sup_4x4_gs1.png', 'Fig_sup_b.png'),
 ]
 
-# Target: each panel scaled so output is ~300 dpi at ~8.5 cm render height.
+# Target: each panel scaled so output is ~300 dpi at ~7.0 cm render height.
 TARGET_HEIGHT = 1000   # px per panel (generous resolution for the print size)
-LABEL_PAD = 24         # px whitespace above each panel for the (a)/(b) label
 OUT_DPI = 300
 
 
-def load_composited(filename):
+def flatten_white(filename):
     """Load a VESTA RGBA PNG, flatten to white, upscale to TARGET_HEIGHT."""
     with Image.open(os.path.join(SRC_DIR, filename)) as im:
         im = im.convert('RGBA')
@@ -49,34 +50,20 @@ def load_composited(filename):
 
 
 def main():
-    flat = [(fn, tag) for fn, tag in PANELS
-            if os.path.exists(os.path.join(SRC_DIR, fn))]
-    if not flat:
-        print('  no source panels found in', SRC_DIR)
-        return
-
-    panels = [load_composited(fn) for fn, _ in flat]
-    panel_w = max(p.width for p in panels)
-    panel_h = max(p.height for p in panels)
-    total_w = panel_w * len(panels)
-    total_h = LABEL_PAD + panel_h
-
-    canvas = Image.new('RGB', (total_w, total_h), 'white')
-    draw = ImageDraw.Draw(canvas)
-    for i, ((fn, tag), p) in enumerate(zip(flat, panels)):
-        x = i * panel_w
-        canvas.paste(p, (x, LABEL_PAD))
-        # (a) / (b) label, left of each panel, above its top edge is too tight,
-        # so place it just inside the top-left of the panel.
-        try:
-            font = ImageFont.truetype('DejaVuSans-Bold.ttf', 72)
-        except Exception:
-            font = ImageFont.load_default()
-        draw.text((x + 12, LABEL_PAD + 12), f'({tag})', fill=(0, 0, 0), font=font)
-
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    canvas.save(OUT, dpi=(OUT_DPI, OUT_DPI))
-    print(f'  -> {OUT} ({canvas.size[0]}x{canvas.size[1]} @ {OUT_DPI} dpi)')
+    os.makedirs(FIG_DIR, exist_ok=True)
+    made = 0
+    for src, out in PANELS:
+        src_path = os.path.join(SRC_DIR, src)
+        if not os.path.exists(src_path):
+            print(f'  MISSING {src}')
+            continue
+        img = flatten_white(src)
+        out_path = os.path.join(FIG_DIR, out)
+        img.save(out_path, dpi=(OUT_DPI, OUT_DPI))
+        print(f'  -> {out_path} ({img.size[0]}x{img.size[1]} @ {OUT_DPI} dpi)')
+        made += 1
+    if not made:
+        print('  no panels produced')
 
 
 if __name__ == '__main__':

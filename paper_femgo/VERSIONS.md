@@ -15,7 +15,7 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/draw_si_env.py` | 1.0.0 | Fig_env (structure, data-driven) |
 | `codes/draw_si_supercell.py` | 1.0.0 | Fig_sup (reads data/femgo_3x3, femgo_4x4) |
 | `codes/emit_fig_sup_vesta.py` | 1.1.1 | Fig S2 ground states → .vesta (3x3 + 4x4); Fe height-darkening (darken_factor 0.8, max_cbar = actual ΔZ) |
-| `codes/emit_fig_sup_png.py` | 1.0.0 | Fig S2 composite from VESTA renders (3x3 + 4x4 side-by-side, (a)/(b) labels, 300 dpi) |
+| `codes/emit_fig_sup_png.py` | 2.0.0 | Fig S2 panels from VESTA renders: separate Fig_sup_a.png / Fig_sup_b.png (no embedded labels; 300 dpi) |
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |
 | `codes/draw_wet_landscape.py` | 1.4.0 | Fig_wetLandscape two-panel PCA+Δz landscape; flat/island mode dashed lines (white shadow) |

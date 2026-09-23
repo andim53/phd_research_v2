@@ -326,3 +326,11 @@
 **Owner request:** remove the now-redundant "(darker = higher)" and instead state the ΔZ range cap for each panel.
 
 **Action:** `article.tex` — caption now ends with "The color-grading spans a ΔZ range of ≈1.56 Å for the 3×3 supercell (a) and ≈3.53 Å for the 4×4 supercell (b)." Rebuilt `supplementary/article.pdf` (clean, exit 0); verified "(darker = higher)" absent and 1.56/3.53 Å present in the PDF.
+
+## Session 13 — 2026-09-23 (Fig S2 → table layout, labels below)
+**Owner request (clarified):** switch Fig S2 from a single composite image with drawn (a)/(b) labels to TWO separate panel images placed in adjacent cells of a table with NO visible lines, with (a)/(b) as text centered below each image.
+
+**Actions taken:**
+1. `codes/emit_fig_sup_png.py` (2.0.0): now writes separate `analysis/figures/Fig_sup_a.png` (3×3, 1004×1000) and `Fig_sup_b.png` (4×4, 1017×1000), flattened to white, no embedded labels, 300 dpi.
+2. `article.tex`: Fig S2 now a 2-column `tabular` (no lines, `@{}c@{\hspace{0.6cm}}c@{}`) with each panel image (6.0 cm) and `\small (a)` / `\small (b)` centered below.
+3. Rebuilt `supplementary/article.pdf` — 6 pages, clean (exit 0); page 5 has both panel images (1004×1000, 1017×1000) + (a)/(b) text labels + caption.
