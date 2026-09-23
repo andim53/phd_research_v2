@@ -8,9 +8,9 @@ colors (Fe green #4C9F38, Mg orange #FF7F0E, O red #D62728) and the
 space-filling (MODEL 1) display model.
 
 Fe atoms are darkened progressively with height, replicating the
-_analysist/scripts/plot_structure.py mechanism (darken_factor=0.4, max_cbar=5.0
-Å, z_min = lowest Fe atom), so the VESTA matches the paper's Δz colorbar
-convention (0.00 Å flat → ~5.00 Å island).
+_analysist/scripts/plot_structure.py mechanism (darken_factor=0.8, max_cbar
+rescaled to each structure's actual ΔZ, z_min = lowest Fe atom), so the top Fe
+atom is fully darkened for strong visible contrast.
 
 Output:
   analysis/fig_sup_vesta/fig_sup_3x3_gs.vesta
@@ -18,7 +18,7 @@ Output:
 
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 """
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import os
 import sys
@@ -42,27 +42,34 @@ COLORS = {'Fe': (76, 159, 56), 'Mg': (255, 127, 14), 'O': (214, 39, 40)}
 RADII = {'Fe': 1.32, 'Mg': 1.41, 'O': 0.66}
 
 # Height-darkening (replicates _analysist/scripts/plot_structure.py).
-DARKEN_FACTOR = 0.4
-MAX_CBAR = 5.0  # Å — height at which Fe reaches full darkening
+DARKEN_FACTOR = 0.8
+# max_cbar is rescaled to each structure's actual ΔZ (z_max - z_min) so the
+# top Fe atom is fully darkened (strongest visible contrast).
 
 
 def _fe_darkened_colors(atoms):
     """Per-Fe-atom RGB darkened by height, matching plot_structure.
 
     For each Fe atom: atom_height = z - z_min (z_min = lowest Fe),
-    norm_height = clip(atom_height / MAX_CBAR, 0, 1),
-    shade = 1.0 - norm_height * DARKEN_FACTOR, rgb = base_green * shade.
+    norm_height = clip(atom_height / max_cbar, 0, 1) where max_cbar = ΔZ
+    (z_max - z_min) of this structure, shade = 1.0 - norm_height * DARKEN_FACTOR,
+    rgb = base_green * shade. The top Fe atom (norm_height=1) is fully darkened
+    (shade = 1 - 0.8 = 0.2).
     Returns a dict {atom_index: (r, g, b)} for Fe atoms only.
     """
     fe_idx = [a.index for a in atoms if a.symbol == 'Fe']
     if not fe_idx:
         return {}
-    z_min = min(atoms[i].position[2] for i in fe_idx)
+    z = [atoms[i].position[2] for i in fe_idx]
+    z_min = min(z)
+    max_cbar = max(z) - z_min
+    if max_cbar <= 0:
+        return {i: COLORS['Fe'] for i in fe_idx}
     base = np.array(COLORS['Fe'], float)
     out = {}
     for i in fe_idx:
         h = atoms[i].position[2] - z_min
-        norm = min(max(h / MAX_CBAR, 0.0), 1.0)
+        norm = min(max(h / max_cbar, 0.0), 1.0)
         shade = 1.0 - norm * DARKEN_FACTOR
         rgb = tuple(int(round(c)) for c in (base * shade))
         out[i] = rgb

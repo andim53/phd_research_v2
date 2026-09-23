@@ -291,3 +291,10 @@
 3. Computed structure heights for the caption: 3×3 ΔZ = 1.556 Å (z 12.043→13.599); 4×4 ΔZ = 3.526 Å (z 11.989→15.515).
 
 **Note:** Fig S2 caption text drafted for review (not yet written into article.tex). PNG rendering is the owner's step in VESTA's GUI; the caption is applied to article.tex in a later step once the owner renders the PNG.
+
+## Session 11 (cont.) — 2026-09-23 (Fig S2 → VESTA: stronger darkening)
+**Owner feedback:** the darkening was not visible enough in VESTA. Root cause: max_cbar=5.0 Å was far larger than the actual heights (3×3 ΔZ=1.56 Å → only ~12% darker at top; 4×4 ΔZ=3.53 Å → ~28%).
+
+**Fix (owner-confirmed):** `codes/emit_fig_sup_vesta.py` (1.1.1) — darken_factor 0.4→0.8, and max_cbar rescaled to each structure's actual ΔZ (z_max − z_min) so the top Fe atom is fully darkened (shade = 1 − 0.8 = 0.2). Regenerated both `.vesta` files.
+
+**Result:** 3×3 Fe now spans (76,159,56) base → (15,32,11) top (80% darker); 4×4 spans (66,137,48) → (31,65,23). Both parse cleanly under headless VESTA (exit 0).
