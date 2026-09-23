@@ -20,9 +20,8 @@ cd "$(dirname "$0")"
 
 export OMP_NUM_THREADS=1
 
-PY=/home/think/miniconda3/envs/agox_v2/bin/python
-
-$PY main.py \
+# Use the gpaw_env interpreter (already activated above) — NOT agox_v2.
+python main.py \
     --dataset ./data/femgo \
     --n-e-bins 35 --e-min 0.0 --e-max 0.7 \
     --n-dz-bins 12 --dz-min 0.0 --dz-max 4.5 \

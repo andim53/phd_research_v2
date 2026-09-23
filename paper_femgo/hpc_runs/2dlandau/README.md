@@ -37,9 +37,9 @@ copied from `paper_femgo/data/femgo` and committed in-dir (`stop_16` is
 excluded by the `seed_*` glob). These are inputs, not regenerable.
 
 ## Environment
-- HPC: `gpaw_env` conda env (switch to `agox_v2` if the AGOX/ASE stack is
-  missing there). Python interpreter `/home/think/miniconda3/envs/agox_v2/bin/python`.
-- Local smoke check (serial, no `--use-ray`):
+- HPC: `gpaw_env` conda env — the run uses that env's `python` (NOT `agox_v2`).
+- Local smoke check (serial, no `--use-ray`, uses `agox_v2` since `gpaw_env`
+  is HPC-only):
   ```bash
   cd hpc_runs/2dlandau
   /home/think/miniconda3/envs/agox_v2/bin/python main.py --mc-steps 1
