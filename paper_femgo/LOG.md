@@ -308,3 +308,11 @@
 3. Rebuilt `supplementary/article.pdf` with tectonic — 7 pages, builds cleanly (exit 0); page 6 has the new Fig S2 with caption text confirmed. (Overfull hbox warnings are pre-existing, from the wide Fig_mgo image.)
 
 **Note:** Fig S2 now uses the VESTA ground-state renders with strong (0.8) height-darkening. The small source renders (73×72, 76×76) were upscaled per owner approval (slight softness accepted).
+
+## Session 12 (cont.) — 2026-09-23 (Fig S2 → supplementary: new renders + smaller)
+**Owner note:** replaced the source VESTA PNGs with new, higher-resolution renders (fig_sup_3x3_gs1.png 542×540, fig_sup_4x4_gs1.png 549×540; previously ~73×72 / 76×76). Asked to redo the composite and make the figure slightly smaller for better visual rather than page-fitting.
+
+**Actions taken:**
+1. Re-ran `codes/emit_fig_sup_png.py` (unchanged, 1.0.0) on the new source renders → `analysis/figures/Fig_sup.png` (2034×1024 @ 300 dpi).
+2. `article.tex`: Fig S2 `\includegraphics` height 8.5cm → 7.0cm (slightly smaller).
+3. Rebuilt `supplementary/article.pdf` — 6 pages, clean build (exit 0); page 5 has the new Fig S2 (2034×1024) with the updated caption.
