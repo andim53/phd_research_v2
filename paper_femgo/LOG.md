@@ -281,3 +281,13 @@
 **Fix:** `codes/emit_fig_sup_vesta.py` (1.0.1) — added `_labels()` helper that concatenates `{el}{n}` with no padding; all three blocks now emit `O1`/`Mg1`/`Fe1`. Regenerated both `.vesta` files; labels now match the reference `relax_dz_2.08.vesta`; both still parse cleanly under headless VESTA (exit 0).
 
 **Prevention:** the vesta-visualization skill's format reference already documents the label as `{El}{n:>6s}` (string, no space) — the emitter had deviated to `{n:>6d}`. Noted in skill to keep labels as element+counter with no padding.
+
+## Session 11 — 2026-09-23 (Fig S2 → VESTA: Fe height-darkening)
+**Owner request (via /clarify-me spec `202609231915-figs2-vesta-darken.md`, approved):** re-author the Fig S2 `.vesta` files so Fe atoms carry the paper's height-darkening coloring (matching `plot_structure` and the paper's Δz colorbar convention), and draft the Fig S2 caption explaining color↔height↔ΔZ with each structure's height.
+
+**Actions taken:**
+1. `codes/emit_fig_sup_vesta.py` (1.1.0): added `_fe_darkened_colors()` replicating `_analysist/scripts/plot_structure.py` — `shade = 1 − (norm_height × 0.4)`, `norm_height = clip((z − z_min)/5.0, 0, 1)`, base Fe green #4C9F38. Only Fe darkens; Mg/O fixed.
+2. Regenerated both `.vesta` files. Verified darkening: 3×3 Fe range 76,159,56 (base) → 67,139,49 (top); 4×4 wider range 76,159,56 → 60,126,44 (consistent with larger ΔZ). Both parse cleanly under headless VESTA (exit 0).
+3. Computed structure heights for the caption: 3×3 ΔZ = 1.556 Å (z 12.043→13.599); 4×4 ΔZ = 3.526 Å (z 11.989→15.515).
+
+**Note:** Fig S2 caption text drafted for review (not yet written into article.tex). PNG rendering is the owner's step in VESTA's GUI; the caption is applied to article.tex in a later step once the owner renders the PNG.

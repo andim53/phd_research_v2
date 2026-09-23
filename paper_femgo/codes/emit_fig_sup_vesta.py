@@ -7,17 +7,23 @@ supercell) and writes them as VESTA 3.5.4 project files with the owner's custom
 colors (Fe green #4C9F38, Mg orange #FF7F0E, O red #D62728) and the
 space-filling (MODEL 1) display model.
 
+Fe atoms are darkened progressively with height, replicating the
+_analysist/scripts/plot_structure.py mechanism (darken_factor=0.4, max_cbar=5.0
+Å, z_min = lowest Fe atom), so the VESTA matches the paper's Δz colorbar
+convention (0.00 Å flat → ~5.00 Å island).
+
 Output:
   analysis/fig_sup_vesta/fig_sup_3x3_gs.vesta
   analysis/fig_sup_vesta/fig_sup_4x4_gs.vesta
 
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 """
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 import os
 import sys
 import glob
+import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import DATA_DIR
@@ -34,6 +40,33 @@ OUT_DIR = os.path.join(os.path.dirname(DATA_DIR), 'analysis', 'fig_sup_vesta')
 # Owner's custom colors (RGB 0-255) + covalent radii (Å).
 COLORS = {'Fe': (76, 159, 56), 'Mg': (255, 127, 14), 'O': (214, 39, 40)}
 RADII = {'Fe': 1.32, 'Mg': 1.41, 'O': 0.66}
+
+# Height-darkening (replicates _analysist/scripts/plot_structure.py).
+DARKEN_FACTOR = 0.4
+MAX_CBAR = 5.0  # Å — height at which Fe reaches full darkening
+
+
+def _fe_darkened_colors(atoms):
+    """Per-Fe-atom RGB darkened by height, matching plot_structure.
+
+    For each Fe atom: atom_height = z - z_min (z_min = lowest Fe),
+    norm_height = clip(atom_height / MAX_CBAR, 0, 1),
+    shade = 1.0 - norm_height * DARKEN_FACTOR, rgb = base_green * shade.
+    Returns a dict {atom_index: (r, g, b)} for Fe atoms only.
+    """
+    fe_idx = [a.index for a in atoms if a.symbol == 'Fe']
+    if not fe_idx:
+        return {}
+    z_min = min(atoms[i].position[2] for i in fe_idx)
+    base = np.array(COLORS['Fe'], float)
+    out = {}
+    for i in fe_idx:
+        h = atoms[i].position[2] - z_min
+        norm = min(max(h / MAX_CBAR, 0.0), 1.0)
+        shade = 1.0 - norm * DARKEN_FACTOR
+        rgb = tuple(int(round(c)) for c in (base * shade))
+        out[i] = rgb
+    return out
 
 
 def ground_state(db_path):
@@ -65,6 +98,7 @@ def write_vesta(atoms, out_path, title):
     alpha, beta, gamma = cell.angles()
     scaled = atoms.get_scaled_positions()
     labels = _labels(atoms)
+    fe_colors = _fe_darkened_colors(atoms)
 
     lines = []
     lines.append('#VESTA_FORMAT_VERSION 3.5.4')
@@ -119,7 +153,7 @@ def write_vesta(atoms, out_path, title):
     lines.append('SITET')
     for i, atom in enumerate(atoms, start=1):
         el = atom.symbol
-        r, g, b = COLORS[el]
+        r, g, b = fe_colors.get(i - 1, COLORS[el])
         rad = RADII[el]
         lines.append(f' {i:3d} {labels[i-1]:>7s}  {rad:.4f}  {r:3d} {g:3d} {b:3d}  {r:3d} {g:3d} {b:3d}  204  0')
     lines.append('  0 0 0 0 0 0')
