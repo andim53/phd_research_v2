@@ -321,3 +321,8 @@
 **Owner request:** remove the trailing sentence from the Fig S2 caption (the ΔZ≈1.56/3.53 Å heights + "confirming the island growth mode..." + dashed outlines), keeping only the color-graded-by-height description.
 
 **Action:** `article.tex` — trimmed Fig S2 caption to end at "(darker = higher)". Rebuilt `supplementary/article.pdf` (clean, exit 0); verified the removed sentence is absent from the PDF.
+
+## Session 12 (cont. 3) — 2026-09-23 (Fig S2 caption: ΔZ cap)
+**Owner request:** remove the now-redundant "(darker = higher)" and instead state the ΔZ range cap for each panel.
+
+**Action:** `article.tex` — caption now ends with "The color-grading spans a ΔZ range of ≈1.56 Å for the 3×3 supercell (a) and ≈3.53 Å for the 4×4 supercell (b)." Rebuilt `supplementary/article.pdf` (clean, exit 0); verified "(darker = higher)" absent and 1.56/3.53 Å present in the PDF.
