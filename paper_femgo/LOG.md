@@ -354,3 +354,13 @@
 2. Single file (C1 folded — owner sets top/side views in VESTA); output dir `analysis/fig_env_vesta/` (M2).
 
 **Verified:** cell 14.35×14.35×40 Å; all 25 Fe at (76,159,56) — no darkening; labels O1/Mg1/Fe1; VESTA parse-check exit 0 (clean). Structure-only (no red box/crosses — owner adds in GUI).
+
+## Session 16 — 2026-09-24 (Fig S1 → supplementary: two-panel table)
+**Owner request (via /clarify-me spec `202609241852-figs1-supp-include.md`, approved v2):** replace the single old `Fig_env.png` in Fig S1 with the owner's two new VESTA renders (top + side) in the same 2-column line-less table with (a)/(b) labels below as Fig S2, and rebuild the supplementary PDF.
+
+**Actions taken (folds applied from inspect-me):**
+1. `codes/emit_fig_env_png.py` (1.0.0): crops each render to opaque content, flattens RGBA→white, upscales to 300 dpi → `analysis/figures/Fig_env_a.png` (600×600) + `Fig_env_b.png` (2046×600). PNGs tracked in git (exception to analysis/figures/*.png ignore).
+2. `article.tex`: Fig S1 now a 2-column `tabular` (no lines), panels at `height=3.5cm`, `\small (a)`/`\small (b)` below (C1).
+3. Rebuilt `article.pdf` — 6 pages, clean (exit 0); page 5 has Fig_env panels (600×600, 2046×600) + (a)/(b) labels + unchanged caption. Fig_sup also on page 5 (both two-panel tables adjacent).
+
+**Note:** side view dominates the row by width (aspect 3.41) — accepted. Old `analysis/figures/Fig_env.png` superseded, left unreferenced.

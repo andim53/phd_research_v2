@@ -10,6 +10,9 @@
 
 # Regenerable figure outputs (produced by codes/ into analysis/)
 analysis/figures/*.png
+# ... except the Fig S1 (Fig_env) VESTA-render panels, which are tracked
+!analysis/figures/Fig_env_a.png
+!analysis/figures/Fig_env_b.png
 
 # Raw data (large, regenerable) — keep code/docs, exclude data
 data/
