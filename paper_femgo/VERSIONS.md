@@ -21,3 +21,4 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |
 | `codes/draw_wet_landscape.py` | 1.4.0 | Fig_wetLandscape two-panel PCA+Δz landscape; flat/island mode dashed lines (white shadow) |
+| `2dlandau/landau_2d/generator.py` | 1.2.1 | defensive `top_z=max(top_z,z_contact)` clamp (dz-min crash fix) |

@@ -1,9 +1,9 @@
 #!/bin/sh
-##PJM -L rscgrp=a-pj24001864
-#PJM -L rscgrp=a-batch
-#PJM -L vnode-core=64
-#PJM --mpi proc=64
-#PJM -L elapse=120:00:00
+#PJM -L rscgrp=a-pj24001864
+##PJM -L rscgrp=a-batch
+#PJM -L vnode-core=8
+#PJM --mpi proc=8
+#PJM -L elapse=90:00:00
 #PJM -j
 #PJM -X
 
@@ -27,8 +27,8 @@ python main.py \
     --n-dz-bins 12 \
     --relax-steps 100 \
     --reference-steps 5000 \
-    --mc-steps 100000 \
+    --mc-steps 1000 \
     --temperatures 298,573,623,673,773 \
-    --output ./output \
+    --output ./output_1000Steps \
     --use-ray \
     --rng 42
