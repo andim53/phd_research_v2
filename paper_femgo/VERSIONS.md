@@ -15,7 +15,7 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/draw_si_env.py` | 1.0.0 | Fig_env (structure, data-driven) |
 | `codes/draw_si_supercell.py` | 1.0.0 | Fig_sup (reads data/femgo_3x3, femgo_4x4) |
 | `codes/emit_fig_sup_png.py` | 2.0.0 | Fig S2 panels from VESTA renders: separate Fig_sup_a.png / Fig_sup_b.png (no embedded labels; 300 dpi) |
-| `codes/vesta_writer.py` | 1.0.0 | CANONICAL VESTA .vesta writer (colors, MODEL 1, fractional, O1/Mg1/Fe1, opt-in Fe height-darkening) |
+| `codes/vesta_writer.py` | 2.0.0 | CANONICAL VESTA .vesta writer (darker preset colors ~0.95x Fe/Mg/O, MODEL 1, fractional, O1/Mg1/Fe1, opt-in Fe height-darkening) |
 | `codes/emit_fig_sup_vesta.py` | 2.0.0 | Fig S2 .vesta via canonical writer (darkening on) |
 | `codes/emit_fig_env_vesta.py` | 1.0.0 | Fig S1 (Fig_env) reference structure → .vesta (canonical writer, darkening off) |
 | `codes/emit_fig_env_png.py` | 1.0.0 | Fig S1 panels from VESTA renders: Fig_env_a/b.png (crop→flatten→300 dpi; tracked) |

@@ -32,13 +32,16 @@ Example:
 
 Environment: any python with numpy + ase Atoms.
 """
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 import os
 import numpy as np
 
 # Project-standard colors (RGB 0-255) + covalent radii (Å).
-COLORS = {'Fe': (76, 159, 56), 'Mg': (255, 127, 14), 'O': (214, 39, 40)}
+# Colors are the slightly-darker preset (~0.95x of the original
+# Fe #4C9F38, Mg #FF7F0E, O #D62728), which matches the look in the Fig S2
+# VESTA renders and is used as the default for all generated .vesta files.
+COLORS = {'Fe': (72, 151, 53), 'Mg': (242, 121, 13), 'O': (203, 37, 38)}
 RADII = {'Fe': 1.32, 'Mg': 1.41, 'O': 0.66}
 
 # Height-darkening defaults (opt-in via darken_fe=True).

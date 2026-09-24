@@ -364,3 +364,13 @@
 3. Rebuilt `article.pdf` — 6 pages, clean (exit 0); page 5 has Fig_env panels (600×600, 2046×600) + (a)/(b) labels + unchanged caption. Fig_sup also on page 5 (both two-panel tables adjacent).
 
 **Note:** side view dominates the row by width (aspect 3.41) — accepted. Old `analysis/figures/Fig_env.png` superseded, left unreferenced.
+
+## Session 17 — 2026-09-24 (VESTA darker color preset + Fig S1 regen)
+**Owner request (via /clarify-me spec `202609241914-vesta-preset-darker-colors.md`, approved):** standardize the slightly-darker color palette (matching the Fig S2 VESTA look) as the canonical default for all .vesta files, regenerate Fig S1's .vesta with it, and preserve the manually-edited article.pdf.
+
+**Actions taken:**
+1. `codes/vesta_writer.py` (1.0.0→2.0.0): flat default COLORS changed to ~0.95x darker preset — Fe (76,159,56)→(72,151,53), Mg (255,127,14)→(242,121,13), O (214,39,40)→(203,37,38). All new .vesta inherit it. Height-darkening formula unchanged (still scales the new base).
+2. Regenerated `analysis/fig_env_vesta/fig_env.vesta` (darken_fe off) — Fe (72,151,53), Mg (242,121,13), O (203,37,38); VESTA parse-check exit 0.
+3. Backed up manually-edited PDF: `papers/paper2/supplementary/article_manual_20260924.pdf`. Live `article.pdf` untouched; no PDF rebuild, no PNG re-render.
+
+**Note:** Fig S2 .vesta NOT regenerated (owner did not request; its height-darkening base would shift to the new darker color if re-run — flag for later if wanted).
