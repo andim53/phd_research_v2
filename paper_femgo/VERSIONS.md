@@ -17,6 +17,7 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/emit_fig_sup_png.py` | 2.0.0 | Fig S2 panels from VESTA renders: separate Fig_sup_a.png / Fig_sup_b.png (no embedded labels; 300 dpi) |
 | `codes/vesta_writer.py` | 1.0.0 | CANONICAL VESTA .vesta writer (colors, MODEL 1, fractional, O1/Mg1/Fe1, opt-in Fe height-darkening) |
 | `codes/emit_fig_sup_vesta.py` | 2.0.0 | Fig S2 .vesta via canonical writer (darkening on) |
+| `codes/emit_fig_env_vesta.py` | 1.0.0 | Fig S1 (Fig_env) reference structure → .vesta (canonical writer, darkening off) |
 | `2dlandau/render_structures.py` | 2.0.0 | 2dlandau .vesta via canonical writer (standard colors, darkening off) |
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |

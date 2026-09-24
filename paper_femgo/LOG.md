@@ -345,3 +345,12 @@
 4. README.md: added "VESTA generation (canonical writer)" note; VERSIONS.md updated.
 
 **Result:** one canonical writer; both emitters consolidated. Future VESTA generation imports `codes/vesta_writer.py`.
+
+## Session 15 — 2026-09-24 (Fig S1 → VESTA)
+**Owner request (via /clarify-me spec `202609241834-figs1-env-vesta.md`, approved v2):** author a VESTA `.vesta` for Fig S1 (`Fig_env`) — the AGOX environment reference structure — via the canonical writer, so the owner can render top/side PNGs in VESTA.
+
+**Actions taken (folds applied from inspect-me):**
+1. `codes/emit_fig_env_vesta.py` (1.0.0): reads `data/femgo/seed_3/0_result/0_xsf/heteroStruct.xsf` (75 atoms, 5×5 cell) via ase, writes `analysis/fig_env_vesta/fig_env.vesta` through `codes/vesta_writer.py` with `darken_fe=False` (Fe layer flat, ΔZ=0).
+2. Single file (C1 folded — owner sets top/side views in VESTA); output dir `analysis/fig_env_vesta/` (M2).
+
+**Verified:** cell 14.35×14.35×40 Å; all 25 Fe at (76,159,56) — no darkening; labels O1/Mg1/Fe1; VESTA parse-check exit 0 (clean). Structure-only (no red box/crosses — owner adds in GUI).
