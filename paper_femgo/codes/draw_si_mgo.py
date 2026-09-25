@@ -8,7 +8,7 @@ Reads the emitted dataset (analysis/Fig_mgo.json) and plots three panels:
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_mgo.png
 """
-__version__ = "1.5.0"
+__version__ = "1.5.1"
 
 import os
 import sys
@@ -78,7 +78,7 @@ def main():
     ax_boltz.set_ylabel(r'Boltzmann density $\rho_B(E)$ (1/eV)', fontsize=10)
     ax_boltz.set_xlim(min_e, max_e)
     ax_boltz.set_ylim(0, max_boltz * 1.05)  # dynamic for true density (∫P dE=1)
-    ax_boltz.legend(frameon=False, loc='upper right', fontsize=7)
+    ax_boltz.legend(frameon=True, loc='upper right', fontsize=7)
 
     out = os.path.join(ensure_fig_dir(), 'Fig_mgo.png')
     plt.tight_layout()

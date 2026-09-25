@@ -7,7 +7,7 @@ Runs are labeled Run 1..13 (on-disk seeds 3..15 renumbered).
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_convStateDens.png
 """
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 
 import os
 import sys
@@ -49,7 +49,7 @@ def main():
     ax.set_xlabel(DENSITY_LABEL)
     ax.set_ylabel(E_LABEL)
     ax.set_ylim(min_e, max_e)
-    ax.legend(frameon=False, loc='upper right', fontsize=7)
+    ax.legend(frameon=True, loc='upper right', fontsize=7)
 
     out = os.path.join(ensure_fig_dir(), 'Fig_convStateDens.png')
     plt.tight_layout()

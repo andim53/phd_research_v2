@@ -40,19 +40,30 @@ a_lcbnovel/
 ├── transcript.log              # Raw tool-call / run-output transcript
 ├── TUTORIAL.md                 # Reproduce + repair guide with pitfalls
 ├── VERSIONS.md                 # Version manifest: every source file's __version__
-├── 1_runs/                      # Self-contained run dirs (HPC per-seed runs + benchmarks)
-│   ├── 1_mgofe_Seed3_Iter300/  #   bare per-seed run (j_*.sh + main.py + scripts/ + novelty_lcb/)
-│   ├── 2_mgofe_Seed3_Iter500/  #   bare per-seed run
-│   ├── 3_mgofe_Seed3_Iter700/  #   bare per-seed run
-│   └── 73_novel_benchEMT/      #   full benchmark project (doc trio + main_benchmark*.py + j_benchmark*.sh)
-├── 2_analysist/                 # Analysed/intermediate results (0_analy/, 1_result/, notebooks)
-│   ├── run_analysis_indices.py #   multi-seed analysis runner (3-stage pipeline, 71/72)
-│   ├── run_analysis_a_runs.py  #   single-seed analysis runner (per-seed a-runs)
-│   ├── scripts/                #   copied deps: process_database.py, plot_structure_landscape.py,
+├── 1_runs/                      # Self-contained run dirs (per-seed a-runs + benchmarks)
+│   ├── a1_mgofe_Seed3_Iter300/  #   per-seed a-run: 300 iters (README+TUTORIAL + j_*.sh + main.py + scripts/ + novelty_lcb/)
+│   ├── a2_mgofe_Seed3_Iter500/  #   per-seed a-run: 500 iters
+│   ├── a3_mgofe_Seed3_Iter700/  #   per-seed a-run: 700 iters
+│   ├── a4_mgofe_Seed3_Iter500_k3/  #   kappa sweep (κ=3)
+│   ├── a5_mgofe_Seed3_Iter500_k4/  #   kappa sweep (κ=4); base for λ sweep
+│   ├── a6_mgofe_Seed3_Iter500_k5/  #   kappa sweep (κ=5)
+│   ├── a7_mgofe_Seed3_Iter500_k4_nw2/  #   novelty_weight sweep (λ=2)
+│   ├── a8_mgofe_Seed3_Iter500_k4_nw3/  #   novelty_weight sweep (λ=3)
+│   ├── a9_mgofe_Seed3_Iter500_k4_nw4/  #   novelty_weight sweep (λ=4)
+│   ├── a10_mgofeb_Seed3_Iter500/ #   B-doped Fe/MgO+B (B7Fe25 mobile layer); first doping run
+│   └── 73_novel_benchEMT/       #   full benchmark project (doc trio + main_benchmark*.py + j_benchmark*.sh)
+├── 2_analysist/                 # Analysed results + heavy-run/benchmark project dirs
+│   ├── run_analysis_indices.py  #   multi-seed analysis runner (3-stage pipeline, for 71/72)
+│   ├── run_analysis_a_runs.py   #   single-seed analysis runner (for per-seed a-runs)
+│   ├── scripts/                 #   copied deps: process_database.py, plot_structure_landscape.py,
 │   │                           #     calculate_relative_energy.py
-│   ├── 0_analy/                #   analysis outputs (gitignored, regenerable)
-│   └── 1_result/               #   raw run results 71-74 (gitignored, regenerable)
-└── .gitignore                  # ignores 2_analysist/0_analy, 2_analysist/1_result, *.db/*.png/*.traj/...
+│   ├── 71_novel_runEWindow/     #   heavy multi-seed run, manual window (−411.6/25 eV), 13 seeds
+│   ├── 72_novel_AutoGlob_1eVperAtomAboveGlob/  #   heavy multi-seed run, auto-glob window, 13 seeds
+│   ├── 73_novel_benchEMT/       #   extended EMT benchmark results + DISCUSSION.md
+│   ├── 74_novel_benchSweep/     #   kappa×λ sweep results + DISCUSSION.md
+│   ├── a1_mgofe_Seed3_Iter300/  # … per-run a-run analysis dirs (README/TUTORIAL + analysis_a_runs/)
+│   └── …a10_mgofeb_Seed3_Iter500/
+└── .gitignore                  # ignores outputs/results (*.db/*.png/*.traj/...); code + docs tracked
 ```
 
 ### 2a. `1_runs/` and `2_analysist/`
@@ -60,15 +71,20 @@ a_lcbnovel/
 - **`1_runs/`** — self-contained run directories. Each HPC run (or benchmark) is its
   own dir, holding **everything** it needs (job script, main script, and copies of
   `scripts/` and `novelty_lcb/`), independent of the project root. Naming:
-  **`<NN>_<descriptor>`** (e.g. `a1_mgofe_Seed3_Iter300`). **HPC per-seed Fe/MgO runs**
-  carry a per-run **`README.md` + `TUTORIAL.md`** specific to that run's treatment
-  (seed, iteration budget); **standalone benchmarks** (e.g. `73_novel_benchEMT`) carry
-  the full doc trio inside their own dir. Run copies of `main.py`, `scripts/`, and
-  `novelty_lcb/` are kept in sync with the latest versioned project root. Tracked in
-  git (code + docs), subject to the regenerable-data exclusions.
-- **`2_analysist/`** — analysed/intermediate results, kept separate from `1_runs/`.
-  Expected layout (matching the repo-root `.gitignore`): `0_analy/` (staging),
-  `1_result/` (final), `main_analyst.ipynb`, `main_test.ipynb`. Outputs are
+  **`<NN>_<descriptor>`** (e.g. `a1_mgofe_Seed3_Iter300`, `a10_mgofeb_Seed3_Iter500`).
+  **HPC per-seed Fe/MgO a-runs** (`a1`–`a10`) carry a per-run **`README.md` +
+  `TUTORIAL.md`** specific to that run's treatment (seed, iteration budget, kappa,
+  novelty_weight, or doping); **standalone benchmarks** (e.g. `73_novel_benchEMT`)
+  carry the full doc trio inside their own dir. Run copies of `main.py`, `scripts/`,
+  and `novelty_lcb/` are kept in sync with the latest versioned project root. Tracked
+  in git (code + docs), subject to the regenerable-data exclusions.
+- **`2_analysist/`** — analysed results, the heavy multi-seed run dirs, and the
+  benchmark output dirs, kept separate from `1_runs/`. The repo-root `.gitignore`
+  anticipates an abstract `0_analy/` (staging) / `1_result/` (final) layout, but in
+  this project the heavy-run/benchmark **project dirs sit directly here**
+  (`71_novel_runEWindow/`, `72_novel_AutoGlob_1eVperAtomAboveGlob/`,
+  `73_novel_benchEMT/`, `74_novel_benchSweep/`), as do per-a-run `a1…a10/` dirs
+  (each with README/TUTORIAL + `analysis_a_runs/`). Outputs are
   regenerable/gitignored.
 - **`2_analysist/run_analysis_indices.py`** — self-contained **multi-seed** analysis
   runner (mirrors the sibling b_nestedsampling
@@ -79,12 +95,14 @@ a_lcbnovel/
   Scoped to the multi-seed heavy runs **71** and **72** (the flat benchmark dirs 73/74
   are excluded — no `seed_*` layout). Stages: ① best-so-far progression (per-seed),
   ② PCA landscape, ③ Boltzmann probability. CLI: `--dataset --outdir --e-max
-  --normalize-density --start-iter`. Outputs → per-run `<run>/analysis_indices/`.
+  --normalize-density --start-iter`. Supports two-phase `--extract` /
+  `--plot-from-json` (single self-describing `analysis_data.json` → bit-identical
+  PNGs, DB-free). Outputs → per-run `<run>/analysis_indices/`.
 - **`2_analysist/run_analysis_a_runs.py`** — self-contained **single-seed** analysis
   runner for the per-seed a-runs (e.g. `a1_mgofe_Seed3_Iter300/output`). Same 3-stage
   pipeline but labels the progression by the actual seed number and writes
-  `progression_seed_split_Seed3.png`. Same CLI (`--dataset --outdir --e-max
-  --normalize-density --start-iter`). Outputs → per-run `<run>/analysis_a_runs/`.
+  `progression_seed_split_Seed3.png`. Same CLI + two-phase `--extract` /
+  `--plot-from-json`. Outputs → per-run `<run>/analysis_a_runs/`.
 - **Per-analysis `DISCUSSION.md`** — each analysis dir carries a `DISCUSSION.md`
   stating the **exact running command + params** (a `## Running script` section) and
   discussing the results, mirroring the b_nestedsampling convention. Analysis outputs
@@ -140,6 +158,9 @@ $PY run_analysis_indices.py --dataset 72_novel_AutoGlob_1eVperAtomAboveGlob/data
 
 # Analyse a per-seed a-run (single seed) — run_analysis_a_runs.py
 $PY run_analysis_a_runs.py --dataset a1_mgofe_Seed3_Iter300/output --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
+# two-phase: --extract writes analysis_data.json; --plot-from-json replots PNGs DB-free
+$PY run_analysis_a_runs.py --dataset a1_mgofe_Seed3_Iter300/output --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs --extract
+$PY run_analysis_a_runs.py --plot-from-json a1_mgofe_Seed3_Iter300/analysis_a_runs/analysis_data.json --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
 ```
 
 ### `main.py` CLI

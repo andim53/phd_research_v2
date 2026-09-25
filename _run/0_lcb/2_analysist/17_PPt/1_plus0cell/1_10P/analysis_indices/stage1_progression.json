@@ -4,6 +4,7 @@
   "curves": [
    {
     "name": "Seed 0",
+    "seed": 0,
     "x": [
      0,
      1,
@@ -368,6 +369,7 @@
    },
    {
     "name": "Seed 1",
+    "seed": 1,
     "x": [
      0,
      1,
@@ -1200,6 +1202,7 @@
    },
    {
     "name": "Seed 2",
+    "seed": 2,
     "x": [
      0,
      1,
@@ -1566,6 +1569,7 @@
    },
    {
     "name": "Seed 3",
+    "seed": 3,
     "x": [
      0,
      1,
@@ -1954,5 +1958,23 @@
   "e_max": 0.5,
   "max_y": 0.4950638839718787,
   "max_x": 411
+ },
+ "description": {
+  "dataset": "17_PPt/1_plus0cell/1_10P",
+  "num_atoms": null,
+  "formula": null,
+  "origin": "AGOX GPR+LCB search over DFT-relaxed structures read from seed_*/1_db/db_*.db (AGOX Database, iteration >= start_iter)",
+  "energy_units": "eV/atom",
+  "rel": "rel = (E_i - E_min)/N, per-atom relative energy in eV/atom; E_min = lowest energy among loaded structures (global min when all seeds share composition); axis label $E_i-E_{glob}$ (eV/atom).",
+  "kind": "AGOX Stage-1 best-so-far progression data",
+  "schema": "0_lcb_analysis_stage1/v1",
+  "fields": {
+   "curves": "per-seed best-so-far curve: x = evaluated-candidate index (0..max_x), best_so_far = running-min rel energy/atom up to that candidate, color = hex, lw = linewidth, is_seed0 = seed-0 flag",
+   "bullets": "seed-0 window-minimum markers: x = candidate index, rel_e = rel energy/atom at that window minimum",
+   "global_gs": "global ground-state marker: x = candidate index of the lowest-energy structure, rel_e = its rel energy/atom",
+   "e_max": "energy-axis upper limit (eV/atom) applied to all stages",
+   "max_y": "max rel energy/atom across kept structures",
+   "max_x": "max candidate index (x-axis extent)"
+  }
  }
 }

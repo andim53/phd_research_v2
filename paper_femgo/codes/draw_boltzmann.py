@@ -6,7 +6,7 @@ temperatures 300-10000 K, color gradient dark blue -> light yellow.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Boltz.png
 """
-__version__ = "1.5.0"
+__version__ = "1.5.1"
 
 import os
 import sys
@@ -53,7 +53,7 @@ def main():
     ax.set_ylabel(r'Boltzmann density $\rho_B(E)$ (1/eV)')
     ax.set_xlim(0.0, 0.7)  # relative-energy (x) axis capped at 0.7 eV/atom (owner)
     ax.set_ylim(0, max_dens * 1.05)  # dynamic for true density (∫P dE=1)
-    ax.legend(frameon=False, loc='upper right', fontsize=8)
+    ax.legend(frameon=True, loc='upper right', fontsize=8)
 
     out = os.path.join(ensure_fig_dir(), 'Fig_Boltz.png')
     plt.tight_layout()

@@ -1600,3 +1600,75 @@ analysis, and update AGENTS.md.
 - Result: 0 duplicates in every run (all structures fingerprint-distinct); pairwise
   mean distance 4.2-4.9; a5/a7/a8/a9 (k4, nw 0/2/3/4) identical novelty + same
   global min (-436.0513 eV) -> novelty_weight had no effect on explored set.
+
+
+## 2026-09-25 — Session: Refresh root docs to the current run catalogue
+
+### Goal (owner command)
+Update the root markdown notes so a future AI agent can fully use the project. Full
+enumeration of the current a-run + benchmark catalogue requested. Confirmed scope via
+clarify: root `README.md` + `README.AI.md` + `TUTORIAL.md` + the `AGENTS.md` run-dir
+section; append a LOG entry.
+
+### Clarify (confirmed)
+- Files: root README.md, README.AI.md, TUTORIAL.md, AGENTS.md (§3a run-dir section only).
+- Detail: full enumeration — a-runs a1–a10 treatment table + benchmarks 71–74, with
+  pointers to per-run READMEs.
+- Append a LOG.md entry recording this doc update.
+
+### Discovery (read-only)
+The project had grown well beyond what the root docs described (which still used the
+pre-rename numeric run names `1|2|3_mgofe_Seed3_Iter300/500/700` and listed only
+analysis runs 71/72 + benchmark 73):
+- **1_runs/** now holds per-seed **a-runs a1–a10** (each with its own README.md +
+  TUTORIAL.md + `j_novEperAtom.sh` + `main.py` + `scripts/` + `novelty_lcb/`) plus
+  benchmark **73_novel_benchEMT**.
+- **2_analysist/** holds heavy multi-seed run project dirs **71** (`71_novel_runEWindow/`,
+  manual window −411.6/25 eV) and **72** (`72_novel_AutoGlob_1eVperAtomAboveGlob/`,
+  auto-glob 1.0 eV/atom, 13 seeds each), **benchmark 73** (extended EMT, 250 runs) and
+  **74** (`74_novel_benchSweep/`, κ×λ sweep, 20 combos), and per-a-run analysis dirs
+  `a1…a10`.
+- Verified completion: a-runs a1–a9 each have `analysis_data.json` (extracted);
+  a10 (B-doped) has analysis but **no JSON yet**; heavy runs 71/72 + benchmarks 73/74
+  have results + DISCUSSION.md. The legacy `19_kappa2_...` and `66_MgOFe_20B` trees in
+  `2_analysist/` are sibling/pre-existing, not this project's runs.
+- a-run treatments (all seed 3, auto-glob 1.0 eV/atom window): a1–a3 = iteration budget
+  300/500/700; a4–a6 = kappa sweep κ=3/4/5; a7–a9 = novelty_weight sweep λ=2/3/4 off
+  a5 (κ=4); a10 = B-doped Fe/MgO+B (B7Fe25 mobile layer).
+
+### Actions taken
+1. `README.md` — replaced the stale "Run directories" section with a full a-run
+   treatment table (a1–a10) + the 2_analysist heavy-run/benchmark/per-a-run layout;
+   added the 72 analysis command + two-phase `--extract`/`--plot-from-json` + novelty
+   metrics notes; updated the "Where heavy runs actually live" callout and the Status
+   checklist (heavy search now marked done; a10 JSON-not-yet-extracted noted).
+2. `README.AI.md` — updated the file-layout tree (real a-run dirs, 71–74, per-a-run
+   analysis), §2a conventions, and the entry-point analyse commands (+72, +two-phase).
+3. `TUTORIAL.md` — rewrote Step 4 (run-catalogue + kappa/weight edits), Step 4b/4c
+   (2_analysist layout + 71/72 window distinction), pitfall #7 trailing-space note.
+4. `AGENTS.md` §3a — added the current a1–a10 run set summary and replaced the abstract
+   2_analysist layout with the concrete 71/72/73/74 + a-run dirs.
+5. No code changed, so no `__version__` / `VERSIONS.md` bumps.
+
+### Results
+- Root README/README.AI/TUTORIAL/AGENTS now enumerate the full current run + benchmark
+  catalogue and no longer reference the pre-rename numeric run names (verified by grep —
+  only the a-run names remain, which match on-disk dirs).
+- Docs remain consistent with each other and with the on-disk layout.
+
+### Decisions & reasoning
+- Kept the per-run README/TUTORIAL files as the source of detail (they were already
+  current) and made the root docs a faithful index + treatment table pointing at them,
+  rather than duplicating per-run specifics.
+- Marked heavy-search Status done (runs exist and are analysed) rather than leaving the
+  stale "not launched" checkbox.
+
+### Open items / next steps
+- (Optional) run `--extract` for a10 (`2_analysist/run_analysis_a_runs.py --dataset
+  a10_mgofeb_Seed3_Iter500/output ... --extract`) so its `analysis_data.json` exists
+  like a1–a9.
+- PROMPTS.md #3 (new run with dipole correction) and #5 (a1–a9 novelty comparison
+  report) are still open owner prompts.
+
+### Time
+~35 min.

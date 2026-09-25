@@ -297,11 +297,12 @@ pjsub j_benchmark_sweep.sh
 > **Where heavy runs actually live.** The per-seed HPC runs and benchmarks are kept in
 > **`1_runs/`** as self-contained directories (job script + main script + copies of
 > `scripts/` and `novelty_lcb/`), named `<NN>_<descriptor>` (e.g.
-> `1_mgofe_Seed3_Iter300`, `73_novel_benchEMT`). The root-level `j_*.sh` / `main*.py`
-> are the parent project's own copies; to launch a concrete run, `cd` into the
-> matching `1_runs/<NN>_<descriptor>/` and `pjsub j_*.sh` there (edit `SEED=` /
-> `N_ITERATIONS=` inside that script). Analysed results go in **`2_analysist/`** — see
-> the "Run directories" section below.
+> `a1_mgofe_Seed3_Iter300`, `a10_mgofeb_Seed3_Iter500`, `73_novel_benchEMT`). The
+> root-level `j_*.sh` / `main*.py` are the parent project's own copies; to launch a
+> concrete run, `cd` into the matching `1_runs/<NN>_<descriptor>/` and `pjsub` its
+> `j_*.sh` there (edit `SEED=` / `N_ITERATIONS=` / `KAPPA=` / `NOVELTY_WEIGHT=` inside
+> that script). Analysed results and the heavy multi-seed runs / benchmarks 71–74 live
+> in **`2_analysist/`** — see the "Run directories" section below.
 
 ## Run directories: `1_runs/` and `2_analysist/`
 
@@ -310,20 +311,58 @@ Two sibling directories keep concrete runs separate from the project root.
 **`1_runs/` — self-contained run directories.** Each HPC run or benchmark is its own
 directory under `1_runs/`, holding everything that run needs (job script, main
 script, copies of `scripts/` and `novelty_lcb/`) so it is launchable in isolation.
-Naming follows **`<NN>_<descriptor>`** — a running index plus a short descriptive
-suffix (e.g. `1_mgofe_Seed3_Iter300`, `2_mgofe_Seed3_Iter500`,
-`3_mgofe_Seed3_Iter700`, `73_novel_benchEMT`).
+Naming follows `<NN>_<descriptor>`. The **per-seed Fe/MgO a-runs** (`a1`–`a10`) all
+use seed 3 and the auto global-min energy window (`energy_above_min = 1.0` eV/atom,
+`per_atom=True`); they differ only in the treatment in the table below.
 
-- **HPC per-seed Fe/MgO runs** (one seed per job) are **bare code dirs**: just
-  `j_*.sh` + `main.py` + `scripts/` + `novelty_lcb/` (plus their generated
-  `output/`). No per-run docs.
-- **Standalone benchmarks** (e.g. `73_novel_benchEMT`) are full projects with their
-  own README/README.AI/LOG/TUTORIAL and `main_benchmark*.py` / `j_benchmark*.sh`.
+| Run | N_ITERATIONS | KAPPA (κ) | NOVELTY_WEIGHT (λ) | What it varies |
+|---|---|---|---|---|
+| **a1** `a1_mgofe_Seed3_Iter300` | 300 | 2.0 | 1.5 | iteration budget (shortest; quick first check) |
+| **a2** `a2_mgofe_Seed3_Iter500` | 500 | 2.0 | 1.5 | standard-length search |
+| **a3** `a3_mgofe_Seed3_Iter700` | 700 | 2.0 | 1.5 | iteration budget (longest, deepest) |
+| **a4** `a4_mgofe_Seed3_Iter500_k3` | 500 | 3.0 | 1.5 | kappa sweep |
+| **a5** `a5_mgofe_Seed3_Iter500_k4` | 500 | 4.0 | 1.5 | kappa sweep + base for the λ sweep |
+| **a6** `a6_mgofe_Seed3_Iter500_k5` | 500 | 5.0 | 1.5 | kappa sweep |
+| **a7** `a7_mgofe_Seed3_Iter500_k4_nw2` | 500 | 4.0 | 2.0 | novelty_weight sweep (off a5) |
+| **a8** `a8_mgofe_Seed3_Iter500_k4_nw3` | 500 | 4.0 | 3.0 | novelty_weight sweep |
+| **a9** `a9_mgofe_Seed3_Iter500_k4_nw4` | 500 | 4.0 | 4.0 | novelty_weight sweep |
+| **a10** `a10_mgofeb_Seed3_Iter500` | 500 | 2.0 | 1.5 | **B-doped** Fe (B7Fe25 mobile layer, 82 atoms); first doping run |
 
-**`2_analysist/` — analysed results.** Analysed and intermediate results go here,
-kept separate from `1_runs/` so raw runs are never mixed with their analysis. The
-repo-root `.gitignore` anticipates the layout `0_analy/` (staging), `1_result/`
-(final), and `main_analyst.ipynb` / `main_test.ipynb` (notebooks).
+- **a1–a3** (integration budget sweep): identical except `N_ITERATIONS`.
+- **a4–a6** (kappa sweep): same seed/budget/window, `KAPPA` = 3/4/5; κ sets the
+  LCB surrogate-relaxation surface `E − κ·σ` (higher = more aggressive exploitation
+  on the surrogate).
+- **a7–a9** (novelty_weight sweep): built on `a5` (κ=4), `NOVELTY_WEIGHT` = 2/3/4;
+  λ = weight on the novelty term in `a(x) = σ + λ·Novelty`.
+- **a10** (B-doping): MgO substrate fixed, mobile layer **B7Fe25** (25 Fe + 6–7 B on
+  hollow sites) via `add_adsorbate_to_hollows.py` v1.1.0; adds a Fe↔B permutation
+  generator. First doping run, based on the `66_MgOFe_20B` example.
+
+Each a-run ships a per-run `README.md` + `TUTORIAL.md` (its exact treatment + how to
+reproduce it in isolation) plus `j_novEperAtom.sh` + `main.py` + `scripts/` +
+`novelty_lcb/`. **Standalone benchmarks** are full projects with their own doc trio
+(README/README.AI/LOG/TUTORIAL + AGENTS.md) inside their dir.
+
+**`2_analysist/` — analysed results and the heavy-run project dirs.** Kept separate
+from `1_runs/` so raw runs are never mixed with their analysis. It holds:
+
+- **Heavy multi-seed Fe/MgO runs** (self-contained projects, not run via the a-runs):
+  - **71** `71_novel_runEWindow/` — the older multi-seed run using the **manual
+    calibrated window** (`target ≈ −411.6 eV, ΔE = 25 eV`), 13 seeds.
+  - **72** `72_novel_AutoGlob_1eVperAtomAboveGlob/` — the multi-seed run using the
+    **auto global-minimum window** (1.0 eV/atom above live DB min), 13 seeds. Carries
+    `novelty_analysis_results.json` and `pca_basin_analysis_results.json`.
+- **Benchmarks:**
+  - **73** `73_novel_benchEMT/` — extended EMT benchmark, regular LCB vs Novelty-LCB
+    (Ni8/Au(4,4,2)), 10 seeds × iter 100–500 × λ 2–5 = 250 runs; results in
+    `benchmark_results/` + `DISCUSSION.md`.
+  - **74** `74_novel_benchSweep/` — kappa × novelty_weight sweep
+    (κ ∈ {0.5,1,2,4} × λ ∈ {0,0.5,1,1.5,2}, 20 combos); results in
+    `benchmark_results/sweep_kappa_lambda/` + `DISCUSSION.md`.
+- **Per-run a-run analysis** — `a1_mgofe_Seed3_Iter300/` … `a10_mgofeb_Seed3_Iter500/`,
+  each holding a `README.md`/`TUTORIAL.md` + an `analysis_a_runs/` output dir.
+- Older/sibling-project result trees live here too (e.g. `19_kappa2_...`,
+  `66_MgOFe_20B_...`) — treat them as pre-existing/staging, not this project's runs.
 
 Two self-contained analysis runners live at `2_analysist/`:
 
@@ -337,7 +376,7 @@ Two self-contained analysis runners live at `2_analysist/`:
 - `run_analysis_a_runs.py` — the **single-seed** runner for the per-seed a-runs
   (e.g. `a1_mgofe_Seed3_Iter300/output`). Same 3-stage pipeline but labels the
   progression by the actual seed number and writes `progression_seed_split_Seed3.png`.
-  Same CLI (`--dataset --outdir --e-max --normalize-density --start-iter`).
+  Same CLI.
 
 Both import only the `2_analysist/scripts/` deps copied next to them
 (`plot_structure_landscape.py`, plus `process_database.py` / `calculate_relative_energy.py`
@@ -345,13 +384,20 @@ where used), so they are callable in place:
 
 ```bash
 cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
-# multi-seed heavy runs 71/72
+# heavy runs 71/72
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
     --dataset 71_novel_runEWindow/dataset --outdir 71_novel_runEWindow/analysis_indices
+/home/think/miniconda3/envs/agox_v2/bin/python run_analysis_indices.py \
+    --dataset 72_novel_AutoGlob_1eVperAtomAboveGlob/dataset --outdir 72_novel_AutoGlob_1eVperAtomAboveGlob/analysis_indices
 # single-seed a-run
 /home/think/miniconda3/envs/agox_v2/bin/python run_analysis_a_runs.py \
     --dataset a1_mgofe_Seed3_Iter300/output --outdir a1_mgofe_Seed3_Iter300/analysis_a_runs
 ```
+
+Both runners also support a **two-phase `--extract` / `--plot-from-json`** mode that
+writes all raw plot data to a single self-describing `analysis_data.json` (DB-free
+replot from JSON, bit-identical PNGs). Each a-run's JSON also records fingerprint
+**novelty metrics** (distinct/duplicate counts + pairwise distance stats) per PROMPT #5.
 
 Outputs go to a per-run `<run>/analysis_indices/` or `<run>/analysis_a_runs/` dir
 (progression plot + window `.xsf`, `conf_space.png`,
@@ -386,9 +432,18 @@ API/behavior changes), updates `VERSIONS.md`, and is recorded in `LOG.md`. See
 - [x] `novelty_lcb` package + scripts copied and compiling under `agox_v2`
 - [x] `main.py` faithfully re-wired (same physics as run 7)
 - [x] Serialization smoke test **PASSES** (crash root cause verified fixed)
-- [ ] Heavy Fe/MgO search launched on HPC (see `TUTORIAL.md` step 4)
 - [x] Energy window = auto global-min mode (`energy_above_min=1.0 eV/atom`, per_atom), no manual calibration
-- [x] Run dirs organized under `1_runs/` (HPC per-seed runs + `73_novel_benchEMT`) and analysis under `2_analysist/`
+- [x] Heavy Fe/MgO search launched + analysed on HPC: multi-seed runs **71** (manual
+  window) and **72** (auto-glob window, 13 seeds each), and **a-runs a1–a9** computed
+  and extracted to JSON (a1–a3 iteration sweep, a4–a6 kappa sweep, a7–a9 λ sweep).
+- [x] **a10** B-doped run computed + analysed (first doping run; `analysis_data.json`
+  not yet extracted — optional).
+- [x] Benchmarks **73** (extended EMT, 250 runs) and **74** (κ×λ sweep, 20 combos)
+  have results in `benchmark_results/` + `DISCUSSION.md`.
+- [x] Embedded benchmarks (`main_benchmark.py`, `main_benchmark_sweep.py`) shipped
+  for regular-LCB vs Novelty-LCB comparison on the Ni8/Au(4,4,2) EMT model.
+- [x] Run dirs organized under `1_runs/` (per-seed a-runs a1–a10 + `73_novel_benchEMT`)
+  and analysis/heavy-runs/benchmarks under `2_analysist/`.
 
 See `TUTORIAL.md` for the full reproduction and repair guide, `LOG.md` for what
 has been done, and `README.AI.md` for the agent-facing spec.

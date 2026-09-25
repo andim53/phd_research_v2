@@ -49,6 +49,36 @@ def load_all_seeds(dataset_dir: str, pattern: str = "seed_*/1_db/db_*.db"):
     return structures, np.asarray(energies, dtype=float), db_paths
 
 
+def _ensure_ray_local():
+    """Pre-initialise a small local Ray cluster if none is running.
+
+    AGOX's ``GPR.__init__`` calls ``RayPoolUser.__init__``, which starts Ray
+    unconditionally (``use_ray=False`` only skips registering the model on the
+    pool, NOT the startup). On a memory-constrained local box Ray's auto-detected
+    config underflows its 75 MB object-store minimum and the GCS times out, so we
+    pre-start a deliberately small cluster — AGOX's ``ray_startup`` then
+    short-circuits via ``ray.is_initialized()``. On HPC (SLURM) Ray is left to
+    AGOX's own startup, which reads SLURM vars for a correctly-sized cluster.
+    """
+    import os
+    try:
+        import ray
+    except ImportError:
+        return
+    if ray.is_initialized():
+        return
+    if "SLURM_NTASKS" in os.environ or "PJM" in os.environ.get("PJM_JOBID", ""):
+        return  # let AGOX size the cluster on HPC
+    try:
+        ray.init(num_cpus=2, object_store_memory=int(120e6),
+                 _memory=int(300e6), include_dashboard=False,
+                 _temp_dir=os.path.expanduser("~/tmp/ray_small"),
+                 ignore_reinit_error=True, log_to_driver=False)
+    except Exception as e:  # pragma: no cover - best effort
+        print(f"[gpr_training] WARNING: local Ray pre-init failed ({e}); "
+              f"AGOX will attempt its own startup")
+
+
 def build_gpr(traj, use_ray=False):
     """Build and train the GPR surrogate (AGOX recipe from the dataset).
 
@@ -57,6 +87,7 @@ def build_gpr(traj, use_ray=False):
     ``Fingerprint(environment=...)`` of the original search differs only in
     environment plumbing, not the radial/angular fingerprint features).
     """
+    _ensure_ray_local()
     descriptor = Fingerprint.from_atoms(traj[0])
     print(f"  Descriptor feature dim: "
           f"{descriptor.create_features(traj[0]).shape[1]}")

@@ -8,7 +8,7 @@ Run 1..13 (on-disk seeds 3..15 renumbered).
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_Prog.png
 """
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 import os
 import sys
@@ -44,7 +44,7 @@ def main():
     ax.set_ylabel(E_LABEL)
     ax.set_xlim(0, None)
     ax.set_ylim(0, None)
-    ax.legend(loc='best', fontsize=8, frameon=False, ncol=2)
+    ax.legend(loc='best', fontsize=8, frameon=True, ncol=2)
 
     out = os.path.join(ensure_fig_dir(), 'Fig_Prog.png')
     plt.tight_layout()

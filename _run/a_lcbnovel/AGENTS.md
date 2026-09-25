@@ -129,6 +129,13 @@ short descriptive suffix that captures the run's identity (e.g.
 `a1_mgofe_Seed3_Iter300`, `73_novel_benchEMT`). This keeps runs ordered and
 unambiguous.
 
+**Current Fe/MgO run set (`1_runs/a1…a10`).** All per-seed a-runs share seed 3 and the
+auto global-min energy window (`energy_above_min=1.0` eV/atom, `per_atom=True`). They
+differ as: **a1–a3** iteration budget (300/500/700); **a4–a6** kappa sweep (κ=3/4/5 off
+the a2/a5 baseline); **a7–a9** novelty_weight sweep (λ=2/3/4 off `a5` at κ=4);
+**a10** B-doped Fe/MgO+B (`B7Fe25` mobile layer, first doping run). See the a-run
+table in `README.md` and each run's own `README.md` for the exact treatment.
+
 Documentation policy:
 - **HPC per-seed Fe/MgO runs** (one seed per job, e.g. `a1_mgofe_Seed3_Iter300`)
   carry a **per-run `README.md` + `TUTORIAL.md`** alongside `j_*.sh` + `main.py` +
@@ -147,22 +154,30 @@ root (`cp main.py novelty_lcb/*.py scripts/*.py <run>/` after a root change).
 Everything under `1_runs/` is **tracked in git** (code + docs), subject to the same
 regenerable-data exclusions.
 
-### `2_analysist/` — analysed results
+### `2_analysist/` — analysed results, heavy runs, benchmarks
 
-Analysed/intermediate results live in `2_analysist/`, kept separate from both the
-project root and `1_runs/` so raw runs are never mixed with their analysis.
+Analysed results, the **heavy multi-seed run project dirs**, the **benchmark output
+dirs**, and the **per-a-run analysis dirs** all live in `2_analysist/`, kept separate
+from both the project root and `1_runs/` so raw runs are never mixed with their
+analysis.
 
-Expected layout (matching the repo-root `.gitignore`):
+The repo-root `.gitignore` anticipates an abstract layout; in practice the project
+dirs sit directly under `2_analysist/`:
 ```
 2_analysist/
-├── 0_analy/               # intermediate analysis / staging
-├── 1_result/              # final analysed results
-├── main_analyst.ipynb     # analysis notebook (gitignored if large)
-└── main_test.ipynb        # scratch/testing notebook (gitignored)
+├── run_analysis_indices.py    # multi-seed analysis runner (71/72)
+├── run_analysis_a_runs.py     # single-seed analysis runner (a-runs)
+├── scripts/                   # copied deps (process_database, plot_structure_landscape, ...)
+├── 71_novel_runEWindow/       # heavy multi-seed run (manual window −411.6/25 eV), 13 seeds
+├── 72_novel_AutoGlob_1eVperAtomAboveGlob/   # heavy multi-seed run (auto-glob window), 13 seeds
+├── 73_novel_benchEMT/         # extended EMT benchmark results + DISCUSSION.md
+├── 74_novel_benchSweep/       # kappa×λ sweep results + DISCUSSION.md
+└── a<1..10>_*/                # per-a-run dirs: README/TUTORIAL + analysis_a_runs/
 ```
 
 Analysis outputs are regenerable artifacts and are gitignored; only the
-analysis code/notebooks the owner chooses to track are tracked.
+analysis runners + `2_analysist/scripts/` code the owner chooses to track are
+tracked.
 
 ### Per-run analysis convention
 

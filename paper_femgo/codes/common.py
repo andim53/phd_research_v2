@@ -7,10 +7,11 @@ definition (AGOX iteration >= 10). All figure scripts import from here.
 Environment: agox_v2 (/home/think/miniconda3/envs/agox_v2/bin/python).
 Set matplotlib.use('Agg') before importing anything that plots.
 """
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import glob
+import sqlite3
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -142,6 +143,33 @@ def femgo_db_paths():
 def mgofe_db_paths():
     """Reverse-deposition (MgO-on-Fe) dbs (seeds 0-4; seed_5 truncated)."""
     return sorted(glob.glob(os.path.join(DATA_DIR, 'mgofe', 'seed_*', '1_db', 'db_*.db')))
+
+
+def _db_max_iteration(path):
+    """Max `iteration` in an AGOX .db's structures table, or None if unreadable/empty."""
+    try:
+        con = sqlite3.connect(f'file:{os.path.abspath(path)}?mode=ro', uri=True)
+        try:
+            return con.execute('select max(iteration) from structures').fetchone()[0]
+        finally:
+            con.close()
+    except Exception:
+        return None
+
+
+def febmgo_db_paths(full_iterations=100):
+    """Fe-B/MgO dbs (seeds 0-5 completed; seed_6 empty -> excluded by iteration check).
+
+    Unlike femgo (whose truncated run is *named* stop_16 and dropped by the seed_* glob),
+    febmgo's unfinished run is *named* seed_6 but empty, so it must be filtered by the
+    completion rule (max iteration >= full_iterations) rather than by name.
+    """
+    out = []
+    for p in sorted(glob.glob(os.path.join(DATA_DIR, 'febmgo', 'seed_*', '1_db', 'db_*.db'))):
+        hi = _db_max_iteration(p)
+        if hi is not None and hi >= full_iterations:
+            out.append(p)
+    return out
 
 
 def ensure_fig_dir():

@@ -7,7 +7,7 @@ negative = spin-down (mirrored). Fermi level at E-Ef=0.
 
 Run emit_datasets.py first. Output: analysis/figures/Fig_dos.png
 """
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import os
 import sys
@@ -46,7 +46,7 @@ def main():
     ax.set_xlim(ENERGY_RANGE)
     ax.set_xlabel(r'$E - E_f$ (eV)')
     ax.set_ylabel('Fe-3d PDOS (states/eV)')
-    ax.legend(frameon=False, loc='lower right')
+    ax.legend(frameon=True, loc='lower right')
 
     out = os.path.join(ensure_fig_dir(), 'Fig_dos.png')
     plt.tight_layout()

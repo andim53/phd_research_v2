@@ -59,41 +59,48 @@ passes `functools.partial(...)` over **module-level** functions (not bound metho
 ## Step 4 — Launch the heavy search on HPC
 
 Each heavy run lives in its own **self-contained directory** under `1_runs/`, named
-`<NN>_<descriptor>` (e.g. `1_mgofe_Seed3_Iter300`). `cd` into the run dir, then
-`pjsub` its job script. The seed and iteration count are set by editing `SEED=` and
-`N_ITERATIONS=` at the top of that run's `j_*.sh` (the owner prefers this over
+`<NN>_<descriptor>`. For the Fe/MgO system the **per-seed a-runs** (`a1`–`a10`, see the
+table in `README.md`) cover the iteration, kappa, novelty_weight, and B-doped
+treatments. `cd` into the run dir, then `pjsub` its job script. The seed, iteration
+count, kappa and novelty_weight are set by editing `SEED=`, `N_ITERATIONS=`, `KAPPA=`,
+`NOVELTY_WEIGHT=` at the top of that run's `j_*.sh` (the owner prefers this over
 passing `-x SEED=N`). The job activates `gpaw_env` (NOT `agox_v2`).
 
 ```bash
-cd /home/think/Desktop/research/_run/a_lcbnovel/1_runs/<NN>_<descriptor>   # e.g. 1_mgofe_Seed3_Iter300
-# edit SEED= / N_ITERATIONS= in j_*.sh if needed
+cd /home/think/Desktop/research/_run/a_lcbnovel/1_runs/<NN>_<descriptor>   # e.g. a1_mgofe_Seed3_Iter300
+# edit SEED= / N_ITERATIONS= / KAPPA= / NOVELTY_WEIGHT= in j_*.sh if needed
 pjsub j_*.sh            # e.g. j_novEperAtom.sh — runs the seed set in the script
 # monitor: pjstat   |   cancel: pjdel
 ```
 
 The `1_runs/<NN>_<descriptor>/` dir carries everything the job needs (its own
 `main.py`, `scripts/`, `novelty_lcb/`), so it is fully isolated from the project
-root. For a new run, copy the latest per-seed dir, bump the `<NN>` index, and adjust
-the `SEED=` / `N_ITERATIONS=` in its job script. Standalone benchmarks
-(e.g. `73_novel_benchEMT`) are full projects under `1_runs/` with their own
-README/LOG/TUTORIAL.
+root. For a new run, copy the closest per-seed dir, bump the `<NN>` index, and adjust
+the variables in its job script (and `NUM_ATOMS_ADD` in `main.py` for a B-doped run).
+**Each a-run also carries a per-run `README.md` + `TUTORIAL.md`** detailing its exact
+treatment and how to reproduce it in isolation. Standalone benchmarks
+(73 `73_novel_benchEMT`, and the heavy-run/benchmark project dirs inside
+`2_analysist/` 71–74) are full projects with their own README/LOG/TUTORIAL.
 
 Outputs per seed: `output/seed_<N>/1_db/db_<N>.db`, `0_result/0_xsf/*.xsf`,
 `output_seed_<N>.txt` (GPAW log), `generated_structures/` — all regenerable.
 
 ## Step 4b — Where analysed results go
 
-Analysed/intermediate results go in **`2_analysist/`** (sibling of `1_runs/`), kept
-separate from raw runs. The repo-root `.gitignore` anticipates
-`0_analy/` (staging), `1_result/` (final), and `main_analyst.ipynb` /
-`main_test.ipynb` (notebooks). Analysis outputs are regenerable/gitignored.
+Analysed results, the **heavy multi-seed run project dirs (71, 72)**, the **benchmark
+output dirs (73, 74)**, and the **per-a-run analysis dirs** all live in **`2_analysist/`**
+(sibling of `1_runs/`), kept separate from raw runs. (The repo-root `.gitignore`
+anticipates an abstract `0_analy/` / `1_result/` / notebook layout, but in this project
+the heavy-run/benchmark and per-run analysis dirs sit directly under `2_analysist/`.)
+Analysis outputs are regenerable/gitignored; the runners + `scripts/` are tracked.
 
 ## Step 4c — Analyse the Fe/MgO heavy-run results (idx 71, 72)
 
 A self-contained analysis runner lives at `2_analysist/run_analysis_indices.py`
 (mirrors the sibling `/home/think/Desktop/research/2_analysist/run_analysis_indices.py`,
 adapted to this project; imports only the `2_analysist/scripts/` deps copied next to
-it). It runs the 3-stage pipeline on the Fe/MgO heavy runs **71** and **72**:
+it). It runs the 3-stage pipeline on the Fe/MgO heavy runs **71** and **72** (13 seeds
+each):
 ① `process_database` (AGOX `.db` → trajectory/xsf/csv, `start_iter=10`),
 ② PCA landscape, ③ Boltzmann probability vs temperature.
 
@@ -104,11 +111,15 @@ cd /home/think/Desktop/research/_run/a_lcbnovel/2_analysist
 # optional: --e-max 0.8 --normalize-density --skip-probability
 ```
 
-The `FOLDER_MAP` points each index at the DB root that holds `seed_*/1_db/`
-(`71_novel_runEWindow/output`, `72_novel_AutoGlob_1eVperAtomAboveGlob/output`).
+The `FOLDER_MAP` points each index at the DB root that holds `seed_*/1_db/`:
+- 71 → `71_novel_runEWindow/dataset` (manual calibrated window `target ≈ −411.6 eV,
+  ΔE = 25 eV`);
+- 72 → `72_novel_AutoGlob_1eVperAtomAboveGlob/dataset` (auto global-min window,
+  1.0 eV/atom above live DB min).
+
 **73/74 are excluded** — their flat `benchmark_results/` layout has no `seed_*` dirs,
 so `process_database` would find nothing; those benchmarks have their own analysis
-(DISCUSSION.md, benchmark_results JSON). Outputs → `0_analy/idx_<N>/`:
+(DISCUSSION.md, benchmark_results JSON). Outputs → each run's `<run>/analysis_indices/`:
 `1_xsf_traj/traj_<N>.traj`, `data_<N>.csv`, `progression_*.png`, `2_im/conf_space.png`,
 `2_im/binding_probability_vs_temperature.png`.
 
@@ -355,7 +366,8 @@ Once real DBs exist, the established downstream pipeline applies:
    actor per CPU); on a small machine this can OOM. On the 64-core HPC node Ray is
    fine and expected.
 7. **Trailing space in run-dir names** — a run dir was accidentally created as
-   `1_runs/3_mgofe_Seed3_Iter700 ` (trailing space). This is error-prone with paths
+   `1_runs/3_mgofe_Seed3_Iter700 ` (trailing space; this predates the a-run rename,
+   i.e. it is now `a3_mgofe_Seed3_Iter700`). This is error-prone with paths
    and scripts; keep run-dir names free of spaces (`<NN>_<descriptor>`). The space
    was removed via `git mv`.
 8. **Keep each run dir self-contained + documented** — always give a run its own
