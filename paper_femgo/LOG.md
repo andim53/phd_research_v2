@@ -374,3 +374,16 @@
 3. Backed up manually-edited PDF: `papers/paper2/supplementary/article_manual_20260924.pdf`. Live `article.pdf` untouched; no PDF rebuild, no PNG re-render.
 
 **Note:** Fig S2 .vesta NOT regenerated (owner did not request; its height-darkening base would shift to the new darker color if re-run — flag for later if wanted).
+
+## Session 18 — 2026-09-26 (inspect-this fold: docs reconciliation + push)
+**Context:** `/inspect-this` audit of paper_femgo (report-only) returned C1/M1/M2/M3/M4. Owner folded C1, M1, M2, M3, M4. Folds applied:
+
+1. **C1 — push pending commits.** Moved `thesis-demo/` → `_archive/` (owner). Pushed `main` → `origin/main` (`f5056c6..f71e21f`); branch now in sync. Both pending commits were paper_femgo-scoped (2dlandau move + README merge).
+2. **M1 — reconcile manuscript number policy.** MANUSCRIPT IS CANONICAL (13 runs / 1,180 configs / peaks 0.079 / 0.259 / seeds 3–15 / stop_16 excl.). Rewrote the stale "frozen as drafted (1,207 / 0.074/0.255)" claims in:
+   - `README.md`: Key-decisions table, §1 data-consistency note, §2 error-handling, §3 Pitfalls.
+   - `papers/paper1/CLAIMS.md` + `papers/paper2/CLAIMS.md`: header now states current values are canonical, draft superseded.
+3. **M2 — reconcile `VERSIONS.md`.** Fixed stale paths after the 2dlandau → `codes/2dlandau` move (`2dlandau/render_structures.py`, `2dlandau/landau_2d/generator.py`) and added the 12 previously-untracked versioned modules (`main.py`, `make_examples.py`, `map_accessible.py`, `real_gpr_check.py`, `smoke_test_2dlandau.py`, `landau_2d/{generator,gpr_training,thermodynamics,utils,wang_landau_2d,__init__}.py`). Verified: script check shows zero orphans both directions.
+4. **M3 — refresh paper_status checkpoints.** Both `paper1/paper_status.md` and `paper2/paper_status.md`: "through Session 8" → "through Session 17" + added a "Sessions 9–17 delta" section (wetting figures, VESTA canonical writer, Fig S1/S2 two-panel tables, 2dlandau move).
+5. **M4 — wetting figures parked as future work.** Added "Future work (not yet claimed, parked)" section to `papers/paper2/CLAIMS.md` documenting that `Fig_wetModes`/`Fig_wetLandscape` + their emit/draw scripts are versioned but not referenced by any `.tex`; they stay future content until a section claims them.
+
+**Result:** docs cross-consistency restored; branch pushed. No manuscript/PDF changes (M1 resolved docs only — the manuscript already carried the correct values). Unrelated dirty `_run/` + `README.md` (research super-repo) left untouched per scope.

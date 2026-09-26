@@ -21,7 +21,7 @@ This project initializes the `scientific-paper-writing` workflow on a finished d
 | Manuscript layout | Full skill layout: `papers/paper1/` with per-section `.tex` |
 | Draft handling | Ported verbatim; structure split only, prose unchanged |
 | Figure code | `_analysist` style (rcParams, iter≥10 filter), all paper + SI figures |
-| Numbers | Manuscript's stated numbers kept as-is; discrepancies flagged in report only |
+| Numbers | Manuscript corrected to current results (13 runs, 1,180 configs, 0.079/0.259) |
 | Fig_flow schematic | Excluded from regeneration (hand-drawn, reused from draft) |
 
 ### VESTA generation (canonical writer)
@@ -32,7 +32,7 @@ Fe #4C9F38 / Mg #FF7F0E / O #D62728, space-filling `MODEL 1`, fractional coords,
 hand-roll a `.vesta`. Example: `write_vesta(atoms, path, "title", darken_fe=True)`.
 
 ### Data-consistency note
-The manuscript states "13 independent runs, 1,180 configurations" (seeds 3–15, `stop_16` excluded), matching the on-disk `data/femgo/` ensemble. Peak positions updated to the regenerated values (0.079 / 0.259 eV/atom). Finite-size data lives in `data/femgo_3x3` and `data/femgo_4x4`.
+The manuscript reports **13 independent runs, 1,180 configurations** (seeds 3–15, `stop_16` excluded), matching the on-disk `data/femgo/` ensemble. Peak positions are the regenerated values (0.079 / 0.259 eV/atom). Finite-size data lives in `data/femgo_3x3` and `data/femgo_4x4`. These current values are canonical; older draft figures (14 runs / 1,207 configs, 0.074/0.255) were superseded when the manuscript was corrected.
 
 ---
 
@@ -89,7 +89,7 @@ paper_femgo/
 ### Error handling & edge cases
 - `stop_16/` (36 configs, iters 1–37) and `mgofe/seed_5` (26 configs) are **truncated** — exclude from pooled statistics; flag in report.
 - Only 2 DOS seeds exist (`dos_seed_3.csv`, `dos_seed_4.csv`) — Fig_dos is limited to these.
-- Manuscript numbers (seeds 0–13, 1,207 configs) are **kept as drafted**; on-disk reality (seeds 3–15, 1,180) is flagged in the report, never silently edited into prose.
+- **Current values are canonical:** the manuscript states seeds 3–15, 13 runs, 1,180 configs, peaks 0.079/0.259 eV/atom, matching on-disk data. The older draft numbers (seeds 0–13, 1,207 configs, 0.074/0.255) were corrected in the manuscript and are no longer authoritative.
 
 ### Provenance
 Draft ported from `tmp/draft_paper/RevTeX 4.2 Manuscript.zip` + `Supplementary.zip` (extracted to `tmp/draft_paper/_extracted/`). Figure PNGs copied from the zips; regenerated versions live in `analysis/figures/`.
@@ -155,5 +155,5 @@ Emitted datasets: `analysis/dataset_femgo.csv`, `dataset_mgofe.csv`, `dataset_fe
 ### Pitfalls
 - **`restore_to_memory()`** must be called before `get_all_candidates()` on an AGOX db, else it returns `[]`.
 - **Truncated runs:** `data/femgo/stop_16` (36 configs) and `data/mgofe/seed_5` (26 configs) are incomplete — exclude from pooled statistics.
-- **Manuscript numbers are frozen:** the draft's "seeds 0–13, 1,207 configs" stays as-is; on-disk reality (seeds 3–15, 1,180) is flagged in the report, not edited into prose.
+- **Manuscript numbers are current:** the draft's "seeds 0–13, 1,207 configs" was corrected to seeds 3–15, 13 runs, 1,180 configs, peaks 0.079/0.259 eV/atom, matching on-disk data.
 - **`eprint` fields with raw URLs** break LaTeX — wrap in `\url{}` (already done in `references.bib`).

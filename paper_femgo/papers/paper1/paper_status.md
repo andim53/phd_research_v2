@@ -8,7 +8,7 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 - SI: SPIE class (`spieman.cls` + `spiejour.bst`).
 - Venue template swap deferred to submission (Phase G).
 
-## Current state (updated 2026-09-21, through Session 8)
+## Current state (updated 2026-09-26, through Session 17)
 - **Manuscript:** ported verbatim into `sections/` (01_abstract … 06_ack_dataavail). Numbers corrected to current results: **13 runs (Run 1–13), 1,180 configs**, peaks **0.079 / 0.259 eV/atom**, `stop_16` excluded. `main.pdf` + `article.pdf` compile cleanly, all citations resolve.
 - **Figures:** paper1 uses the **original draft PNGs** (in `paper1/figures/`) — it preserves draft provenance. The *regenerated/current-style* figures live in `analysis/figures/` and are used by **paper2**.
 - **Figure style:** sans-serif rcParams ACCEPTED (common.py 1.4.0); ticks outward; no inner ticks; PCA scatter s=10 edgecolors=none, YlGnBu_r cmap; density line lw=1.0; peak lines zorder=20 + white shadow; Fig_Prog 13 viridis colors; Fig_mgo 3-panel + rel-E cap 3.7.
@@ -39,6 +39,13 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 - [x] Boltzmann density (∫ρ_B dE = 1) (Session 7e)
 - [ ] Section-by-section review gate (owner) — prose is frozen, so this is a review pass, not re-drafting
 - [ ] Owner decides whether paper1 stays on draft figures or moves to regenerated (`analysis/figures/`)
+
+## Sessions 9–17 delta (added 2026-09-26)
+- **Boltzmann/texture:** true Boltzmann density (∫ρ_B dE=1) agreed; framed black legend boxes applied to Fig_Boltz/Fig_mgo/Fig_dos/Fig_Prog/Fig_convStateDens.
+- **Wetting-mode work (Fig_wetModes, Fig_wetLandscape):** Fe/MgO vs Fe-B/MgO comparison figures built (LOOCV removed per owner; pooled) — **not yet in any `.tex`**, tracked as future work in `paper2/CLAIMS.md`.
+- **VESTA canonical writer:** `codes/vesta_writer.py` (2.0.0) is now the single canonical writer; emitters refactored. Darker ~0.95× color preset is the default.
+- **Fig S1 / S2:** Fig_env .vesta + PNG panels (Fig_env_a/b.png) and Fig_sup PNG panels (Fig_sup_a/b.png) rendered via canonical writer; both supplementary figures are now 2-column line-less tables. Old `Fig_env.png`/`Fig_sup.png` superseded.
+- **2dlandau:** code moved to `codes/2dlandau/` (Session beyond this paper's main figures); `VERSIONS.md` paths reconciled along with the following fixes (inspect-this C1/M1/M2 fold, 2026-09-26).
 
 ## Open decisions / next step
 - [ ] Confirm contribution framing with owner

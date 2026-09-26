@@ -1,6 +1,6 @@
 # CLAIMS.md — paper1 (frozen claim list)
 
-Freeze the claims before drafting. Any new claim requires bumping this file to v2 first. Numbers are **as drafted** (frozen); on-disk discrepancies are flagged in the data-consistency report, not silently edited.
+Freeze the claims before drafting. Any new claim requires bumping this file to v2 first. Numbers reflect the **current manuscript** (13 runs, 1,180 configs, peaks 0.079/0.259 eV/atom, seeds 3–15, `stop_16` excluded) — the older draft figures (14 runs / 1,207 configs, 0.074/0.255) are superseded.
 
 ## One-sentence contribution
 A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-ensemble of surrogate-relaxed Fe/MgO(001) structures, from which KDE state-density + Boltzmann analysis show the island (Volmer-Weber) mode is the thermodynamic ground state and that temperature alone cannot suppress it.

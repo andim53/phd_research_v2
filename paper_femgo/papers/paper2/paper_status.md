@@ -13,7 +13,7 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 - SI: SPIE class (`spieman.cls` + `spiejour.bst`).
 - Venue template swap deferred to submission (Phase G).
 
-## Current state (updated 2026-09-21, through Session 8)
+## Current state (updated 2026-09-26, through Session 17)
 - **Created** as a fork of paper1 (Session 8). Figures referenced directly from `analysis/figures/` (regenerated, current style). Only `Fig_flow` (hand-drawn schematic) is kept locally in `paper2/figures/`.
 - **Prose/numbers:** match current results — 13 runs (Run 1–13), 1,180 configs, peaks 0.079/0.259, true Boltzmann density (∫ρ_B dE = 1).
 - **Compiles:** `main.pdf` (983 KB) + `article.pdf` (1.16 MB) build cleanly; all citations resolve.
@@ -39,6 +39,11 @@ A biased-exploration active-learning (GOFEE/AGOX) framework samples a minimum-en
 - [x] Figures referenced from `analysis/figures/` (regenerated, current style)
 - [ ] Section-by-section review gate (owner) — prose is frozen, so this is a review pass, not re-drafting
 - [ ] Owner inspects the current-results figures
+
+## Sessions 9–17 delta (added 2026-09-26)
+- **Figures rewired:** Fig_env_a/b.png and Fig_sup_a/b.png (VESTA-render two-panel tables) now referenced from `analysis/figures/` in the supplementary, via the canonical `codes/vesta_writer.py` pipeline.
+- **Wetting-mode work (Fig_wetModes, Fig_wetLandscape):** built for Fe/MgO vs Fe-B/MgO (owner-pooled, no LOOCV) — **not yet wired into any `.tex`**; marked future work in this paper's `CLAIMS.md`.
+- **2dlandau:** moved to `codes/2dlandau/`; VERSIONS.md reconciled.
 
 ## Open decisions / next step
 - [ ] Confirm contribution framing with owner

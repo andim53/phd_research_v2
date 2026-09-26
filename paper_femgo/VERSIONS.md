@@ -19,8 +19,19 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/emit_fig_sup_vesta.py` | 2.0.0 | Fig S2 .vesta via canonical writer (darkening on) |
 | `codes/emit_fig_env_vesta.py` | 1.0.0 | Fig S1 (Fig_env) reference structure → .vesta (canonical writer, darkening off) |
 | `codes/emit_fig_env_png.py` | 1.0.0 | Fig S1 panels from VESTA renders: Fig_env_a/b.png (crop→flatten→300 dpi; tracked) |
-| `2dlandau/render_structures.py` | 2.0.0 | 2dlandau .vesta via canonical writer (standard colors, darkening off) |
+| `codes/2dlandau/render_structures.py` | 2.0.0 | 2dlandau .vesta via canonical writer (standard colors, darkening off) |
+| `codes/2dlandau/landau_2d/generator.py` | 1.2.1 | defensive `top_z=max(top_z,z_contact)` clamp (dz-min crash fix) |
+| `codes/2dlandau/landau_2d/gpr_training.py` | 1.0.0 | GPR surrogate training for 2dlandau |
+| `codes/2dlandau/landau_2d/thermodynamics.py` | 1.0.0 | thermodynamics helpers |
+| `codes/2dlandau/landau_2d/utils.py` | 1.0.0 | utility functions (2dlandau) |
+| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.1.0 | 2D Wang-Landau sampler |
+| `codes/2dlandau/landau_2d/__init__.py` | 1.0.0 | package init |
+| `codes/2dlandau/main.py` | 1.0.0 | 2dlandau entry point |
+| `codes/2dlandau/make_examples.py` | 1.0.0 | example-structure generator |
+| `codes/2dlandau/map_accessible.py` | 1.0.0 | accessible-region mapper |
+| `codes/2dlandau/real_gpr_check.py` | 1.0.0 | real-data GPR sanity check |
+| `codes/2dlandau/smoke_test_2dlandau.py` | 1.2.0 | smoke test (2dlandau) |
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |
 | `codes/draw_wet_landscape.py` | 1.4.0 | Fig_wetLandscape two-panel PCA+Δz landscape; flat/island mode dashed lines (white shadow) |
-| `2dlandau/landau_2d/generator.py` | 1.2.1 | defensive `top_z=max(top_z,z_contact)` clamp (dz-min crash fix) |
+| `codes/2dlandau/landau_2d/generator.py` | 1.2.1 | defensive `top_z=max(top_z,z_contact)` clamp (dz-min crash fix) |
