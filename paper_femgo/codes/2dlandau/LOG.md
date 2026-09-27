@@ -90,3 +90,48 @@ Fix (spec v3, approved):
 Verification (real execution): `main.py --mc-steps 1 --reference-steps 5` (no dz
 flags) → `dZ range (film height): [2.080, 5.725]`, `dz_min=2.08`,
 `dz_max=5.724565966311513` in `g_of_E_dZ.json`, exit 0. Crash gone.
+
+## 2026-09-27 — checkpoint / resume (spec 202609271240, v8)
+
+Added crash-resilient checkpointing + resume to the 2D WL sampler per approved
+spec v8 (clarify-me + inspect-me cycle).
+
+Changes:
+- `wang_landau_2d.py` 1.1.0→1.2.0: `state_dict()`/`load_state()` (I/O-free
+  sampler); `run()` gains `checkpoint_interval` + `checkpoint_callback` (fires
+  every N steps and on completion).
+- `main.py` 1.0.0→1.1.0: `--checkpoint-interval` (default 100); auto-resume from
+  `--output/checkpoint.json` (skips reference pass + init); C1 config-header
+  guard (fail-loud on mismatch); M2 target rules (`mc_steps < checkpoint` →
+  abort, `==` → re-derive, `>` → resume); M1 two-file commit (`ensemble.traj`
+  before `checkpoint.json`) + load consistency; m2 per-checkpoint step-tagged
+  thermodynamic snapshots (`*.step{N}.*`); atomic writes (tmp→rename); G4
+  corrupt/unknown-schema checkpoint → warn + fresh.
+- `README.md`: checkpoint/resume section + `--checkpoint-interval` flag row +
+  m6 "one run per output dir" note.
+
+Fixes during the build (AGENTS rule 4):
+1. **Traj format bug.** `ase_write(tmp, structs)` inferred format from the
+   `.tmp` extension → `UnknownFileTypeError`. Fix: `format="traj"` + tmp
+   cleanup on failure.
+2. **Traj unreadable on resume.** The stored agox `BoxConstraint` dict can't be
+   reconstructed by ASE's `dict2constraint` → `ValueError` reading
+   `ensemble.traj`. Fix: write the traj **geometry-only** (strip constraints +
+   calculator) — resume only needs coordinates.
+
+Verification (real execution, agox_v2, real GPR 1297 structs):
+- `py_compile` PASS on `main.py` + `wang_landau_2d.py`.
+- **G1 resume smoke test** (`--checkpoint-interval 2 --relax-steps 10
+  --reference-steps 12`): leg A `--mc-steps 2` → checkpoint at step 2, traj 2
+  frames, `*.step2.*` snapshots; leg B `--mc-steps 4` → `[RESUME] loaded
+  checkpoint at step 2 ... Reference pass + init SKIPPED`, ran 2 more steps,
+  `Total MC steps = 4`; final `step=4`, `rows=4`, `traj frames=4` (readable),
+  `H sum=4` (accumulated, not reset), `accessible=11` (preserved), `ln_g`
+  nonzero cells=4. Both step2 and step4 snapshots present.
+- **M2 branches:** `--mc-steps 1` (< checkpoint 4) → `[ABORT]`, no outputs;
+  `--mc-steps 4` (==) → `[DONE] skipping sampling, re-deriving`; `--mc-steps 4`
+  after step-2 checkpoint (`>`) → resumed 3–4.
+- **C1/G2/G4 guards (unit):** config mismatch → SystemExit abort; corrupt /
+  missing-config / wrong-schema checkpoint → warn + fresh (None).
+
+Version bumps: wang_landau_2d.py 1.1.0→1.2.0; main.py 1.0.0→1.1.0.

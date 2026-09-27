@@ -9,18 +9,27 @@ runs WangLandau2DSampler (generator-based jump proposal -> dZ-ceiling GPR relax
 it the island-height distribution <dZ(T)> and flat<->island free-energy
 difference at a set of temperatures.
 
+Crash-resilient (spec 202609271240, v8): every ``--checkpoint-interval`` MC
+steps it writes ``--output/checkpoint.json`` (full WL state + config header) and
+``--output/ensemble.traj`` (accepted geometries) atomically, plus derivation a
+step-tagged set of thermodynamic outputs (``*.step{N}.*``) for convergence
+analysis. If run is interrupted, re-running with the same ``--output``
+auto-resumes from the last checkpoint and continues the walk (running only the
+remaining steps).
+
 Run with the agox_v2 conda env:
     /home/think/miniconda3/envs/agox_v2/bin/python main.py [options]
 """
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import json
 import os
 import sys
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -38,7 +47,246 @@ from landau_2d.wang_landau_2d import WangLandau2DSampler
 from landau_2d.thermodynamics import reweight_2d, E_min_curve
 
 DATA_DIR = os.path.join(_HERE, "..", "data", "femgo")
+CHECKPOINT_NAME = "checkpoint.json"
+TRAJ_NAME = "ensemble.traj"
+_SCHEMA_VERSION = 1
 
+
+# -- Atomic writes ------------------------------------------------------------
+
+def _atomic_write_bytes(path: Path, data: bytes):
+    """Write bytes atomically (tmp already in target dir, then rename)."""
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=path.name + ".",
+                               suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as f:
+            f.write(data)
+        os.replace(tmp, str(path))
+    except BaseException:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        raise
+
+
+def _atomic_write_json(path: Path, obj):
+    _atomic_write_bytes(path, json.dumps(obj, indent=2).encode("utf-8"))
+
+
+def _atomic_write_traj(sampler, path: Path):
+    """Write the accumulated accepted geometries to a ASE trajectory atomically.
+
+    Geometry-only: constraints (agox ``BoxConstraint``) and the calculator are
+    stripped so the traj round-trips through ``ase.io.read`` (ASE's
+    ``dict2constraint`` cannot reconstruct the agox box). Resume only needs the
+    coordinates; constraints/calc are re-applied fresh during sampling.
+    """
+    from ase.io import write as ase_write
+    structs = sampler.ensemble_structs
+    if not structs:
+        return  # nothing recorded yet — leave any existing traj untouched
+    clean = []
+    for a in structs:
+        c = a.copy()
+        c.set_constraint()
+        c.calc = None
+        clean.append(c)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=path.name + ".",
+                               suffix=".tmp")
+    os.close(fd)
+    try:
+        ase_write(tmp, clean, format="traj")
+        os.replace(tmp, str(path))
+    except BaseException:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        raise
+
+
+# -- Config header / resume guard (spec C1 / G2) ------------------------------
+
+def _config_header(sampler, args, dz_min, dz_max, dataset_dir) -> dict:
+    return {
+        "version": _SCHEMA_VERSION,
+        "n_e_bins": int(sampler.n_e_bins),
+        "n_dz_bins": int(sampler.n_dz_bins),
+        "e_min": float(sampler.e_min),
+        "e_max": float(sampler.e_max),
+        "dz_min": float(dz_min),
+        "dz_max": float(dz_max),
+        "n_atoms": int(sampler.n_atoms),
+        "E_ref": float(sampler.E_ref),
+        "contact_gap": float(args.contact_gap),
+        "dataset": str(Path(dataset_dir).resolve()),
+    }
+
+
+def _try_load_checkpoint(path: Path):
+    """Load a checkpoint file; return (state, header) or None-on-unusable.
+
+    G4: unreadable/invalid/unknown-schema file -> warn and return None (fresh
+    run). C1/G2: a *present but differing* config, or an unsupported schema
+    version -> hard fail via SystemExit (never silently resume).
+    """
+    if not path.exists():
+        return None
+    try:
+        with open(path) as f:
+            ckpt = json.load(f)
+    except (OSError, ValueError) as e:
+        print(f"[WARN] checkpoint {path} unreadable ({e}); starting a fresh "
+              f"run (it will be overwritten).")
+        return None
+    header = ckpt.get("config")
+    state = ckpt.get("state")
+    if not isinstance(header, dict) or not isinstance(state, dict):
+        print(f"[WARN] checkpoint {path} has no config/state; starting a fresh "
+              f"run (it will be overwritten).")
+        return None
+    if header.get("version") != _SCHEMA_VERSION:
+        print(f"[WARN] checkpoint {path} uses schema v{header.get('version')} "
+              f"!= expected v{_SCHEMA_VERSION}; starting a fresh run.")
+        return None
+    return state, header
+
+
+def _validate_config(header, sampler, args, dz_min, dz_max, dataset_dir):
+    """C1: refuse to resume on any config mismatch against the current args."""
+    expected = _config_header(sampler, args, dz_min, dz_max, dataset_dir)
+    for k in expected:
+        if header.get(k) != expected[k]:
+            raise SystemExit(
+                f"[ABORT] checkpoint config mismatch on '{k}': checkpoint has "
+                f"{header.get(k)!r}, current run has {expected[k]!r}. "
+                "Refusing to resume. Remove the checkpoint or use a clean "
+                "--output.")
+
+
+# -- Outputs ------------------------------------------------------------------
+
+def _emit_outputs(sampler, args, out: Path, tag=None):
+    """Reweight + write checkpoint/traj (M1 order) and the derived outputs.
+
+    ``tag``: None -> canonical (final) filenames; int N -> step-tagged
+    ``*.step{N}.*`` provisional convergence snapshots (spec m2).
+    """
+    suffix = "" if tag is None else f".step{tag}"
+    name = str(tag) if tag is not None else f"final(step {sampler.step})"
+    print(f"\n  [emit] step-tag={name}: reweighting + writing outputs...")
+
+    e_centers, dz_centers, ln_g, H, accessible = sampler.g_of_E_dZ()
+    temps = [float(t) for t in args.temperatures.split(",") if t.strip()]
+    rows = reweight_2d(
+        sampler.ensemble_rows, ln_g, e_centers, dz_centers,
+        sampler.e_min, sampler.e_width, sampler.dz_min, sampler.dz_width,
+        sampler.n_atoms, temps, flat_island_spread_aa=args.flat_island_spread)
+
+    # 1) geometries FIRST, then checkpoint.json = authoritative commit (M1)
+    traj_path = out / TRAJ_NAME
+    _atomic_write_traj(sampler, traj_path)
+    cp_path = out / CHECKPOINT_NAME
+    _atomic_write_json(cp_path, {
+        "config": _config_header(sampler, args, sampler.dz_min,
+                                 sampler.dz_max, args.dataset),
+        "state": sampler.state_dict(),
+    })
+
+    # 2) derived outputs (g / delta-z / ensemble + PNGs), step-tagged or canonical
+    dzc, emin = E_min_curve(ln_g, e_centers, dz_centers, accessible)
+    payload = {
+        "e_min": sampler.e_min, "e_max": sampler.e_max,
+        "n_e_bins": sampler.n_e_bins,
+        "e_edges": (sampler.e_min + sampler.e_width *
+                    np.arange(sampler.n_e_bins + 1)).tolist(),
+        "dz_min": sampler.dz_min, "dz_max": sampler.dz_max,
+        "n_dz_bins": sampler.n_dz_bins,
+        "dz_edges": (sampler.dz_min + sampler.dz_width *
+                     np.arange(sampler.n_dz_bins + 1)).tolist(),
+        "ln_g": ln_g.tolist(),
+        "H": H.tolist(),
+        "accessible": accessible.tolist(),
+        "E_min_dZ": emin.tolist(),
+        "n_bins_visited": int((H > 0).sum()),
+        "n_accessible": int(accessible.sum()),
+        "flatness_criterion": args.flatness_criterion,
+        "switched_to_1_over_t": sampler.switched_to_1_over_t,
+        "stages": sampler.stage,
+        "step": sampler.step,
+        "rng": args.rng,
+        "temperatures_K": temps,
+        "n_atoms": sampler.n_atoms,
+    }
+    _atomic_write_json(out / f"g_of_E_dZ{suffix}.json", payload)
+
+    with open(out / f"g_of_E_dZ{suffix}.csv", "w") as f:
+        f.write("E_center_eV_per_atom,dZ_center_A,i,j,ln_g,H,visited\n")
+        for i in range(sampler.n_e_bins):
+            for j in range(sampler.n_dz_bins):
+                f.write(f"{e_centers[i]:.6f},{dz_centers[j]:.6f},{i},{j},"
+                        f"{ln_g[i, j]:.6f},{H[i, j]},"
+                        f"{int(accessible[i, j])}\n")
+    print(f"  Wrote g_of_E_dZ{suffix}.csv")
+
+    with open(out / f"delta_z_distribution{suffix}.csv", "w") as f:
+        f.write("T_K,mean_dZ_A,std_dZ_A,dF_flat_island_eV\n")
+        for r in rows:
+            f.write(f"{r['T_K']:.1f},{r['mean_dZ_A']:.6f},"
+                    f"{r['std_dZ_A']:.6f},{r['dF_flat_island_eV']:.6f}\n")
+    print(f"  Wrote delta_z_distribution{suffix}.csv")
+
+    ens = []
+    for (E_total, E_rel, dz, i, j, lab) in sampler.ensemble_rows:
+        ens.append({"E_total_eV": E_total, "E_rel_eV_per_atom": E_rel,
+                    "dZ_A": dz, "E_bin": i, "dZ_bin": j, "label": lab})
+    _atomic_write_json(out / f"ensemble{suffix}.json", ens)
+    print(f"  Wrote ensemble{suffix}.json ({len(ens)} accepted structures)")
+
+    _plot_heatmap(e_centers, dz_centers, ln_g, accessible, out, suffix)
+    _plot_dz_distribution(rows, out, suffix)
+
+    print("Island-height distribution <dZ(T)>:")
+    print("  T(K)     <dZ>(A)    std(A)   dF_flat-island(eV)")
+    for r in rows:
+        print(f"  {r['T_K']:6.1f}  {r['mean_dZ_A']:9.4f}  "
+              f"{r['std_dZ_A']:7.4f}  {r['dF_flat_island_eV']:9.4f}")
+    return rows
+
+
+def _plot_heatmap(e_centers, dz_centers, ln_g, accessible, out, suffix=""):
+    import matplotlib.pyplot as plt
+    ln = np.where(accessible, ln_g, np.nan)
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+    im = ax.imshow(ln.T, aspect="auto", origin="lower",
+                   extent=[e_centers[0], e_centers[-1],
+                           dz_centers[0], dz_centers[-1]],
+                   cmap="viridis")
+    ax.set_xlabel(r"$(E - E_\mathrm{min})/N$  (eV/atom)")
+    ax.set_ylabel(r"$\Delta Z$  (\AA)")
+    ax.set_title(r"$\ln g_{\mathrm{IS}}(E, \Delta Z)$")
+    fig.colorbar(im, ax=ax, label=r"$\ln g$")
+    fig.tight_layout()
+    fig.savefig(str(out / f"g_of_E_dZ{suffix}.png"), dpi=150)
+    plt.close(fig)
+    print(f"  Wrote g_of_E_dZ{suffix}.png")
+
+
+def _plot_dz_distribution(rows, out, suffix=""):
+    import matplotlib.pyplot as plt
+    T = [r["T_K"] for r in rows]
+    mean = [r["mean_dZ_A"] for r in rows]
+    std = [r["std_dZ_A"] for r in rows]
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.errorbar(T, mean, yerr=std, fmt="o-", capsize=3)
+    ax.set_xlabel("T (K)")
+    ax.set_ylabel(r"$\langle \Delta Z \rangle$  (\AA)")
+    ax.set_title(r"Island height vs temperature")
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(str(out / f"delta_z_distribution{suffix}.png"), dpi=150)
+    plt.close(fig)
+    print(f"  Wrote delta_z_distribution{suffix}.png")
+
+
+# -- Driver -------------------------------------------------------------------
 
 def main():
     p = argparse.ArgumentParser(
@@ -77,7 +325,10 @@ def main():
     p.add_argument("--reference-steps", type=int, default=2000,
                    help="Torbrügge initial pass length (accessible-cell map)")
     p.add_argument("--mc-steps", type=int, default=50000,
-                   help="WL MC steps")
+                   help="WL MC steps (absolute total target; on resume only the "
+                        "remaining steps are run)")
+    p.add_argument("--checkpoint-interval", type=int, default=100,
+                   help="Save a checkpoint every N MC steps (default 100)")
     p.add_argument("--temperatures", default="100,200,300,500,1000",
                    help="Comma-separated temperatures (K)")
     p.add_argument("--output", default=os.path.join(_HERE, "output"),
@@ -140,121 +391,68 @@ def main():
         rng=np.random.default_rng(args.rng + 1),
     )
 
-    # --- 4. Run --------------------------------------------------------------
-    sampler.initialize()
-    sampler.run(n_steps=args.mc_steps,
-                progress_every=max(args.check_interval, 1))
-
-    # --- 5. Reweight -> <dZ(T)>, dF -----------------------------------------
-    temps = [float(t) for t in args.temperatures.split(",") if t.strip()]
-    e_centers, dz_centers, ln_g, H, accessible = sampler.g_of_E_dZ()
-    rows = reweight_2d(
-        sampler.ensemble_rows, ln_g, e_centers, dz_centers,
-        args.e_min, sampler.e_width, dz_min, sampler.dz_width,
-        sampler.n_atoms, temps, flat_island_spread_aa=args.flat_island_spread)
-
-    # --- 6. Save (all machine-readable; PNGs derived) ------------------------
+    # --- 4. Resume or fresh run ---------------------------------------------
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
+    cp_path = out / CHECKPOINT_NAME
 
-    # g_of_E_dZ.json — full 2D result
-    dzc, emin = E_min_curve(ln_g, e_centers, dz_centers, accessible)
-    payload = {
-        "e_min": args.e_min, "e_max": args.e_max, "n_e_bins": args.n_e_bins,
-        "e_edges": (args.e_min + sampler.e_width * np.arange(args.n_e_bins + 1)).tolist(),
-        "dz_min": dz_min, "dz_max": dz_max,
-        "n_dz_bins": args.n_dz_bins,
-        "dz_edges": (dz_min + sampler.dz_width * np.arange(args.n_dz_bins + 1)).tolist(),
-        "ln_g": ln_g.tolist(),
-        "H": H.tolist(),
-        "accessible": accessible.tolist(),
-        "E_min_dZ": emin.tolist(),
-        "n_bins_visited": int((H > 0).sum()),
-        "n_accessible": int(accessible.sum()),
-        "flatness_criterion": args.flatness_criterion,
-        "switched_to_1_over_t": sampler.switched_to_1_over_t,
-        "stages": sampler.stage,
-        "rng": args.rng,
-        "temperatures_K": temps,
-        "n_atoms": sampler.n_atoms,
-    }
-    with open(out / "g_of_E_dZ.json", "w") as f:
-        json.dump(payload, f, indent=2)
-    print(f"\n  Wrote g_of_E_dZ.json")
+    ckpt = _try_load_checkpoint(cp_path)
+    if ckpt is not None:
+        state, header = ckpt
+        _validate_config(header, sampler, args, dz_min, dz_max, args.dataset)
+        sampler.load_state(state)
+        # rebuild accepted geometries from ensemble.traj (M1: traj-first/commit)
+        traj_path = out / TRAJ_NAME
+        if traj_path.exists():
+            from ase.io import read as ase_read
+            structs = list(ase_read(str(traj_path), index=":"))
+            n_rows = len(sampler.ensemble_rows)
+            if len(structs) > n_rows:
+                structs = structs[:n_rows]  # commit point = checkpoint rows
+            elif len(structs) < n_rows:
+                print(f"[WARN] ensemble.traj has {len(structs)} structures but "
+                      f"checkpoint has {n_rows} rows (inconsistent pair); scalar "
+                      f"rows are authoritative, geometry will be short.")
+            sampler.ensemble_structs = structs
+        else:
+            sampler.ensemble_structs = []
+        loaded_step = sampler.step
+        print(f"\n[RESUME] loaded checkpoint at step {loaded_step}; "
+              f"{len(sampler.ensemble_rows)} accepted structures, "
+              f"{int(sampler.accessible.sum())} accessible cells. "
+              f"Reference pass + init SKIPPED.")
+    else:
+        print("\n[FRESH RUN] no usable checkpoint; running reference pass + init.")
+        sampler.initialize()
+        loaded_step = 0
 
-    # g_of_E_dZ.csv — long-form dump
-    with open(out / "g_of_E_dZ.csv", "w") as f:
-        f.write("E_center_eV_per_atom,dZ_center_A,i,j,ln_g,H,visited\n")
-        for i in range(args.n_e_bins):
-            for j in range(args.n_dz_bins):
-                f.write(f"{e_centers[i]:.6f},{dz_centers[j]:.6f},{i},{j},"
-                        f"{ln_g[i, j]:.6f},{H[i, j]},"
-                        f"{int(accessible[i, j])}\n")
-    print("  Wrote g_of_E_dZ.csv")
+    # --- 5. Run --------------------------------------------------------------
+    # M2: --mc-steps is an absolute total target.
+    remaining = args.mc_steps - loaded_step
+    if remaining < 0:
+        raise SystemExit(
+            f"[ABORT] --mc-steps {args.mc_steps} < checkpoint step "
+            f"{loaded_step}. Refusing to run. Raise --mc-steps or remove the "
+            f"checkpoint / use a clean --output.")
 
-    # delta_z_distribution.csv
-    with open(out / "delta_z_distribution.csv", "w") as f:
-        f.write("T_K,mean_dZ_A,std_dZ_A,dF_flat_island_eV\n")
-        for r in rows:
-            f.write(f"{r['T_K']:.1f},{r['mean_dZ_A']:.6f},"
-                    f"{r['std_dZ_A']:.6f},{r['dF_flat_island_eV']:.6f}\n")
-    print("  Wrote delta_z_distribution.csv")
+    if remaining > 0:
+        print(f"[RUN] sampling {remaining} more steps toward "
+              f"--mc-steps={args.mc_steps} "
+              f"(checkpoint every {args.checkpoint_interval} steps)...")
+        def _checkpoint_cb(s):
+            _emit_outputs(s, args, out, tag=s.step)
+        sampler.run(n_steps=remaining,
+                    progress_every=max(args.check_interval, 1),
+                    checkpoint_interval=args.checkpoint_interval,
+                    checkpoint_callback=_checkpoint_cb)
+    else:
+        print(f"[DONE] --mc-steps {args.mc_steps} already reached by the "
+              f"checkpoint (step {loaded_step}); skipping sampling, re-deriving "
+              f"final outputs from the loaded state.")
 
-    # ensemble.json — reweightable dump of accepted structures
-    ens = []
-    for (E_total, E_rel, dz, i, j, lab) in sampler.ensemble_rows:
-        ens.append({"E_total_eV": E_total, "E_rel_eV_per_atom": E_rel,
-                    "dZ_A": dz, "E_bin": i, "dZ_bin": j, "label": lab})
-    with open(out / "ensemble.json", "w") as f:
-        json.dump(ens, f, indent=2)
-    print(f"  Wrote ensemble.json ({len(ens)} accepted structures)")
-
-    # --- 7. Derived plots ----------------------------------------------------
-    _plot_heatmap(e_centers, dz_centers, ln_g, accessible, out)
-    _plot_dz_distribution(rows, out)
-
-    print("\nIsland-height distribution <dZ(T)>:")
-    print("  T(K)     <dZ>(A)    std(A)   dF_flat-island(eV)")
-    for r in rows:
-        print(f"  {r['T_K']:6.1f}  {r['mean_dZ_A']:9.4f}  "
-              f"{r['std_dZ_A']:7.4f}  {r['dF_flat_island_eV']:9.4f}")
-
-    print(f"\nDone. Results written to {out}")
-
-
-def _plot_heatmap(e_centers, dz_centers, ln_g, accessible, out):
-    import matplotlib.pyplot as plt
-    ln = np.where(accessible, ln_g, np.nan)
-    fig, ax = plt.subplots(figsize=(6, 4.5))
-    im = ax.imshow(ln.T, aspect="auto", origin="lower",
-                   extent=[e_centers[0], e_centers[-1],
-                           dz_centers[0], dz_centers[-1]],
-                   cmap="viridis")
-    ax.set_xlabel(r"$(E - E_\mathrm{min})/N$  (eV/atom)")
-    ax.set_ylabel(r"$\Delta Z$  (\AA)")
-    ax.set_title(r"$\ln g_{\mathrm{IS}}(E, \Delta Z)$")
-    fig.colorbar(im, ax=ax, label=r"$\ln g$")
-    fig.tight_layout()
-    fig.savefig(out / "g_of_E_dZ.png", dpi=150)
-    plt.close(fig)
-    print("  Wrote g_of_E_dZ.png")
-
-
-def _plot_dz_distribution(rows, out):
-    import matplotlib.pyplot as plt
-    T = [r["T_K"] for r in rows]
-    mean = [r["mean_dZ_A"] for r in rows]
-    std = [r["std_dZ_A"] for r in rows]
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.errorbar(T, mean, yerr=std, fmt="o-", capsize=3)
-    ax.set_xlabel("T (K)")
-    ax.set_ylabel(r"$\langle \Delta Z \rangle$  (\AA)")
-    ax.set_title(r"Island height vs temperature")
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(out / "delta_z_distribution.png", dpi=150)
-    plt.close(fig)
-    print("  Wrote delta_z_distribution.png")
+    # --- 6. Final (canonical) outputs ---------------------------------------
+    _emit_outputs(sampler, args, out, tag=None)
+    print(f"\nDone. Results (canonical + per-checkpoint snapshots) in {out}")
 
 
 if __name__ == "__main__":

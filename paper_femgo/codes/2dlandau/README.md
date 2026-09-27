@@ -77,10 +77,40 @@ pjsub j_2dlandau.sh
 | `--check-interval` | `5000` | Flatness check interval. |
 | `--n-stages-standard` | `14` | Halvings before 1/t switch. |
 | `--reference-steps` | `2000` | Torbrügge initial pass (accessible-cell map). |
-| `--mc-steps` | `50000` | WL MC steps. |
+| `--mc-steps` | `50000` | WL MC steps (**absolute** total target; on resume only the remaining steps run). |
+| `--checkpoint-interval` | `100` | Save a checkpoint every N MC steps (+ on completion). |
 | `--temperatures` | `100,200,300,500,1000` | Reweighting temperatures (K). |
 | `--output` | `./output` | Output dir. |
 | `--rng` | `42` | Seed. |
+
+#### Checkpoint / resume (crash-resilience)
+
+Every `--checkpoint-interval` MC steps (and on completion) the run writes, into
+`--output`, atomically (write tmp → rename, `ensemble.traj` **before**
+`checkpoint.json` as the commit point):
+
+- `checkpoint.json` — full WL state (`ln_g`, `H`, `accessible`, WL-phase
+  counters, `step`, `ensemble_rows`) **plus** a config header (`n_e_bins`,
+  `n_dz_bins`, e/dz ranges, `n_atoms`, `E_ref`, `contact_gap`, dataset path,
+  schema `version`).
+- `ensemble.traj` — the accepted structures' geometry (ASE trajectory).
+- A step-tagged thermodyn-derived snapshot `g_of_E_dZ.step{N}.*`,
+  `delta_z_distribution.step{N}.csv`, `ensemble.step{N}.json`, `*.step{N}.png`
+  — a **provisional** convergence trajectory vs step (canonical *untagged*
+  files at completion hold the final converged result).
+
+**Resume:** re-running the same command with the same `--output` auto-detects
+`checkpoint.json`, skips the reference pass + init, and continues the walk from
+the saved `step`. `--mc-steps` is an **absolute** target: re-run with a larger
+value to extend (e.g. ran to 100, re-run `--mc-steps 200` → walks 101–200).
+Rules: `--mc-steps < checkpoint step` → **abort** (no outputs); `==` → skip
+sampling, re-derive outputs; `>` → resume.
+
+**One run per output dir.** Each `--output` must host at most one run at a time —
+two runs writing to the same dir race `checkpoint.json`/`ensemble.traj` and
+corrupt them. Use a separate `--output` per run (e.g. per job slot). A stale
+`checkpoint.json` is also what triggers resume, so to *start over* on the same
+dir, delete the checkpoint/traj (or use a fresh `--output`).
 
 ## 4. Algorithm (2D generalisation of d_landauPlus)
 

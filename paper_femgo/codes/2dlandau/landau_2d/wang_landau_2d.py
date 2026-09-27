@@ -28,7 +28,7 @@ volume) — see the spec Assumption 1. Ensemble is reweightable.
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 from typing import List, Optional
 
@@ -286,7 +286,54 @@ class WangLandau2DSampler:
         self.ensemble_rows.append(
             (E, float(rel), float(dz), i, j, self.label(atoms)))
 
-    def run(self, n_steps: int, progress_every: int = 5000):
+    # -- Checkpointing (spec 202609271240, v8) ------------------------------
+
+    def state_dict(self) -> dict:
+        """Serialisable walk state as a plain JSON-able dict (no geometry).
+
+        Geometries live in ``ensemble.traj`` (written by the caller); this dict
+        carries only the scalar/array state needed to continue the WL walk.
+        Rows are emitted as lists (JSON-compatible); ``load_state`` restores
+        them as tuples.
+        """
+        return {
+            "ln_g": self.ln_g.tolist(),
+            "H": self.H.tolist(),
+            "accessible": self.accessible.astype(int).tolist(),
+            "bin_current": [int(x) for x in self.bin_current],
+            "stage": int(self.stage),
+            "ln_f": float(self.ln_f),
+            "switched_to_1_over_t": bool(self.switched_to_1_over_t),
+            "step_at_switch": int(self.step_at_switch),
+            "step": int(self.step),
+            "ensemble_rows": [list(r) for r in self.ensemble_rows],
+        }
+
+    def load_state(self, d: dict):
+        """Restore walk state from a ``state_dict`` (e.g. a loaded checkpoint).
+
+        Restores accumulated ``ln_g``/``H``/``accessible`` (never reset), the
+        WL phase counters, ``step``, and the recorded scalar ensemble rows.
+        ``ensemble_structs`` (geometries) is *not* part of the dict; the caller
+        rebuilds it from ``ensemble.traj``.
+        """
+        self.ln_g = np.asarray(d["ln_g"], dtype=float).reshape(
+            (self.n_e_bins, self.n_dz_bins))
+        self.H = np.asarray(d["H"], dtype=int).reshape(
+            (self.n_e_bins, self.n_dz_bins))
+        self.accessible = np.asarray(d["accessible"], dtype=bool).reshape(
+            (self.n_e_bins, self.n_dz_bins))
+        self.bin_current = tuple(int(x) for x in d["bin_current"])
+        self.stage = int(d["stage"])
+        self.ln_f = float(d["ln_f"])
+        self.switched_to_1_over_t = bool(d["switched_to_1_over_t"])
+        self.step_at_switch = int(d["step_at_switch"])
+        self.step = int(d["step"])
+        self.ensemble_rows = [tuple(r) for r in d["ensemble_rows"]]
+
+    def run(self, n_steps: int, progress_every: int = 5000,
+            checkpoint_interval: Optional[int] = None,
+            checkpoint_callback=None):
         print(f"\nWL-2D: {n_steps} MC steps, grid {self.n_e_bins}x"
               f"{self.n_dz_bins}, ln_f_init=1.0")
         print("=" * 60)
@@ -313,11 +360,21 @@ class WangLandau2DSampler:
             self._visit(*self.bin_current)
             self._maybe_refine()
 
+            # periodic checkpoint (spec v8: every checkpoint_interval steps)
+            if checkpoint_interval is not None and \
+                    checkpoint_callback is not None and \
+                    self.step % checkpoint_interval == 0:
+                checkpoint_callback(self)
+
             if self.step % progress_every == 0:
                 visited = int((self.H > 0).sum())
                 n_acc = int(self.accessible.sum())
                 print(f"  step {self.step:9d}  stage {self.stage:2d}  "
                       f"ln_f {self.ln_f:.3e}  visited {visited}/{n_acc}")
+
+        # completion checkpoint (spec v8)
+        if checkpoint_interval is not None and checkpoint_callback is not None:
+            checkpoint_callback(self)
 
         print(f"\nTotal MC steps = {self.step}, stages reached = {self.stage}")
         print(f"  accepted ensemble size = {len(self.ensemble_structs)}")
