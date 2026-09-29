@@ -28,11 +28,12 @@ volume) — see the spec Assumption 1. Ensemble is reweightable.
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 from typing import List, Optional
 
 import numpy as np
+import time
 from ase import Atoms
 
 from agox.utils.constraints.box_constraint import BoxConstraint
@@ -59,7 +60,8 @@ class WangLandau2DSampler:
         flatness_criterion: float = 0.80,
         check_interval: int = 5000,
         n_stages_standard: int = 14,
-        reference_steps: int = 2000,
+        reference_steps: int = 500,
+        progress_interval: int = 10,
         rng: np.random.Generator = None,
     ):
         self.gpr = gpr
@@ -99,6 +101,7 @@ class WangLandau2DSampler:
         self.check_interval = int(check_interval)
         self.n_stages_standard = int(n_stages_standard)
         self.reference_steps = int(reference_steps)
+        self.progress_interval = int(progress_interval)
         self.rng = rng or np.random.default_rng()
         self.ln_g = np.zeros((self.n_e_bins, self.n_dz_bins))
         self.H = np.zeros((self.n_e_bins, self.n_dz_bins), dtype=int)
@@ -155,6 +158,19 @@ class WangLandau2DSampler:
         """Label by Fe z-spread (flat monolayer < threshold <= island)."""
         return "flat" if self.fe_z_spread(atoms) < self.flat_island_spread_aa \
             else "island"
+
+    @staticmethod
+    def _fmt_dur(seconds: float) -> str:
+        """Human-readable wall time (s / m+s / h+m+s) for elapsed/ETA lines."""
+        s = float(seconds)
+        if s < 60:
+            return f"{s:.1f}s"
+        if s < 3600:
+            m, s = divmod(s, 60)
+            return f"{int(m)}m{s:04.1f}s"
+        h, rem = divmod(s, 3600)
+        m, s = divmod(rem, 60)
+        return f"{int(h)}h{int(m):02d}m{s:04.1f}s"
 
     # -- Relax ----------------------------------------------------------------
 
@@ -256,19 +272,32 @@ class WangLandau2DSampler:
         """Torbrügge-style initial pass: map the accessible (E, dZ) region."""
         print(f"[WL2D] reference pass: {self.reference_steps} proposals to map "
               f"accessible (E, dZ) cells...")
-        for _ in range(self.reference_steps):
+        t0 = time.perf_counter()
+        total_s = 0.0
+        for n in range(1, self.reference_steps + 1):
+            t_start = time.perf_counter()
             _, e_bin, dz_bin, rel, _ = self._propose()
+            total_s += time.perf_counter() - t_start
             if e_bin >= 0 and np.isfinite(rel):
                 self.accessible[e_bin, dz_bin] = True
+            if n % self.progress_interval == 0 or n == self.reference_steps:
+                avg_ms = total_s / n * 1e3
+                elapsed = time.perf_counter() - t0
+                eta_s = avg_ms * 1e-3 * (self.reference_steps - n)
+                print(f"  ref {n}/{self.reference_steps} | "
+                      f"{avg_ms:8.3f} ms/proposal | "
+                      f"{self._fmt_dur(elapsed):>9s} | ETA "
+                      f"{self._fmt_dur(eta_s):>9s}", flush=True)
         n_acc = int(self.accessible.sum())
         print(f"[WL2D] accessible cells mapped: {n_acc} / "
-              f"{self.n_e_bins * self.n_dz_bins}")
+              f"{self.n_e_bins * self.n_dz_bins}", flush=True)
 
     def initialize(self):
         """Set ``cur`` to the first accepted structure's bin."""
         self._reference_pass()
         # walker starts at the first proposal that lands in an accessible cell
-        for _ in range(100):
+        t0 = time.perf_counter()
+        for k in range(100):
             trial, e_bin, dz_bin, rel, dz = self._propose()
             if e_bin >= 0 and np.isfinite(rel):
                 self.bin_current = (e_bin, dz_bin)
@@ -276,6 +305,8 @@ class WangLandau2DSampler:
                 print(f"[WL2D] init: rel E = {rel:.4f} eV/atom (E bin "
                       f"{e_bin}), dZ = {dz:.3f} A (dZ bin {dz_bin}) "
                       f"({self.label(trial)})")
+                print(f"  init walker selected after {k + 1} proposal(s) in "
+                      f"{self._fmt_dur(time.perf_counter() - t0)}", flush=True)
                 return
         raise RuntimeError("Could not initialise the walker inside the "
                            "accessible region.")
@@ -331,15 +362,23 @@ class WangLandau2DSampler:
         self.step = int(d["step"])
         self.ensemble_rows = [tuple(r) for r in d["ensemble_rows"]]
 
-    def run(self, n_steps: int, progress_every: int = 5000,
+    def run(self, n_steps: int, progress_every: Optional[int] = None,
             checkpoint_interval: Optional[int] = None,
             checkpoint_callback=None):
+        interval = (self.progress_interval if progress_every is None
+                    else progress_every)
         print(f"\nWL-2D: {n_steps} MC steps, grid {self.n_e_bins}x"
               f"{self.n_dz_bins}, ln_f_init=1.0")
         print("=" * 60)
+        t0 = time.perf_counter()
+        total_s = 0.0
+        done = 0
         for _ in range(n_steps):
             self.step += 1
+            done += 1
+            t_start = time.perf_counter()
             trial, e_bin, dz_bin, rel, dz = self._propose()
+            total_s += time.perf_counter() - t_start
 
             # extrapolation / out-of-range / never-visited -> revisit cur
             reject = (e_bin < 0 or not np.isfinite(rel)
@@ -366,17 +405,25 @@ class WangLandau2DSampler:
                     self.step % checkpoint_interval == 0:
                 checkpoint_callback(self)
 
-            if self.step % progress_every == 0:
+            if self.step % interval == 0:
                 visited = int((self.H > 0).sum())
                 n_acc = int(self.accessible.sum())
+                avg_ms = total_s / done * 1e3
+                elapsed = time.perf_counter() - t0
+                eta_s = avg_ms * 1e-3 * (n_steps - done)
                 print(f"  step {self.step:9d}  stage {self.stage:2d}  "
-                      f"ln_f {self.ln_f:.3e}  visited {visited}/{n_acc}")
+                      f"ln_f {self.ln_f:.3e}  visited {visited}/{n_acc}  "
+                      f"{avg_ms:8.3f} ms/step  "
+                      f"{self._fmt_dur(elapsed):>9s}  "
+                      f"ETA {self._fmt_dur(eta_s):>9s}", flush=True)
 
         # completion checkpoint (spec v8)
         if checkpoint_interval is not None and checkpoint_callback is not None:
             checkpoint_callback(self)
 
         print(f"\nTotal MC steps = {self.step}, stages reached = {self.stage}")
+        print(f"  MC walk wall time = "
+              f"{self._fmt_dur(time.perf_counter() - t0)} (this segment)")
         print(f"  accepted ensemble size = {len(self.ensemble_structs)}")
         print(f"  accessible cells = {int(self.accessible.sum())}")
         if self.switched_to_1_over_t:

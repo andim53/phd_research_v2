@@ -24,9 +24,9 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/2dlandau/landau_2d/gpr_training.py` | 1.0.0 | GPR surrogate training for 2dlandau |
 | `codes/2dlandau/landau_2d/thermodynamics.py` | 1.0.0 | thermodynamics helpers |
 | `codes/2dlandau/landau_2d/utils.py` | 1.0.0 | utility functions (2dlandau) |
-| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.2.0 | + state_dict/load_state + run checkpoint_interval/callback (spec 202609271240) |
+| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.3.0 | + ref/MC step+timing progress logging, `--progress-interval` knob, `_fmt_dur` (spec 202609291759) |
 | `codes/2dlandau/landau_2d/__init__.py` | 1.0.0 | package init |
-| `codes/2dlandau/main.py` | 1.1.0 | + checkpoint/resume + --checkpoint-interval (spec 202609271240) |
+| `codes/2dlandau/main.py` | 1.2.0 | + --progress-interval (default 10); --reference-steps default 2000→500 (spec 202609291759) |
 | `codes/2dlandau/make_examples.py` | 1.0.0 | example-structure generator |
 | `codes/2dlandau/map_accessible.py` | 1.0.0 | accessible-region mapper |
 | `codes/2dlandau/real_gpr_check.py` | 1.0.0 | real-data GPR sanity check |

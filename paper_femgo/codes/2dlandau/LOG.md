@@ -135,3 +135,36 @@ Verification (real execution, agox_v2, real GPR 1297 structs):
   missing-config / wrong-schema checkpoint → warn + fresh (None).
 
 Version bumps: wang_landau_2d.py 1.1.0→1.2.0; main.py 1.0.0→1.1.0.
+
+## 2026-09-29 — reference/MC step + timing progress logging (spec 202609291759)
+
+Added progress + wall-time logging to the reference pass and the MC walk per
+approved spec v2 (clarify-me + inspect-me cycle; folded C1, M1, M2, M3).
+
+Changes:
+- `wang_landau_2d.py` 1.2.0→1.3.0: `_reference_pass()` emits a
+  `ref <n>/<N> | <avg> ms/proposal | elapsed | ETA` line every
+  `progress_interval` proposals, with a `n == reference_steps` fallback so it
+  always fires ≥1 line (C1); `initialize()` adds a one-line
+  `init walker selected after k proposal(s) in <dur>` report (M1); `run()` gains
+  a `progress_interval` knob (default 10) and augments the step line with
+  `<avg> ms/step | elapsed | ETA`, plus an end-of-run `MC walk wall time`
+  summary. All timing prints use `flush=True` (HPC stdout is block-buffered, M2);
+  `elapsed` = current-process segment, `ETA = avg × remaining` (M3). New
+  `_fmt_dur` human-duration helper.
+- `main.py` 1.1.0→1.2.0: `--progress-interval` (default 10) + plumb to sampler;
+  `--reference-steps` default 2000→500.
+
+Verification (real execution, agox_v2):
+- `py_compile` clean on all modules.
+- **smoke_test_2dlandau.py → PASS.** `ref` lines every 10 proposals (300 total),
+  `init walker selected` one-liner, MC `step 1000/2000` lines with
+  `ms/step | elapsed | ETA`, `MC walk wall time` summary. Physics unchanged.
+- **main.py end-to-end** (`--reference-steps 5 --mc-steps 2 --progress-interval 10`,
+  real GPR 1297 structs): C1 fallback emitted exactly one `ref 5/5` line
+  (interval 10 > ref 5); init one-liner; `MC walk wall time = 6.2s`; outputs
+  written. exit 0.
+
+Note: `main.py` default `--dataset` (`codes/data/femgo`) is stale — the real
+data is `paper_femgo/data/femgo`; runs must pass `--dataset` explicitly (or fix
+`DATA_DIR`). Pre-existing, unrelated to this change.

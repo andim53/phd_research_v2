@@ -23,7 +23,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import json
@@ -322,8 +322,11 @@ def main():
     p.add_argument("--flatness-criterion", type=float, default=0.80)
     p.add_argument("--check-interval", type=int, default=5000)
     p.add_argument("--n-stages-standard", type=int, default=14)
-    p.add_argument("--reference-steps", type=int, default=2000,
+    p.add_argument("--reference-steps", type=int, default=500,
                    help="Torbrügge initial pass length (accessible-cell map)")
+    p.add_argument("--progress-interval", type=int, default=10,
+                   help="Emit progress/timing lines every N proposals (reference "
+                        "pass) or N steps (MC walk); default 10")
     p.add_argument("--mc-steps", type=int, default=50000,
                    help="WL MC steps (absolute total target; on resume only the "
                         "remaining steps are run)")
@@ -388,6 +391,7 @@ def main():
         check_interval=args.check_interval,
         n_stages_standard=args.n_stages_standard,
         reference_steps=args.reference_steps,
+        progress_interval=args.progress_interval,
         rng=np.random.default_rng(args.rng + 1),
     )
 
@@ -442,7 +446,7 @@ def main():
         def _checkpoint_cb(s):
             _emit_outputs(s, args, out, tag=s.step)
         sampler.run(n_steps=remaining,
-                    progress_every=max(args.check_interval, 1),
+                    progress_every=args.progress_interval,
                     checkpoint_interval=args.checkpoint_interval,
                     checkpoint_callback=_checkpoint_cb)
     else:
