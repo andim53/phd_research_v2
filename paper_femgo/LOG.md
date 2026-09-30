@@ -387,3 +387,19 @@
 5. **M4 — wetting figures parked as future work.** Added "Future work (not yet claimed, parked)" section to `papers/paper2/CLAIMS.md` documenting that `Fig_wetModes`/`Fig_wetLandscape` + their emit/draw scripts are versioned but not referenced by any `.tex`; they stay future content until a section claims them.
 
 **Result:** docs cross-consistency restored; branch pushed. No manuscript/PDF changes (M1 resolved docs only — the manuscript already carried the correct values). Unrelated dirty `_run/` + `README.md` (research super-repo) left untouched per scope.
+
+## Session 19 — 2026-09-30 (relax-steps 100→300 + genkai standalone runner)
+**Goal (owner, via /clarify-me spec `202609301624-2dlandau-genkai-relax300-runner.md`, approved):** raise the `--relax-steps` default 100→300 (so a GPR quench reaches a basin minimum = inherent-structure DOS, addressing the `output_test` inspection finding that ~68% of non-flat quenches need ≥100 steps and max-natural-dZ needs ~184) and provision a new standalone HPC runner for genkai.
+
+**Actions taken:**
+1. `codes/2dlandau/main.py` 1.2.0→1.3.0: `--relax-steps` default 100→300, with a help text documenting the calibration rationale.
+2. Doc-sync: `codes/2dlandau/README.md` — production-command, CLI-table, and constrained-relax notes updated to 300.
+3. `VERSIONS.md`: `codes/2dlandau/main.py` row → 1.3.0 with rationale.
+4. Created standalone `hpc_runs/2dlandau_genkai/` (genkai node, mirrors `hpc_runs/2dlandau`): `main.py` (canonical v1.3.0), `landau_2d/` package (verbatim), committed `data/femgo/` (13 seed DBs, 7.6M), `job_2dlandau.sh` (pjsub `a-batch`/64 cores/elapse 120h/`gpaw_env`; relax 300), `README.md`, `.gitignore`.
+5. Verified: `py_compile` clean on canonical + genkai main.py and the whole `landau_2d/` package; default 300 confirmed in genkai main.py.
+
+**Results:** canonical default now 300; genkai standalone runner provisioned and compile-checked. No other params changed (mc 100000, reference 5000, temps 298,573,623,673,773, `--use-ray`, rng 42).
+
+**Not in scope:** existing `hpc_runs/2dlandau`/`2dlandau_ckpt`/`hpc_results/4_2dlandau` copies unchanged; generator reachability (C2) fix not done here; no HPC submission.
+
+**Open items:** [ ] commit Session 19.

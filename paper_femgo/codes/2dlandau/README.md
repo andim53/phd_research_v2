@@ -55,7 +55,7 @@ $PY real_gpr_check.py
 # Production run (dz-min/max default to [contact gap, natural island height])
 $PY main.py --dataset ../data/femgo \
     --n-e-bins 35 --e-min 0.0 --e-max 0.7 \
-    --relax-steps 100 --reference-steps 5000 --mc-steps 100000 \
+    --relax-steps 300 --reference-steps 5000 --mc-steps 100000 \
     --temperatures 100,200,300,500,1000 --output ./output --rng 42
 
 # HPC
@@ -70,7 +70,7 @@ pjsub j_2dlandau.sh
 | `--e-reject` | `5×e_max` | Rel E above which a trial is rejected as GPR extrapolation. |
 | `--n-dz-bins` | `12` | ΔZ (film height) bins. |
 | `--dz-min` / `--dz-max` | auto | ΔZ film-height range (Å). Default: contact gap / natural-island height (measured from the global-min structure). |
-| `--relax-steps` | `100` | GPR BFGS steps per trial (GO-run cap). |
+| `--relax-steps` | `300` | GPR BFGS steps per trial. 300 = calibration floor so a quench reaches `fmax=0.05` (inherent-structure DOS); ~68% of non-flat quenches need ≥100, max-natural-dZ ~184. |
 | `--flat-island-spread` | `1.0` | Fe z-spread threshold (Å) for flat vs island labelling (label uses z-spread, not film height). |
 | `--contact-gap` | `2.08` | Bottom-Fe adsorption height above MgO (Å). |
 | `--flatness-criterion` | `0.80` | WL flatness (2D, over visited cells). |
@@ -127,7 +127,7 @@ dir, delete the checkpoint/traj (or use a fresh `--output`).
    **z-ceiling BoxConstraint** on Fe at `z_substrate_top + ΔZ`. Because the
    range is capped at the natural island height, the ceiling always binds — the
    Fe want to be taller than any target below the natural island, so `max(z_Fe)`
-   presses against the ceiling and ΔZ = target holds. `fmax=0.05, steps=100`.
+   presses against the ceiling and ΔZ = target holds. `fmax=0.05, steps=300`.
 4. **2D WL accept:** bin relaxed (E, ΔZ); accept `ln(r) < ln_g[cur] − ln_g[trial]`;
    `f → f/2` flatness then 1/t (Belardinelli–Pereyra). Flatness over *visited*
    cells only; a Torbrügge initial pass maps the accessible (E, ΔZ) region and
