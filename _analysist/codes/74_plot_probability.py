@@ -1,1 +1,0 @@
-min(relative_eb)

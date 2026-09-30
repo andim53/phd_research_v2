@@ -10,7 +10,7 @@ Governing rules for any AI agent working in this project. Read this first.
 
 ## Operating rules
 1. **Clarify before every step.** Confirm task/approach/outputs with the owner before writing/running code. Batch independent questions.
-2. **Ground in the repo.** Read `README.AI.md` + relevant code before acting. Never invent files/symbols/APIs. Read-gating: read only `README.AI.md` + code unless the owner grants access to other notes.
+2. **Ground in the repo.** Read `README.md` + relevant code before acting. Never invent files/symbols/APIs. Read-gating: read only `README.md` + code unless the owner grants access to other notes.
 3. **Keep deliverables current.** After any code change, append to `LOG.md` and update `VERSIONS.md` (append-only, never rewrite). Other notes updated only on explicit owner command.
 4. **Log is append-only.** Never rewrite/delete prior entries; append corrections that explicitly reverse earlier records.
 5. **Verify before claiming done.** Run compile/smoke checks; report real output.

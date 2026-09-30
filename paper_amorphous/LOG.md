@@ -218,6 +218,23 @@ lines + hardcoded TRAJ; no dangling refs to the removed template.
 
 **Time:** 2026-09-21 ~21:00–21:10 JST
 
+## Session 3 — 2026-09-30 (doc parity with paper_femgo: fold README.AI + TUTORIAL into README)
+**Owner request (clarified):** bring the project's `.md` files to `paper_femgo`'s format — restructure the docs to femgo's single-README convention, folding `README.AI.md` (agent spec) + `TUTORIAL.md` (reproduction) into `README.md`, and delete those two files. AGENTS.md + VERSIONS.md were already in femgo's format.
+
+**Actions taken:**
+1. Rebuilt `README.md` on paper_femgo's 3-section template (1 Overview/human, 2 Agent spec, 3 Tutorial), folding in all content from the old `README.AI.md` (Purpose, file layout, data model for `data/17_PPt`, SHC workflow, provenance) and `TUTORIAL.md` (reproduction steps, figure conventions, pitfalls), plus the original README's systems/scope/status and the newer `hpc_runs/` structure.
+2. Updated `AGENTS.md` rule 2 to read `README.md` instead of `README.AI.md` (read-gating target changed, since README.AI.md no longer exists).
+3. Deleted `README.AI.md` + `TUTORIAL.md` (content folded — no loss).
+4. `VERSIONS.md` unchanged (already matches femgo's table format).
+
+**Result (file set is now femgo-parity):** `AGENTS.md`, `LOG.md`, `README.md`, `VERSIONS.md`.
+
+**Verified:** all femgo top-level docs accounted for in README; no dangling `README.AI.md`/`TUTORIAL.md` references (checked AGENTS rule 2); VERSIONS table intact.
+
+**Open items:** (unchanged) SHC calc in progress; codes/ analysis scripts to be written; commit Milestone.
+
+**Time:** 2026-09-30 JST
+
 
 
 

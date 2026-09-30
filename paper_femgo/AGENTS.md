@@ -20,8 +20,8 @@ Governing rules for any AI agent working in this project. Read this first.
 9. **Ask permission before accessing other notes/projects.**
 
 ## Paper-writing rules (scientific-paper-writing skill)
-- **LaTeX-native, one `.tex` per section** in `papers/paper1/sections/`; `main.tex` `\input`s them. Block-and-wait review gate between sections.
-- **Checkpoint/resume:** always update `papers/paper1/paper_status.md` before ending a session; a fresh session reads it first.
+- **LaTeX-native, one `.tex` per section** in `papers/<paperN>/sections/`; `main.tex` `\input`s them. Block-and-wait review gate between sections.
+- **Checkpoint/resume:** always update `papers/<paperN>/paper_status.md` before ending a session; a fresh session reads it first.
 - **Citations:** never hallucinate; fetch/verify programmatically; mark `[CITATION NEEDED]`. `\cite{key}` must match `.bib` key byte-for-byte.
 - **Claims:** every number traces to a source file; figures/results come from `analysis/` by reference. `CLAIMS.md` freezes the claim list; drafting must not introduce claims outside it.
 - **Reuse rule:** produce paper-needed graphs in `codes/`/`analysis/`, then reference them; do not duplicate.
