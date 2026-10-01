@@ -710,3 +710,33 @@ lines + hardcoded TRAJ; no dangling refs to the removed template.
 - NEXT: after Methods approval → draft full 04_results (crystallinity MT-1..MT-4).
 
 **Time:** 2026-10-01 JST
+
+## Session 4y — 2026-10-01 (M-section intro: mermaid flowchart source of truth)
+**Owner request:** update the M-section intro statement — reflect prior changes (sections emptied) and that the mermaid flowchart now comes from this CLAIMS.
+
+**Edits (CLAIMS.md, v3):**
+1. M-section heading: "pipeline that 03_methods.tex must trace to" → "pipeline that the manuscript must trace to".
+2. Intro blockquote: now says the manuscript sections and the mermaid flowchart (M-1b, in this file) trace to the method claims; the mermaid flowchart lives in this CLAIMS (M-1b) and is the source of truth (old `codes/methods_flowchart.mmd` figure removed).
+
+**Decorations / pending:**
+- [ ] Commit this edit.
+- NEXT: after Methods approval → draft full 04_results (crystallinity MT-1..MT-4).
+
+**Time:** 2026-10-01 JST
+
+## Session 4z — 2026-10-01 (fix stale references in CLAIMS)
+**Owner request:** inspect CLAIMS for problems like before (stale references to emptied/removed files).
+
+**Found + fixed (5 stale references):**
+1. Header (line 3): "`sections/03_methods.tex` and Fig. 1 must trace to them" → "the manuscript and the mermaid flowchart (M-1b) must trace to them"; also "M-1..M-2" → "M-1..M-2, M-1b..M-1d".
+2. M-1 Source: dropped `codes/methods_flowchart.mmd` (figure removed) + `sections/03_methods.tex` (emptied) → `data/17_PPt/*/main.py`.
+3. M-1c Source: `sections/03_methods.tex`, `sections/04_results.tex` (emptied) → `data/17_PPt/*/seed_*/1_db/db_*.db`.
+4. M-1d Source: `sections/03_methods.tex` (emptied) → `data/17_PPt/1_plus0cell/2_20P/seed_0/1_db/db_0.db`.
+5. Sign-off: "03_methods.tex must trace to them" → "the manuscript must trace to them".
+- Kept the intentional note (line 48) that `codes/methods_flowchart.mmd` figure was removed.
+
+**Decorations / pending:**
+- [ ] Commit this edit.
+- NEXT: after Methods approval → draft full 04_results (crystallinity MT-1..MT-4).
+
+**Time:** 2026-10-01 JST

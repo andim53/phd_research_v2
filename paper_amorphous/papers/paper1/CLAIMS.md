@@ -1,6 +1,6 @@
 # CLAIMS.md — paper1 (frozen claim list)
 
-Freeze the claims before drafting. Any new claim requires bumping this file to v3 first. Numbers must trace to a source file; figures/results come from `analysis/` by reference. **v3 adds the Method claims (M-1..M-2); `sections/03_methods.tex` and Fig. 1 must trace to them.**
+Freeze the claims before drafting. Any new claim requires bumping this file to v3 first. Numbers must trace to a source file; figures/results come from `analysis/` by reference. **v3 adds the Method claims (M-1..M-2, M-1b..M-1d); the manuscript and the mermaid flowchart (M-1b) must trace to them.**
 
 ## One-sentence contribution — CONFIRMED (owner, Session 4; reframed Session 4b/4c/4d; **reference-dependence reframe Session 4t**)
 We present a cheap, **reference-dependent** route to model amorphous alloys: a GOFEE/AGOX global-optimization screening (Oganov-style fingerprint descriptor) enumerates the low-energy amorphous basin around a chosen crystalline reference, and the Steinhardt q6 crystalline-fraction order parameter confirms amorphization. Applied to Pt(P) — whose fcc reference is its only stable phase — the screening finds 20–30 at% P as the onset of structural amorphization, saturating in concentration and modestly increasing under +3/+5% cell expansion. The reference-dependence is the key feature: for polymorphic hosts (Ta, W) the reference state is a physical choice, and we demonstrate the method from the **α (bcc) reference** while experiments stabilize the metastable **β** phase (SI-1).
@@ -40,10 +40,12 @@ We present a cheap, **reference-dependent** route to model amorphous alloys: a G
 - **Source:** `analysis/cna_rdf/*/cna_rdf.json`.
 - **Verified:** yes.
 
-## Method claims (M) — pipeline that 03_methods.tex must trace to
+## Method claims (M) — pipeline that the manuscript must trace to
 > These freeze the *methodological* claims (how the results were produced), so
-> `sections/03_methods.tex` and Fig. 1 (`codes/methods_flowchart.mmd`) trace to
-> them the same way MT-1..MT-3 trace to `analysis/`. Any new method claim bumps
+> the manuscript sections and the mermaid flowchart (M-1b, in this file) trace
+> to them the same way MT-1..MT-3 trace to `analysis/`. The mermaid flowchart
+> lives in this CLAIMS (M-1b) and is the source of truth (the old
+> `codes/methods_flowchart.mmd` figure was removed). Any new method claim bumps
 > this file to v3 first.
 
 ### M-1 — Global-optimization search (GOFEE/AGOX)
@@ -77,8 +79,7 @@ We present a cheap, **reference-dependent** route to model amorphous alloys: a G
   linear-combination-of-atomic-orbitals basis, double-zeta-polarized, PBE
   functional, single Γ-centered k-point, Fermi–Dirac smearing 0.05 eV, forces
   converged to 0.05 eV/Å).
-- **Source:** `codes/methods_flowchart.mmd`; `sections/03_methods.tex`;
-  `data/17_PPt/*/main.py`;
+- **Source:** `data/17_PPt/*/main.py`;
   \cite{gofee2020,gofee2022,agox2022,oganov2009,gpaw2010,madanchi2024,biswas2017,artrith2018}.
 
 ### M-1b — Iteration dependence of the search (timeline)
@@ -155,7 +156,7 @@ flowchart TD
   systems (~10³ first-principles calcs), and far below the tens of thousands
   of reference calculations typically needed to train a general
   machine-learned potential for melt-quench.
-- **Source:** `sections/03_methods.tex`, `sections/04_results.tex`;
+- **Source:** `data/17_PPt/*/seed_*/1_db/db_*.db`;
   \cite{meltquench2026,artrith2018,nahas2016,activemlp2020}.
 
 ### M-1d — Exploration-to-exploitation transition
@@ -167,7 +168,7 @@ flowchart TD
   iterations; the acquisition value correlates strongly with the DFT energy
   (Pearson r ≈ 0.8), confirming the surrogate selects low-energy candidates
   rather than noise.
-- **Source:** `sections/03_methods.tex`; \cite{gofee2022}.
+- **Source:** `data/17_PPt/1_plus0cell/2_20P/seed_0/1_db/db_0.db`; \cite{gofee2022}.
 
 ### M-2 — Crystallinity verification (XRD + Steinhardt q4/q6 + partial radial distribution functions)
 - **Claim:** Amorphization is quantified by two complementary metrics — XRD
@@ -214,5 +215,5 @@ flowchart TD
 - ✅ Contribution framing confirmed (reframed Session 4b: cheap screening→SHC pipeline; **Session 4t: FLAPW SHC dropped entirely** — contribution is the reference-dependent screening → structural verification pipeline).
 - ✅ Experimental anchoring + refs approved (Shashank/Yang/Shi verified, added to `references.bib`).
 - ✅ Claim list confirmed (MT-1..MT-3 reviewed; capped numbers + reference-dependence reframe approved).
-- ✅ Method claims M-1..M-2 confirmed (v3; 03_methods.tex must trace to them).
+- ✅ Method claims M-1..M-2 confirmed (v3; the manuscript must trace to them).
 - ✅ SI-1 confirmed (reference-dependence + polymorphism; α-reference demonstration, β experimental contrast; 5 refs verified, thome1984 removed).
