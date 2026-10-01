@@ -17,13 +17,18 @@ analysis. If run is interrupted, re-running with the same ``--output``
 auto-resumes from the last checkpoint and continues the walk (running only the
 remaining steps).
 
+Inherent-structure definition (spec 202610012247): a structure only counts as
+an inherent structure if its FINAL max-force <= ``--fmax`` (default 0.1 eV/A,
+the surrogate noise floor) after the relax steps. Stalled quenches (leftover
+force above fmax) are re-generated up to 4 attempts, then dropped.
+
 Run with the agox_v2 conda env:
     /home/think/miniconda3/envs/agox_v2/bin/python main.py [options]
 """
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import argparse
 import json
@@ -116,6 +121,7 @@ def _config_header(sampler, args, dz_min, dz_max, dataset_dir) -> dict:
         "n_atoms": int(sampler.n_atoms),
         "E_ref": float(sampler.E_ref),
         "contact_gap": float(args.contact_gap),
+        "fmax": float(sampler.fmax),
         "dataset": str(Path(dataset_dir).resolve()),
     }
 
@@ -214,6 +220,9 @@ def _emit_outputs(sampler, args, out: Path, tag=None):
         "rng": args.rng,
         "temperatures_K": temps,
         "n_atoms": sampler.n_atoms,
+        "fmax": float(sampler.fmax),
+        "n_stalled_trials": int(sampler.n_stalled_trials),
+        "n_proposals_dropped": int(sampler.n_proposals_dropped),
     }
     _atomic_write_json(out / f"g_of_E_dZ{suffix}.json", payload)
 
@@ -248,6 +257,9 @@ def _emit_outputs(sampler, args, out: Path, tag=None):
     for r in rows:
         print(f"  {r['T_K']:6.1f}  {r['mean_dZ_A']:9.4f}  "
               f"{r['std_dZ_A']:7.4f}  {r['dF_flat_island_eV']:9.4f}")
+    print(f"  stall stats: {sampler.n_stalled_trials} stalled trials, "
+          f"{sampler.n_proposals_dropped} proposals dropped "
+          f"(fmax {sampler.fmax})")
     return rows
 
 
@@ -315,6 +327,13 @@ def main():
                    help="GPR BFGS steps per trial (default 300; calibrated so a "
                         "quench reaches fmax=0.05 — ~68% of non-flat quenches need "
                         ">=100 steps, max-natural-dZ needs ~184)")
+    p.add_argument("--fmax", type=float, default=0.1,
+                   help="Max-force threshold (eV/A) used BOTH as the BFGS relax "
+                        "convergence target AND as the stall/inherent-structure "
+                        "threshold (default 0.1, the surrogate noise floor). A "
+                        "structure only counts as an inherent structure if its "
+                        "final max-force <= fmax; stalled quenches are "
+                        "re-generated (up to 4 attempts) then dropped.")
     p.add_argument("--flat-island-spread", type=float, default=1.0,
                    help="Fe z-spread threshold (A) for flat vs island labelling, "
                         "default 1.0")
@@ -388,6 +407,7 @@ def main():
         dz_min=dz_min,
         dz_max=dz_max,
         relax_steps=args.relax_steps,
+        fmax=args.fmax,
         flat_island_spread_aa=args.flat_island_spread,
         flatness_criterion=args.flatness_criterion,
         check_interval=args.check_interval,

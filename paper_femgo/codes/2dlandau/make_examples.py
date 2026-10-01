@@ -21,7 +21,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import os
@@ -54,7 +54,7 @@ def _strip_constraints(atoms):
     return a
 
 
-def _relax(gpr, gen, atoms, dz_target, relax_steps):
+def _relax(gpr, gen, atoms, dz_target, relax_steps, fmax):
     """Relax under the dZ ceiling; return (relaxed, [E0, E1, ...] per step)."""
     z_floor = gen.substrate_top_z
     z_ceil = z_floor + dz_target
@@ -76,7 +76,7 @@ def _relax(gpr, gen, atoms, dz_target, relax_steps):
     try:
         opt = ase.optimize.BFGS(r, logfile=None)
         opt.attach(_cb)
-        opt.run(fmax=0.05, steps=relax_steps)
+        opt.run(fmax=fmax, steps=relax_steps)
     except Exception as e:
         print(f"  [warn] relax failed for h={dz_target:.3f}: {e}")
     return r, energies
@@ -88,6 +88,8 @@ def main():
                     help="number of example film-height targets (default 6)")
     ap.add_argument("--relax-steps", type=int, default=50,
                     help="BFGS steps per structure (default 50)")
+    ap.add_argument("--fmax", type=float, default=0.1,
+                    help="BFGS convergence target (eV/A), default 0.1")
     args = ap.parse_args()
 
     os.makedirs(_OUTDIR, exist_ok=True)
@@ -119,7 +121,7 @@ def main():
               f"(spread {gen.fe_z_spread(trial):.3f}), "
               f"E = {gpr.predict_energy(trial):.3f} eV")
 
-        relaxed, es = _relax(gpr, gen, trial, h, args.relax_steps)
+        relaxed, es = _relax(gpr, gen, trial, h, args.relax_steps, args.fmax)
         traj[h] = es
         h_rel = gen.fe_film_height(relaxed)
         E_rel = gpr.predict_energy(relaxed)

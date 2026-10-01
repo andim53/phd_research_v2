@@ -24,13 +24,13 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/2dlandau/landau_2d/gpr_training.py` | 1.0.0 | GPR surrogate training for 2dlandau |
 | `codes/2dlandau/landau_2d/thermodynamics.py` | 1.0.0 | thermodynamics helpers |
 | `codes/2dlandau/landau_2d/utils.py` | 1.0.0 | utility functions (2dlandau) |
-| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.3.0 | + ref/MC step+timing progress logging, `--progress-interval` knob, `_fmt_dur` (spec 202609291759) |
+| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.4.0 | + configurable `fmax` (default 0.1) as BFGS target + stall/inherent-structure threshold; final fmax recomputed from ending geometry; 4-attempt stall-drop in `_propose`; stall counters in state (spec 202610012247) |
 | `codes/2dlandau/landau_2d/__init__.py` | 1.0.0 | package init |
-| `codes/2dlandau/main.py` | 1.3.0 | --relax-steps default 100→300 (quench reaches fmax=0.05; ~68% non-flat need ≥100, max-dZ ~184) |
-| `codes/2dlandau/make_examples.py` | 1.0.0 | example-structure generator |
-| `codes/2dlandau/map_accessible.py` | 1.0.0 | accessible-region mapper |
+| `codes/2dlandau/main.py` | 1.4.0 | + `--fmax` (default 0.1) threaded to sampler; fmax in config header; stall counters in output JSON (spec 202610012247) |
+| `codes/2dlandau/make_examples.py` | 1.1.0 | + `--fmax` (default 0.1) replaces hardcoded 0.05 as BFGS target |
+| `codes/2dlandau/map_accessible.py` | 1.1.0 | + `--fmax` (default 0.1) replaces hardcoded 0.05 as BFGS target |
 | `codes/2dlandau/real_gpr_check.py` | 1.0.0 | real-data GPR sanity check |
-| `codes/2dlandau/smoke_test_2dlandau.py` | 1.2.0 | smoke test (2dlandau) |
+| `codes/2dlandau/smoke_test_2dlandau.py` | 1.3.0 | + stall-drop G1(a) check (tight fmax → n_proposals_dropped>0); `_relax` returns (relaxed, final_fmax) |
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |
 | `codes/draw_wet_landscape.py` | 1.4.0 | Fig_wetLandscape two-panel PCA+Δz landscape; flat/island mode dashed lines (white shadow) |

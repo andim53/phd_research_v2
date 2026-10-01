@@ -168,3 +168,53 @@ Verification (real execution, agox_v2):
 Note: `main.py` default `--dataset` (`codes/data/femgo`) is stale — the real
 data is `paper_femgo/data/femgo`; runs must pass `--dataset` explicitly (or fix
 `DATA_DIR`). Pre-existing, unrelated to this change.
+
+## 2026-10-01 — configurable fmax + stall-drop inherent-structure definition (spec 202610012247, v8)
+
+Added a configurable max-force threshold that defines what counts as an
+inherent structure, per approved spec v8 (clarify-me + inspect-me cycle; folded
+C1, M1, M2, m1, m2, G1(a), G2, G3, G4).
+
+Changes:
+- `landau_2d/wang_landau_2d.py` 1.3.0→1.4.0: new `fmax` ctor param (default
+  0.1); `relax_steps` ctor default 100→300 (matches CLI). `_relax` now runs
+  `opt.run(fmax=self.fmax, ...)` and **always recomputes** the final max force
+  from the ending geometry (`np.abs(get_forces()).max()` — ASE has no
+  `maxforce` attr; FixAtoms zeroes the fixed substrate, so this is the free-Fe
+  residual, same convention as `probe_optionA_fmax.py`). `_propose` tries up to
+  4 attempts (1 + 3 retries, each a fully fresh draw); a structure only counts
+  as an inherent structure if its final max-force <= fmax; stalled quenches
+  increment `n_stalled_trials` and retry; if all stall the proposal is dropped
+  (`n_proposals_dropped` += 1, returns a dropped marker so callers hit the
+  existing reject path). Stall counters persisted in `state_dict`/`load_state`
+  (graceful `.get` for old checkpoints). m1: WARN if `fmax < 0.02` or the
+  reference-pass drop rate > 50%.
+- `main.py` 1.3.0→1.4.0: `--fmax` flag (default 0.1) threaded to the sampler;
+  `fmax` added to the config header (pre-change checkpoints now abort on resume
+  — expected); stall counters written into `g_of_E_dZ*.json` and printed in
+  the emit summary.
+- `make_examples.py` 1.0.0→1.1.0, `map_accessible.py` 1.0.0→1.1.0: `--fmax`
+  flag (default 0.1) replaces the hardcoded `fmax=0.05` as the BFGS target
+  (flag value only — no stall/regenerate logic, per G2).
+
+Verification (real execution, agox_v2, real GPR 1297 structs):
+- `py_compile` clean on all four edited files.
+- **smoke_test_2dlandau.py → PASS** (1.2.0→1.3.0, Ray-free fake GPR): main run
+  visits 30 cells, 1179 accepted structures, T-dependent <dZ(T)> (4.50→2.62 Å),
+  dF changes sign — physics intact. **G1(a) stall-drop check** (fmax=1e-6):
+  39 stalled trials, 4 proposals dropped, no crash; m1 WARN fired for
+  `--fmax < 0.02`.
+- **G1(a) real-GPR run BLOCKED (environment, not code):** `main.py --fmax
+  0.005` failed at Ray startup ("current node timed out during startup") because
+  the user's own nested-sampling run (`main.py --n-live 8 --n-iterations 20
+  --output /tmp/ns_smoke`, PID 2287212) is actively holding the Ray instance.
+  Not killed (user's process). The stall-drop logic is verified Ray-free via
+  the smoke test; the real-GPR G1(a) run can be re-run once that process
+  finishes.
+- Empirical M1 probe (`probe_inbetween_fmax.py`, 5 trials × 300 steps @ fmax
+  0.1): flat side (dZ 2.5/3.0) converges 5/5; island side (3.5–5.5) stalls
+  40–80% but every height keeps 1–3 passing trials, so no region empties.
+
+Version bumps: wang_landau_2d.py 1.3.0→1.4.0; main.py 1.3.0→1.4.0;
+make_examples.py 1.0.0→1.1.0; map_accessible.py 1.0.0→1.1.0;
+smoke_test_2dlandau.py 1.2.0→1.3.0.

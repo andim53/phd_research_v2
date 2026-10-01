@@ -22,13 +22,17 @@ energy is:
 Full-rank analytic forces (no argmax/argmin singularity, no quartic barrier),
 so BFGS stays well-conditioned.
 
+Also verifies the stall-drop inherent-structure logic (spec 202610012247) in a
+Ray-free way: a deliberately tight fmax forces stalled quenches, and the run
+must complete without crashing with n_proposals_dropped > 0.
+
 Run:
     /home/think/miniconda3/envs/agox_v2/bin/python smoke_test_2dlandau.py
 """
 
 from __future__ import annotations
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -144,21 +148,25 @@ def main():
             ok = False
     print("[SMOKE] generator realises target film height exactly")
 
-    # --- (2) relax descends in energy, ceiling holds max Fe z -----------------
+    # --- (2) relax descends in energy, ceiling holds max Fe z ----------------
     trial = gen(3.0)
     E_before = fake.predict_energy(trial)
-    relaxed = sampler._relax(trial, 3.0)
+    relaxed, final_fmax = sampler._relax(trial, 3.0)
     E_after = fake.predict_energy(relaxed)
     zmax_after = relaxed.positions[gen.fe_indices, 2].max()
     z_ceil = gen.substrate_top_z + 3.0
     print(f"[SMOKE] relax: E {E_before:.4f} -> {E_after:.4f} eV, "
-          f"max z {zmax_after:.3f} <= ceil {z_ceil:.3f}")
+          f"max z {zmax_after:.3f} <= ceil {z_ceil:.3f}, "
+          f"final fmax {final_fmax:.4f}")
     if E_after > E_before + 1e-9:
         print("[SMOKE] FAIL: relaxation raised the energy")
         ok = False
     if zmax_after > z_ceil + 1e-3:
         print(f"[SMOKE] FAIL: ceiling leaked, max z {zmax_after:.3f} > "
               f"{z_ceil:.3f}")
+        ok = False
+    if not np.isfinite(final_fmax):
+        print("[SMOKE] FAIL: final fmax not finite")
         ok = False
 
     # --- (3) short WL run: 2D histogram non-trivial --------------------------
@@ -192,6 +200,26 @@ def main():
         ok = False
     if not all(np.isfinite(r["dF_flat_island_eV"]) for r in rows):
         print("[SMOKE] FAIL: non-finite dF_flat_island")
+        ok = False
+
+    # --- (5) stall-drop inherent-structure logic (G1(a), Ray-free) -----------
+    # A deliberately tight fmax forces stalled quenches; the run must complete
+    # without crashing and report n_proposals_dropped > 0.
+    tight = WangLandau2DSampler(
+        gpr=fake, generator=gen, E_ref=-2.0, n_atoms=6,
+        n_e_bins=20, e_min=0.0, e_max=0.7, e_reject=None,
+        n_dz_bins=10, dz_min=dz_min, dz_max=dz_max,
+        relax_steps=30, fmax=1e-6, flat_island_spread_aa=1.0,
+        flatness_criterion=0.80, check_interval=300,
+        n_stages_standard=3, reference_steps=20,
+        rng=np.random.default_rng(11),
+    )
+    tight.initialize()
+    tight.run(n_steps=10, progress_every=10)
+    print(f"[SMOKE] stall-drop: {tight.n_stalled_trials} stalled trials, "
+          f"{tight.n_proposals_dropped} proposals dropped (fmax 1e-6)")
+    if tight.n_proposals_dropped <= 0:
+        print("[SMOKE] FAIL: tight fmax did not produce any dropped proposal")
         ok = False
 
     print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))

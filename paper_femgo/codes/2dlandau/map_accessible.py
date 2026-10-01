@@ -17,7 +17,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import os
@@ -42,6 +42,8 @@ def main():
                     help="number of proposals (default 120)")
     ap.add_argument("--relax-steps", type=int, default=100,
                     help="BFGS steps per proposal (default 100, production)")
+    ap.add_argument("--fmax", type=float, default=0.1,
+                    help="BFGS convergence target (eV/A), default 0.1")
     ap.add_argument("--n-e-bins", type=int, default=35)
     ap.add_argument("--e-max", type=float, default=0.7)
     ap.add_argument("--n-dz-bins", type=int, default=12)
@@ -82,7 +84,7 @@ def main():
         r.calc = gpr
         try:
             opt = ase.optimize.BFGS(r, logfile=None)
-            opt.run(fmax=0.05, steps=args.relax_steps)
+            opt.run(fmax=args.fmax, steps=args.relax_steps)
         except Exception as e:
             print(f"  relax failed: {e}")
         return r

@@ -18,6 +18,13 @@ joint DOS g_IS(E, dZ). Flatness is a 2D check over *visited* cells only
 (Torbrügge reference-histogram style): an initial pass maps the accessible
 (E, dZ) region, and proposals landing in never-visited cells are rejected.
 
+A structure qualifies as an inherent structure only if its FINAL max-force
+<= ``fmax`` after the relax steps (spec 202610012247). A quench that runs out
+of steps with leftover force above ``fmax`` is *stalled* — it has not reached
+its basin minimum and is not counted. Up to 4 attempts per proposal (1 initial
++ 3 retries, each a fully fresh draw); if all stall, the proposal is dropped
+and the WL walk simply revisits the current bin.
+
 Wang-Landau acceptance ``ln(r) < ln_g[cur] - ln_g[trial]``, standard f->f/2
 flatness, then the 1/t tail (Belardinelli & Pereyra 2007). The walk is
 non-Markovian by design (Fort et al. 2015) — that is correct, not a bug.
@@ -28,7 +35,7 @@ volume) — see the spec Assumption 1. Ensemble is reweightable.
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 from typing import List, Optional
 
@@ -55,7 +62,8 @@ class WangLandau2DSampler:
         n_dz_bins: int = 12,
         dz_min: float = 2.08,
         dz_max: float = 5.73,
-        relax_steps: int = 100,
+        relax_steps: int = 300,
+        fmax: float = 0.1,
         flat_island_spread_aa: float = 1.0,
         flatness_criterion: float = 0.80,
         check_interval: int = 5000,
@@ -86,6 +94,7 @@ class WangLandau2DSampler:
             np.arange(self.n_dz_bins) + 0.5)
 
         self.relax_steps = int(relax_steps)
+        self.fmax = float(fmax)
 
         if e_reject is not None and float(e_reject) > self.e_max:
             self.e_reject = float(e_reject)
@@ -112,6 +121,12 @@ class WangLandau2DSampler:
         self.step_at_switch = 0
         self.step = 0
 
+        # Stall counters (spec 202610012247): n_stalled_trials counts each
+        # individual stalled attempt; n_proposals_dropped counts proposals
+        # where all attempts stalled (dropped, no inherent structure counted).
+        self.n_stalled_trials = 0
+        self.n_proposals_dropped = 0
+
         # Current walker bin (i, j) — the "cur" state of the jump walk.
         self.bin_current = (-1, -1)
 
@@ -123,9 +138,13 @@ class WangLandau2DSampler:
               f"(width {self.e_width:.4f})")
         print(f"[WL2D] dZ bins={self.n_dz_bins} over [{dz_min}, {dz_max}] "
               f"(width {self.dz_width:.4f})")
-        print(f"[WL2D] relax {self.relax_steps} BFGS steps; "
-              f"flatness {self.flatness_criterion}; 1/t after "
+        print(f"[WL2D] relax {self.relax_steps} BFGS steps (fmax {self.fmax} "
+              f"eV/A); flatness {self.flatness_criterion}; 1/t after "
               f"{self.n_stages_standard} halvings")
+        if self.fmax < 0.02:
+            print(f"[WARN] --fmax {self.fmax} is below the surrogate noise "
+                  f"floor (~0.1); expect a very high stall/drop rate "
+                  f"(spec m1).")
 
     # -- Helpers --------------------------------------------------------------
 
@@ -195,8 +214,19 @@ class WangLandau2DSampler:
                             pbc=[True, True, False])
         return box
 
-    def _relax(self, atoms: Atoms, dZ_target: float) -> Atoms:
-        """Relax under the dZ ceiling: FixAtoms(substrate) + BoxConstraint(Fe)."""
+    def _relax(self, atoms: Atoms, dZ_target: float):
+        """Relax under the dZ ceiling: FixAtoms(substrate) + BoxConstraint(Fe).
+
+        Returns ``(relaxed, final_fmax)``. The final max force is **always
+        recomputed** from the ending geometry (ASE's ``Optimizer`` has no
+        ``maxforce`` attribute); FixAtoms already zeroes the fixed substrate's
+        forces, so this max is over the free Fe and matches what BFGS sees.
+
+        NOTE (spec M1): this is the residual of the **dZ-ceiling-constrained**
+        force field — the box removes the outward z+ component of
+        ceiling-pressed Fe, so it measures convergence within the constrained
+        subspace, not an absolute basin-minimum force.
+        """
         import ase.optimize
         from ase.constraints import FixAtoms
 
@@ -207,11 +237,12 @@ class WangLandau2DSampler:
         relaxed.calc = self.gpr
         try:
             opt = ase.optimize.BFGS(relaxed, logfile=None)
-            opt.run(fmax=0.05, steps=self.relax_steps)
+            opt.run(fmax=self.fmax, steps=self.relax_steps)
         except Exception as e:
             print(f"[WL2D] relax failed ({e}); using unrelaxed trial")
-            return atoms
-        return relaxed
+            return atoms, float("nan")
+        final_fmax = float(np.abs(relaxed.get_forces()).max())
+        return relaxed, final_fmax
 
     # -- Wang-Landau bookkeeping ---------------------------------------------
 
@@ -251,20 +282,36 @@ class WangLandau2DSampler:
     def _propose(self):
         """One jump move: draw dZ -> generate -> relax -> bin.
 
-        Returns (relaxed_atoms, e_bin, dz_bin, rel_E, dz); bins -1 if out of
-        range (E below floor).
+        A structure qualifies as an inherent structure only if its FINAL
+        max-force <= ``self.fmax`` after the relax steps. Up to 4 attempts (1
+        initial + 3 retries), each a fully fresh draw (new dZ + new random
+        structure). If all stall, the proposal is DROPPED: returns
+        ``(None, -1, -1, nan, nan)`` so callers hit the existing reject path
+        (WL revisits the current bin; no geometry recorded, no inherent
+        structure counted).
+
+        Returns ``(relaxed_atoms, e_bin, dz_bin, rel_E, dz)``; bins -1 if out
+        of range (E below floor) or dropped.
         """
-        dz_target = self.gen.draw_target_dz(self.dz_min, self.dz_max)
-        trial = self.gen(dz_target)
-        trial = self._relax(trial, dz_target)
-        E = self.gpr.predict_energy(trial)
-        rel = (E - self.E_ref) / self.n_atoms if np.isfinite(E) else float("nan")
-        dz = self.fe_axis(trial)
-        if not np.isfinite(rel) or abs(E) > 1e4:
-            return trial, -1, -1, float("nan"), dz
-        e_bin = self.get_e_bin(rel)
-        dz_bin = self.get_dz_bin(dz)
-        return trial, e_bin, dz_bin, rel, dz
+        for attempt in range(4):
+            dz_target = self.gen.draw_target_dz(self.dz_min, self.dz_max)
+            trial = self.gen(dz_target)
+            trial, final_fmax = self._relax(trial, dz_target)
+            if not np.isfinite(final_fmax) or final_fmax > self.fmax:
+                self.n_stalled_trials += 1
+                continue  # stalled -> fresh draw
+            E = self.gpr.predict_energy(trial)
+            rel = (E - self.E_ref) / self.n_atoms if np.isfinite(E) \
+                else float("nan")
+            dz = self.fe_axis(trial)
+            if not np.isfinite(rel) or abs(E) > 1e4:
+                return trial, -1, -1, float("nan"), dz
+            e_bin = self.get_e_bin(rel)
+            dz_bin = self.get_dz_bin(dz)
+            return trial, e_bin, dz_bin, rel, dz
+        # all attempts stalled -> drop the proposal
+        self.n_proposals_dropped += 1
+        return None, -1, -1, float("nan"), float("nan")
 
     # -- Initialisation & run --------------------------------------------------
 
@@ -274,6 +321,7 @@ class WangLandau2DSampler:
               f"accessible (E, dZ) cells...")
         t0 = time.perf_counter()
         total_s = 0.0
+        d0 = self.n_proposals_dropped
         for n in range(1, self.reference_steps + 1):
             t_start = time.perf_counter()
             _, e_bin, dz_bin, rel, _ = self._propose()
@@ -291,6 +339,13 @@ class WangLandau2DSampler:
         n_acc = int(self.accessible.sum())
         print(f"[WL2D] accessible cells mapped: {n_acc} / "
               f"{self.n_e_bins * self.n_dz_bins}", flush=True)
+        # m1: warn on an extreme drop rate over the reference pass.
+        dropped = self.n_proposals_dropped - d0
+        rate = dropped / max(self.reference_steps, 1)
+        if rate > 0.5:
+            print(f"[WARN] reference-pass drop rate {rate:.0%} "
+                  f"({dropped}/{self.reference_steps} proposals dropped); "
+                  f"the accessible map may be very sparse (spec m1).")
 
     def initialize(self):
         """Set ``cur`` to the first accepted structure's bin."""
@@ -338,6 +393,8 @@ class WangLandau2DSampler:
             "step_at_switch": int(self.step_at_switch),
             "step": int(self.step),
             "ensemble_rows": [list(r) for r in self.ensemble_rows],
+            "n_stalled_trials": int(self.n_stalled_trials),
+            "n_proposals_dropped": int(self.n_proposals_dropped),
         }
 
     def load_state(self, d: dict):
@@ -346,7 +403,8 @@ class WangLandau2DSampler:
         Restores accumulated ``ln_g``/``H``/``accessible`` (never reset), the
         WL phase counters, ``step``, and the recorded scalar ensemble rows.
         ``ensemble_structs`` (geometries) is *not* part of the dict; the caller
-        rebuilds it from ``ensemble.traj``.
+        rebuilds it from ``ensemble.traj``. Stall counters default to 0 if
+        absent (old checkpoints).
         """
         self.ln_g = np.asarray(d["ln_g"], dtype=float).reshape(
             (self.n_e_bins, self.n_dz_bins))
@@ -361,6 +419,8 @@ class WangLandau2DSampler:
         self.step_at_switch = int(d["step_at_switch"])
         self.step = int(d["step"])
         self.ensemble_rows = [tuple(r) for r in d["ensemble_rows"]]
+        self.n_stalled_trials = int(d.get("n_stalled_trials", 0))
+        self.n_proposals_dropped = int(d.get("n_proposals_dropped", 0))
 
     def run(self, n_steps: int, progress_every: Optional[int] = None,
             checkpoint_interval: Optional[int] = None,
@@ -426,6 +486,8 @@ class WangLandau2DSampler:
               f"{self._fmt_dur(time.perf_counter() - t0)} (this segment)")
         print(f"  accepted ensemble size = {len(self.ensemble_structs)}")
         print(f"  accessible cells = {int(self.accessible.sum())}")
+        print(f"  stalled trials = {self.n_stalled_trials}, "
+              f"proposals dropped = {self.n_proposals_dropped}")
         if self.switched_to_1_over_t:
             print("Used the 1/t algorithm for the final stage.")
         else:
