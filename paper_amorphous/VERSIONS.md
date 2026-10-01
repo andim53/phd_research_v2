@@ -24,3 +24,4 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `hpc_runs/shc/job_ref_0P_gmin.sh` | — | per-traj independent script (own pjsub header; TRAJ=ref_0P_gmin.traj) |
 | `hpc_runs/convert_dose_concentration.py` | 1.0.0 | Reference ion-dose ↔ our at% P conversion helper |
 | `hpc_runs/xrd_benchmark.py` | 1.0.0 | Write CIF+manifest for the existing XRD pipeline (amorphous vs ref) |
+| `codes/emit_cna_rdf.py` | 1.1.0 | Steinhardt q4/q6 + crystalline fraction + partial RDF (agox_v2, vectorized via `neighbor_list`) → `analysis/cna_rdf/<leaf>/cna_rdf.json` + figures. v1.1.0 adds `--e-max` relative-energy cap (per-leaf global-min ref) + records `n_structures_full`/`e_max` in JSON |
