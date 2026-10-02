@@ -1,0 +1,4871 @@
+{
+  "description": {
+    "name": "energy-vs-force per-structure data",
+    "version": "1.0.0",
+    "produced_by": "codes/extract_energy_force.py",
+    "purpose": "citable per-structure (dE, max|F|) data the energy-vs-force figures import (instead of re-reading AGOX DBs)",
+    "filters": {
+      "iteration_min": 10,
+      "e_max_eV_per_atom": 0.3,
+      "reference": "per-leaf global energy minimum",
+      "units": {
+        "dE_eV_per_atom": "eV/atom relative to leaf E_min",
+        "fmax_eV_A": "eV/angstrom, max |F| over all atoms"
+      }
+    },
+    "caveats": [
+      "fmax is the STORED force after the AGOX evaluator's single DFT step (optimizer_run_kwargs={'fmax':0.05,'steps':1}); P-doped leaves are not force-converged (0.7-40 eV/A)",
+      "dE evaluated per leaf against that leaf's own global minimum"
+    ]
+  },
+  "leaf": "0_plus5cell/2_3x3_30P",
+  "cell": "+5",
+  "P_loading": "30P",
+  "natoms": 154,
+  "n_retained": 807,
+  "global_min_eV": -820.5698175112703,
+  "structures": [
+    {
+      "seed": "seed_0",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.270302,
+      "fmax_eV_A": 3.012311
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.206709,
+      "fmax_eV_A": 3.700593
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.179658,
+      "fmax_eV_A": 2.174223
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.236615,
+      "fmax_eV_A": 4.005531
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.196271,
+      "fmax_eV_A": 2.327182
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.20362,
+      "fmax_eV_A": 3.76174
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.168163,
+      "fmax_eV_A": 2.565186
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.284772,
+      "fmax_eV_A": 4.279565
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.244305,
+      "fmax_eV_A": 2.56746
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.236215,
+      "fmax_eV_A": 3.680419
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.203626,
+      "fmax_eV_A": 2.611307
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.205073,
+      "fmax_eV_A": 2.829005
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.180931,
+      "fmax_eV_A": 1.883514
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.203267,
+      "fmax_eV_A": 3.05603
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.1816,
+      "fmax_eV_A": 2.287238
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.217739,
+      "fmax_eV_A": 3.106654
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.193999,
+      "fmax_eV_A": 2.591105
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.193452,
+      "fmax_eV_A": 3.704884
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.166232,
+      "fmax_eV_A": 2.733518
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.168613,
+      "fmax_eV_A": 2.727875
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.144413,
+      "fmax_eV_A": 2.053737
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.280908,
+      "fmax_eV_A": 3.02091
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.254237,
+      "fmax_eV_A": 2.47379
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.153086,
+      "fmax_eV_A": 2.539767
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.135573,
+      "fmax_eV_A": 1.92291
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.145192,
+      "fmax_eV_A": 2.147308
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.128576,
+      "fmax_eV_A": 1.827995
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.121124,
+      "fmax_eV_A": 2.462593
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.106154,
+      "fmax_eV_A": 1.874931
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.133399,
+      "fmax_eV_A": 2.592198
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.116781,
+      "fmax_eV_A": 1.89915
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.147284,
+      "fmax_eV_A": 2.935464
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.127434,
+      "fmax_eV_A": 2.355908
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.145349,
+      "fmax_eV_A": 2.541956
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.130273,
+      "fmax_eV_A": 1.874286
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.103307,
+      "fmax_eV_A": 1.922094
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.092281,
+      "fmax_eV_A": 1.474702
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.1465,
+      "fmax_eV_A": 3.09599
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.124106,
+      "fmax_eV_A": 2.261502
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.096447,
+      "fmax_eV_A": 3.336434
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.074734,
+      "fmax_eV_A": 2.007361
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.105012,
+      "fmax_eV_A": 2.537814
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.091314,
+      "fmax_eV_A": 1.673023
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.083094,
+      "fmax_eV_A": 2.184885
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.070836,
+      "fmax_eV_A": 1.782638
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.115212,
+      "fmax_eV_A": 2.984737
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.099458,
+      "fmax_eV_A": 2.090047
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.087687,
+      "fmax_eV_A": 2.299539
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.075004,
+      "fmax_eV_A": 1.501028
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.107527,
+      "fmax_eV_A": 2.38806
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.093327,
+      "fmax_eV_A": 1.780487
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.069327,
+      "fmax_eV_A": 1.948629
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.05955,
+      "fmax_eV_A": 1.358082
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.059882,
+      "fmax_eV_A": 2.120257
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.050106,
+      "fmax_eV_A": 1.371171
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.087278,
+      "fmax_eV_A": 1.997876
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.076941,
+      "fmax_eV_A": 1.596981
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.104183,
+      "fmax_eV_A": 1.910246
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.093613,
+      "fmax_eV_A": 1.614233
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.153852,
+      "fmax_eV_A": 3.00294
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.138362,
+      "fmax_eV_A": 1.82238
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.247377,
+      "fmax_eV_A": 3.54693
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.219828,
+      "fmax_eV_A": 2.858331
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.057265,
+      "fmax_eV_A": 2.372626
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.047767,
+      "fmax_eV_A": 1.244792
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.295836,
+      "fmax_eV_A": 3.111634
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.104913,
+      "fmax_eV_A": 2.164633
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.091051,
+      "fmax_eV_A": 1.467019
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.090669,
+      "fmax_eV_A": 2.567218
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.080007,
+      "fmax_eV_A": 1.587037
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.075977,
+      "fmax_eV_A": 1.574799
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.06858,
+      "fmax_eV_A": 1.288411
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.144953,
+      "fmax_eV_A": 2.485246
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.125507,
+      "fmax_eV_A": 2.090396
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.212147,
+      "fmax_eV_A": 3.474338
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.183347,
+      "fmax_eV_A": 2.62529
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.071018,
+      "fmax_eV_A": 2.226062
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.059919,
+      "fmax_eV_A": 1.959591
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.296395,
+      "fmax_eV_A": 2.356945
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.075811,
+      "fmax_eV_A": 2.024911
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.066564,
+      "fmax_eV_A": 1.48055
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.054078,
+      "fmax_eV_A": 2.107325
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.043561,
+      "fmax_eV_A": 1.393099
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.142166,
+      "fmax_eV_A": 2.919455
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.122081,
+      "fmax_eV_A": 1.773448
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.193321,
+      "fmax_eV_A": 2.727221
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.176331,
+      "fmax_eV_A": 1.82477
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.225397,
+      "fmax_eV_A": 2.463875
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.20595,
+      "fmax_eV_A": 2.003436
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.132878,
+      "fmax_eV_A": 2.208691
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.12115,
+      "fmax_eV_A": 1.399942
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.065144,
+      "fmax_eV_A": 2.002413
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.057059,
+      "fmax_eV_A": 1.343821
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.108763,
+      "fmax_eV_A": 2.438876
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.096774,
+      "fmax_eV_A": 1.757939
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.07044,
+      "fmax_eV_A": 1.68566
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.062862,
+      "fmax_eV_A": 1.345507
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.192644,
+      "fmax_eV_A": 2.439998
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.174041,
+      "fmax_eV_A": 1.723001
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.07912,
+      "fmax_eV_A": 2.53904
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.067297,
+      "fmax_eV_A": 1.568935
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.108713,
+      "fmax_eV_A": 2.863422
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.092891,
+      "fmax_eV_A": 2.235957
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.097937,
+      "fmax_eV_A": 2.061218
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.086858,
+      "fmax_eV_A": 1.470365
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.100119,
+      "fmax_eV_A": 2.201404
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.088277,
+      "fmax_eV_A": 1.477147
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.122273,
+      "fmax_eV_A": 1.973566
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.111724,
+      "fmax_eV_A": 1.511883
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.118446,
+      "fmax_eV_A": 2.482326
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.102412,
+      "fmax_eV_A": 1.807153
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.067291,
+      "fmax_eV_A": 2.098823
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.059348,
+      "fmax_eV_A": 1.672495
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.100005,
+      "fmax_eV_A": 3.106137
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.088265,
+      "fmax_eV_A": 2.291497
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.09607,
+      "fmax_eV_A": 2.683463
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.08466,
+      "fmax_eV_A": 2.162467
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.040853,
+      "fmax_eV_A": 2.078128
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.03276,
+      "fmax_eV_A": 1.352306
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.094945,
+      "fmax_eV_A": 2.141015
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.083672,
+      "fmax_eV_A": 1.43094
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.068265,
+      "fmax_eV_A": 1.809324
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.061407,
+      "fmax_eV_A": 1.091388
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.193508,
+      "fmax_eV_A": 3.311197
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.171661,
+      "fmax_eV_A": 2.700127
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.030123,
+      "fmax_eV_A": 1.684056
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.024776,
+      "fmax_eV_A": 1.344381
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.042364,
+      "fmax_eV_A": 2.008829
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.035957,
+      "fmax_eV_A": 1.14431
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.074752,
+      "fmax_eV_A": 1.907202
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.065152,
+      "fmax_eV_A": 1.458756
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.087366,
+      "fmax_eV_A": 3.089151
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.074119,
+      "fmax_eV_A": 1.569884
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.046052,
+      "fmax_eV_A": 1.765734
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.038344,
+      "fmax_eV_A": 1.208861
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.256957,
+      "fmax_eV_A": 3.682486
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.228341,
+      "fmax_eV_A": 2.620417
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.073793,
+      "fmax_eV_A": 1.748889
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.066381,
+      "fmax_eV_A": 1.471874
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.038895,
+      "fmax_eV_A": 2.088628
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.030616,
+      "fmax_eV_A": 1.353541
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 18,
+      "dE_eV_per_atom": 0.25075,
+      "fmax_eV_A": 4.619319
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 18,
+      "dE_eV_per_atom": 0.20489,
+      "fmax_eV_A": 3.023816
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 19,
+      "dE_eV_per_atom": 0.23492,
+      "fmax_eV_A": 3.839502
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 19,
+      "dE_eV_per_atom": 0.202852,
+      "fmax_eV_A": 2.246126
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 20,
+      "dE_eV_per_atom": 0.228757,
+      "fmax_eV_A": 3.868681
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 20,
+      "dE_eV_per_atom": 0.201675,
+      "fmax_eV_A": 2.638989
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.266905,
+      "fmax_eV_A": 2.763175
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.232382,
+      "fmax_eV_A": 3.790694
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.201498,
+      "fmax_eV_A": 2.829552
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.295651,
+      "fmax_eV_A": 3.214025
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.221718,
+      "fmax_eV_A": 3.73061
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.193531,
+      "fmax_eV_A": 2.794278
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.157267,
+      "fmax_eV_A": 3.27054
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.135822,
+      "fmax_eV_A": 2.087947
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.180762,
+      "fmax_eV_A": 3.385241
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.152955,
+      "fmax_eV_A": 2.260415
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.230182,
+      "fmax_eV_A": 2.858691
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.210158,
+      "fmax_eV_A": 2.242853
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.223998,
+      "fmax_eV_A": 2.335254
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.204031,
+      "fmax_eV_A": 1.591791
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.156172,
+      "fmax_eV_A": 2.78043
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.136154,
+      "fmax_eV_A": 2.01113
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.174851,
+      "fmax_eV_A": 3.080936
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.151644,
+      "fmax_eV_A": 2.035474
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.197822,
+      "fmax_eV_A": 3.153077
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.175962,
+      "fmax_eV_A": 1.832289
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.154786,
+      "fmax_eV_A": 2.73221
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.135228,
+      "fmax_eV_A": 1.99236
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.139549,
+      "fmax_eV_A": 2.668094
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.123935,
+      "fmax_eV_A": 2.061589
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.258827,
+      "fmax_eV_A": 3.238626
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.229578,
+      "fmax_eV_A": 2.459552
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.128022,
+      "fmax_eV_A": 3.051069
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.113732,
+      "fmax_eV_A": 1.814018
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.093797,
+      "fmax_eV_A": 3.042197
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.078255,
+      "fmax_eV_A": 1.855543
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.17936,
+      "fmax_eV_A": 2.597582
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.161479,
+      "fmax_eV_A": 2.103436
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.11673,
+      "fmax_eV_A": 2.102105
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.104881,
+      "fmax_eV_A": 1.580624
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.138135,
+      "fmax_eV_A": 4.386548
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.115565,
+      "fmax_eV_A": 2.427609
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.153591,
+      "fmax_eV_A": 2.90717
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.132667,
+      "fmax_eV_A": 2.43286
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.288326,
+      "fmax_eV_A": 3.394394
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.184991,
+      "fmax_eV_A": 3.269315
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.164085,
+      "fmax_eV_A": 2.054899
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.121313,
+      "fmax_eV_A": 2.167309
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.111673,
+      "fmax_eV_A": 1.408522
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.09027,
+      "fmax_eV_A": 2.132367
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.077548,
+      "fmax_eV_A": 1.577958
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.114171,
+      "fmax_eV_A": 2.493872
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.103097,
+      "fmax_eV_A": 1.806146
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.084959,
+      "fmax_eV_A": 2.401543
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.073256,
+      "fmax_eV_A": 1.841991
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.150354,
+      "fmax_eV_A": 2.928408
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.1286,
+      "fmax_eV_A": 2.436469
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.09864,
+      "fmax_eV_A": 1.945573
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.088578,
+      "fmax_eV_A": 1.543988
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.168197,
+      "fmax_eV_A": 2.68396
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.152502,
+      "fmax_eV_A": 2.005188
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.076181,
+      "fmax_eV_A": 2.554668
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.065767,
+      "fmax_eV_A": 1.38389
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.154332,
+      "fmax_eV_A": 2.502462
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.134277,
+      "fmax_eV_A": 1.880123
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.058512,
+      "fmax_eV_A": 1.549582
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.050601,
+      "fmax_eV_A": 1.247109
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.075477,
+      "fmax_eV_A": 1.937363
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.065838,
+      "fmax_eV_A": 1.380913
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.108966,
+      "fmax_eV_A": 2.443896
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.095664,
+      "fmax_eV_A": 1.65637
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.074481,
+      "fmax_eV_A": 1.90083
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.065265,
+      "fmax_eV_A": 1.69369
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.06727,
+      "fmax_eV_A": 1.825622
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.059329,
+      "fmax_eV_A": 1.209276
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.0833,
+      "fmax_eV_A": 2.200388
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.071191,
+      "fmax_eV_A": 1.605231
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.131485,
+      "fmax_eV_A": 3.252077
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.115154,
+      "fmax_eV_A": 2.266758
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.033468,
+      "fmax_eV_A": 2.292758
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.0265,
+      "fmax_eV_A": 1.261918
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.083309,
+      "fmax_eV_A": 2.860483
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.072379,
+      "fmax_eV_A": 1.850408
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.182691,
+      "fmax_eV_A": 2.708913
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.164132,
+      "fmax_eV_A": 2.046889
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.064624,
+      "fmax_eV_A": 1.902114
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.055852,
+      "fmax_eV_A": 1.462792
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.060178,
+      "fmax_eV_A": 1.755233
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.049024,
+      "fmax_eV_A": 1.28217
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.046718,
+      "fmax_eV_A": 1.699756
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.038492,
+      "fmax_eV_A": 1.410858
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.231326,
+      "fmax_eV_A": 2.673723
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.205214,
+      "fmax_eV_A": 2.388808
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.041214,
+      "fmax_eV_A": 2.005482
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.03221,
+      "fmax_eV_A": 1.419176
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.053831,
+      "fmax_eV_A": 1.721878
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.046692,
+      "fmax_eV_A": 1.47668
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.092302,
+      "fmax_eV_A": 1.791112
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.082891,
+      "fmax_eV_A": 1.552468
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.048015,
+      "fmax_eV_A": 2.01332
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.038417,
+      "fmax_eV_A": 1.692844
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.049735,
+      "fmax_eV_A": 1.767663
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.042454,
+      "fmax_eV_A": 1.340384
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.244213,
+      "fmax_eV_A": 3.546375
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.228031,
+      "fmax_eV_A": 2.658918
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.123779,
+      "fmax_eV_A": 1.928906
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.112232,
+      "fmax_eV_A": 1.55316
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.055682,
+      "fmax_eV_A": 2.295569
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.047781,
+      "fmax_eV_A": 1.897316
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.060046,
+      "fmax_eV_A": 2.224753
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.051294,
+      "fmax_eV_A": 1.425399
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.187694,
+      "fmax_eV_A": 3.733753
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.169603,
+      "fmax_eV_A": 2.8398
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.188085,
+      "fmax_eV_A": 2.503444
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.175246,
+      "fmax_eV_A": 1.870205
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.112765,
+      "fmax_eV_A": 2.549694
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.101659,
+      "fmax_eV_A": 1.66999
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.116492,
+      "fmax_eV_A": 2.032573
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.102039,
+      "fmax_eV_A": 1.692947
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.033758,
+      "fmax_eV_A": 1.95167
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.026096,
+      "fmax_eV_A": 1.484293
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.101569,
+      "fmax_eV_A": 1.978505
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.090231,
+      "fmax_eV_A": 1.306334
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.035674,
+      "fmax_eV_A": 1.872227
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.028412,
+      "fmax_eV_A": 1.223764
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.055808,
+      "fmax_eV_A": 2.165083
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.04779,
+      "fmax_eV_A": 1.585319
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.038716,
+      "fmax_eV_A": 2.236915
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.030391,
+      "fmax_eV_A": 1.706803
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.067954,
+      "fmax_eV_A": 1.745149
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.058889,
+      "fmax_eV_A": 1.303078
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.074946,
+      "fmax_eV_A": 1.82467
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.066168,
+      "fmax_eV_A": 1.46226
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.022535,
+      "fmax_eV_A": 1.722529
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.015612,
+      "fmax_eV_A": 1.196152
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.035707,
+      "fmax_eV_A": 2.025281
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.028061,
+      "fmax_eV_A": 1.436102
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.04465,
+      "fmax_eV_A": 1.931769
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.037121,
+      "fmax_eV_A": 1.349607
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.06247,
+      "fmax_eV_A": 1.91608
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.052406,
+      "fmax_eV_A": 1.44456
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.026564,
+      "fmax_eV_A": 1.970291
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.019591,
+      "fmax_eV_A": 1.605371
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.095926,
+      "fmax_eV_A": 2.579671
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.080874,
+      "fmax_eV_A": 1.921785
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.028922,
+      "fmax_eV_A": 1.60724
+    },
+    {
+      "seed": "seed_0",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.020777,
+      "fmax_eV_A": 1.234198
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 18,
+      "dE_eV_per_atom": 0.293008,
+      "fmax_eV_A": 4.740956
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 18,
+      "dE_eV_per_atom": 0.242823,
+      "fmax_eV_A": 2.761016
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.259905,
+      "fmax_eV_A": 4.116586
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.217303,
+      "fmax_eV_A": 2.874245
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.28913,
+      "fmax_eV_A": 3.789438
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.247071,
+      "fmax_eV_A": 2.818974
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.270625,
+      "fmax_eV_A": 3.406706
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.232113,
+      "fmax_eV_A": 2.361812
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.270809,
+      "fmax_eV_A": 2.77566
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.265019,
+      "fmax_eV_A": 3.588702
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.239169,
+      "fmax_eV_A": 2.097305
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.258872,
+      "fmax_eV_A": 3.191262
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.23438,
+      "fmax_eV_A": 2.415589
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.298277,
+      "fmax_eV_A": 4.276011
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.258899,
+      "fmax_eV_A": 3.189423
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.17979,
+      "fmax_eV_A": 2.96493
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.161626,
+      "fmax_eV_A": 1.931092
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.149523,
+      "fmax_eV_A": 2.76582
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.130678,
+      "fmax_eV_A": 1.882928
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.152566,
+      "fmax_eV_A": 2.800463
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.134756,
+      "fmax_eV_A": 1.914313
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.15008,
+      "fmax_eV_A": 3.314056
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.134089,
+      "fmax_eV_A": 2.292628
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.259745,
+      "fmax_eV_A": 3.512904
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.23915,
+      "fmax_eV_A": 2.575531
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.23157,
+      "fmax_eV_A": 3.480746
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.206461,
+      "fmax_eV_A": 2.353227
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.155803,
+      "fmax_eV_A": 2.246024
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.140664,
+      "fmax_eV_A": 1.688355
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.282616,
+      "fmax_eV_A": 3.228103
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.252462,
+      "fmax_eV_A": 2.19427
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.141296,
+      "fmax_eV_A": 2.926629
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.123908,
+      "fmax_eV_A": 2.422718
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.167997,
+      "fmax_eV_A": 2.687364
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.151601,
+      "fmax_eV_A": 1.844378
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.192871,
+      "fmax_eV_A": 3.173235
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.176246,
+      "fmax_eV_A": 2.544167
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.135729,
+      "fmax_eV_A": 2.92689
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.11759,
+      "fmax_eV_A": 1.758518
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.106644,
+      "fmax_eV_A": 2.137627
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.096568,
+      "fmax_eV_A": 1.638153
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.118998,
+      "fmax_eV_A": 2.233671
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.107609,
+      "fmax_eV_A": 1.420535
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.120546,
+      "fmax_eV_A": 1.993253
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.107048,
+      "fmax_eV_A": 1.496604
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.105839,
+      "fmax_eV_A": 2.790562
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.092981,
+      "fmax_eV_A": 2.189297
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.106519,
+      "fmax_eV_A": 2.255887
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.093202,
+      "fmax_eV_A": 1.515306
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.119804,
+      "fmax_eV_A": 2.084565
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.108339,
+      "fmax_eV_A": 1.656437
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.085747,
+      "fmax_eV_A": 2.281626
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.074481,
+      "fmax_eV_A": 1.851793
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.084731,
+      "fmax_eV_A": 2.617544
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.074763,
+      "fmax_eV_A": 1.718688
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.142732,
+      "fmax_eV_A": 2.376631
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.130798,
+      "fmax_eV_A": 1.50238
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.102874,
+      "fmax_eV_A": 2.233404
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.088782,
+      "fmax_eV_A": 1.807563
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.087753,
+      "fmax_eV_A": 2.669765
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.076147,
+      "fmax_eV_A": 1.94569
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.095802,
+      "fmax_eV_A": 1.974135
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.085723,
+      "fmax_eV_A": 1.609714
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.237005,
+      "fmax_eV_A": 3.638877
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.214303,
+      "fmax_eV_A": 2.882694
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.281603,
+      "fmax_eV_A": 3.660522
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.250635,
+      "fmax_eV_A": 2.091146
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.077829,
+      "fmax_eV_A": 2.189926
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.06679,
+      "fmax_eV_A": 1.549194
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.168882,
+      "fmax_eV_A": 2.342034
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.15273,
+      "fmax_eV_A": 1.828498
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.106277,
+      "fmax_eV_A": 2.234414
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.094426,
+      "fmax_eV_A": 1.602817
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.090284,
+      "fmax_eV_A": 1.870179
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.081965,
+      "fmax_eV_A": 1.191203
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.104741,
+      "fmax_eV_A": 2.22134
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.094359,
+      "fmax_eV_A": 1.445787
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.088412,
+      "fmax_eV_A": 2.316627
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.075567,
+      "fmax_eV_A": 1.568385
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.092799,
+      "fmax_eV_A": 2.00597
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.081372,
+      "fmax_eV_A": 1.44031
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.071544,
+      "fmax_eV_A": 1.985868
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.063802,
+      "fmax_eV_A": 1.532468
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.074569,
+      "fmax_eV_A": 2.353648
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.064722,
+      "fmax_eV_A": 1.853627
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.083229,
+      "fmax_eV_A": 2.131632
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.07362,
+      "fmax_eV_A": 1.857473
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.07953,
+      "fmax_eV_A": 2.571379
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.068452,
+      "fmax_eV_A": 1.951708
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.071553,
+      "fmax_eV_A": 1.557676
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.063735,
+      "fmax_eV_A": 1.112859
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.177729,
+      "fmax_eV_A": 2.050635
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.164794,
+      "fmax_eV_A": 1.517249
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.072735,
+      "fmax_eV_A": 1.514521
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.065826,
+      "fmax_eV_A": 1.036677
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.059477,
+      "fmax_eV_A": 2.093549
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.051251,
+      "fmax_eV_A": 1.674664
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.103683,
+      "fmax_eV_A": 2.719405
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.091207,
+      "fmax_eV_A": 2.13226
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.179804,
+      "fmax_eV_A": 3.257138
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.160313,
+      "fmax_eV_A": 2.285705
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.049203,
+      "fmax_eV_A": 1.722387
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.040971,
+      "fmax_eV_A": 1.162694
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.099309,
+      "fmax_eV_A": 1.920119
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.086965,
+      "fmax_eV_A": 1.562226
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.060365,
+      "fmax_eV_A": 1.900805
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.05359,
+      "fmax_eV_A": 1.197742
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.072145,
+      "fmax_eV_A": 2.140593
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.062652,
+      "fmax_eV_A": 1.367826
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.078021,
+      "fmax_eV_A": 1.853235
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.070186,
+      "fmax_eV_A": 1.215519
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.142173,
+      "fmax_eV_A": 2.571037
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.126185,
+      "fmax_eV_A": 2.029525
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.154,
+      "fmax_eV_A": 2.46869
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.141001,
+      "fmax_eV_A": 1.939475
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.061375,
+      "fmax_eV_A": 2.002344
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.052577,
+      "fmax_eV_A": 1.787035
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.095478,
+      "fmax_eV_A": 2.727634
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.084152,
+      "fmax_eV_A": 2.000577
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.277745,
+      "fmax_eV_A": 2.759599
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.165493,
+      "fmax_eV_A": 46.607756
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.060284,
+      "fmax_eV_A": 6.054791
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.275249,
+      "fmax_eV_A": 3.638936
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.245234,
+      "fmax_eV_A": 2.639242
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.268265,
+      "fmax_eV_A": 2.710829
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.297299,
+      "fmax_eV_A": 3.517908
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.266559,
+      "fmax_eV_A": 2.335417
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.055254,
+      "fmax_eV_A": 2.490051
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.046092,
+      "fmax_eV_A": 1.92151
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.19418,
+      "fmax_eV_A": 2.401694
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.17765,
+      "fmax_eV_A": 1.938146
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.197609,
+      "fmax_eV_A": 2.869774
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.178349,
+      "fmax_eV_A": 2.113909
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.124799,
+      "fmax_eV_A": 2.270724
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.113285,
+      "fmax_eV_A": 1.854661
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.23225,
+      "fmax_eV_A": 2.895459
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.207863,
+      "fmax_eV_A": 2.233489
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.129809,
+      "fmax_eV_A": 2.391197
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.120521,
+      "fmax_eV_A": 1.469905
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.075614,
+      "fmax_eV_A": 1.84743
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.068616,
+      "fmax_eV_A": 1.202047
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.125303,
+      "fmax_eV_A": 2.210862
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.111782,
+      "fmax_eV_A": 1.834347
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 97,
+      "dE_eV_per_atom": 0.087387,
+      "fmax_eV_A": 1.955473
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 97,
+      "dE_eV_per_atom": 0.077152,
+      "fmax_eV_A": 1.66988
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.10709,
+      "fmax_eV_A": 2.285007
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.096629,
+      "fmax_eV_A": 1.55375
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.179423,
+      "fmax_eV_A": 5.91507
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.151257,
+      "fmax_eV_A": 2.304772
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.159474,
+      "fmax_eV_A": 2.500213
+    },
+    {
+      "seed": "seed_1",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.137848,
+      "fmax_eV_A": 2.116136
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 18,
+      "dE_eV_per_atom": 0.290415,
+      "fmax_eV_A": 4.791745
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 18,
+      "dE_eV_per_atom": 0.248146,
+      "fmax_eV_A": 2.094408
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 20,
+      "dE_eV_per_atom": 0.273244,
+      "fmax_eV_A": 3.529137
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.25917,
+      "fmax_eV_A": 5.451523
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 22,
+      "dE_eV_per_atom": 0.22003,
+      "fmax_eV_A": 3.632292
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.292374,
+      "fmax_eV_A": 2.774464
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.276672,
+      "fmax_eV_A": 4.095947
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.243216,
+      "fmax_eV_A": 2.479904
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.238108,
+      "fmax_eV_A": 3.740413
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.208464,
+      "fmax_eV_A": 2.656563
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.269129,
+      "fmax_eV_A": 2.471203
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.263892,
+      "fmax_eV_A": 3.31008
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.236145,
+      "fmax_eV_A": 2.250281
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.247298,
+      "fmax_eV_A": 3.931247
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.221655,
+      "fmax_eV_A": 2.544235
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.278837,
+      "fmax_eV_A": 2.605162
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.199357,
+      "fmax_eV_A": 3.110751
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.177709,
+      "fmax_eV_A": 2.21213
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.168231,
+      "fmax_eV_A": 2.560909
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.15164,
+      "fmax_eV_A": 2.076502
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.194891,
+      "fmax_eV_A": 3.243668
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.173409,
+      "fmax_eV_A": 2.101634
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.184723,
+      "fmax_eV_A": 3.322657
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.163108,
+      "fmax_eV_A": 2.482285
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.186778,
+      "fmax_eV_A": 2.519506
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.167333,
+      "fmax_eV_A": 1.918266
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.202524,
+      "fmax_eV_A": 4.680758
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.181792,
+      "fmax_eV_A": 2.068437
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.212766,
+      "fmax_eV_A": 2.892851
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.189117,
+      "fmax_eV_A": 2.528063
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.118399,
+      "fmax_eV_A": 1.89075
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.105631,
+      "fmax_eV_A": 1.280622
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.182181,
+      "fmax_eV_A": 3.14233
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.166227,
+      "fmax_eV_A": 2.030086
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.124315,
+      "fmax_eV_A": 3.345814
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.107371,
+      "fmax_eV_A": 2.081151
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.125866,
+      "fmax_eV_A": 2.539193
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.112994,
+      "fmax_eV_A": 1.741706
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.135744,
+      "fmax_eV_A": 2.878015
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.121295,
+      "fmax_eV_A": 1.89497
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.132312,
+      "fmax_eV_A": 2.899759
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.117113,
+      "fmax_eV_A": 1.532439
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.108849,
+      "fmax_eV_A": 1.724889
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.100423,
+      "fmax_eV_A": 1.393917
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.155485,
+      "fmax_eV_A": 2.61721
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.140223,
+      "fmax_eV_A": 1.993028
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.128285,
+      "fmax_eV_A": 2.66895
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.116926,
+      "fmax_eV_A": 2.135575
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.103279,
+      "fmax_eV_A": 3.259364
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.08997,
+      "fmax_eV_A": 2.606304
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.118161,
+      "fmax_eV_A": 2.718194
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.106565,
+      "fmax_eV_A": 1.589222
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.125515,
+      "fmax_eV_A": 1.920076
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.115774,
+      "fmax_eV_A": 1.327646
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.094854,
+      "fmax_eV_A": 1.944667
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.084517,
+      "fmax_eV_A": 1.561364
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.27046,
+      "fmax_eV_A": 2.654444
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.101142,
+      "fmax_eV_A": 1.72029
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.09168,
+      "fmax_eV_A": 1.436182
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 14,
+      "dE_eV_per_atom": 0.285347,
+      "fmax_eV_A": 4.689301
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 14,
+      "dE_eV_per_atom": 0.2256,
+      "fmax_eV_A": 2.905175
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 16,
+      "dE_eV_per_atom": 0.293804,
+      "fmax_eV_A": 2.719536
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 20,
+      "dE_eV_per_atom": 0.292257,
+      "fmax_eV_A": 4.296502
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 20,
+      "dE_eV_per_atom": 0.235722,
+      "fmax_eV_A": 2.817674
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.230758,
+      "fmax_eV_A": 3.594721
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.203366,
+      "fmax_eV_A": 2.756258
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.25419,
+      "fmax_eV_A": 3.440248
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 23,
+      "dE_eV_per_atom": 0.225322,
+      "fmax_eV_A": 2.341014
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.292023,
+      "fmax_eV_A": 5.915331
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.246129,
+      "fmax_eV_A": 3.581243
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.207875,
+      "fmax_eV_A": 2.976494
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.185699,
+      "fmax_eV_A": 2.390935
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.217885,
+      "fmax_eV_A": 3.57053
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.184487,
+      "fmax_eV_A": 2.65442
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.206892,
+      "fmax_eV_A": 3.612502
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.182164,
+      "fmax_eV_A": 2.409502
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.221167,
+      "fmax_eV_A": 3.089101
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.196415,
+      "fmax_eV_A": 2.29371
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.152821,
+      "fmax_eV_A": 2.879346
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.130316,
+      "fmax_eV_A": 2.203768
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.228467,
+      "fmax_eV_A": 3.475712
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.208178,
+      "fmax_eV_A": 2.645532
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.16947,
+      "fmax_eV_A": 2.896767
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.151703,
+      "fmax_eV_A": 1.960232
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.162129,
+      "fmax_eV_A": 2.349653
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.14713,
+      "fmax_eV_A": 1.817995
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.178775,
+      "fmax_eV_A": 2.226337
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.161329,
+      "fmax_eV_A": 1.844997
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.155583,
+      "fmax_eV_A": 2.910811
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.135619,
+      "fmax_eV_A": 2.071762
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.205617,
+      "fmax_eV_A": 2.822733
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.187355,
+      "fmax_eV_A": 2.074894
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.123467,
+      "fmax_eV_A": 2.287391
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.110057,
+      "fmax_eV_A": 1.552624
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.148924,
+      "fmax_eV_A": 2.780643
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.132713,
+      "fmax_eV_A": 2.087399
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.21786,
+      "fmax_eV_A": 4.113907
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.183945,
+      "fmax_eV_A": 3.402055
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.117691,
+      "fmax_eV_A": 2.894434
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.102986,
+      "fmax_eV_A": 2.077392
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.086978,
+      "fmax_eV_A": 2.448033
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.07477,
+      "fmax_eV_A": 2.031652
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.101035,
+      "fmax_eV_A": 2.379015
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.087381,
+      "fmax_eV_A": 1.79426
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.079407,
+      "fmax_eV_A": 2.31278
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 42,
+      "dE_eV_per_atom": 0.067875,
+      "fmax_eV_A": 1.620086
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.091118,
+      "fmax_eV_A": 2.229645
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.078128,
+      "fmax_eV_A": 1.942339
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.120198,
+      "fmax_eV_A": 2.575296
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.107933,
+      "fmax_eV_A": 1.403493
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.096468,
+      "fmax_eV_A": 2.025092
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.085058,
+      "fmax_eV_A": 1.561607
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.092238,
+      "fmax_eV_A": 2.478474
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.082701,
+      "fmax_eV_A": 1.843955
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.088176,
+      "fmax_eV_A": 2.555963
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.076441,
+      "fmax_eV_A": 1.893623
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.074136,
+      "fmax_eV_A": 2.190953
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.062651,
+      "fmax_eV_A": 1.65034
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.269521,
+      "fmax_eV_A": 3.592208
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.238414,
+      "fmax_eV_A": 2.531828
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.095867,
+      "fmax_eV_A": 2.005976
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.083843,
+      "fmax_eV_A": 1.314712
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.081977,
+      "fmax_eV_A": 1.807955
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.072367,
+      "fmax_eV_A": 1.250347
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.06719,
+      "fmax_eV_A": 2.102171
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.054921,
+      "fmax_eV_A": 1.556818
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.091746,
+      "fmax_eV_A": 1.926112
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.080062,
+      "fmax_eV_A": 1.233854
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.074375,
+      "fmax_eV_A": 1.860835
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.064137,
+      "fmax_eV_A": 1.513739
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.085571,
+      "fmax_eV_A": 1.927229
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 55,
+      "dE_eV_per_atom": 0.076574,
+      "fmax_eV_A": 1.374575
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.167472,
+      "fmax_eV_A": 3.223646
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.142852,
+      "fmax_eV_A": 1.908704
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.080652,
+      "fmax_eV_A": 2.521538
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.069449,
+      "fmax_eV_A": 1.783267
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.085887,
+      "fmax_eV_A": 2.163414
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.074186,
+      "fmax_eV_A": 1.554803
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.062955,
+      "fmax_eV_A": 1.808077
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.055278,
+      "fmax_eV_A": 1.382348
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.257571,
+      "fmax_eV_A": 3.216844
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.221263,
+      "fmax_eV_A": 2.56048
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.125762,
+      "fmax_eV_A": 2.404316
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.111005,
+      "fmax_eV_A": 1.708923
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.07501,
+      "fmax_eV_A": 1.749049
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.065451,
+      "fmax_eV_A": 1.435952
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.067063,
+      "fmax_eV_A": 1.592713
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.058824,
+      "fmax_eV_A": 1.334339
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.0404,
+      "fmax_eV_A": 1.821392
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.033822,
+      "fmax_eV_A": 1.705689
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.137593,
+      "fmax_eV_A": 2.171274
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.122581,
+      "fmax_eV_A": 1.383445
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.07246,
+      "fmax_eV_A": 2.26109
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.061739,
+      "fmax_eV_A": 1.786665
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.058188,
+      "fmax_eV_A": 2.514133
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.050125,
+      "fmax_eV_A": 1.571736
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.180295,
+      "fmax_eV_A": 3.185054
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.156154,
+      "fmax_eV_A": 2.210095
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.037431,
+      "fmax_eV_A": 1.537101
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.03092,
+      "fmax_eV_A": 1.095646
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.06298,
+      "fmax_eV_A": 1.94689
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.053023,
+      "fmax_eV_A": 1.5749
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.037642,
+      "fmax_eV_A": 2.145714
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.030143,
+      "fmax_eV_A": 1.457264
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.104886,
+      "fmax_eV_A": 2.138285
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.091082,
+      "fmax_eV_A": 1.58576
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.297102,
+      "fmax_eV_A": 3.888001
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.269266,
+      "fmax_eV_A": 2.767657
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.102459,
+      "fmax_eV_A": 2.489463
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.088073,
+      "fmax_eV_A": 1.57162
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.059368,
+      "fmax_eV_A": 1.600864
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 76,
+      "dE_eV_per_atom": 0.051117,
+      "fmax_eV_A": 1.230108
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.156183,
+      "fmax_eV_A": 2.662549
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 77,
+      "dE_eV_per_atom": 0.13875,
+      "fmax_eV_A": 1.904778
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.048873,
+      "fmax_eV_A": 1.690338
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.042478,
+      "fmax_eV_A": 1.397721
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.184591,
+      "fmax_eV_A": 2.452524
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.167769,
+      "fmax_eV_A": 1.708514
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.056093,
+      "fmax_eV_A": 1.411245
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.048258,
+      "fmax_eV_A": 1.195621
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.064382,
+      "fmax_eV_A": 1.973178
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.056605,
+      "fmax_eV_A": 1.562723
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.098836,
+      "fmax_eV_A": 2.36997
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.083448,
+      "fmax_eV_A": 1.920397
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.128693,
+      "fmax_eV_A": 2.30545
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.114847,
+      "fmax_eV_A": 1.665085
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.079815,
+      "fmax_eV_A": 2.216722
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.070027,
+      "fmax_eV_A": 1.664239
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.224996,
+      "fmax_eV_A": 2.716626
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.205245,
+      "fmax_eV_A": 1.96816
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.047926,
+      "fmax_eV_A": 1.655105
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.040712,
+      "fmax_eV_A": 1.166414
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.102888,
+      "fmax_eV_A": 1.865237
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.091715,
+      "fmax_eV_A": 1.563544
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.025738,
+      "fmax_eV_A": 2.209634
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.018084,
+      "fmax_eV_A": 1.86106
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.10452,
+      "fmax_eV_A": 1.772423
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.094008,
+      "fmax_eV_A": 1.330219
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.005207,
+      "fmax_eV_A": 1.956588
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.0,
+      "fmax_eV_A": 1.653975
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.057309,
+      "fmax_eV_A": 1.737717
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.049176,
+      "fmax_eV_A": 1.458368
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.033261,
+      "fmax_eV_A": 1.542785
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.026991,
+      "fmax_eV_A": 1.038334
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.10421,
+      "fmax_eV_A": 2.539674
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.092954,
+      "fmax_eV_A": 1.808404
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.037871,
+      "fmax_eV_A": 1.347973
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.032371,
+      "fmax_eV_A": 1.181641
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.071439,
+      "fmax_eV_A": 1.705892
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.062027,
+      "fmax_eV_A": 1.269965
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.222666,
+      "fmax_eV_A": 5.491573
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.198621,
+      "fmax_eV_A": 2.209305
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 97,
+      "dE_eV_per_atom": 0.039622,
+      "fmax_eV_A": 2.130821
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 97,
+      "dE_eV_per_atom": 0.032231,
+      "fmax_eV_A": 1.40252
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.025414,
+      "fmax_eV_A": 1.629533
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.018633,
+      "fmax_eV_A": 1.409117
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.079507,
+      "fmax_eV_A": 2.75739
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.069789,
+      "fmax_eV_A": 1.912013
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.028131,
+      "fmax_eV_A": 1.568848
+    },
+    {
+      "seed": "seed_2",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.022507,
+      "fmax_eV_A": 1.076556
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 17,
+      "dE_eV_per_atom": 0.238338,
+      "fmax_eV_A": 3.890871
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 17,
+      "dE_eV_per_atom": 0.197145,
+      "fmax_eV_A": 2.242086
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 20,
+      "dE_eV_per_atom": 0.28047,
+      "fmax_eV_A": 3.777246
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.263755,
+      "fmax_eV_A": 4.224834
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 21,
+      "dE_eV_per_atom": 0.216878,
+      "fmax_eV_A": 2.912247
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.169779,
+      "fmax_eV_A": 5.11235
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 24,
+      "dE_eV_per_atom": 0.131526,
+      "fmax_eV_A": 3.0733
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.269633,
+      "fmax_eV_A": 3.934184
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 25,
+      "dE_eV_per_atom": 0.230906,
+      "fmax_eV_A": 2.867188
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.235492,
+      "fmax_eV_A": 3.763214
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 26,
+      "dE_eV_per_atom": 0.206171,
+      "fmax_eV_A": 2.475941
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.255156,
+      "fmax_eV_A": 4.058002
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 27,
+      "dE_eV_per_atom": 0.211428,
+      "fmax_eV_A": 2.875219
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.212682,
+      "fmax_eV_A": 4.045489
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 28,
+      "dE_eV_per_atom": 0.181753,
+      "fmax_eV_A": 2.753156
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.215325,
+      "fmax_eV_A": 4.16399
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 29,
+      "dE_eV_per_atom": 0.184437,
+      "fmax_eV_A": 3.114126
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.219456,
+      "fmax_eV_A": 3.55855
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 30,
+      "dE_eV_per_atom": 0.1924,
+      "fmax_eV_A": 2.966552
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.221548,
+      "fmax_eV_A": 3.067653
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 31,
+      "dE_eV_per_atom": 0.199184,
+      "fmax_eV_A": 2.214655
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.148001,
+      "fmax_eV_A": 3.705077
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 32,
+      "dE_eV_per_atom": 0.124986,
+      "fmax_eV_A": 2.820123
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.105444,
+      "fmax_eV_A": 2.461503
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 33,
+      "dE_eV_per_atom": 0.088904,
+      "fmax_eV_A": 2.004555
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.163526,
+      "fmax_eV_A": 3.368799
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 34,
+      "dE_eV_per_atom": 0.143389,
+      "fmax_eV_A": 2.548066
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.142896,
+      "fmax_eV_A": 3.195592
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 35,
+      "dE_eV_per_atom": 0.124786,
+      "fmax_eV_A": 2.351823
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.12166,
+      "fmax_eV_A": 2.975354
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 36,
+      "dE_eV_per_atom": 0.102355,
+      "fmax_eV_A": 2.184452
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.08298,
+      "fmax_eV_A": 2.544642
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 37,
+      "dE_eV_per_atom": 0.068623,
+      "fmax_eV_A": 2.055281
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.125033,
+      "fmax_eV_A": 2.627031
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 38,
+      "dE_eV_per_atom": 0.110082,
+      "fmax_eV_A": 1.959455
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.09831,
+      "fmax_eV_A": 1.89674
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 39,
+      "dE_eV_per_atom": 0.08792,
+      "fmax_eV_A": 1.467681
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.075355,
+      "fmax_eV_A": 2.910434
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 40,
+      "dE_eV_per_atom": 0.061285,
+      "fmax_eV_A": 1.738188
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.081708,
+      "fmax_eV_A": 2.321551
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 41,
+      "dE_eV_per_atom": 0.06814,
+      "fmax_eV_A": 1.873649
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.102938,
+      "fmax_eV_A": 2.406135
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 43,
+      "dE_eV_per_atom": 0.087399,
+      "fmax_eV_A": 1.568979
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.094252,
+      "fmax_eV_A": 2.565164
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 44,
+      "dE_eV_per_atom": 0.081626,
+      "fmax_eV_A": 1.815904
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.115238,
+      "fmax_eV_A": 2.136217
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 45,
+      "dE_eV_per_atom": 0.104073,
+      "fmax_eV_A": 1.600298
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.050753,
+      "fmax_eV_A": 2.382226
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 46,
+      "dE_eV_per_atom": 0.039512,
+      "fmax_eV_A": 1.574956
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.265631,
+      "fmax_eV_A": 4.192056
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 47,
+      "dE_eV_per_atom": 0.231787,
+      "fmax_eV_A": 2.931262
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.10085,
+      "fmax_eV_A": 2.53372
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 48,
+      "dE_eV_per_atom": 0.086309,
+      "fmax_eV_A": 1.96071
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.071466,
+      "fmax_eV_A": 2.098908
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 49,
+      "dE_eV_per_atom": 0.060851,
+      "fmax_eV_A": 1.711778
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.15097,
+      "fmax_eV_A": 3.040093
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 50,
+      "dE_eV_per_atom": 0.127525,
+      "fmax_eV_A": 2.101413
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.064514,
+      "fmax_eV_A": 1.814601
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 51,
+      "dE_eV_per_atom": 0.05588,
+      "fmax_eV_A": 1.130912
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.096409,
+      "fmax_eV_A": 2.173129
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 52,
+      "dE_eV_per_atom": 0.082816,
+      "fmax_eV_A": 1.570759
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.099252,
+      "fmax_eV_A": 2.836077
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 53,
+      "dE_eV_per_atom": 0.085735,
+      "fmax_eV_A": 1.914384
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.072805,
+      "fmax_eV_A": 2.433807
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 54,
+      "dE_eV_per_atom": 0.061222,
+      "fmax_eV_A": 1.579746
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.060223,
+      "fmax_eV_A": 1.902178
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 56,
+      "dE_eV_per_atom": 0.049963,
+      "fmax_eV_A": 1.558245
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.175306,
+      "fmax_eV_A": 3.688444
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 57,
+      "dE_eV_per_atom": 0.145066,
+      "fmax_eV_A": 2.192036
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.057063,
+      "fmax_eV_A": 1.708707
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 58,
+      "dE_eV_per_atom": 0.049323,
+      "fmax_eV_A": 1.155989
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.231508,
+      "fmax_eV_A": 3.268508
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 59,
+      "dE_eV_per_atom": 0.199004,
+      "fmax_eV_A": 2.198466
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.207349,
+      "fmax_eV_A": 3.910162
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 60,
+      "dE_eV_per_atom": 0.182947,
+      "fmax_eV_A": 2.832558
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.126547,
+      "fmax_eV_A": 2.451644
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 61,
+      "dE_eV_per_atom": 0.114087,
+      "fmax_eV_A": 1.730433
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.061082,
+      "fmax_eV_A": 2.164558
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 62,
+      "dE_eV_per_atom": 0.050769,
+      "fmax_eV_A": 1.698013
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.10948,
+      "fmax_eV_A": 2.261978
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 63,
+      "dE_eV_per_atom": 0.094392,
+      "fmax_eV_A": 1.788615
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.067144,
+      "fmax_eV_A": 2.679014
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 64,
+      "dE_eV_per_atom": 0.055899,
+      "fmax_eV_A": 1.740017
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.070624,
+      "fmax_eV_A": 2.118915
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 65,
+      "dE_eV_per_atom": 0.060327,
+      "fmax_eV_A": 1.498284
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.073126,
+      "fmax_eV_A": 2.023839
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 66,
+      "dE_eV_per_atom": 0.061132,
+      "fmax_eV_A": 1.823477
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.042644,
+      "fmax_eV_A": 2.365551
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 67,
+      "dE_eV_per_atom": 0.031217,
+      "fmax_eV_A": 1.716408
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.240241,
+      "fmax_eV_A": 3.224349
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 68,
+      "dE_eV_per_atom": 0.209259,
+      "fmax_eV_A": 2.209529
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.046724,
+      "fmax_eV_A": 1.792447
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 69,
+      "dE_eV_per_atom": 0.039958,
+      "fmax_eV_A": 1.177598
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.072209,
+      "fmax_eV_A": 1.627951
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 70,
+      "dE_eV_per_atom": 0.063172,
+      "fmax_eV_A": 1.239156
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.079822,
+      "fmax_eV_A": 2.2377
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 71,
+      "dE_eV_per_atom": 0.068187,
+      "fmax_eV_A": 1.839428
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.164856,
+      "fmax_eV_A": 2.842915
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 72,
+      "dE_eV_per_atom": 0.14402,
+      "fmax_eV_A": 2.362049
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 73,
+      "dE_eV_per_atom": 0.292867,
+      "fmax_eV_A": 2.079695
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.096981,
+      "fmax_eV_A": 2.296981
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 74,
+      "dE_eV_per_atom": 0.082468,
+      "fmax_eV_A": 1.594764
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.076982,
+      "fmax_eV_A": 2.488888
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 75,
+      "dE_eV_per_atom": 0.066315,
+      "fmax_eV_A": 1.636358
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.25078,
+      "fmax_eV_A": 3.002358
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 78,
+      "dE_eV_per_atom": 0.222026,
+      "fmax_eV_A": 2.329463
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 79,
+      "dE_eV_per_atom": 0.296929,
+      "fmax_eV_A": 3.294849
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.089397,
+      "fmax_eV_A": 2.035822
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 80,
+      "dE_eV_per_atom": 0.079347,
+      "fmax_eV_A": 1.196152
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.055328,
+      "fmax_eV_A": 1.743536
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 81,
+      "dE_eV_per_atom": 0.04839,
+      "fmax_eV_A": 1.099154
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.113142,
+      "fmax_eV_A": 3.260171
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 82,
+      "dE_eV_per_atom": 0.099227,
+      "fmax_eV_A": 2.496134
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.116963,
+      "fmax_eV_A": 1.99623
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 83,
+      "dE_eV_per_atom": 0.101004,
+      "fmax_eV_A": 1.590616
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.102309,
+      "fmax_eV_A": 2.286846
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 84,
+      "dE_eV_per_atom": 0.089682,
+      "fmax_eV_A": 1.860862
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.062926,
+      "fmax_eV_A": 1.598894
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 85,
+      "dE_eV_per_atom": 0.054949,
+      "fmax_eV_A": 1.171373
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.06898,
+      "fmax_eV_A": 2.970192
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 86,
+      "dE_eV_per_atom": 0.055619,
+      "fmax_eV_A": 1.951323
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.151656,
+      "fmax_eV_A": 2.906712
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 87,
+      "dE_eV_per_atom": 0.131459,
+      "fmax_eV_A": 2.080869
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.147745,
+      "fmax_eV_A": 2.605305
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 88,
+      "dE_eV_per_atom": 0.135804,
+      "fmax_eV_A": 1.560031
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.149308,
+      "fmax_eV_A": 3.762686
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 89,
+      "dE_eV_per_atom": 0.126395,
+      "fmax_eV_A": 2.957003
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.148445,
+      "fmax_eV_A": 3.664574
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 90,
+      "dE_eV_per_atom": 0.123369,
+      "fmax_eV_A": 2.135093
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.020062,
+      "fmax_eV_A": 1.939126
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 91,
+      "dE_eV_per_atom": 0.012227,
+      "fmax_eV_A": 1.424076
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.129773,
+      "fmax_eV_A": 2.467505
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 92,
+      "dE_eV_per_atom": 0.114765,
+      "fmax_eV_A": 2.025572
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.07856,
+      "fmax_eV_A": 2.74299
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 93,
+      "dE_eV_per_atom": 0.067598,
+      "fmax_eV_A": 1.814547
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.07683,
+      "fmax_eV_A": 1.941158
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 94,
+      "dE_eV_per_atom": 0.068272,
+      "fmax_eV_A": 1.540213
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.121225,
+      "fmax_eV_A": 2.181881
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 95,
+      "dE_eV_per_atom": 0.108884,
+      "fmax_eV_A": 1.646069
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.046613,
+      "fmax_eV_A": 1.835544
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 96,
+      "dE_eV_per_atom": 0.037562,
+      "fmax_eV_A": 1.372479
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 97,
+      "dE_eV_per_atom": 0.140637,
+      "fmax_eV_A": 2.60112
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 97,
+      "dE_eV_per_atom": 0.121173,
+      "fmax_eV_A": 2.060023
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 98,
+      "dE_eV_per_atom": 0.294477,
+      "fmax_eV_A": 2.615953
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.041626,
+      "fmax_eV_A": 1.983653
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 99,
+      "dE_eV_per_atom": 0.033283,
+      "fmax_eV_A": 1.276632
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.086873,
+      "fmax_eV_A": 2.22367
+    },
+    {
+      "seed": "seed_3",
+      "iteration": 100,
+      "dE_eV_per_atom": 0.075953,
+      "fmax_eV_A": 1.386716
+    }
+  ]
+}

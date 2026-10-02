@@ -1,0 +1,131 @@
+{
+  "description": {
+    "name": "force-convergence probe (e_max=0.3, fmax=0.05)",
+    "version": "1.0.0",
+    "produced_by": "codes/probe_forces_e003.py",
+    "purpose": "count retained (iter>=10, per-leaf e_max<0.3 eV/atom) structures whose stored DFT max|F| < 0.05 eV/A (AGOX LocalOptimizationEvaluator fmax target)",
+    "key_definitions": {
+      "n_loaded_iter10": "structures with AGOX iteration >= 10 loaded from seed_*/1_db",
+      "n_retained_e003": "kept after per-leaf (E - E_min)/natoms < 0.3 eV/atom",
+      "n_force_below_0.05": "retained structures with stored max|F| < 0.05 eV/A"
+    },
+    "caveats": [
+      "AGOX evaluator runs optimizer_run_kwargs={'fmax':0.05,'steps':1}: ONE DFT step after surrogate relaxation, so stored forces are typically unconverged (~1-40 eV/A)",
+      "single stored force per structure, non-relaxed"
+    ]
+  },
+  "leaves": [
+    {
+      "leaf": "1_plus0cell/0_0P",
+      "cell": "+0",
+      "P": "0P",
+      "n_loaded_iter10": 1279,
+      "n_retained_e003": 1087,
+      "n_force_below_0.05": 643,
+      "frac_force_below": 0.5915,
+      "fmax_retained_median": 0.043,
+      "fmax_retained_max": 6.457,
+      "fmax_retained_min": 0.012
+    },
+    {
+      "leaf": "1_plus0cell/2_20P",
+      "cell": "+0",
+      "P": "20P",
+      "n_loaded_iter10": 820,
+      "n_retained_e003": 701,
+      "n_force_below_0.05": 0,
+      "frac_force_below": 0.0,
+      "fmax_retained_median": 1.813,
+      "fmax_retained_max": 40.676,
+      "fmax_retained_min": 0.838
+    },
+    {
+      "leaf": "1_plus0cell/3_30P",
+      "cell": "+0",
+      "P": "30P",
+      "n_loaded_iter10": 1122,
+      "n_retained_e003": 914,
+      "n_force_below_0.05": 0,
+      "frac_force_below": 0.0,
+      "fmax_retained_median": 2.435,
+      "fmax_retained_max": 38.678,
+      "fmax_retained_min": 1.012
+    },
+    {
+      "leaf": "2_plus3cell/0_0P",
+      "cell": "+3",
+      "P": "0P",
+      "n_loaded_iter10": 892,
+      "n_retained_e003": 858,
+      "n_force_below_0.05": 565,
+      "frac_force_below": 0.6585,
+      "fmax_retained_median": 0.035,
+      "fmax_retained_max": 4.701,
+      "fmax_retained_min": 0.008
+    },
+    {
+      "leaf": "2_plus3cell/2_20P",
+      "cell": "+3",
+      "P": "20P",
+      "n_loaded_iter10": 752,
+      "n_retained_e003": 641,
+      "n_force_below_0.05": 0,
+      "frac_force_below": 0.0,
+      "fmax_retained_median": 1.558,
+      "fmax_retained_max": 34.819,
+      "fmax_retained_min": 0.698
+    },
+    {
+      "leaf": "2_plus3cell/3_30P",
+      "cell": "+3",
+      "P": "30P",
+      "n_loaded_iter10": 618,
+      "n_retained_e003": 497,
+      "n_force_below_0.05": 0,
+      "frac_force_below": 0.0,
+      "fmax_retained_median": 2.29,
+      "fmax_retained_max": 32.82,
+      "fmax_retained_min": 1.074
+    },
+    {
+      "leaf": "0_plus5cell/3_3x3_0P",
+      "cell": "+5",
+      "P": "0P",
+      "n_loaded_iter10": 1143,
+      "n_retained_e003": 1118,
+      "n_force_below_0.05": 573,
+      "frac_force_below": 0.5125,
+      "fmax_retained_median": 0.048,
+      "fmax_retained_max": 6.803,
+      "fmax_retained_min": 0.006
+    },
+    {
+      "leaf": "0_plus5cell/1_3x3_20P",
+      "cell": "+5",
+      "P": "20P",
+      "n_loaded_iter10": 896,
+      "n_retained_e003": 792,
+      "n_force_below_0.05": 0,
+      "frac_force_below": 0.0,
+      "fmax_retained_median": 1.545,
+      "fmax_retained_max": 8.216,
+      "fmax_retained_min": 0.714
+    },
+    {
+      "leaf": "0_plus5cell/2_3x3_30P",
+      "cell": "+5",
+      "P": "30P",
+      "n_loaded_iter10": 988,
+      "n_retained_e003": 807,
+      "n_force_below_0.05": 0,
+      "frac_force_below": 0.0,
+      "fmax_retained_median": 2.12,
+      "fmax_retained_max": 46.608,
+      "fmax_retained_min": 1.037
+    }
+  ],
+  "total": {
+    "n_retained_e003": 7415,
+    "n_force_below_0.05": 1781
+  }
+}

@@ -25,3 +25,9 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `hpc_runs/convert_dose_concentration.py` | 1.0.0 | Reference ion-dose ↔ our at% P conversion helper |
 | `hpc_runs/xrd_benchmark.py` | 1.0.0 | Write CIF+manifest for the existing XRD pipeline (amorphous vs ref) |
 | `codes/emit_cna_rdf.py` | 1.1.0 | Steinhardt q4/q6 + crystalline fraction + partial RDF (agox_v2, vectorized via `neighbor_list`) → `analysis/cna_rdf/<leaf>/cna_rdf.json` + figures. v1.1.0 adds `--e-max` relative-energy cap (per-leaf global-min ref) + records `n_structures_full`/`e_max` in JSON |
+| `codes/probe_forces_e003.py` | 1.0.0 | Force-convergence probe: per-leaf min max\|F\|, count near-min, E@min-F vs E_min → `analysis/force_convergence_probe.json` |
+| `codes/extract_energy_force.py` | 1.0.0 | Persist per-structure (ΔE, max\|F\|, seed, iteration) to `analysis/energy_vs_force/<leaf>.json` + `energy_vs_force.csv` (7,415 rows). Citable source the figures import |
+| `codes/emit_fig2_2panel.py` | 1.0.0 | Crystallinity 2-panel figure (partial RDF + crystalline-fraction vs cell) → `analysis/figures/fig2_2panel.png` |
+| `codes/emit_fig_energy_vs_force.py` | 1.1.1 | Hexbin ΔE vs max\|F\|, 3 panels by P loading. v1.1.0 plots from JSON (not DBs); v1.1.1 fixes sub-unity y-tick labels |
+| `codes/emit_fig_energy_vs_force_3x3.py` | 1.1.1 | Hexbin ΔE vs max\|F\|, 3×3 (rows=cell, cols=P). v1.1.0 plots from JSON; v1.1.1 fixes sub-unity y-tick labels |
+| `codes/emit_fig_crystallinity_3panel.py` | 1.0.0 | Crystallinity 3-panel figure (partial RDF + crystalline-fraction vs cell + relative cell-expansion effect) → `analysis/figures/fig_crystallinity_3panel.png`. Serves MT-1..MT-4; panel titles live in CLAIMS |

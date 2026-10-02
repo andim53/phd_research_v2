@@ -207,9 +207,90 @@ flowchart TD
 - **Supercell size (finite-size):** all results use a single 3×3×3 supercell (Pt₁₀₈, ~12 Å edge, ~135–154 atoms); the +0/+3/+5\ % differ by cell \emph{volume} at fixed occupancy (a free-volume probe, MT-3), not by a same-physics supercell-size convergence sweep. Per best practice for amorphous modeling \cite{setten2026}, the cell is near the lower edge of sizes needed to fully suppress artificial periodicity / resolve medium-range order — a reviewer may request a 2×2×2 vs 3×3×3 check. Stated as a limitation, not a claim.
 - **Reference-biased search:** the GOFEE/AGOX search is seeded from the P-interstitial reference alloy structure (amorphous randomizer), so it explores configurations *near the reference topology* first — it is not a uniform random search over all amorphous configurations. This is appropriate for a design tool (it targets the relevant basin) but should be stated so the search is not read as unbiased. The first ~10 iterations are surrogate-building (exploration) and are excluded from analysis (iteration ≥ 10 filter).
 - All structures DFT-relaxed in a fixed supercell with fixed P count — none is truly bulk-amorphous; expect modest order change vs experiment.
+- **Force-under-relaxation of P-doped geometries (applies to MT-1..MT-4):** the geometries backing the crystalline-fraction claims are not force-converged for the P leaves. The AGOX evaluator runs `optimizer_run_kwargs={"fmax": 0.05, "steps": 1}` — a single DFT step after surrogate relaxation — so the stored forces are snapshots. Measured across the retained ensemble (`iteration >= 10`, per-leaf `e_max < 0.3 eV/atom`): 0P leaves reach max|F| down to 0.006–0.012 eV/Å (51–66% of retained structures below 0.05; low energy and low force coincide); every 20P/30P leaf has max|F| pinned at ~0.7–3 eV/Å (median 1.5–2.4, min never below 0.70, up to ~40 in the tail), and the per-leaf *global energy minimum* structure itself sits at max|F| = 0.71–1.65 eV/Å. The amorphization signal (crystalline fraction q6) is therefore computed on geometries 0.7–1.65 eV/Å from force equilibrium for the P leaves only. This is a property of the *search* (surrogate-relaxed + 1 DFT step), not evidence about physical Pt(P) relaxation; the structural claims are stated as energetics-based and must be re-checked against force-converged re-relaxations (see Future work) before any force-based property is trusted. Source: `analysis/energy_vs_force/*.json`, `analysis/energy_vs_force/energy_vs_force.csv` (per-structure ΔE, max|F|), `codes/probe_forces_e003.py`, fig `analysis/figures/fig_energy_vs_force{,_3x3}.png`.
+
 - Crystalline fraction uses a single bond-order threshold (q6 > 0.5, fcc q6 ≈ 0.5745) on the first-neighbor shell; results are threshold-sensitive at the margins but the 0P vs P and cell-expansion contrasts are robust to it.
 - `main.py` `SCALE_CELL=1.05` is stale for +0/+3 families — use the xsf cell dimensions.
 - High-energy XRD windows have few structures (n=2–3) — least reliable XRD CIs.
+
+## Figures (paper figures and the claims they serve)
+> Paper figures live in `analysis/figures/` (by reference, per the reuse rule) and are
+> staged into `papers/paper1/figures/` at compile time. Each paper figure maps to the
+> claim(s) it serves. The energy-vs-force figures are **diagnostics only** (see the
+> Methodological diagnostics section) and are NOT paper figures.
+
+| Figure (analysis/figures/) | Serves | Content | Producing script | Data source |
+|---------------------------|--------|---------|------------------|-------------|
+| `fig_crystallinity_3panel.png` | MT-1, MT-2, MT-3, MT-4 | 3-panel crystallinity (panel titles live here, not in the figure; panels labelled (a)/(b)/(c) at bottom-middle). **(a) Partial RDF** — g_PtP(r)/g_PP(r) for a representative 20P +0% leaf (illustrative, M-2). **(b) Crystalline fraction vs cell expansion** — Steinhardt q6 crystalline fraction (mean ± std), line per P loading across +0/+3/+5%; carries the 0P→P collapse (MT-1), 20P≈30P saturation (MT-2), and the mild cell-dependence (MT-3). **(c) Relative cell-expansion effect** — relative drop in crystalline fraction vs +0% cell, line per P; carries the P-amplified cell-expansion effect (MT-4) and the 20P≈30P overlap (MT-2). | `codes/emit_fig_crystallinity_3panel.py` v1.0.0 | `analysis/cna_rdf/*/cna_rdf.json` (`crystalline_fraction.mean/std`, `partial_rdf`), produced by `codes/emit_cna_rdf.py` v1.1.0 from `data/17_PPt/*/seed_*/1_db/db_*.db` |
+| `fig2_2panel.png` | (superseded by `fig_crystallinity_3panel.png`) | 2-panel crystallinity (partial RDF + crystalline-fraction vs cell). Kept as a diagnostic; not the paper figure. | `codes/emit_fig2_2panel.py` v1.0.0 | `analysis/cna_rdf/*/cna_rdf.json` |
+| `fig_energy_vs_force.png` | — (diagnostic, NOT paper) | Hexbin ΔE vs max\|F\|, 3 panels by P loading. | `codes/emit_fig_energy_vs_force.py` v1.1.1 | `analysis/energy_vs_force/*.json` (per-structure ΔE, max\|F\|), produced by `codes/extract_energy_force.py` v1.0.0 |
+| `fig_energy_vs_force_3x3.png` | — (diagnostic, NOT paper) | Hexbin ΔE vs max\|F\|, 3×3 (rows=cell, cols=P). | `codes/emit_fig_energy_vs_force_3x3.py` v1.1.1 | `analysis/energy_vs_force/*.json`, produced by `codes/extract_energy_force.py` v1.0.0 |
+
+## Methodological diagnostics — energy-vs-force figure (discussion + numbers; NOT for the paper)
+> Analysis of `analysis/figures/fig_energy_vs_force{,_3x3}.png` (data:
+> `analysis/energy_vs_force/*.json`). This is a **methodological diagnostic** for
+> future work — do not draft into the manuscript unless/when promoted by the owner.
+
+### The pattern (quantified, retained ensemble: iteration ≥ 10, per-leaf e_max < 0.3 eV/atom)
+| P | n | frac <0.05 | frac <0.5 | frac <1 | frac <2 | median F (eV/Å) | corr(ΔE, F) |
+|----|----|----|----|----|----|----|----|
+| 0P | 3063 | 58% | 73% | 83% | 96% | 0.04 | +0.83 |
+| 20P | 2134 | 0% | 0% | 8% | 67% | 1.64 | +0.48 |
+| 30P | 2218 | 0% | 0% | 0% | 35% | 2.29 | +0.37 |
+
+- **0P:** dense cloud below fmax (58% under 0.05, median 0.04) — converged; low energy ⇔ low force.
+- **20P:** dense band at F ≈ 0.5–3 (91.5% of points), median 1.64, nothing below 0.5.
+- **30P:** band shifts higher — median 2.29, 78.6% in 0.5–3, 65% above 2.
+- **Concentration scaling:** the residual-force band rises monotonically with P loading
+  (median 0.04 → 1.64 → 2.29 eV/Å) — not just "P vs no-P", but monotonic in concentration.
+- **Energy–force decoupling:** corr(ΔE, F) weakens with P (0.83 → 0.48 → 0.37) — for 0P the
+  lowest-energy structures are the best-relaxed; for P the low-energy basin is not the low-force basin.
+
+### Discussion paragraph (candidate framing)
+> The residual force after the surrogate-guided relaxation rises monotonically with P loading
+> (median 0.04 → 1.64 → 2.29 eV/Å) and the energy–force correlation weakens (0.83 → 0.37),
+> consistent with the same interstitial-induced topological frustration that drives the
+> crystalline-fraction collapse (MT-1, confusion principle). The force band is thus a second,
+> independent fingerprint of the frustration behind amorphization. However, it also means the
+> P-doped geometries are not force-converged (single-DFT-step evaluator), so the structural
+> claims rest on energetics and must be re-checked against force-converged re-relaxations
+> (see Future work) before any force-based property is trusted.
+
+### Reading / interpretation (for the future-work discussion)
+1. **Methodological:** the pattern is a signature of the search's relaxation scheme, not the
+   physics — the single-DFT-step evaluator leaves the surrogate-relaxed geometry at whatever
+   residual force the surrogate could not remove. 0P is already near a minimum after surrogate
+   relaxation; P's interstitial disorder creates frustrated local environments the surrogate
+   cannot fully relax, so residual force stays high.
+2. **Two populations:** 0P is one converged population; 20P/30P are one unconverged population —
+   the search never produces force-converged P geometries, so force-based properties cannot be
+   trusted from the DB as-is.
+3. **Concentration scaling:** the surrogate's ability to relax the structure degrades as the
+   system becomes more amorphous — a statement about the method's convergence vs composition.
+4. **Energy decoupling:** for P, the low-energy basin is populated by under-relaxed geometries,
+   reinforcing the re-relaxation future-work item.
+
+## Future work (PLAN ONLY — not to be included in the paper/manuscript at this stage)
+> These are next-step plans for the project, **not** results or claims for the manuscript.
+> None of this goes into `sections/*.tex` or the paper until the owner explicitly
+> promotes it. Tracked here so the plan survives across sessions.
+
+- **Continue the Pt(P) amorphous runs / continue the AGOX iterations.** The current
+  GOFEE/AGOX searches (the nine 17_PPt leaves: 0P/20P/30P × +0/+3/+5%) used
+  `N_ITERATIONS = 100` per seed. A plan is to run **further AGOX iterations** (extend
+  the search budget beyond 100) to deepen sampling of the low-energy amorphous basin
+  for the P-doped leaves. This directly addresses the force-under-relaxation caveat
+  (at more iterations the surrogate guides to lower-energy, better-relaxed candidates)
+  and could grow the retained ensemble those claims rest on.
+- **Re-relaxation check (paired with the above).** An explicit plan: fully re-relax the
+  P-doped per-leaf global minima (and per-seed minima) with force-converged DFT (proper
+  `optimizer_run_kwargs` with real convergence, not `steps: 1`) and re-verify the
+  crystalline-fraction / structural ranking of MT-1..MT-4 against the force-converged
+  geometries. Whether this hardens or revises the claims is an open question — it is
+  future work, not an assumed outcome.
+- **NOT for the current paper:** force statistics, the under-relaxation analysis, or the
+  energy-vs-force figures are methodological diagnostics for future work — do not draft
+  them into the manuscript unless/when promoted by the owner.
 
 ## Sign-off (owner, Session 4 + 4b + 4t)
 - ✅ Contribution framing confirmed (reframed Session 4b: cheap screening→SHC pipeline; **Session 4t: FLAPW SHC dropped entirely** — contribution is the reference-dependent screening → structural verification pipeline).

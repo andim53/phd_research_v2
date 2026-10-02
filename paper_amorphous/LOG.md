@@ -740,3 +740,42 @@ lines + hardcoded TRAJ; no dangling refs to the removed template.
 - NEXT: after Methods approval → draft full 04_results (crystallinity MT-1..MT-4).
 
 **Time:** 2026-10-01 JST
+
+## Session 4aa — 2026-10-02 (force-under-relaxation diagnosis + figures + CLAIMS caveat)
+**Owner request (series):** inspect force convergence of the retained structures; make
+energy-vs-force figures; persist per-structure data to JSON/CSV; add the caveat to CLAIMS.
+
+**Findings (the force story, all leaves, iteration >= 10, per-leaf e_max < 0.3 eV/atom):**
+1. Config: `LocalOptimizationEvaluator(..., optimizer_run_kwargs={"fmax": 0.05, "steps": 1})`
+   — AGOX stores a SINGLE-dft-step snapshot after surrogate relaxation; forces are not converged.
+2. 0P: max|F| min 0.006–0.012 eV/Å; 51–66% of retained < 0.05; low energy ⇔ low force (near-min-F
+   structures ARE the near-min-E structures).
+3. 20P/30P: max|F| never below 0.70 eV/Å (min 0.70–1.07), median 1.5–2.4, tail to ~40; 0% below 0.05.
+   The per-leaf global energy minimum itself sits at max|F| 0.71–1.65. Near-min-F structures are a
+   handful (1–8) of outliers, NOT the energy minima → energy & force decoupled in P, coupled in 0P.
+4. Interpretation: structural claims (MT-1..MT-4, crystalline fraction q6) are computed on
+   under-relaxed geometries for the P leaves only — a property of the search, not physical Pt(P).
+
+**Artifacts created:**
+- `codes/probe_forces_e003.py` v1.0.0 → `analysis/force_convergence_probe.json` (per-leaf min F,
+  count/grad near-min, etc.).
+- `analysis/figures/fig2_2panel.png` (crystallinity 2-panel: partial RDF + CF vs cell) via
+  `codes/emit_fig2_2panel.py` v1.0.0.
+- `analysis/figures/fig_energy_vs_force.png` + `fig_energy_vs_force_3x3.png` (hexbin ΔE vs max|F|,
+  log-force binning) via `codes/emit_fig_energy_vs_force.py` / `_3x3.py`.
+- JSON/CSV extraction: `codes/extract_energy_force.py` v1.0.0 →
+  `analysis/energy_vs_force/<leaf>.json` (×9) + `energy_vs_force.csv` (7,415 rows). Figure scripts
+  refactored to import these JSONs (v1.1.0), then y-tick formatter fixed for sub-unity forces (v1.1.1).
+- Hexbin bug fixed: hexbin in linear force threw away all sub-0.05 resolution (only 3 bins < 0.05);
+  re-binned on log10(F) → 13 populated bins below 0.05.
+
+**CLAIMS.md (paper1):** added the force-under-relaxation limitation (MT-1..MT-4) + a "Future work
+(PLAN ONLY — not for the manuscript)" section: continue the Pt(P) AGOX runs/iterations + a
+paired re-relaxation check of the P minima. These plans are tracked here, NOT for the paper.
+
+**Decorations / pending:**
+- [ ] Commit this milestone (probe, extractor, figures, JSON/CSV, CLAIMS caveat + lay plan).
+- NEXT: after owner review of figure layouts → commit; then continue paper drafting (Methods/results
+  prose) per paper_status.md.
+
+**Time:** 2026-10-02 JST
