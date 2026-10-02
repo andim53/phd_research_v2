@@ -89,4 +89,4 @@ Related amorphous-material XRD handling (see source for details).
 
 ## License
 
-Something
+Something MIT

@@ -1,0 +1,18 @@
+%% methods_flowchart.mmd — screening→SHC pipeline for amorphous Pt(P)
+%% Source of truth for Fig. 1 in sections/03_methods.tex.
+%% Render: npx @mermaid-js/mermaid-cli -i methods_flowchart.mmd -o ../analysis/figures/methods_flowchart.svg
+flowchart TD
+    A["fcc Pt host<br/>a = 3.975534 Å, 3×3×3 (Pt₁₀₈)"]
+    B["P interstitials<br/>B = C·A/(1−C) → Pt₁₀₈P₂₇ (20%) / Pt₁₀₈P₄₆ (30%)"]
+    C["Cell expansion<br/>+0% / +3% / +5% (11.927 / 12.284 / 12.523 Å)"]
+    D["GOFEE/AGOX search<br/>Rattle + AmorphStructRandomize + AmorphPermutation"]
+    E["Oganov–Valle fingerprint descriptor"]
+    F["GPR surrogate (2×RBF + repulsive prior)<br/>+ LCB acquisition (κ=2)"]
+    G["GPAW relax<br/>LCAO/dzp/PBE, kpts (1,1,1), fmax 0.05 eV/Å"]
+    H["Database<br/>iteration ≥ 10 filter"]
+    I["Crystallinity analysis<br/>XRD (pymatgen) + Steinhardt q4/q6 + partial RDF"]
+    J["Amorphous minima selected"]
+    K["FLAPW spin Hall conductivity<br/>(placeholder)"]
+
+    A --> B --> C --> D
+    D --> E --> F --> G --> H --> I --> J --> K
