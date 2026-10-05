@@ -9,10 +9,9 @@ We model the amorphous state as the low-energy basin around a chosen
 crystalline reference and enumerate that basin with a surrogate-guided
 global-optimization search, rather than by melt-quench molecular dynamics
 \cite{gofee2020,gofee2022,agox2022}. The reference is a \emph{physical choice}
-the user controls: for a host with a single stable phase the reference is
-unique, whereas for a polymorphic host it is a genuine choice. Here the fcc
-Pt host has a single stable phase, so its reference is unique; we return to
-the polymorphic case (Ta, W) in the Supplementary Information
+the user controls: unique for a host with a single stable phase (here fcc
+Pt), a genuine choice for a polymorphic host (Ta, W), which we return to in
+the Supplementary Information
 \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
 
 The search is seeded from the reference topology. Starting from the
@@ -24,42 +23,40 @@ differing only in the cell expansion applied to the host: $+0\%$
 (11.927~\AA), $+3\%$ (12.284~\AA), and $+5\%$ (12.523~\AA); the $+10\%$
 family is excluded from scope. Candidate structures are described by the
 Oganov--Valle angular fingerprint \cite{oganov2009}, and a Gaussian-process
-regression surrogate is built from a sum of two radial-basis-function kernels
-with a repulsive prior \cite{biswas2017,artrith2018}. A
-lower-confidence-bound acquisition function ($\kappa = 2$) selects candidates
-for density-functional evaluation \cite{gofee2022}.
+regression (GPR) surrogate is built from a sum of two radial-basis-function
+kernels with a repulsive prior \cite{biswas2017,artrith2018}. A
+lower-confidence-bound (LCB) acquisition function ($\kappa = 2$) selects
+candidates for density-functional theory (DFT) evaluation \cite{gofee2022}.
 
 Three structure generators enter the candidate mix progressively
-\cite{agox2022}. The \emph{amorphous randomizer} starts from the reference
-P-interstitial alloy and randomly displaces every atom: for each atom it
-attempts up to 500 random displacements inside a sphere of radius
-1.5~\AA{} (uniform-volume sampling), keeping only displacements that stay
-inside the cell and do not place the atom too close to a neighbour. This
-seeds the search near the reference topology. The \emph{rattle generator}
-displaces a random subset of atoms by up to 1.5~\AA{}, producing small local
-perturbations of an existing candidate. The \emph{interstitial-permutation
-generator} swaps the positions of atoms of different species (Pt~$\leftrightarrow$~P)
-among the interstitial sites, up to 20 swaps with 20 attempts each, and
-applies a small rattling displacement (1.5~\AA{}) to the swapped atoms,
-redistributing P among sites to explore different interstitial arrangements.
+\cite{agox2022}, all applying displacements up to 1.5~\AA{}. The
+\emph{amorphous randomizer} starts from the reference P-interstitial alloy
+and randomly displaces every atom: for each atom it attempts up to 500
+random displacements inside a sphere of radius 1.5~\AA{} (uniform-volume
+sampling), keeping only displacements that stay inside the cell and do not
+place the atom too close to a neighbour. This seeds the search near the
+reference topology. The \emph{rattle generator} displaces a random subset of
+atoms, producing small local perturbations of an existing candidate. The
+\emph{interstitial-permutation generator} swaps the positions of atoms of
+different species (Pt~$\leftrightarrow$~P) among the interstitial sites, up
+to 20 swaps with 20 attempts each, and applies a small rattling displacement
+to the swapped atoms, redistributing P among sites to explore different
+interstitial arrangements.
 
 \subsection{Iteration timeline}\label{sec:methods-timeline}
 
-The search runs as an iteration counter $i$. At each iteration the active
-phase generates $N$ candidate structures, which are scored by the
-Gaussian-process surrogate; the lower-confidence-bound acquisition selects
-$M$ of them, and density-functional theory (DFT) evaluates those $M$. The
-results are stored in a database and $i$ increments by one. The generator mix
-and the relaxation gate switch on at specific iterations, as summarized in
-Fig.~\ref{fig:methods-timeline}:
+The search runs as an iteration counter $i$; the active phase generates $N$
+candidates, the surrogate scores them, LCB selects $M$, and DFT evaluates
+those $M$ (Fig.~\ref{fig:methods-timeline}). The generator mix and the
+relaxation gate switch on at specific iterations:
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/methods_timeline.png}
   \caption{Iteration timeline of the surrogate-guided search. The search
       runs as an iteration counter $i$; at each iteration the active phase
-      generates $N$ candidates, the Gaussian-process surrogate scores them,
-      the lower-confidence-bound acquisition selects $M$, and DFT evaluates
+      generates $N$ candidates, the GPR surrogate scores them,
+      the LCB acquisition selects $M$, and DFT evaluates
       those $M$, with the results stored in the database and $i$ incrementing
       by one (feedback loop). The generator mix switches on at specific
       iterations: Phase I ($0 \le i < 10$) uses the amorphous randomizer
@@ -78,17 +75,16 @@ Fig.~\ref{fig:methods-timeline}:
   \item \textbf{Phase II} ($10 \le i < 25$): the rattle generator joins ---
   $N = 5$ from the amorphous randomizer plus $N = 5$ from the rattle
   generator. Relaxation begins at iteration 10 and the search
-    becomes LCB-guided ($\kappa = 2$).
+    becomes LCB-guided.
   \item \textbf{Phase III} ($25 \le i$): the permutation generator joins ---
   $N = 5$ from the rattle generator plus $N = 5$ from the permutation
   generator; the amorphous randomizer drops out. The search continues under
-  LCB ($\kappa = 2$).
+  LCB.
 \end{itemize}
 
-Structures from iterations below 10 are generated and DFT-scored to populate
-the surrogate but are \emph{not} relaxed; relaxation (and the analysis
-filter) begins at iteration 10. Only structures from iteration 10 onward are
-retained for analysis.
+Only structures from iteration 10 onward and within 0.3~eV/atom of the
+leaf's global minimum (relative-energy cap, per-leaf reference) are retained
+for analysis.
 
 \subsection{Electronic structure}\label{sec:methods-dft}
 
@@ -132,14 +128,14 @@ medians 80--99; range 10--100) \cite{gofee2022}.
 
 The GPR surrogate predicts the DFT energy accurately enough to drive the
 search, and its error grows with distance from the minimum and with P
-loading. Over the retained ensemble (iteration $\ge$ 10, all nine leaves,
-per-leaf relative energy 0--0.3~eV/atom), the mean absolute error (MAE) in
+loading. Over the retained ensemble (all nine leaves), the mean absolute
+error (MAE) in
 the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
 0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
 $\sigma$ in the same window is 0.019--0.023 (0P), 0.028--0.032 (20P), and
 0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with distance from the
 minimum and with P loading, and the predicted uncertainty tracks the actual
-error --- validating the LCB acquisition ($\kappa = 2$). Per-window $R^2$ is
+error --- validating the LCB acquisition. Per-window $R^2$ is
 not reported: within 0.1~eV/atom windows the energy variance is tiny relative
 to the error, so $R^2$ is negative and uninformative; MAE and GPR $\sigma$
 are the meaningful metrics. We note that the DFT ground truth for P leaves is
@@ -163,8 +159,7 @@ window is averaged \cite{pymatgen2013,ase2017}.
 Steinhardt bond-orientational order parameters $q_4$ and $q_6$ are computed
 from the first-neighbour shell (cutoff $1.3\times$ the nearest-neighbour
 distance); an atom is classified fcc-like when $q_6 > 0.5$ (fcc $q_6 \approx
-0.5745$). The crystalline fraction is the mean over retained structures
-within 0.3~eV/atom of the leaf's global minimum (relative-energy cap,
-per-leaf reference). Partial radial distribution functions $g_{\mathrm{Pt-P}}(r)$
+0.5745$). The crystalline fraction is the mean over the retained ensemble.
+Partial radial distribution functions $g_{\mathrm{Pt-P}}(r)$
 and $g_{\mathrm{P-P}}(r)$ are computed out to 5.0~\AA{} (200 bins)
 \cite{ase2017}.
