@@ -20,7 +20,8 @@ machine-learned potential for melt-quench.
 \subsection{Exploration-to-exploitation transition}\label{sec:results-explore}
 
 The search transitions sharply from a surrogate-building (exploration) phase
-to LCB-guided exploitation at iteration 10. Across 61 seeds and 13 leaves,
+to LCB-guided exploitation at iteration 10 (Fig.~\ref{fig:explore-exploit}).
+Across 61 seeds and 13 leaves,
 the mean DFT energy of retained structures drops sharply at the iteration-10
 LCB switch-on, and the drop is universal across every seed. The per-leaf
 median drop (exploitation mean minus exploration mean) grows with P loading:
@@ -34,11 +35,24 @@ selects low-energy candidates rather than noise. The per-leaf global minimum
 is typically reached in the latter half of the 100-iteration budget (P-leaf
 medians 80--99; range 10--100) \cite{gofee2022}.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_explore_exploit.png}
+  \caption{Exploration-to-exploitation transition. (a) DFT energy versus
+      iteration for a representative 20~at.\% P leaf at $+0\%$ cell expansion
+      (seed 0), with the iteration-10 phase boundary shaded and the global
+      minimum marked; the mean energy drops sharply at the LCB switch-on.
+      (b) Acquisition value versus DFT energy in the exploitation phase, with
+      the Pearson $|r|$ reported, showing the surrogate selects low-energy
+      candidates.}
+  \label{fig:explore-exploit}
+\end{figure}
+
 \subsection{Surrogate predictive performance}\label{sec:results-surrogate}
 
 The GPR surrogate predicts the DFT energy accurately enough to drive the
 search, and its error grows with distance from the minimum and with P
-loading. Over the retained ensemble (all nine leaves), the mean absolute
+loading (Fig.~\ref{fig:surrogate-perf}). Over the retained ensemble (all nine leaves), the mean absolute
 error (MAE) in
 the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
 0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
@@ -52,6 +66,19 @@ are the meaningful metrics. We note that the DFT ground truth for P leaves is
 on under-relaxed geometries (single-DFT-step evaluator), so the measured
 error includes that noise and is an upper bound on the true model error
 \cite{gofee2022}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_surrogate_perf.png}
+  \caption{Surrogate predictive performance, one line per leaf (all nine),
+      colored by P loading with a distinct line style per cell expansion.
+      (a) Mean absolute error (MAE) versus $E_i - E_{\rm glob}$ (eV/atom) per
+      0.1~eV/atom window; the error grows with distance from the minimum and
+      with P loading. (b) GPR uncertainty $\sigma$ versus $E_i - E_{\rm glob}$;
+      comparing (a) and (b) shows the predicted uncertainty tracks the actual
+      error. $E_{\rm glob}$ is the energy of the leaf's global minimum.}
+  \label{fig:surrogate-perf}
+\end{figure}
 
 \subsection{Crystallinity: amorphization onset and cell dependence}\label{sec:results-crystallinity}
 
