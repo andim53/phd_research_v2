@@ -1,35 +1,33 @@
 %% methods_timeline.mmd — iteration timeline (M-1b) for amorphous Pt(P)
 %% Source of truth for Fig. in sections/03_methods.tex (Iteration timeline).
+%% Mirrors the mermaid in CLAIMS.md M-1b.
 %% Render: npx @mermaid-js/mermaid-cli -i methods_timeline.mmd -o ../analysis/figures/methods_timeline.png
-flowchart TD
-    Init["Initialize the search<br/>iteration (i = 0)"]
-    D1{"0 ≤ i < 10"}
-    D2{"10 ≤ i < 25"}
-    D3{"25 ≤ i"}
+flowchart LR
+    Init["Init (i = 0)"]
+    Dec{"Iteration i"}
 
-    subgraph BE ["<b>Biased Exploration: Generate N candidates</b>"]
+    subgraph BE["Biased Exploration"]
         direction TB
-        P1["<b>Phase I</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Amorphous randomizer:&nbsp;N&nbsp;=&nbsp;10</div>"]
-        P2["<b>Phase II</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Amorphous randomizer:&nbsp;N&nbsp;=&nbsp;5<br/>• Rattle generator:&nbsp;N&nbsp;=&nbsp;5</div>"]
-        P3["<b>Phase III</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Rattle generator:&nbsp;N&nbsp;=&nbsp;5<br/>• Permutation generator:&nbsp;N&nbsp;=&nbsp;5</div>"]
+        P1["<b>Phase I</b> (0 ≤ i < 10)<br/>Amorphous: N = 10"]
+        P2["<b>Phase II</b> (10 ≤ i < 25)<br/>Amorphous: N=5 | Rattle: N=5"]
+        P3["<b>Phase III</b> (i ≥ 25)<br/>Rattle: N=5 | Permute: N=5"]
     end
 
-    GPR["GPR surrogate<br/>optimization"]
-    LCB["LCB choose M<br/>candidates"]
-    DFT["DFT evaluate M<br/>candidates"]
-    DB["Database"]
+    GPR["GPR Surrogate<br/>Optimization"]
+    Eval["LCB Select M →<br/>DFT Evaluate M"]
+    DB[(Database)]
 
-    Init --> D1
-    D1 -->|Y| P1
-    D1 -->|N| D2
-    D2 -->|Y| P2
-    D2 -->|N| D3
-    D3 -->|Y| P3
+    Init --> Dec
+    
+    Dec -->|i < 10| P1
+    Dec -->|10 ≤ i < 25| P2
+    Dec -->|i ≥ 25| P3
 
-    P1 --> LCB
+    P1 --> Eval
     P2 --> GPR
     P3 --> GPR
 
-    GPR --> LCB
-    LCB --> DFT
-    DFT -->|Store candidates| DB
+    GPR --> Eval --> DB
+    DB -->|i = i + 1| Dec
+
+    style BE fill:#f4f4f5,stroke:#71717a,stroke-width:1px,color:#18181b

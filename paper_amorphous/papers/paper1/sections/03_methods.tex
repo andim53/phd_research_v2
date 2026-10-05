@@ -55,12 +55,17 @@ Fig.~\ref{fig:methods-timeline}:
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.55\textwidth]{figures/methods_timeline.png}
-  \caption{Iteration timeline of the surrogate-guided search. The
-      generator mix and the relaxation gate switch on at specific iterations:
-      Phase I ($0 \le i < 10$) uses the amorphous randomizer alone; Phase II
-      ($10 \le i < 25$) adds the rattle generator and turns on relaxation and
-      LCB guidance; Phase III ($25 \le i$) swaps in the permutation generator.}
+  \includegraphics[width=\textwidth]{figures/methods_timeline.png}
+  \caption{Iteration timeline of the surrogate-guided search. The search
+      runs as an iteration counter $i$; at each iteration the active phase
+      generates $N$ candidates, the Gaussian-process surrogate scores them,
+      the lower-confidence-bound acquisition selects $M$, and DFT evaluates
+      those $M$, with the results stored in the database and $i$ incrementing
+      by one (feedback loop). The generator mix switches on at specific
+      iterations: Phase I ($0 \le i < 10$) uses the amorphous randomizer
+      alone; Phase II ($10 \le i < 25$) adds the rattle generator and turns
+      on relaxation and LCB guidance; Phase III ($i \ge 25$) swaps in the
+      permutation generator.}
   \label{fig:methods-timeline}
 \end{figure}
 
