@@ -1176,3 +1176,18 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4aw — 2026-10-05 (Fig 4(b) legend → lower-left, raised into empty band)
+**Owner request:** put the Fig 4(b) legend in the same position as Fig 4(c) (lower left), but raise it so the bottom green (30P) and orange (20P) lines don't cover it.
+
+**Actions taken:**
+1. **`codes/emit_fig_crystallinity_3panel.py` v1.0.2 → v1.0.3:** panel (b) legend `center right` → `lower left` + `bbox_to_anchor=(0, 0.30)` — matches Fig 4(c)'s lower-left position but raised into the empty middle band (y≈0.3–0.8), clear of the bottom green/orange lines (y≈0.09–0.18) and the top 0P line (y≈0.99).
+2. Regenerated `fig_crystallinity_3panel.png`, staged into `papers/paper1/figures/`. VERSIONS.md updated.
+
+**Verified:** figure regenerates with no layout warning; legend present in the raised lower-left region (dark fraction 0.036 vs 0.019 in the bottom band); `tectonic main.tex` compiles clean.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST
