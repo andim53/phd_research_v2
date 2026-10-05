@@ -51,32 +51,32 @@ systems reach it at iterations 80--99; range 10--100) \cite{gofee2022}.
 \subsection{Surrogate predictive performance}\label{sec:results-surrogate}
 
 The GPR surrogate predicts the DFT energy accurately enough to drive the
-search, and its error grows with distance from the minimum and with P
-loading (Fig.~\ref{fig:surrogate-perf}). Over the retained ensemble (all nine systems), the mean absolute
-error (MAE) in
+search in the low-energy regime that matters for selection --- structures
+within 0.1~eV/atom of the system's global minimum (Fig.~\ref{fig:surrogate-perf}).
+Over the retained ensemble (all nine systems), the mean absolute error (MAE) in
 the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
 0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
 $\sigma$ in the same window is 0.019--0.023 (0P), 0.028--0.032 (20P), and
-0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with distance from the
-minimum and with P loading, and the predicted uncertainty tracks the actual
-error --- validating the LCB acquisition. Per-window $R^2$ is
-not reported: within 0.1~eV/atom windows the energy variance is tiny relative
-to the error, so $R^2$ is negative and uninformative; MAE and GPR $\sigma$
-are the meaningful metrics. We note that the DFT ground truth for P systems is
-on under-relaxed geometries (single-DFT-step evaluator), so the measured
-error includes that noise and is an upper bound on the true model error
-\cite{gofee2022}.
+0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with P loading, and the
+predicted uncertainty tracks the actual error --- validating the LCB
+acquisition. $R^2$ is not reported: within the 0.1~eV/atom window the energy
+variance is tiny relative to the error, so $R^2$ is negative and
+uninformative; MAE and GPR $\sigma$ are the meaningful metrics. We note that
+the DFT ground truth for P systems is on under-relaxed geometries
+(single-DFT-step evaluator), so the measured error includes that noise and is
+an upper bound on the true model error \cite{gofee2022}.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/fig_surrogate_perf.png}
-  \caption{Surrogate predictive performance, one line per system (all nine),
-      colored by P loading with a distinct line style per cell expansion.
-      (a) Mean absolute error (MAE) versus $E_i - E_{\rm glob}$ (eV/atom) per
-      0.1~eV/atom window; the error grows with distance from the minimum and
-      with P loading. (b) GPR uncertainty $\sigma$ versus $E_i - E_{\rm glob}$;
-      comparing (a) and (b) shows the predicted uncertainty tracks the actual
-      error. $E_{\rm glob}$ is the energy of the system's global minimum.}
+  \caption{Surrogate predictive performance at the 0--0.1~eV/atom window
+      (structures within 0.1~eV/atom of the system's global minimum), one bar
+      per system (all nine), grouped by P loading and colored by P loading
+      with a distinct hatch per cell expansion.
+      (a) Mean absolute error (MAE) between the surrogate prediction and the
+      DFT energy. (b) GPR uncertainty $\sigma$. Comparing (a) and (b) shows
+      the predicted uncertainty tracks the actual error; both rise with P
+      loading.}
   \label{fig:surrogate-perf}
 \end{figure}
 

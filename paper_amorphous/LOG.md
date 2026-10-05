@@ -1142,3 +1142,21 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4au — 2026-10-05 (tighten surrogate-performance cap to 0.1 eV/atom; Fig 3 → bar chart)
+**Owner request:** with the 0.1 eV/atom cap now adopted, also update Fig 3 (surrogate predictive performance, R-1e) to the 0.1 cap. Owner chose: shrink to a single 0–0.1 eV/atom window, bar chart (x-axis = 9 leaves grouped by P loading), losing the multi-window "error grows with distance" trend.
+
+**Actions taken:**
+1. **`codes/extract_surrogate_perf.py` v1.0.0 → v1.1.0:** energy cap E_MAX 1.0 → 0.1 eV/atom (single 0–0.1 window). Re-ran → `analysis/surrogate_perf/surrogate_perf.json` now reports only the 0–0.1 window.
+2. **`codes/emit_fig_surrogate_perf.py` v2.1.0 → v3.0.0:** rewrote as a 2-panel bar chart (MAE + GPR σ), one bar per leaf at the 0–0.1 window, grouped by P loading, colored by P loading + hatch per cell expansion. Regenerated `analysis/figures/fig_surrogate_perf.png` and staged into `papers/paper1/figures/`.
+3. **04_results.tex:** surrogate subsection + Fig 3 caption rewritten — single 0–0.1 window, "error grows with distance" trend removed, MAE/σ rise with P loading retained.
+4. **CLAIMS.md (v6):** R-1e updated (0→0.1 eV/atom, single-window, trend removed), Figures table row for `fig_surrogate_perf.png` (v3.0.0, e_max=0.1), header + sign-off notes.
+5. **VERSIONS.md:** both code files bumped.
+
+**Verified:** `tectonic main.tex` compiles clean; figure regenerated (layout warning resolved); JSON reports e_max=0.1.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST

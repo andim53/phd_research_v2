@@ -9,7 +9,7 @@ DB at selection time (before the candidate is DFT-scored), so model_energy is a
 genuine out-of-sample prediction.
 
 Metrics, binned by per-leaf relative energy (eV/atom, relative to the leaf's
-global minimum) across the 0 -> 1 eV/atom range:
+global minimum) across the 0 -> 0.1 eV/atom range:
   - MAE, RMSE (eV/atom) between model_energy and DFT energy
   - R^2 (variance explained) per window
   - Spearman rho (rank correlation) per window  -- the surrogate is used for
@@ -25,7 +25,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import argparse
 import glob
@@ -38,7 +38,7 @@ import numpy as np
 from agox.databases import Database
 
 START_ITER = 10
-E_MAX = 1.0  # eV/atom, per-leaf relative-energy cap (the 0 -> 1 eV/atom range)
+E_MAX = 0.1  # eV/atom, per-leaf relative-energy cap (the 0 -> 0.1 eV/atom range)
 WINDOW = 0.1  # eV/atom window width
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -19,6 +19,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - **Key numbers (crystalline fraction mean, e_max=0.1):** 0P 0.99 → 20/30P 0.09–0.18 (MT-1); 20P≈30P (MT-2); cell expansion +0→+3/+5: 20P 0.184→0.137→0.094, 30P 0.176→0.098→0.098 (MT-3).
 - **XRD cross-check** (`data/17_PPt/DISCUSSION.md`): integrated CI 0.81–0.83→0.35–0.38 for P loading; cell effect only ~7% (weak) → CNA is the quantitative backbone for MT-3.
 - **M-1d exploration→exploitation verified multi-seed** (61 seeds, 13 leaves): energy drop at iteration-10 LCB switch-on universal; |r| P-specific (0.7–0.9); gmin in latter half of budget. `analysis/explore_exploit/explore_exploit.json` + `fig_explore_exploit.png`.
+- **R-1e surrogate performance (Fig 3) tightened to 0.1 eV/atom** (Session 4au): MAE/GPR σ now reported at the single 0–0.1 eV/atom window (bar chart, one bar per leaf grouped by P loading); multi-window "error grows with distance" trend dropped. `analysis/surrogate_perf/surrogate_perf.json` (e_max=0.1) + `fig_surrogate_perf.png` (v3.0.0).
 - **Force-under-relaxation diagnostic** (NOT for the paper): P leaves are not force-converged (single-DFT-step evaluator); structural claims rest on energetics, re-check planned (Future work). `analysis/energy_vs_force/`, `analysis/force_convergence_probe.json`.
 - SHC pipeline built (`hpc_runs/`, Sessions 2) but **out of scope** for this manuscript (Session 4t).
 
