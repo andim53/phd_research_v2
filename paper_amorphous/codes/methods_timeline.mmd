@@ -1,16 +1,16 @@
 %% methods_timeline.mmd — iteration timeline (M-1b) for amorphous Pt(P)
 %% Source of truth for Fig. in sections/03_methods.tex (Iteration timeline).
 %% Mirrors the mermaid in CLAIMS.md M-1b.
-%% Render: npx @mermaid-js/mermaid-cli -i methods_timeline.mmd -o ../analysis/figures/methods_timeline.png
+%% Render: npx @mermaid-js/mermaid-cli -i methods_timeline.mmd -o ../analysis/figures/methods_timeline.png -s 3
 flowchart LR
     Init["Init (i = 0)"]
     Dec{"Iteration i"}
 
     subgraph BE["Biased Exploration"]
         direction TB
-        P1["<b>Phase I</b><br/>Amorphous: N = 10"]
-        P2["<b>Phase II</b><br/>Amorphous: N=5 | Rattle: N=5"]
-        P3["<b>Phase III</b><br/>Rattle: N=5 | Permute: N=5"]
+        P1["<b>Phase I</b><br/>Amorphous randomizer: N = 10"]
+        P2["<b>Phase II</b><br/>Amorphous randomizer: N=5 | Rattle generator: N=5"]
+        P3["<b>Phase III</b><br/>Rattle generator: N=5 | Permutation generator: N=5"]
     end
 
     GPR["GPR Surrogate<br/>Optimization"]
