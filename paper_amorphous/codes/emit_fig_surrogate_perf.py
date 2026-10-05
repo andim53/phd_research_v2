@@ -5,14 +5,14 @@ Serves M-1e (GPR surrogate predictive performance) from
 analysis/surrogate_perf/surrogate_perf.json (produced by
 codes/extract_surrogate_perf.py).
 
-Two panels, all 9 leaves pooled per P loading (n-weighted across the +0/+3/+5
-cells), x-axis 0 -> 0.3 eV/atom:
+Two panels, one line per leaf (all 9 leaves), colored by P loading with a
+distinct line style per cell expansion (+0/+3/+5), x-axis 0 -> 0.3 eV/atom:
 
   (a) MAE vs E_i - E_glob — mean absolute error (eV/atom) per 0.1 eV/atom
-      window, line per P loading. Carries the headline: surrogate error grows
-      with distance from the minimum and with P loading.
+      window, line per leaf. Carries the headline: surrogate error grows with
+      distance from the minimum and with P loading.
   (b) GPR uncertainty vs E_i - E_glob — mean GPR sigma (eV/atom) per window,
-      line per P loading. Carries the predicted-uncertainty story (what the LCB
+      line per leaf. Carries the predicted-uncertainty story (what the LCB
       acquisition uses). Comparing (a) and (b) shows whether the predicted
       uncertainty tracks the actual error.
 
@@ -26,11 +26,10 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import json
 import os
-from collections import defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
@@ -50,6 +49,8 @@ OUTDIR = os.path.join(ANALYSIS, "figures")
 
 P_ORDER = ["0P", "20P", "30P"]
 COLORS = {"0P": "tab:blue", "20P": "tab:orange", "30P": "tab:green"}
+# line style per cell expansion, so the 3 leaves of a P loading are distinct
+CELL_STYLE = {"+0": "-", "+3": "--", "+5": ":"}
 
 XLABEL = r"$E_i - E_{\rm glob}$ (eV/atom)"
 XMAX = 0.3  # eV/atom, low-energy regime
@@ -60,44 +61,33 @@ def load():
     return d["leaves"]
 
 
-def pool_by_p(leaves):
-    """n-weighted pool of per-window MAE and GPR sigma across all leaves of a P loading."""
-    # by_p[P][window_lo] = [n, mae_sum, sigma_sum]
-    by_p = {p: defaultdict(lambda: [0, 0.0, 0.0]) for p in P_ORDER}
-    for l in leaves:
-        p = l["P_loading"]
-        for w in l["windows"]:
-            lo = w["window_lo_eV_per_atom"]
-            if lo >= XMAX:
-                continue
-            acc = by_p[p][lo]
-            acc[0] += w["n"]
-            acc[1] += w["n"] * w["mae_eV_per_atom"]
-            acc[2] += w["n"] * w["mean_sigma_eV_per_atom"]
-    out = {}
-    for p in P_ORDER:
-        wins = sorted(by_p[p].keys())
-        out[p] = {
-            "x": [lo + 0.05 for lo in wins],
-            "mae": [by_p[p][lo][1] / by_p[p][lo][0] for lo in wins],
-            "sigma": [by_p[p][lo][2] / by_p[p][lo][0] for lo in wins],
-            "n": [by_p[p][lo][0] for lo in wins],
-        }
-    return out
+def leaf_series(rec):
+    """Per-window (x, mae, sigma) for one leaf, restricted to x < XMAX."""
+    x, mae, sigma = [], [], []
+    for w in rec["windows"]:
+        lo = w["window_lo_eV_per_atom"]
+        if lo >= XMAX:
+            continue
+        x.append(lo + 0.05)
+        mae.append(w["mae_eV_per_atom"])
+        sigma.append(w["mean_sigma_eV_per_atom"])
+    return x, mae, sigma
 
 
 def main():
     os.makedirs(OUTDIR, exist_ok=True)
     leaves = load()
-    pooled = pool_by_p(leaves)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 4.2), layout="constrained")
 
-    for p in P_ORDER:
+    for rec in leaves:
+        p = rec["P_loading"]
+        cell = rec["cell"]
         c = COLORS[p]
-        d = pooled[p]
-        ax1.plot(d["x"], d["mae"], color=c, lw=1.6, marker="o", ms=3, label=p)
-        ax2.plot(d["x"], d["sigma"], color=c, lw=1.6, marker="o", ms=3, label=p)
+        ls = CELL_STYLE[cell]
+        x, mae, sigma = leaf_series(rec)
+        ax1.plot(x, mae, color=c, ls=ls, lw=1.4, marker="o", ms=3)
+        ax2.plot(x, sigma, color=c, ls=ls, lw=1.4, marker="o", ms=3)
 
     ax1.set_xlabel(XLABEL)
     ax1.set_ylabel(r"MAE (eV/atom)")
@@ -109,18 +99,21 @@ def main():
     ax2.set_xlim(0, XMAX)
     ax2.text(0.5, -0.22, "(b)", transform=ax2.transAxes, ha="center", va="bottom", fontsize=12)
 
+    # legend: P loading (color) + cell (line style)
     for ax in (ax1, ax2):
-        ax.legend(frameon=False, fontsize=10, loc="best")
+        handles = [plt.Line2D([0], [0], color=COLORS[p], lw=1.6, label=p) for p in P_ORDER]
+        handles += [plt.Line2D([0], [0], color="k", ls=ls, lw=1.4, label=f"{cell}% cell")
+                    for cell, ls in CELL_STYLE.items()]
+        ax.legend(handles=handles, frameon=False, fontsize=9, loc="best")
 
     out = os.path.join(OUTDIR, "fig_surrogate_perf.png")
     fig.savefig(out)
     plt.close(fig)
     print("figures ->", out)
-    for p in P_ORDER:
-        d = pooled[p]
-        print(f"  {p}: n={sum(d['n']):,}  "
-              f"MAE@0-0.1={d['mae'][0]:.4f} sigma@0-0.1={d['sigma'][0]:.4f}  "
-              f"MAE@0.2-0.3={d['mae'][-1]:.4f} sigma@0.2-0.3={d['sigma'][-1]:.4f}")
+    for rec in leaves:
+        x, mae, sigma = leaf_series(rec)
+        print(f"  {rec['leaf']:<24} {rec['P_loading']:<4} {rec['cell']:<4} "
+              f"MAE@0-0.1={mae[0]:.4f} sigma@0-0.1={sigma[0]:.4f}")
 
 
 if __name__ == "__main__":

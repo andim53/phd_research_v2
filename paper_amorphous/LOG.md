@@ -937,3 +937,20 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: after owner review -> commit; then draft sections/03_methods.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ai — 2026-10-05 (fig_surrogate_perf v2.1.0: per-leaf lines)
+**Owner request:** show all 9 leaves individually instead of the pooled mean. Clarified intent: one line per leaf, colored by P loading (3 colors, 3 lines each), keeping the P-loading story visible.
+
+**Actions taken:**
+1. `codes/emit_fig_surrogate_perf.py` v2.0.0 -> v2.1.0: one line per leaf (all 9), colored by P loading with a distinct line style per cell expansion (+0 solid / +3 dashed / +5 dotted). Legend shows P loading (color) + cell (line style). 2 panels unchanged (MAE + GPR sigma vs E_i-E_glob, x 0-0.3).
+2. `CLAIMS.md`: M-1e numbers updated to per-leaf ranges (0-0.1 window MAE 0.009-0.015/0.029-0.034/0.048-0.061 for 0P/20P/30P); figure table updated to v2.1.0.
+3. `VERSIONS.md` bumped to 2.1.0.
+
+**Verified:** script compiles; figure regenerates cleanly (valid PNG).
+
+**Decorations / pending:**
+- [ ] Owner reviews the per-leaf figure.
+- [ ] Commit this milestone (fig script v2.1.0 + CLAIMS + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
