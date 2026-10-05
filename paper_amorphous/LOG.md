@@ -1107,3 +1107,20 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4as — 2026-10-05 (add XRD crystallinity cross-check figure, Fig. 3)
+**Owner request:** add the XRD crystallinity index as a figure — rebuild code, rebuild json/csv, rebuild graph, add + reference it.
+
+**Actions taken:**
+1. **Wrote `codes/emit_fig_xrd_crystallinity.py` v1.0.0** — reads `data/17_PPt/*/xrd_out/crystallinity.csv` for the 9 paper leaves, takes the integrated CI at the lowest-energy window (0.05 eV/atom, most crystalline reference), plots integrated CI vs cell expansion (one line per P loading) → `analysis/figures/fig_xrd_crystallinity.png` + `analysis/xrd_crystallinity/xrd_crystallinity.json`.
+2. **Staged** the PNG into `papers/paper1/figures/`.
+3. **04_results.tex:** added `Fig.~\ref{fig:xrd-crystallinity}` to the XRD cross-check sentence and a figure environment (Fig. 3) with caption.
+4. **CLAIMS.md:** added `fig_xrd_crystallinity.png` to the Figures table (serves MT-1, MT-3). **paper_status.md + VERSIONS.md** updated.
+
+**Verified:** `tectonic main.tex` compiles clean; Fig. 3 embedded (1800×1200, 463 ppi); ref resolves. Numbers match the paper's claim (0P 0.81–0.83 → P 0.35–0.38).
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v5.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST

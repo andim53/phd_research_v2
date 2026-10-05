@@ -39,7 +39,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Phase A.5: CLAIMS.md v3 — MT-1..MT-4, M-1..M-1d, M-2, SI-1 all signed off (Phase B evidence mapped)
 - [x] Phase B: claims mapped to CNA/RDF JSONs + XRD table + explore/exploit JSON
 - [x] sections/03_methods.tex (DRAFTED Session 4ao — traces M-1, M-1b, M-2, M-3; 19 cites all resolve; compiles clean; **Session 4ap: de-code-like'd prose, added iteration-timeline figure Fig. 1; Session 4aq: M-1c/M-1d/M-1e moved to Results**) — **awaiting owner review**
-- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2**)
+- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3**)
 - [ ] sections/05_conclusion.tex (placeholder)
 - [ ] sections/02_introduction.tex (placeholder)
 - [ ] sections/06_ack_dataavail.tex (placeholder)

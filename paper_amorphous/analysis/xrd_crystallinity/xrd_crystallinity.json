@@ -1,0 +1,86 @@
+{
+  "metric": "XRD integrated crystallinity index at lowest-energy window (0.05 eV/atom, most crystalline reference)",
+  "source": "data/17_PPt/<cell>/<leaf>/xrd_out/crystallinity.csv",
+  "leaves": {
+    "1_plus0cell/0_0P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9797069985343715,
+      "integrated_ci": 0.8253006777527592
+    },
+    "1_plus0cell/2_20P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9725582102111461,
+      "integrated_ci": 0.3776529694534733
+    },
+    "1_plus0cell/3_30P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9798225782636056,
+      "integrated_ci": 0.37771375932653517
+    },
+    "2_plus3cell/0_0P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9832677895790851,
+      "integrated_ci": 0.828116654273637
+    },
+    "2_plus3cell/2_20P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9686556058714035,
+      "integrated_ci": 0.35198497951732766
+    },
+    "2_plus3cell/3_30P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.977386989205379,
+      "integrated_ci": 0.35742062143409076
+    },
+    "0_plus5cell/3_3x3_0P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9558364765844924,
+      "integrated_ci": 0.8066933468744165
+    },
+    "0_plus5cell/1_3x3_20P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.975881272557096,
+      "integrated_ci": 0.35446171700885704
+    },
+    "0_plus5cell/2_3x3_30P": {
+      "window": "0.00_0.10",
+      "center": 0.05,
+      "n": 150,
+      "peak_fraction_ci": 0.9800765707988262,
+      "integrated_ci": 0.34919557902417225
+    }
+  },
+  "grid": {
+    "+0": {
+      "0P": 0.8253006777527592,
+      "20P": 0.3776529694534733,
+      "30P": 0.37771375932653517
+    },
+    "+3": {
+      "0P": 0.828116654273637,
+      "20P": 0.35198497951732766,
+      "30P": 0.35742062143409076
+    },
+    "+5": {
+      "0P": 0.8066933468744165,
+      "20P": 0.35446171700885704,
+      "30P": 0.34919557902417225
+    }
+  }
+}
