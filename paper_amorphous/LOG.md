@@ -1191,3 +1191,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ax — 2026-10-05 (retitle crystallinity Results subsection)
+**Owner request:** replace the heading "Crystallinity: amorphization onset and cell dependence" with a cleaner title. Owner chose option 1.
+
+**Actions taken:**
+1. **04_results.tex:** `\subsection{Crystallinity: amorphization onset and cell dependence}` → `\subsection{Crystallinity of the Pt(P) systems}` (matches the Fig 4 caption; the prose carries the onset/saturation/cell-dependence findings).
+
+**Verified:** `tectonic main.tex` compiles clean.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST
