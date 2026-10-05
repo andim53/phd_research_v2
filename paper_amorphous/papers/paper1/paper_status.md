@@ -12,11 +12,11 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - SI: SPIE class (`spieman.cls` + `spiejour.bst`).
 - Venue template swap deferred to submission (Phase G).
 
-## Current state (updated 2026-10-05, Session 4ab)
+## Current state (updated 2026-10-05, Session 4at)
 - **Contribution framed and confirmed** (SHC dropped entirely from framing per owner, Session 4t).
-- **CLAIMS.md v3 signed off** (MT-1..MT-4, M-1..M-1d, M-2, SI-1) — claim list frozen; manuscript must trace to it.
-- **CNA/RDF structural cross-check done** (`codes/emit_cna_rdf.py` v1.1.0): Steinhardt q6 crystalline fraction + partial RDF for 9 leaves (0P/20P/30P × +0/+3/+5). Results in `analysis/cna_rdf/<leaf>/cna_rdf.json`.
-- **Key numbers (crystalline fraction mean):** 0P 0.85–0.91 → 20/30P 0.14–0.22 (MT-1); 20P≈30P (MT-2); cell expansion +0→+3/+5: 20P 0.212→0.170→0.157, 30P 0.223→0.137→0.152 (MT-3).
+- **CLAIMS.md v6 signed off** (MT-1..MT-4, M-1..M-1d, M-2, SI-1) — claim list frozen; manuscript must trace to it. **v6 (Session 4at): crystalline-fraction energy cap tightened 0.3 → 0.1 eV/atom** (per owner), matching the XRD lowest-window convention.
+- **CNA/RDF structural cross-check done** (`codes/emit_cna_rdf.py` v1.1.0): Steinhardt q6 crystalline fraction + partial RDF for 9 leaves (0P/20P/30P × +0/+3/+5). Results in `analysis/cna_rdf/<leaf>/cna_rdf.json` — **canonical data now at e_max=0.1 eV/atom**.
+- **Key numbers (crystalline fraction mean, e_max=0.1):** 0P 0.99 → 20/30P 0.09–0.18 (MT-1); 20P≈30P (MT-2); cell expansion +0→+3/+5: 20P 0.184→0.137→0.094, 30P 0.176→0.098→0.098 (MT-3).
 - **XRD cross-check** (`data/17_PPt/DISCUSSION.md`): integrated CI 0.81–0.83→0.35–0.38 for P loading; cell effect only ~7% (weak) → CNA is the quantitative backbone for MT-3.
 - **M-1d exploration→exploitation verified multi-seed** (61 seeds, 13 leaves): energy drop at iteration-10 LCB switch-on universal; |r| P-specific (0.7–0.9); gmin in latter half of budget. `analysis/explore_exploit/explore_exploit.json` + `fig_explore_exploit.png`.
 - **Force-under-relaxation diagnostic** (NOT for the paper): P leaves are not force-converged (single-DFT-step evaluator); structural claims rest on energetics, re-check planned (Future work). `analysis/energy_vs_force/`, `analysis/force_convergence_probe.json`.
@@ -25,9 +25,9 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 ## Claim → evidence (Phase B)
 | Claim | Evidence | Metric & value | Verified? |
 |-------|----------|----------------|-----------|
-| MT-1 P amorphizes host | analysis/cna_rdf/*/cna_rdf.json | cryst.frac 0.854–0.913 → 0.137–0.223 | yes |
-| MT-2 saturation 20P≈30P | analysis/cna_rdf/*/cna_rdf.json | 20P 0.157–0.212 vs 30P 0.137–0.223 (overlap) | yes |
-| MT-3 cell expansion mild disorder | analysis/cna_rdf/*/cna_rdf.json | 20P 0.212→0.170→0.157; 30P 0.223→0.137→0.152 | yes |
+| MT-1 P amorphizes host | analysis/cna_rdf/*/cna_rdf.json | cryst.frac 0.99 → 0.09–0.18 (e_max=0.1) | yes |
+| MT-2 saturation 20P≈30P | analysis/cna_rdf/*/cna_rdf.json | 20P 0.094–0.184 vs 30P 0.098–0.176 (overlap) | yes |
+| MT-3 cell expansion mild disorder | analysis/cna_rdf/*/cna_rdf.json | 20P 0.184→0.137→0.094; 30P 0.176→0.098→0.098 | yes |
 | XRD CI supports MT-1 | data/17_PPt/DISCUSSION.md | 0.81–0.83 → 0.35–0.38 | yes |
 
 ## Citations (Phase D)

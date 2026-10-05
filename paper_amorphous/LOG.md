@@ -1124,3 +1124,21 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4at — 2026-10-05 (tighten crystalline-fraction energy cap 0.3 → 0.1 eV/atom)
+**Owner request:** use a 0.1 eV/atom energy cap for the Steinhardt q6 crystalline fraction (matching the XRD lowest-energy-window convention), and update CLAIMS + the manuscript .tex accordingly.
+
+**Actions taken:**
+1. **Recomputed** the crystalline fraction for all 9 leaves with `emit_cna_rdf.py --e-max 0.1` (Steinhardt q6, iteration ≥ 10, per-leaf global-min reference) → `analysis/cna_rdf_emax01/` (temporary), then **promoted** the e=0.1 JSONs into the canonical `analysis/cna_rdf/*/cna_rdf.json` (overwriting the e=0.3 data).
+2. **Regenerated** `fig_crystallinity_3panel.png` from the e=0.1 data and staged it into `papers/paper1/figures/`.
+3. **CLAIMS.md → v6:** updated MT-1 (0P 0.99 → P 0.09–0.18), MT-2 (20P≈30P per-cell values), MT-3 (cell-dependence sequence), MT-4 (relative drops: 0P −0.1/−1.0%, 20P −25.5/−49.2%, 30P −44.3/−44.7%), M-2 (cap 0.3→0.1), Limitations force-under-relaxation (e_max < 0.1), Figures table (e_max=0.1 note), sign-off v6.
+4. **03_methods.tex:** relative-energy cap 0.3 → 0.1 eV/atom.
+5. **04_results.tex:** crystallinity numbers updated to the e=0.1 values (0.99 collapse, 20P/30P per-cell, cell-dependence sequence, relative drops, amorphous floor 0.09–0.18).
+
+**Verified:** `tectonic main.tex` compiles clean (exit 0); all 9 canonical cna_rdf JSONs report e_max=0.1; figure regenerated and staged.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST
