@@ -779,3 +779,57 @@ paired re-relaxation check of the P minima. These plans are tracked here, NOT fo
   prose) per paper_status.md.
 
 **Time:** 2026-10-02 JST
+
+## Session 4ab — 2026-10-02 (M-1d robustness check + 2-panel figure)
+**Owner request:** check whether M-1d (exploration-to-exploitation transition) needs a
+figure; then (2) verify the claim is robust across seeds before building it; then build it.
+
+**Actions taken:**
+1. Wrote `codes/extract_explore_exploit.py` v1.0.0 — extracts per-seed transition metrics
+   (exploration/exploitation mean energy, global-min iteration, acquisition–energy Pearson r,
+   per-iteration series) from every AGOX seed DB → `analysis/explore_exploit/explore_exploit.json`
+   (61 seeds, 13 leaves).
+2. **Robustness verdict (multi-seed):**
+   - Energy drop at iteration-10 LCB switch-on is **universal** (all 61 seeds). Per-leaf median
+     drop: 0P −156 to −218 eV, 20P −256 to −306 eV, 30P −320 to −356 eV — grows with P loading.
+   - Acquisition–energy correlation holds for **P leaves only** (|r| 0.70–0.91); weak for 0P
+     (|r| 0.22–0.67). The old "r ≈ 0.8" was P-specific and the sign is negative (LCB is negative).
+   - "Global min within ~70 iterations" is **NOT robust** — P-leaf medians 80–99, range 10–100.
+     Dropped from the claim.
+3. Wrote `codes/emit_fig_explore_exploit.py` v1.0.0 → `analysis/figures/fig_explore_exploit.png`
+   (2-panel: energy vs iteration with iteration-10 phase boundary + global-min marker; acquisition
+   vs energy with |r|). Representative P leaf 1_plus0cell/2_20P seed_0.
+4. Updated `CLAIMS.md` M-1d to the multi-seed numbers (drop range, |r| P-specific, gmin in latter
+   half of budget) + added `fig_explore_exploit.png` to the Figures table.
+5. Updated `VERSIONS.md` (2 new code files).
+
+**Verified:** extractor runs on all 61 seeds; figure is a valid 2850×1260 @300dpi PNG; CLAIMS M-1d
+numbers trace to `analysis/explore_exploit/explore_exploit.json`.
+
+**Decorations / pending:**
+- [ ] Owner reviews the M-1d figure + revised claim wording.
+- [ ] Commit this milestone (extractor, figure script, JSON, PNG, CLAIMS M-1d + Figures table,
+  VERSIONS, LOG).
+- NEXT: after owner review → commit; then continue paper drafting per paper_status.md.
+
+**Time:** 2026-10-02 JST
+
+## Session 4ac — 2026-10-05 (paper_status refresh + Session 4ab commit)
+**Owner request:** perform (c) — refresh `paper_status.md` to match reality AND commit the pending Session 4ab milestone.
+
+**Actions taken:**
+1. Refreshed `papers/paper1/paper_status.md` to match on-disk state (it was stale at Session 4):
+   - Scope note: FLAPW SHC **dropped entirely** (Session 4t), not "placeholder until calc done".
+   - Current state: CLAIMS v3 signed off (MT-1..MT-4, M-1..M-1d, M-2, SI-1); added M-1d multi-seed + force-under-relaxation diagnostic bullets.
+   - Drafting progress: sections are placeholders (content lives in CLAIMS.md), not "drafted".
+   - Open decisions: marked M-1d review + Session 4ab commit as done; SHC placeholder removed.
+2. Added missing module-level `__version__ = "1.0.0"` to `codes/extract_explore_exploit.py` (AGENTS rule 8; VERSIONS.md already listed 1.0.0).
+3. Committed the Session 4ab milestone (extractor, figure script, JSON, CLAIMS M-1d + Figures table, VERSIONS, LOG) + this paper_status refresh.
+
+**Verified:** extractor + figure script compile; `explore_exploit.json` is a 61-seed list with expected keys; paper_status now consistent with CLAIMS.md and section files.
+
+**Decorations / pending:**
+- [ ] Draft sections/03_methods.tex (global-optimization method, XRD + CNA/RDF crystallinity analysis) — block-and-wait review gate.
+- NEXT: draft sections/03_methods.tex per paper_status.md.
+
+**Time:** 2026-10-05 JST

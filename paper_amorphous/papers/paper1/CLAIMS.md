@@ -162,13 +162,22 @@ flowchart TD
 ### M-1d — Exploration-to-exploitation transition
 - **Claim:** The search transitions sharply from a surrogate-building
   (exploration) phase to LCB-guided exploitation at iteration 10.
-- **Numbers:** the mean DFT energy of retained structures drops from ~−380 eV
-  in the exploration phase (iterations < 10) to ~−680 eV once LCB guidance
-  begins; the per-leaf global minimum is typically reached within ~70
-  iterations; the acquisition value correlates strongly with the DFT energy
-  (Pearson r ≈ 0.8), confirming the surrogate selects low-energy candidates
-  rather than noise.
-- **Source:** `data/17_PPt/1_plus0cell/2_20P/seed_0/1_db/db_0.db`; \cite{gofee2022}.
+- **Numbers (multi-seed, 61 seeds across 13 leaves):** the mean DFT energy of
+  retained structures drops sharply at the iteration-10 LCB switch-on, and the
+  drop is universal across every seed. Per-leaf median drop (exploitation mean
+  minus exploration mean): 0P −156 to −218 eV, 20P −256 to −306 eV, 30P −320
+  to −356 eV — the transition grows with P loading. For the representative
+  leaf (1_plus0cell/2_20P) the mean drops from −375 to −390 eV (exploration)
+  to −681 to −689 eV (exploitation) across its four seeds. The acquisition
+  value correlates strongly with the DFT energy for P-doped leaves (|r| ≈
+  0.7–0.9 across all 20P/30P seeds; the correlation is weak for 0P, |r| ≈
+  0.2–0.7), confirming the surrogate selects low-energy candidates rather than
+  noise. The per-leaf global minimum is typically reached in the latter half
+  of the 100-iteration budget (P-leaf medians 80–99; range 10–100).
+- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
+  `analysis/explore_exploit/explore_exploit.json` (produced by
+  `codes/extract_explore_exploit.py`); fig
+  `analysis/figures/fig_explore_exploit.png`; \cite{gofee2022}.
 
 ### M-2 — Crystallinity verification (XRD + Steinhardt q4/q6 + partial radial distribution functions)
 - **Claim:** Amorphization is quantified by two complementary metrics — XRD
@@ -225,6 +234,7 @@ flowchart TD
 | `fig2_2panel.png` | (superseded by `fig_crystallinity_3panel.png`) | 2-panel crystallinity (partial RDF + crystalline-fraction vs cell). Kept as a diagnostic; not the paper figure. | `codes/emit_fig2_2panel.py` v1.0.0 | `analysis/cna_rdf/*/cna_rdf.json` |
 | `fig_energy_vs_force.png` | — (diagnostic, NOT paper) | Hexbin ΔE vs max\|F\|, 3 panels by P loading. | `codes/emit_fig_energy_vs_force.py` v1.1.1 | `analysis/energy_vs_force/*.json` (per-structure ΔE, max\|F\|), produced by `codes/extract_energy_force.py` v1.0.0 |
 | `fig_energy_vs_force_3x3.png` | — (diagnostic, NOT paper) | Hexbin ΔE vs max\|F\|, 3×3 (rows=cell, cols=P). | `codes/emit_fig_energy_vs_force_3x3.py` v1.1.1 | `analysis/energy_vs_force/*.json`, produced by `codes/extract_energy_force.py` v1.0.0 |
+| `fig_explore_exploit.png` | M-1d | 2-panel exploration-to-exploitation transition. **(a) DFT energy vs iteration** — per-iteration mean/min lines for a representative P leaf (1_plus0cell/2_20P, seed_0), iteration-10 phase boundary shaded (exploration vs exploitation), global-min marker. **(b) Acquisition value vs DFT energy** (exploitation phase) with Pearson |r| reported. Carries the sharp energy drop at LCB switch-on and the surrogate-selects-low-energy claim. | `codes/emit_fig_explore_exploit.py` v1.0.0 | `analysis/explore_exploit/explore_exploit.json`, produced by `codes/extract_explore_exploit.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
 
 ## Methodological diagnostics — energy-vs-force figure (discussion + numbers; NOT for the paper)
 > Analysis of `analysis/figures/fig_energy_vs_force{,_3x3}.png` (data:
