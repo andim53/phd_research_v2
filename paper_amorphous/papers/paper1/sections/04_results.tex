@@ -1,6 +1,4 @@
 % 04_results.tex — Results
-% Traces to CLAIMS.md R-1c (computational cost), R-1d (exploration-to-exploitation),
-% R-1e (surrogate predictive performance), and MT-1..MT-4 (crystallinity).
 % Drafted Session 4aq — reclassified from Methods (M-1c/M-1d/M-1e) to Results.
 
 \section{Results}\label{sec:results}
@@ -54,3 +52,57 @@ are the meaningful metrics. We note that the DFT ground truth for P leaves is
 on under-relaxed geometries (single-DFT-step evaluator), so the measured
 error includes that noise and is an upper bound on the true model error
 \cite{gofee2022}.
+
+\subsection{Crystallinity: amorphization onset and cell dependence}\label{sec:results-crystallinity}
+
+The crystalline fraction (fraction of atoms with $q_6 > 0.5$)
+quantifies how much fcc order survives in each leaf. Adding P interstitials
+collapses it: the 0P leaves retain a crystalline fraction of 0.87--0.97,
+whereas the 20P and 30P leaves fall to 0.11--0.20 across all three cell
+families (Fig.~\ref{fig:crystallinity}). This marks 20--30~at.\% P as the
+onset of structural amorphization by the interstitial global-optimization
+route. The collapse is consistent with the confusion principle
+\cite{greer1993}: each added species frustrates the fcc packing of the host,
+favouring glass formation. The XRD integrated crystallinity index
+cross-checks the same trend, dropping from 0.81--0.83 to 0.35--0.38 with P
+loading.
+
+The amorphizing effect saturates with concentration: the 20P and 30P
+crystalline fractions overlap within scatter at every cell ($+0\%$: 0.188 vs
+0.200; $+3\%$: 0.143 vs 0.112; $+5\%$: 0.126 vs 0.123), so once P is loaded
+the effect does not grow further with loading.
+
+Cell expansion mildly promotes disorder. At fixed composition, the
+equilibrium $+0\%$ cell retains the highest crystalline fraction, and $+3\%$
+and $+5\%$ expansion reduce it consistently for both 20P and 30P (20P:
+0.188 $\to$ 0.143 $\to$ 0.126; 30P: 0.200 $\to$ 0.112 $\to$ 0.123). The
+effect is mild --- a promotion of disorder, not a strong amorphization switch
+--- and matches the XRD integrated-CI direction, which is weak ($\sim$7\% on
+the XRD metric versus $\sim$20--30\% on the per-atom fraction). The mechanism
+is free volume: expanding the supercell at fixed occupancy adds free volume,
+which sustains the disordered rearrangements that characterise the amorphous
+state \cite{yang2025}.
+
+The disordering effect of cell expansion is proportionally much larger once
+P is present. Relative to the $+0\%$ cell, the crystalline fraction drops by
+only 2.5--9.5\% for 0P, but by 23.8--32.8\% for 20P and 38.7--44.1\% for 30P.
+P and cell expansion thus act synergistically, not independently: P already
+frustrates fcc packing, so the extra free volume from expansion has a
+proportionally larger disordering effect on a host that is already partially
+disordered. The doped leaves sit near the amorphous floor (0.11--0.20), so
+the amplification is best read in relative terms.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_crystallinity_3panel.png}
+  \caption{Crystallinity of the Pt(P) leaves. (a) Partial radial
+      distribution functions $g_{\mathrm{Pt-P}}(r)$ and $g_{\mathrm{P-P}}(r)$
+      for a representative 20~at.\% P leaf at $+0\%$ cell expansion,
+      illustrating the disordered P coordination. (b) Steinhardt $q_6$
+      crystalline fraction (mean $\pm$ std) versus cell expansion, one line
+      per P loading; the 0P$\to$P collapse, the 20P$\approx$30P
+            saturation, and the mild cell dependence are visible.
+            (c) Relative drop in crystalline fraction versus the $+0\%$ cell,
+            showing the P-amplified cell-expansion effect.}
+  \label{fig:crystallinity}
+\end{figure}

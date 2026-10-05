@@ -1092,3 +1092,18 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: owner review of 03_methods.tex + CLAIMS v5; then draft crystallinity Results.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ar — 2026-10-05 (draft crystallinity Results MT-1..MT-4 into 04_results.tex)
+**Owner request:** draft the crystallinity Results (MT-1..MT-4) into 04_results.tex.
+
+**Actions taken:**
+1. **04_results.tex:** added "Crystallinity: amorphization onset and cell dependence" subsection tracing MT-1 (0P→P collapse, 0.87–0.97 → 0.11–0.20), MT-2 (20P≈30P saturation), MT-3 (mild cell dependence, free-volume mechanism), MT-4 (P-amplified cell-expansion effect, relative framing). Added Fig. 2 (fig_crystallinity_3panel.png) with caption; staged the PNG into papers/paper1/figures/.
+2. **Removed CLAIMS terms** from the Results prose/caption (per owner's earlier preference) and simplified the header comment.
+
+**Verified:** `tectonic main.tex` compiles clean; Fig. 1 (timeline, p3) + Fig. 2 (crystallinity, p7, 649 ppi) both embedded; refs resolve.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v5.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST
