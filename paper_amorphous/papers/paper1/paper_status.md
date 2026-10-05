@@ -31,7 +31,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 | XRD CI supports MT-1 | data/17_PPt/DISCUSSION.md | 0.81–0.83 → 0.35–0.38 | yes |
 
 ## Citations (Phase D)
-- `references.bib` populated (20 verified): `shashank2025`, `shi2025`, `yang2025`, `greer1993`, `gofee2020`, `gofee2022`, `agox2022`, `oganov2009`, `gpaw2010`, `ase2017`, `pymatgen2013`, `steinhardt1983`, `artrith2018`, `biswas2017`, `valladares2011`, `madanchi2024`, `setten2026`, `nahas2016`, `meltquench2026`, `activemlp2020`. All fetched via DOI/arXiv content negotiation. Wire into prose at the per-section review gate.
+- `references.bib` populated (25 verified): `shashank2025`, `shi2025`, `yang2025`, `greer1993`, `gofee2020`, `gofee2022`, `agox2022`, `oganov2009`, `gpaw2010`, `ase2017`, `pymatgen2013`, `steinhardt1983`, `artrith2018`, `biswas2017`, `valladares2011`, `madanchi2024`, `setten2026`, `nahas2016`, `meltquench2026`, `activemlp2020` (20 main) + `colin2017`, `kozhukhovska2026`, `barmak2017`, `liubarmak2016`, `chattaraj2020` (5 SI-1). All fetched via DOI/arXiv content negotiation. Wire into prose at the per-section review gate.
 
 ## Drafting progress (Phase E — LaTeX-native, block-and-wait)
 - [x] Project + paper1 scaffold (Session 1)
