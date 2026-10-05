@@ -6,7 +6,7 @@ analysis/surrogate_perf/surrogate_perf.json (produced by
 codes/extract_surrogate_perf.py):
 
   (a) MAE vs relative energy — mean absolute error (eV/atom) binned across the
-      0 -> 1 eV/atom range, line per P loading. Carries the headline: surrogate
+      0 -> 0.3 eV/atom range, line per P loading. Carries the headline: surrogate
       error grows with distance from the minimum and with P loading.
   (b) Spearman rho vs relative energy — rank correlation per window, line per P
       loading. Carries the selection-relevance claim: the surrogate ranks
@@ -14,6 +14,10 @@ codes/extract_surrogate_perf.py):
   (c) Uncertainty calibration — mean |error| vs mean GPR sigma per window, line
       per P loading (1:1 dashed). Carries the claim that the GPR uncertainty
       tracks the error (validates the LCB acquisition, kappa=2).
+
+Relative-energy axis: E_i - E_glob (eV/atom), where E_glob is the energy of the
+leaf's global minimum (defined in the CLAIMS figure caption). Panels (a) and (b)
+are scaled to 0 -> 0.3 eV/atom (the low-energy regime where selection matters).
 
 Per-window R^2 is NOT plotted: within 0.1 eV/atom windows the energy variance is
 tiny relative to the error, so R^2 is negative and uninformative (noted in
@@ -26,12 +30,10 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import json
 import os
-
-import numpy as np
 
 import matplotlib
 matplotlib.use("Agg")
@@ -52,6 +54,9 @@ OUTDIR = os.path.join(ANALYSIS, "figures")
 # representative +0-cell leaves, one per P loading
 LEAVES = ["1_plus0cell/0_0P", "1_plus0cell/2_20P", "1_plus0cell/3_30P"]
 COLORS = {"0P": "tab:blue", "20P": "tab:orange", "30P": "tab:green"}
+
+XLABEL = r"$E_i - E_{\rm glob}$ (eV/atom)"
+XMAX = 0.3  # eV/atom, low-energy regime
 
 
 def load():
@@ -83,14 +88,14 @@ def main():
         # (c) uncertainty calibration: mean |error| vs mean sigma
         ax3.plot(sig, abserr, color=c, lw=1.6, marker="o", ms=3, label=p)
 
-    ax1.set_xlabel(r"relative energy (eV/atom)")
+    ax1.set_xlabel(XLABEL)
     ax1.set_ylabel(r"MAE (eV/atom)")
-    ax1.set_xlim(0, 1.0)
+    ax1.set_xlim(0, XMAX)
     ax1.text(0.5, -0.22, "(a)", transform=ax1.transAxes, ha="center", va="bottom", fontsize=12)
 
-    ax2.set_xlabel(r"relative energy (eV/atom)")
+    ax2.set_xlabel(XLABEL)
     ax2.set_ylabel(r"Spearman $\rho$")
-    ax2.set_xlim(0, 1.0)
+    ax2.set_xlim(0, XMAX)
     ax2.set_ylim(-1.05, 1.05)
     ax2.axhline(0, color="k", lw=0.8, ls=":")
     ax2.text(0.5, -0.22, "(b)", transform=ax2.transAxes, ha="center", va="bottom", fontsize=12)

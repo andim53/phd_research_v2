@@ -873,3 +873,22 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: after owner review → commit; then draft sections/03_methods.tex (traces to M-1..M-1e, M-2, M-3).
 
 **Time:** 2026-10-05 JST
+
+## Session 4af — 2026-10-05 (fig_surrogate_perf: unified relative-energy axis + 0-0.3 scale)
+**Owner request:** (1) scale the surrogate-perf figure to 0-0.3 eV/atom; (2) unify the relative-energy axis title across figures to `E_i - E_glob` (no /N), with E_glob defined as the leaf's global-minimum energy.
+
+**Actions taken:**
+1. `codes/emit_fig_surrogate_perf.py` v1.0.0 -> v1.0.1: x-axis title -> `$E_i - E_{\rm glob}$ (eV/atom)`; panels (a)/(b) scaled to 0-0.3 eV/atom (low-energy regime). Panel (c) (calibration) unchanged (not energy-binned on x).
+2. `CLAIMS.md` figure table: `fig_surrogate_perf.png` description updated (E_i - E_glob title, 0-0.3 scale, E_glob defined in caption).
+3. `VERSIONS.md` bumped to 1.0.1.
+
+**Note on axis-title consistency:** the paper figure now uses `$E_i - E_{\rm glob}$ (eV/atom)`; the two diagnostic energy-vs-force figures still use `$\Delta E$ (eV/atom)`. Owner chose NOT to update the diagnostics (they are NOT paper figures). Flagged for future consistency if the diagnostics are ever promoted.
+
+**Verified:** figure regenerates cleanly (valid PNG); CLAIMS + VERSIONS updated.
+
+**Decorations / pending:**
+- [ ] Owner reviews updated figure.
+- [ ] Commit this milestone (fig script v1.0.1 + CLAIMS + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
