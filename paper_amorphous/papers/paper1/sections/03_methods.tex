@@ -1,7 +1,4 @@
 % 03_methods.tex — Methods / Computational details
-% Traces to CLAIMS.md M-1 (search), M-1b (iteration timeline), M-1c (cost),
-% M-1d (exploration-to-exploitation), M-1e (surrogate performance),
-% M-2 (crystallinity), M-3 (reference-anchored search).
 % Drafted Session 4ao — block-and-wait review gate.
 
 \section{Methods}\label{sec:methods}
@@ -59,13 +56,12 @@ Fig.~\ref{fig:methods-timeline}:
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.55\textwidth]{figures/methods_timeline.png}
-  \caption{Iteration timeline of the surrogate-guided search (M-1b). The
-  generator mix and the relaxation gate switch on at specific iterations:
-  Phase I ($0 \le i < 10$) uses the amorphous randomizer alone; Phase II
-  ($10 \le i < 25$) adds the rattle generator and turns on relaxation and
-  LCB guidance; Phase III ($25 \le i$) swaps in the permutation generator.
-  The search is seeded from the reference-anchored P-interstitial alloy
-  (M-3).}
+  \caption{Iteration timeline of the surrogate-guided search. The
+    generator mix and the relaxation gate switch on at specific iterations:
+    Phase I ($0 \le i < 10$) uses the amorphous randomizer alone; Phase II
+    ($10 \le i < 25$) adds the rattle generator and turns on relaxation and
+    LCB guidance; Phase III ($25 \le i$) swaps in the permutation generator.
+    The search is seeded from the reference-anchored P-interstitial alloy.}
   \label{fig:methods-timeline}
 \end{figure}
 
