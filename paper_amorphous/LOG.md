@@ -954,3 +954,21 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: after owner review -> commit; then draft sections/03_methods.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4aj — 2026-10-05 (CLAIMS cleanup: remove non-claim sections)
+**Owner request:** inspect CLAIMS for information that should not be there; perform (a) — remove the Methodological diagnostics + Future work sections, fix stale version refs, fix stale M-1e sign-off.
+
+**Actions taken (CLAIMS.md):**
+1. **Removed the "Methodological diagnostics" section** (energy-vs-force pattern table, candidate-framing paragraph, reading/interpretation) — explicitly "NOT for the paper" analysis, not a claim.
+2. **Removed the "Future work (PLAN ONLY)" section** — planning material, belongs in LOG/paper_status, not the claim list.
+3. **Fixed stale version refs:** "bumping to v4" -> "bumping to v5" (2 places) — the file is now v4, so a new claim bumps to v5.
+4. **Fixed stale M-1e sign-off line:** dropped "Spearman ρ/uncertainty-calibration" (removed in the v2.1.0 figure remake) -> "MAE + GPR σ (v2.1.0, per-leaf lines)".
+5. **Fixed 2 dangling references** to the removed sections: Figures intro ("see the Methodological diagnostics section") and the force-under-relaxation limitation ("see Future work").
+
+**Verified:** no leftover references to removed sections; section structure intact (287 lines, was 354).
+
+**Decorations / pending:**
+- [ ] Commit this milestone (CLAIMS cleanup + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
