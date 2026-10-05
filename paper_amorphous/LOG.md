@@ -1219,3 +1219,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4az — 2026-10-05 (de-jargon 'P loading' → 'P concentration' in Results)
+**Owner request:** replace the jargon-y "with P loading" with clearer wording (option 1: "P concentration"), and check for other jargon-y instances.
+
+**Actions taken:**
+1. **04_results.tex:** replaced all "P loading" → "P concentration" (5 instances: surrogate MAE/σ sentence, explore-exploit median-drop sentence, Fig 3 caption, Fig 4(b) caption, Fig 5 caption). Fixed a "concentrationration" typo and caption indentation drift introduced during editing.
+
+**Verified:** `tectonic main.tex` compiles clean; no "P loading" remains in the manuscript.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST

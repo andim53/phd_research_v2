@@ -24,7 +24,7 @@ to LCB-guided exploitation at iteration 10 (Fig.~\ref{fig:explore-exploit}).
 Across 61 seeds and 13 systems,
 the mean DFT energy of retained structures drops sharply at the iteration-10
 LCB switch-on, and the drop is universal across every seed. The per-system
-median drop (exploitation mean minus exploration mean) grows with P loading:
+median drop (exploitation mean minus exploration mean) grows with P concentration:
 0P $-$156 to $-$218~eV, 20P $-$256 to $-$306~eV, 30P $-$320 to $-$356~eV. For
 the representative 20~at.\% P system at $+0\%$ cell expansion the mean drops from
 $-$375 to $-$390~eV (exploration) to $-$681 to $-$689~eV (exploitation) across
@@ -57,7 +57,7 @@ Over the retained ensemble (all nine systems), the mean absolute error (MAE) in
 the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
 0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
 $\sigma$ in the same window is 0.019--0.023 (0P), 0.028--0.032 (20P), and
-0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with P loading, and the
+0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with P concentration, and the
 predicted uncertainty tracks the actual error --- validating the LCB
 acquisition. We note that the DFT ground truth for P systems is on
 under-relaxed geometries
@@ -69,12 +69,12 @@ an upper bound on the true model error \cite{gofee2022}.
   \includegraphics[width=\textwidth]{figures/fig_surrogate_perf.png}
   \caption{Surrogate predictive performance at the 0--0.1~eV/atom window
       (structures within 0.1~eV/atom of the system's global minimum), one bar
-      per system (all nine), grouped by P loading and colored by P loading
-      with a distinct hatch per cell expansion.
+      per system (all nine), grouped by P concentration and colored by P
+      concentration with a distinct hatch per cell expansion.
       (a) Mean absolute error (MAE) between the surrogate prediction and the
       DFT energy. (b) GPR uncertainty $\sigma$. Comparing (a) and (b) shows
       the predicted uncertainty tracks the actual error; both rise with P
-      loading.}
+      concentration.}
   \label{fig:surrogate-perf}
 \end{figure}
 
@@ -125,10 +125,10 @@ the amplification is best read in relative terms.
       for a representative 20~at.\% P system at $+0\%$ cell expansion,
       illustrating the disordered P coordination. (b) Steinhardt $q_6$
       crystalline fraction (mean $\pm$ std) versus cell expansion, one line
-      per P loading; the 0P$\to$P collapse, the 20P$\approx$30P
-            saturation, and the mild cell dependence are visible.
-            (c) Relative drop in crystalline fraction versus the $+0\%$ cell,
-            showing the P-amplified cell-expansion effect.}
+      per P concentration; the 0P$\to$P collapse, the 20P$\approx$30P
+      saturation, and the mild cell dependence are visible.
+      (c) Relative drop in crystalline fraction versus the $+0\%$ cell,
+      showing the P-amplified cell-expansion effect.}
   \label{fig:crystallinity}
   \end{figure}
 
@@ -136,7 +136,7 @@ the amplification is best read in relative terms.
     \centering
     \includegraphics[width=0.6\textwidth]{figures/fig_xrd_crystallinity.png}
     \caption{XRD integrated crystallinity index versus cell expansion, one
-        line per P loading, at the lowest-energy window (0.05~eV/atom, the most
+        line per P concentration, at the lowest-energy window (0.05~eV/atom, the most
         crystalline reference). The 0P$\to$P collapse (0.81--0.83 to
         0.35--0.38) cross-checks the Steinhardt $q_6$ crystalline fraction
         (Fig.~\ref{fig:crystallinity}); the cell dependence is mild.}
