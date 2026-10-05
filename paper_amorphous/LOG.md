@@ -1024,6 +1024,23 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 
 **Time:** 2026-10-05 JST
 
+## Session 4ao — 2026-10-05 (draft sections/03_methods.tex)
+**Owner request:** commit the pending milestone, then draft the methods section.
+
+**Actions taken:**
+1. **Committed** the pending milestone as `b7f0b170` (drop SHC from title + docs; figure conventions; fig2_2panel v1.1.1 + fig_crystallinity_3panel v1.0.1).
+2. **Drafted `papers/paper1/sections/03_methods.tex`** (replaced placeholder) — traces CLAIMS.md M-1 (reference-anchored search), M-1b (iteration timeline), M-1c (cost), M-1d (explore→exploit), M-1e (surrogate performance), M-2 (crystallinity), M-3 (reference-anchored). Subsections: reference-anchored global optimization, iteration timeline, electronic structure, computational cost, exploration-to-exploitation transition, surrogate predictive performance, crystallinity verification.
+3. **Fixed an overfull hbox** in the electronic-structure paragraph (wide `\cite{gpaw2010,ase2017}` + long hyphenated word) by rewording to "the GPAW code".
+
+**Verified:** `main.tex` compiles clean with tectonic (no overfull/underfull/undefined); all 19 `\cite{}` keys in 03_methods resolve against `references.bib`.
+
+**Decorations / pending:**
+- [ ] Owner reviews sections/03_methods.tex (block-and-wait gate).
+- [ ] On approval, draft sections/04_results.tex.
+- NEXT: owner review of 03_methods.tex.
+
+**Time:** 2026-10-05 JST
+
 ## Session 4aj — 2026-10-05 (CLAIMS cleanup: remove non-claim sections)
 **Owner request:** inspect CLAIMS for information that should not be there; perform (a) — remove the Methodological diagnostics + Future work sections, fix stale version refs, fix stale M-1e sign-off.
 
@@ -1039,5 +1056,21 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Commit this milestone (CLAIMS cleanup + LOG).
 - NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
+
+## Session 4ap — 2026-10-05 (methods edits: de-code-like prose, title, timeline figure)
+**Owner request:** (1) remove code-like terms from 03_methods.tex; (2) retitle the paper; (3) compile the iteration-timeline mermaid to PNG and reference it in the Iteration timeline.
+
+**Actions taken:**
+1. **De-code-like'd `sections/03_methods.tex`:** replaced the leaf path `$1\_\mathrm{plus0cell}/2\_20P$` → "the representative 20 at.% P leaf at +0% cell expansion"; `$\texttt{start\_relax} = 10$` → "Relaxation begins at iteration 10"; `$\texttt{iteration} \ge 10$` → "Only structures from iteration 10 onward are retained". (Fixed two escaping slips mid-edit: a `\kappapa` typo and a `\\%` double-backslash that would have silently dropped text.)
+2. **Retitled the paper** (owner chose Option C minus the subtitle): `main.tex` + `supplementary/article.tex` → *"Amorphous Pt(P) from surrogate-guided global optimization"* (was "…from GOFEE/AGOX Global Optimization: Structure and Crystallinity").
+3. **Iteration-timeline figure:** extracted the M-1b mermaid from `CLAIMS.md` into `codes/methods_timeline.mmd` (the old `codes/methods_flowchart.mmd` is the out-of-scope screening→SHC pipeline, left untouched); rendered → `analysis/figures/methods_timeline.png` (784×1447, mermaid-cli 12.0.0); staged into `papers/paper1/figures/`; added a `figure` env + `Fig.~\ref{fig:methods-timeline}` callout in the Iteration timeline subsection.
+
+**Verified:** `tectonic main.tex` compiles clean; title updated in both main + SI; figure reference resolves to Fig. 1 and the image is embedded (page 8, 784×1447, 47.8 KB).
+
+**Decorations / pending:**
+- [ ] Commit this milestone (methods edits + title + timeline figure + LOG + VERSIONS + paper_status).
+- NEXT: owner review of 03_methods.tex (block-and-wait gate); on approval draft 04_results.tex.
 
 **Time:** 2026-10-05 JST

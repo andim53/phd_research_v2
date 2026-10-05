@@ -1,5 +1,170 @@
-% 03_methods.tex — Methods / Computational details (placeholder)
-% Content moved to papers/paper1/CLAIMS.md (Session 4s): M-1 (search),
-% M-1b (iteration timeline), M-1c (computational cost), M-1d
-% (exploration-to-exploitation), M-2 (crystallinity).
-% [PLACEHOLDER — no prose yet.]
+% 03_methods.tex — Methods / Computational details
+% Traces to CLAIMS.md M-1 (search), M-1b (iteration timeline), M-1c (cost),
+% M-1d (exploration-to-exploitation), M-1e (surrogate performance),
+% M-2 (crystallinity), M-3 (reference-anchored search).
+% Drafted Session 4ao — block-and-wait review gate.
+
+\section{Methods}\label{sec:methods}
+
+\subsection{Reference-anchored global optimization}\label{sec:methods-search}
+
+We model the amorphous state as the low-energy basin around a chosen
+crystalline reference and enumerate that basin with a surrogate-guided
+global-optimization search, rather than by melt-quench molecular dynamics
+\cite{gofee2020,gofee2022,agox2022}. The reference is a \emph{physical choice}
+the user controls: for a host with a single stable phase the reference is
+unique, whereas for a polymorphic host it is a genuine choice. Here the fcc
+Pt host has a single stable phase, so its reference is unique; we return to
+the polymorphic case (Ta, W) in the Supplementary Information
+\cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
+
+The search is seeded from the reference topology. Starting from the
+DFT-optimized fcc Pt lattice constant $a = 3.975534$~\AA{} and a $3\times3\times3$
+supercell (Pt$_{108}$), we add P interstitials to a target atomic fraction
+$C$ via $B = C A / (1 - C)$, giving Pt$_{108}$P$_{27}$ (20~at.\% P) and
+Pt$_{108}$P$_{46}$ (30~at.\% P). Three supercell families are considered,
+differing only in the cell expansion applied to the host: $+0\%$
+(11.927~\AA), $+3\%$ (12.284~\AA), and $+5\%$ (12.523~\AA); the $+10\%$
+family is excluded from scope. Candidate structures are described by the
+Oganov--Valle angular fingerprint \cite{oganov2009}, and a Gaussian-process
+regression surrogate is built from a sum of two radial-basis-function kernels
+with a repulsive prior \cite{biswas2017,artrith2018}. A
+lower-confidence-bound acquisition function ($\kappa = 2$) selects candidates
+for density-functional evaluation \cite{gofee2022}.
+
+Three structure generators enter the candidate mix progressively
+\cite{agox2022}. The \emph{amorphous randomizer} starts from the reference
+P-interstitial alloy and randomly displaces every atom: for each atom it
+attempts up to 500 random displacements inside a sphere of radius
+1.5~\AA{} (uniform-volume sampling), keeping only displacements that stay
+inside the cell and do not place the atom too close to a neighbour. This
+seeds the search near the reference topology. The \emph{rattle generator}
+displaces a random subset of atoms by up to 1.5~\AA{}, producing small local
+perturbations of an existing candidate. The \emph{interstitial-permutation
+generator} swaps the positions of atoms of different species (Pt~$\leftrightarrow$~P)
+among the interstitial sites, up to 20 swaps with 20 attempts each, and
+applies a small rattling displacement (1.5~\AA{}) to the swapped atoms,
+redistributing P among sites to explore different interstitial arrangements.
+
+\subsection{Iteration timeline}\label{sec:methods-timeline}
+
+The search runs as an iteration counter $i$. At each iteration the active
+phase generates $N$ candidate structures, which are scored by the
+Gaussian-process surrogate; the lower-confidence-bound acquisition selects
+$M$ of them, and density-functional theory (DFT) evaluates those $M$. The
+results are stored in a database and $i$ increments by one. The generator mix
+and the relaxation gate switch on at specific iterations, as summarized in
+Fig.~\ref{fig:methods-timeline}:
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.55\textwidth]{figures/methods_timeline.png}
+  \caption{Iteration timeline of the surrogate-guided search (M-1b). The
+  generator mix and the relaxation gate switch on at specific iterations:
+  Phase I ($0 \le i < 10$) uses the amorphous randomizer alone; Phase II
+  ($10 \le i < 25$) adds the rattle generator and turns on relaxation and
+  LCB guidance; Phase III ($25 \le i$) swaps in the permutation generator.
+  The search is seeded from the reference-anchored P-interstitial alloy
+  (M-3).}
+  \label{fig:methods-timeline}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{Phase I} ($0 \le i < 10$): the amorphous randomizer alone
+  generates $N = 10$ candidates. This is the exploration /
+  surrogate-building phase --- the Gaussian process has no training data yet,
+  so candidates are proposed and DFT-scored to populate the surrogate (no
+  LCB guidance).
+  \item \textbf{Phase II} ($10 \le i < 25$): the rattle generator joins ---
+  $N = 5$ from the amorphous randomizer plus $N = 5$ from the rattle
+  generator. Relaxation begins at iteration 10 and the search
+    becomes LCB-guided ($\kappa = 2$).
+  \item \textbf{Phase III} ($25 \le i$): the permutation generator joins ---
+  $N = 5$ from the rattle generator plus $N = 5$ from the permutation
+  generator; the amorphous randomizer drops out. The search continues under
+  LCB ($\kappa = 2$).
+\end{itemize}
+
+Structures from iterations below 10 are generated and DFT-scored to populate
+the surrogate but are \emph{not} relaxed; relaxation (and the analysis
+filter) begins at iteration 10. Only structures from iteration 10 onward are
+retained for analysis.
+
+\subsection{Electronic structure}\label{sec:methods-dft}
+
+Density-functional relaxations are performed with the GPAW code
+\cite{gpaw2010,ase2017} using a linear-combination-of-atomic-orbitals (LCAO)
+basis (double-zeta-polarized) and the PBE functional, with a single
+$\Gamma$-centered $k$-point, Fermi--Dirac smearing of 0.05~eV, and forces
+converged to 0.05 eV/\AA{} \cite{madanchi2024}.
+\subsection{Computational cost}\label{sec:methods-cost}
+
+The surrogate-guided search enumerates the amorphous Pt(P) candidate
+ensemble at a fraction of the cost of conventional first-principles
+melt-quench molecular dynamics \cite{meltquench2026,artrith2018,nahas2016,activemlp2020}.
+Approximately $5.8\times10^{3}$ DFT relaxations across the six Pt(P) leaves
+($\sim$2--3$\times10^{2}$ per seed) produce $\sim$5.2$\times10^{3}$ retained
+candidate structures, stored in a compact, indexable database ($\sim$8--12~MB
+per leaf). This is the same efficiency regime as evolutionary and
+machine-learning-assisted amorphous sampling in other systems
+($\sim$10$^{3}$ first-principles calculations), and far below the tens of
+thousands of reference calculations typically needed to train a general
+machine-learned potential for melt-quench.
+
+\subsection{Exploration-to-exploitation transition}\label{sec:methods-explore}
+
+The search transitions sharply from a surrogate-building (exploration) phase
+to LCB-guided exploitation at iteration 10. Across 61 seeds and 13 leaves,
+the mean DFT energy of retained structures drops sharply at the iteration-10
+LCB switch-on, and the drop is universal across every seed. The per-leaf
+median drop (exploitation mean minus exploration mean) grows with P loading:
+0P $-$156 to $-$218~eV, 20P $-$256 to $-$306~eV, 30P $-$320 to $-$356~eV. For
+the representative 20~at.\% P leaf at $+0\%$ cell expansion the mean drops from
+$-$375 to $-$390~eV (exploration) to $-$681 to $-$689~eV (exploitation) across
+its four seeds. The acquisition value correlates strongly with the DFT energy
+for P-doped leaves ($|r| \approx 0.7$--0.9 across all 20P/30P seeds; the
+correlation is weak for 0P, $|r| \approx 0.2$--0.7), confirming the surrogate
+selects low-energy candidates rather than noise. The per-leaf global minimum
+is typically reached in the latter half of the 100-iteration budget (P-leaf
+medians 80--99; range 10--100) \cite{gofee2022}.
+
+\subsection{Surrogate predictive performance}\label{sec:methods-surrogate}
+
+The GPR surrogate predicts the DFT energy accurately enough to drive the
+search, and its error grows with distance from the minimum and with P
+loading. Over the retained ensemble (iteration $\ge$ 10, all nine leaves,
+per-leaf relative energy 0--0.3~eV/atom), the mean absolute error (MAE) in
+the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
+0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
+$\sigma$ in the same window is 0.019--0.023 (0P), 0.028--0.032 (20P), and
+0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with distance from the
+minimum and with P loading, and the predicted uncertainty tracks the actual
+error --- validating the LCB acquisition ($\kappa = 2$). Per-window $R^2$ is
+not reported: within 0.1~eV/atom windows the energy variance is tiny relative
+to the error, so $R^2$ is negative and uninformative; MAE and GPR $\sigma$
+are the meaningful metrics. We note that the DFT ground truth for P leaves is
+on under-relaxed geometries (single-DFT-step evaluator), so the measured
+error includes that noise and is an upper bound on the true model error
+\cite{gofee2022}.
+
+\subsection{Crystallinity verification}\label{sec:methods-crystallinity}
+
+Amorphization is quantified by two complementary metrics --- XRD
+crystallinity indices and a per-atom Steinhardt bond-orientational order
+parameter --- cross-checked against each other \cite{steinhardt1983}.
+
+XRD patterns are simulated with a powder-diffraction calculator (Cu K$\alpha$,
+$2\theta$ 10--90$^{\circ}$, Gaussian broadening $\sigma = 0.15^{\circ}$),
+reporting peak-fraction and integrated crystallinity indices. Structures are
+binned into relative-energy windows (0.1~eV/atom wide, up to 0.5~eV/atom,
+relative to the leaf's global minimum) and a deterministic sample of each
+window is averaged \cite{pymatgen2013,ase2017}.
+
+Steinhardt bond-orientational order parameters $q_4$ and $q_6$ are computed
+from the first-neighbour shell (cutoff $1.3\times$ the nearest-neighbour
+distance); an atom is classified fcc-like when $q_6 > 0.5$ (fcc $q_6 \approx
+0.5745$). The crystalline fraction is the mean over retained structures
+within 0.3~eV/atom of the leaf's global minimum (relative-energy cap,
+per-leaf reference). Partial radial distribution functions $g_{\mathrm{Pt-P}}(r)$
+and $g_{\mathrm{P-P}}(r)$ are computed out to 5.0~\AA{} (200 bins)
+\cite{ase2017}.

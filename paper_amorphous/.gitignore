@@ -7,6 +7,7 @@
 *.out
 *.xdv
 *.synctex.gz
+mainNotes.bib
 
 # Regenerable figure outputs (produced by codes/ into analysis/)
 analysis/figures/*.png

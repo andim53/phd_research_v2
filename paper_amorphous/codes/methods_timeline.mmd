@@ -1,0 +1,37 @@
+%% methods_timeline.mmd — iteration timeline (M-1b) for amorphous Pt(P)
+%% Source of truth for Fig. in sections/03_methods.tex (Iteration timeline).
+%% Render: npx @mermaid-js/mermaid-cli -i methods_timeline.mmd -o ../analysis/figures/methods_timeline.png
+flowchart TD
+    Ref["<b>Reference-anchored seeding</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Choose crystalline reference<br/>• Build P-interstitial alloy from it<br/>• Amorphous randomizer displaces atoms<br/>• Search explores the reference basin (M-3)</div>"]
+    Init["Initialize the search<br/>iteration (i = 0)"]
+    D1{"0 ≤ i < 10"}
+    D2{"10 ≤ i < 25"}
+    D3{"25 ≤ i"}
+
+    subgraph BE ["<b>Biased Exploration: Generate N candidates</b>"]
+        direction TB
+        P1["<b>Phase I</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Amorphous randomizer:&nbsp;N&nbsp;=&nbsp;10</div>"]
+        P2["<b>Phase II</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Amorphous randomizer:&nbsp;N&nbsp;=&nbsp;5<br/>• Rattle generator:&nbsp;N&nbsp;=&nbsp;5</div>"]
+        P3["<b>Phase III</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Rattle generator:&nbsp;N&nbsp;=&nbsp;5<br/>• Permutation generator:&nbsp;N&nbsp;=&nbsp;5</div>"]
+    end
+
+    GPR["GPR surrogate<br/>optimization"]
+    LCB["LCB choose M<br/>candidates"]
+    DFT["DFT evaluate M<br/>candidates"]
+    DB["Database"]
+
+    Ref --> Init
+    Init --> D1
+    D1 -->|Y| P1
+    D1 -->|N| D2
+    D2 -->|Y| P2
+    D2 -->|N| D3
+    D3 -->|Y| P3
+
+    P1 --> LCB
+    P2 --> GPR
+    P3 --> GPR
+
+    GPR --> LCB
+    LCB --> DFT
+    DFT -->|Store candidates| DB
