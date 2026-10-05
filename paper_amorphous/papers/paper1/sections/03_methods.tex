@@ -14,7 +14,7 @@ Pt), a genuine choice for a polymorphic host (Ta, W), which we return to in
 the Supplementary Information
 \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
 
-The search is seeded from the reference topology. Starting from the
+The search starts from the reference topology. Starting from the
 DFT-optimized fcc Pt lattice constant $a = 3.975534$~\AA{} and a $3\times3\times3$
 supercell (Pt$_{108}$), we add P interstitials to a target atomic fraction
 $C$ via $B = C A / (1 - C)$, giving Pt$_{108}$P$_{27}$ (20~at.\% P) and
@@ -48,7 +48,7 @@ interstitial arrangements.
 The search runs as an iteration counter $i$; the active phase generates $N$
 candidates, the surrogate scores them, LCB selects $M$, and DFT evaluates
 those $M$ (Fig.~\ref{fig:methods-timeline}). The generator mix and the
-relaxation gate switch on at specific iterations:
+relaxation gate switch on at specific iterations.
 
 \begin{figure}[t]
   \centering
@@ -66,21 +66,16 @@ relaxation gate switch on at specific iterations:
   \label{fig:methods-timeline}
 \end{figure}
 
-\begin{itemize}
-  \item \textbf{Phase I} ($0 \le i < 10$): the amorphous randomizer alone
-  generates $N = 10$ candidates. This is the exploration /
-  surrogate-building phase --- the Gaussian process has no training data yet,
-  so candidates are proposed and DFT-scored to populate the surrogate (no
-  LCB guidance).
-  \item \textbf{Phase II} ($10 \le i < 25$): the rattle generator joins ---
-  $N = 5$ from the amorphous randomizer plus $N = 5$ from the rattle
-  generator. Relaxation begins at iteration 10 and the search
-    becomes LCB-guided.
-  \item \textbf{Phase III} ($25 \le i$): the permutation generator joins ---
-  $N = 5$ from the rattle generator plus $N = 5$ from the permutation
-  generator; the amorphous randomizer drops out. The search continues under
-  LCB.
-\end{itemize}
+In Phase I ($0 \le i < 10$) the amorphous randomizer alone generates
+$N = 10$ candidates. This is the exploration / surrogate-building phase ---
+the Gaussian process has no training data yet, so candidates are proposed and
+DFT-scored to populate the surrogate (no LCB guidance). In Phase II
+($10 \le i < 25$) the rattle generator joins, with $N = 5$ from the amorphous
+randomizer plus $N = 5$ from the rattle generator; relaxation begins at
+iteration 10 and the search becomes LCB-guided. In Phase III ($25 \le i$) the
+permutation generator joins, with $N = 5$ from the rattle generator plus
+$N = 5$ from the permutation generator and the amorphous randomizer dropping
+out; the search continues under LCB.
 
 Only structures from iteration 10 onward and within 0.3~eV/atom of the
 leaf's global minimum (relative-energy cap, per-leaf reference) are retained
@@ -93,55 +88,6 @@ Density-functional relaxations are performed with the GPAW code
 basis (double-zeta-polarized) and the PBE functional, with a single
 $\Gamma$-centered $k$-point, Fermi--Dirac smearing of 0.05~eV, and forces
 converged to 0.05 eV/\AA{} \cite{madanchi2024}.
-\subsection{Computational cost}\label{sec:methods-cost}
-
-The surrogate-guided search enumerates the amorphous Pt(P) candidate
-ensemble at a fraction of the cost of conventional first-principles
-melt-quench molecular dynamics \cite{meltquench2026,artrith2018,nahas2016,activemlp2020}.
-Approximately $5.8\times10^{3}$ DFT relaxations across the six Pt(P) leaves
-($\sim$2--3$\times10^{2}$ per seed) produce $\sim$5.2$\times10^{3}$ retained
-candidate structures, stored in a compact, indexable database ($\sim$8--12~MB
-per leaf). This is the same efficiency regime as evolutionary and
-machine-learning-assisted amorphous sampling in other systems
-($\sim$10$^{3}$ first-principles calculations), and far below the tens of
-thousands of reference calculations typically needed to train a general
-machine-learned potential for melt-quench.
-
-\subsection{Exploration-to-exploitation transition}\label{sec:methods-explore}
-
-The search transitions sharply from a surrogate-building (exploration) phase
-to LCB-guided exploitation at iteration 10. Across 61 seeds and 13 leaves,
-the mean DFT energy of retained structures drops sharply at the iteration-10
-LCB switch-on, and the drop is universal across every seed. The per-leaf
-median drop (exploitation mean minus exploration mean) grows with P loading:
-0P $-$156 to $-$218~eV, 20P $-$256 to $-$306~eV, 30P $-$320 to $-$356~eV. For
-the representative 20~at.\% P leaf at $+0\%$ cell expansion the mean drops from
-$-$375 to $-$390~eV (exploration) to $-$681 to $-$689~eV (exploitation) across
-its four seeds. The acquisition value correlates strongly with the DFT energy
-for P-doped leaves ($|r| \approx 0.7$--0.9 across all 20P/30P seeds; the
-correlation is weak for 0P, $|r| \approx 0.2$--0.7), confirming the surrogate
-selects low-energy candidates rather than noise. The per-leaf global minimum
-is typically reached in the latter half of the 100-iteration budget (P-leaf
-medians 80--99; range 10--100) \cite{gofee2022}.
-
-\subsection{Surrogate predictive performance}\label{sec:methods-surrogate}
-
-The GPR surrogate predicts the DFT energy accurately enough to drive the
-search, and its error grows with distance from the minimum and with P
-loading. Over the retained ensemble (all nine leaves), the mean absolute
-error (MAE) in
-the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
-0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
-$\sigma$ in the same window is 0.019--0.023 (0P), 0.028--0.032 (20P), and
-0.043--0.048 (30P)~eV/atom. Both MAE and $\sigma$ rise with distance from the
-minimum and with P loading, and the predicted uncertainty tracks the actual
-error --- validating the LCB acquisition. Per-window $R^2$ is
-not reported: within 0.1~eV/atom windows the energy variance is tiny relative
-to the error, so $R^2$ is negative and uninformative; MAE and GPR $\sigma$
-are the meaningful metrics. We note that the DFT ground truth for P leaves is
-on under-relaxed geometries (single-DFT-step evaluator), so the measured
-error includes that noise and is an upper bound on the true model error
-\cite{gofee2022}.
 
 \subsection{Crystallinity verification}\label{sec:methods-crystallinity}
 

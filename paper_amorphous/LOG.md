@@ -1074,3 +1074,21 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: owner review of 03_methods.tex (block-and-wait gate); on approval draft 04_results.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4aq — 2026-10-05 (reclassify M-1c/M-1d/M-1e to Results; CLAIMS v5)
+**Owner request:** move the measured-outcome content (Computational cost, Exploration-to-exploitation, Surrogate predictive performance) from Methods to Results — starting from CLAIMS first.
+
+**Actions taken:**
+1. **CLAIMS.md → v5:** reclassified M-1c/M-1d/M-1e from Method claims to **Results claims (R-1c/R-1d/R-1e)** under a new "Results claims (R)" heading; header bumped to v5 with the change described; figures table + sign-off updated to R- names; v5 sign-off line added.
+2. **03_methods.tex:** removed the three outcome subsections (Computational cost, Exploration-to-exploitation, Surrogate predictive performance) — Methods now holds only procedure (reference-anchored search, iteration timeline, electronic structure, crystallinity verification).
+3. **04_results.tex:** drafted with the three moved subsections (R-1c/R-1d/R-1e) as Results prose.
+4. **paper_status.md:** marked 03_methods as tracing M-1/M-1b/M-2/M-3; 04_results drafted (R-1c/R-1d/R-1e; crystallinity MT-1..MT-4 still to draft).
+
+**Verified:** `tectonic main.tex` compiles clean; Methods has exactly 4 procedure subsections; Results has the 3 moved subsections.
+
+**Decorations / pending:**
+- [ ] Owner sign-off on CLAIMS v5 (reclassification).
+- [ ] Draft crystallinity Results (MT-1..MT-4) into 04_results.tex.
+- NEXT: owner review of 03_methods.tex + CLAIMS v5; then draft crystallinity Results.
+
+**Time:** 2026-10-05 JST

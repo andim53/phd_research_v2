@@ -1,6 +1,6 @@
 # CLAIMS.md — paper1 (frozen claim list)
 
-Freeze the claims before drafting. Any new claim requires bumping this file to v5 first. Numbers must trace to a source file; figures/results come from `analysis/` by reference. **v4 promotes reference-dependence from a limitation to a first-class method component: adds M-3 (reference-anchored search) and MT-5 (reference-dependence as the defining feature), reframes the "reference-biased search" limitation as a design choice, and updates the M-1b flowchart to show the reference-anchored seeding. The manuscript and the mermaid flowchart (M-1b) must trace to them.**
+Freeze the claims before drafting. Any new claim requires bumping this file to v5 first. Numbers must trace to a source file; figures/results come from `analysis/` by reference. **v5 (Session 4aq): reclassifies M-1c (computational cost), M-1d (exploration-to-exploitation), and M-1e (surrogate predictive performance) from Method claims to Results claims — their content reports measured outcomes (cost numbers, energy drops, MAE) and now lives in the Results section, not Methods. They are moved under a new "Results claims" heading; the manuscript's Results section must trace to them.** (v4 promoted reference-dependence from a limitation to a first-class method component: added M-3 and MT-5, reframed the "reference-biased search" limitation as a design choice, and updated the M-1b flowchart to show the reference-anchored seeding.)
 
 ## One-sentence contribution — CONFIRMED (owner, Session 4; reframed Session 4b/4c/4d; **reference-dependence reframe Session 4t; promoted to method component Session 4ad/v4**)
 We present a cheap, **reference-anchored** route to model amorphous alloys: the method's defining component is that it models the amorphous state as the low-energy basin around a chosen crystalline reference — a GOFEE/AGOX global-optimization screening (Oganov-style fingerprint descriptor) enumerates that basin, and the Steinhardt q6 crystalline-fraction order parameter confirms amorphization. Applied to Pt(P) — whose fcc reference is its only stable phase — the screening finds 20–30 at% P as the onset of structural amorphization, saturating in concentration and modestly increasing under +3/+5% cell expansion. The reference is a *physical choice* the user controls: for polymorphic hosts (Ta, W) the reference state is a genuine choice, and we demonstrate the method from the **α (bcc) reference** while experiments stabilize the metastable **β** phase (M-3, SI-1).
@@ -95,41 +95,35 @@ We present a cheap, **reference-anchored** route to model amorphous alloys: the 
 > structure generators, and the relaxation gate.
 
 ```mermaid
-flowchart TD
-    Ref["<b>Reference-anchored seeding</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Choose crystalline reference<br/>• Build P-interstitial alloy from it<br/>• Amorphous randomizer displaces atoms<br/>• Search explores the reference basin (M-3)</div>"]
-    Init["Initialize the search<br/>iteration (i = 0)"]
-    D1{"0 ≤ i < 10"}
-    D2{"10 ≤ i < 25"}
-    D3{"25 ≤ i"}
+flowchart LR
+    Init["Init (i = 0)"]
+    Dec{"Iteration i"}
 
-    subgraph BE ["<b>Biased Exploration: Generate N candidates</b>"]
+    subgraph BE["Biased Exploration"]
         direction TB
-        P1["<b>Phase I</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Amorphous randomizer:&nbsp;N&nbsp;=&nbsp;10</div>"]
-        P2["<b>Phase II</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Amorphous randomizer:&nbsp;N&nbsp;=&nbsp;5<br/>• Rattle generator:&nbsp;N&nbsp;=&nbsp;5</div>"]
-        P3["<b>Phase III</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Rattle generator:&nbsp;N&nbsp;=&nbsp;5<br/>• Permutation generator:&nbsp;N&nbsp;=&nbsp;5</div>"]
+        P1["<b>Phase I</b><br/>Amorphous: N = 10"]
+        P2["<b>Phase II</b><br/>Amorphous: N=5 | Rattle: N=5"]
+        P3["<b>Phase III</b><br/>Rattle: N=5 | Permute: N=5"]
     end
 
-    GPR["GPR surrogate<br/>optimization"]
-    LCB["LCB choose M<br/>candidates"]
-    DFT["DFT evaluate M<br/>candidates"]
-    DB["Database"]
+    GPR["GPR Surrogate<br/>Optimization"]
+    Eval["LCB Select M →<br/>DFT Evaluate M"]
+    DB[(Database)]
 
-    Ref --> Init
-    Init --> D1
-    D1 -->|Y| P1
-    D1 -->|N| D2
-    D2 -->|Y| P2
-    D2 -->|N| D3
-    D3 -->|Y| P3
+    Init --> Dec
+    
+    Dec -->|i < 10| P1
+    Dec -->|10 ≤ i < 25| P2
+    Dec -->|i ≥ 25| P3
 
-    P1 --> LCB
+    P1 --> Eval
     P2 --> GPR
     P3 --> GPR
 
-    GPR --> LCB
-    LCB --> DFT
-    DFT -->|Store candidates| DB
-    DB -->|i + 1| D1
+    GPR --> Eval --> DB
+    DB -->|i = i + 1| Dec
+
+    style BE fill:#f4f4f5,stroke:#71717a,stroke-width:1px,color:#18181b
 ```
 
 - **Iteration dependence of the method (the loop):** the search runs as an
@@ -153,50 +147,6 @@ flowchart TD
 - **Relaxation gate:** `start_relax = 10` — structures from iterations below
   10 are generated and DFT-scored to populate the surrogate but are **not
   relaxed**; relaxation (and the analysis filter) begins at iteration 10.
-
-### M-1c — Computational cost of the screening
-- **Claim:** The surrogate-guided search enumerates the amorphous Pt(P)
-  candidate ensemble at a fraction of the cost of conventional first-principles
-  melt-quench molecular dynamics.
-- **Numbers:** ~5.8×10³ DFT relaxations across the six Pt(P) leaves
-  (~2–3×10² per seed) produce ~5.2×10³ retained candidate structures, stored
-  in a compact, indexable database (~8–12 MB per leaf). This is the same
-  efficiency regime as evolutionary/ML-assisted amorphous sampling in other
-  systems (~10³ first-principles calcs), and far below the tens of thousands
-  of reference calculations typically needed to train a general
-  machine-learned potential for melt-quench.
-- **Source:** `data/17_PPt/*/seed_*/1_db/db_*.db`;
-  \cite{meltquench2026,artrith2018,nahas2016,activemlp2020}.
-
-### M-1d — Exploration-to-exploitation transition
-- **Claim:** The search transitions sharply from a surrogate-building
-  (exploration) phase to LCB-guided exploitation at iteration 10.
-- **Numbers (multi-seed, 61 seeds across 13 leaves):** the mean DFT energy of
-  retained structures drops sharply at the iteration-10 LCB switch-on, and the
-  drop is universal across every seed. Per-leaf median drop (exploitation mean
-  minus exploration mean): 0P −156 to −218 eV, 20P −256 to −306 eV, 30P −320
-  to −356 eV — the transition grows with P loading. For the representative
-  leaf (1_plus0cell/2_20P) the mean drops from −375 to −390 eV (exploration)
-  to −681 to −689 eV (exploitation) across its four seeds. The acquisition
-  value correlates strongly with the DFT energy for P-doped leaves (|r| ≈
-  0.7–0.9 across all 20P/30P seeds; the correlation is weak for 0P, |r| ≈
-  0.2–0.7), confirming the surrogate selects low-energy candidates rather than
-  noise. The per-leaf global minimum is typically reached in the latter half
-  of the 100-iteration budget (P-leaf medians 80–99; range 10–100).
-- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
-  `analysis/explore_exploit/explore_exploit.json` (produced by
-  `codes/extract_explore_exploit.py`); fig
-  `analysis/figures/fig_explore_exploit.png`; \cite{gofee2022}.
-
-### M-1e — Surrogate predictive performance (energy-resolved)
-- **Claim:** The GPR surrogate predicts the DFT energy accurately enough to drive the search, and its error grows with distance from the minimum and with P loading. The surrogate's predicted uncertainty (GPR σ) tracks the actual error in the low-energy regime — where selection matters.
-- **Numbers (retained ensemble, iteration ≥ 10, all 9 leaves, per-leaf relative energy 0→0.3 eV/atom):** MAE in the 0–0.1 eV/atom window is 0.009–0.015 (0P), 0.029–0.034 (20P), 0.048–0.061 (30P) eV/atom across the three cells; GPR σ in the same window is 0.019–0.023 (0P), 0.028–0.032 (20P), 0.043–0.048 (30P). Both MAE and σ rise with distance from the minimum and with P loading, and the predicted uncertainty tracks the actual error — validating the LCB acquisition (κ=2).
-- **Metric note:** per-window R² is not reported — within 0.1 eV/atom windows the energy variance is tiny relative to the error, so R² is negative and uninformative. MAE and GPR σ are the meaningful metrics.
-- **Caveat:** the DFT ground truth for P leaves is on under-relaxed geometries (single-DFT-step evaluator), so the measured error includes that noise — the surrogate error is an upper bound on the true model error.
-- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
-  `analysis/surrogate_perf/surrogate_perf.json` (produced by
-  `codes/extract_surrogate_perf.py`); fig
-  `analysis/figures/fig_surrogate_perf.png`; \cite{gofee2022}.
 
 ### M-2 — Crystallinity verification (XRD + Steinhardt q4/q6 + partial radial distribution functions)
 - **Claim:** Amorphization is quantified by two complementary metrics — XRD
@@ -238,6 +188,56 @@ flowchart TD
 - **Source:** `data/17_PPt/`, `data/11_bTa/`, `data/16_bW/`;
   \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
 
+## Results claims (R) — measured outcomes reported in the Results section
+> These freeze the *measured outcomes* of the search (cost, search dynamics,
+> surrogate accuracy). They were reclassified from Method claims (M-1c/M-1d/M-1e)
+> in v5 because their content reports results, not procedure; the manuscript's
+> Results section must trace to them.
+
+### R-1c — Computational cost of the screening
+- **Claim:** The surrogate-guided search enumerates the amorphous Pt(P)
+  candidate ensemble at a fraction of the cost of conventional first-principles
+  melt-quench molecular dynamics.
+- **Numbers:** ~5.8×10³ DFT relaxations across the six Pt(P) leaves
+  (~2–3×10² per seed) produce ~5.2×10³ retained candidate structures, stored
+  in a compact, indexable database (~8–12 MB per leaf). This is the same
+  efficiency regime as evolutionary/ML-assisted amorphous sampling in other
+  systems (~10³ first-principles calcs), and far below the tens of thousands
+  of reference calculations typically needed to train a general
+  machine-learned potential for melt-quench.
+- **Source:** `data/17_PPt/*/seed_*/1_db/db_*.db`;
+  \cite{meltquench2026,artrith2018,nahas2016,activemlp2020}.
+
+### R-1d — Exploration-to-exploitation transition
+- **Claim:** The search transitions sharply from a surrogate-building
+  (exploration) phase to LCB-guided exploitation at iteration 10.
+- **Numbers (multi-seed, 61 seeds across 13 leaves):** the mean DFT energy of
+  retained structures drops sharply at the iteration-10 LCB switch-on, and the
+  drop is universal across every seed. Per-leaf median drop (exploitation mean
+  minus exploration mean): 0P −156 to −218 eV, 20P −256 to −306 eV, 30P −320
+  to −356 eV — the transition grows with P loading. For the representative
+  leaf (1_plus0cell/2_20P) the mean drops from −375 to −390 eV (exploration)
+  to −681 to −689 eV (exploitation) across its four seeds. The acquisition
+  value correlates strongly with the DFT energy for P-doped leaves (|r| ≈
+  0.7–0.9 across all 20P/30P seeds; the correlation is weak for 0P, |r| ≈
+  0.2–0.7), confirming the surrogate selects low-energy candidates rather than
+  noise. The per-leaf global minimum is typically reached in the latter half
+  of the 100-iteration budget (P-leaf medians 80–99; range 10–100).
+- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
+  `analysis/explore_exploit/explore_exploit.json` (produced by
+  `codes/extract_explore_exploit.py`); fig
+  `analysis/figures/fig_explore_exploit.png`; \cite{gofee2022}.
+
+### R-1e — Surrogate predictive performance (energy-resolved)
+- **Claim:** The GPR surrogate predicts the DFT energy accurately enough to drive the search, and its error grows with distance from the minimum and with P loading. The surrogate's predicted uncertainty (GPR σ) tracks the actual error in the low-energy regime — where selection matters.
+- **Numbers (retained ensemble, iteration ≥ 10, all 9 leaves, per-leaf relative energy 0→0.3 eV/atom):** MAE in the 0–0.1 eV/atom window is 0.009–0.015 (0P), 0.029–0.034 (20P), 0.048–0.061 (30P) eV/atom across the three cells; GPR σ in the same window is 0.019–0.023 (0P), 0.028–0.032 (20P), 0.043–0.048 (30P). Both MAE and σ rise with distance from the minimum and with P loading, and the predicted uncertainty tracks the actual error — validating the LCB acquisition (κ=2).
+- **Metric note:** per-window R² is not reported — within 0.1 eV/atom windows the energy variance is tiny relative to the error, so R² is negative and uninformative. MAE and GPR σ are the meaningful metrics.
+- **Caveat:** the DFT ground truth for P leaves is on under-relaxed geometries (single-DFT-step evaluator), so the measured error includes that noise — the surrogate error is an upper bound on the true model error.
+- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
+  `analysis/surrogate_perf/surrogate_perf.json` (produced by
+  `codes/extract_surrogate_perf.py`); fig
+  `analysis/figures/fig_surrogate_perf.png`; \cite{gofee2022}.
+
 ## Supplementary claims (SI)
 ### SI-1 — Reference-dependence and polymorphism (Ta, W) — demonstration detail
 > The core reference-anchored claim lives in **M-3** (method) and **MT-5** (main text). SI-1 carries the *polymorphism demonstration* that makes the reference a physical choice.
@@ -274,8 +274,8 @@ flowchart TD
 | `fig2_2panel.png` | (superseded by `fig_crystallinity_3panel.png`) | 2-panel crystallinity (partial RDF + crystalline-fraction vs cell). Kept as a diagnostic; not the paper figure. | `codes/emit_fig2_2panel.py` v1.0.0 | `analysis/cna_rdf/*/cna_rdf.json` |
 | `fig_energy_vs_force.png` | — (diagnostic, NOT paper) | Hexbin $E_i - E_{\rm glob}$ vs max\|F\|, 3 panels by P loading. | `codes/emit_fig_energy_vs_force.py` v1.1.2 | `analysis/energy_vs_force/*.json` (per-structure ΔE, max\|F\|), produced by `codes/extract_energy_force.py` v1.0.0 |
 | `fig_energy_vs_force_3x3.png` | — (diagnostic, NOT paper) | Hexbin $E_i - E_{\rm glob}$ vs max\|F\|, 3×3 (rows=cell, cols=P). | `codes/emit_fig_energy_vs_force_3x3.py` v1.1.2 | `analysis/energy_vs_force/*.json`, produced by `codes/extract_energy_force.py` v1.0.0 |
-| `fig_explore_exploit.png` | M-1d | 2-panel exploration-to-exploitation transition. **(a) DFT energy vs iteration** — per-iteration mean/min lines for a representative P leaf (1_plus0cell/2_20P, seed_0), iteration-10 phase boundary shaded (exploration vs exploitation), global-min marker. **(b) Acquisition value vs DFT energy** (exploitation phase) with Pearson |r| reported. Carries the sharp energy drop at LCB switch-on and the surrogate-selects-low-energy claim. | `codes/emit_fig_explore_exploit.py` v1.0.0 | `analysis/explore_exploit/explore_exploit.json`, produced by `codes/extract_explore_exploit.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
-| `fig_surrogate_perf.png` | M-1e | 2-panel surrogate predictive performance, one line per leaf (all 9), colored by P loading with a distinct line style per cell expansion (+0/+3/+5), x-axis 0→0.3 eV/atom. **(a) MAE vs $E_i - E_{\rm glob}$** — mean absolute error (eV/atom) per 0.1 eV/atom window; carries the headline that surrogate error grows with distance from the minimum and with P loading. **(b) GPR uncertainty vs $E_i - E_{\rm glob}$** — mean GPR σ (eV/atom) per window; comparing (a) and (b) shows whether the predicted uncertainty tracks the actual error. $E_{\rm glob}$ = energy of the leaf's global minimum. | `codes/emit_fig_surrogate_perf.py` v2.1.0 | `analysis/surrogate_perf/surrogate_perf.json`, produced by `codes/extract_surrogate_perf.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
+| `fig_explore_exploit.png` | R-1d | 2-panel exploration-to-exploitation transition. **(a) DFT energy vs iteration** — per-iteration mean/min lines for a representative P leaf (1_plus0cell/2_20P, seed_0), iteration-10 phase boundary shaded (exploration vs exploitation), global-min marker. **(b) Acquisition value vs DFT energy** (exploitation phase) with Pearson |r| reported. Carries the sharp energy drop at LCB switch-on and the surrogate-selects-low-energy claim. | `codes/emit_fig_explore_exploit.py` v1.0.0 | `analysis/explore_exploit/explore_exploit.json`, produced by `codes/extract_explore_exploit.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
+| `fig_surrogate_perf.png` | R-1e | 2-panel surrogate predictive performance, one line per leaf (all 9), colored by P loading with a distinct line style per cell expansion (+0/+3/+5), x-axis 0→0.3 eV/atom. **(a) MAE vs $E_i - E_{\rm glob}$** — mean absolute error (eV/atom) per 0.1 eV/atom window; carries the headline that surrogate error grows with distance from the minimum and with P loading. **(b) GPR uncertainty vs $E_i - E_{\rm glob}$** — mean GPR σ (eV/atom) per window; comparing (a) and (b) shows whether the predicted uncertainty tracks the actual error. $E_{\rm glob}$ = energy of the leaf's global minimum. | `codes/emit_fig_surrogate_perf.py` v2.1.0 | `analysis/surrogate_perf/surrogate_perf.json`, produced by `codes/extract_surrogate_perf.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
 
 ## Sign-off (owner, Session 4 + 4b + 4t + 4ad)
 - ✅ Contribution framing confirmed (reframed Session 4b: cheap screening→SHC pipeline; **Session 4t: FLAPW SHC dropped entirely** — contribution is the reference-dependent screening → structural verification pipeline).
@@ -284,4 +284,5 @@ flowchart TD
 - ✅ Method claims M-1..M-2 confirmed (v3; the manuscript must trace to them).
 - ✅ SI-1 confirmed (reference-dependence + polymorphism; α-reference demonstration, β experimental contrast; 5 refs verified, thome1984 removed).
 - ✅ **v4 (Session 4ad): reference-dependence promoted from limitation to method component** — M-3 (reference-anchored search) + MT-5 (defining feature) added; "reference-biased search" limitation reframed as a design choice; M-1b flowchart shows reference-anchored seeding; SI-1 demoted to the polymorphism demonstration detail. **Awaiting owner sign-off on v4.**
-- ✅ **M-1e added (Session 4ae): surrogate predictive performance** — energy-resolved MAE + GPR σ from `analysis/surrogate_perf/surrogate_perf.json` + `fig_surrogate_perf.png` (v2.1.0, per-leaf lines). **Awaiting owner sign-off.**
+- ✅ **R-1e added (Session 4ae, reclassified v5): surrogate predictive performance** — energy-resolved MAE + GPR σ from `analysis/surrogate_perf/surrogate_perf.json` + `fig_surrogate_perf.png` (v2.1.0, per-leaf lines). **Awaiting owner sign-off.**
+- ✅ **v5 (Session 4aq): M-1c/M-1d/M-1e reclassified as Results claims (R-1c/R-1d/R-1e)** — their content reports measured outcomes and now lives in the Results section, not Methods. **Awaiting owner sign-off.**

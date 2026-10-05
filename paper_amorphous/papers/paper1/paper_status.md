@@ -38,8 +38,8 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Phase A: contribution framing confirmed with owner (Session 4; SHC excluded)
 - [x] Phase A.5: CLAIMS.md v3 — MT-1..MT-4, M-1..M-1d, M-2, SI-1 all signed off (Phase B evidence mapped)
 - [x] Phase B: claims mapped to CNA/RDF JSONs + XRD table + explore/exploit JSON
-- [x] sections/03_methods.tex (DRAFTED Session 4ao — traces M-1, M-1b, M-1c, M-1d, M-1e, M-2, M-3; 19 cites all resolve; compiles clean; **Session 4ap: de-code-like'd prose, added iteration-timeline figure Fig. 1**) — **awaiting owner review**
-- [ ] sections/04_results.tex (placeholder — content lives in CLAIMS.md MT-1..MT-4 + M-1c; draft prose here)
+- [x] sections/03_methods.tex (DRAFTED Session 4ao — traces M-1, M-1b, M-2, M-3; 19 cites all resolve; compiles clean; **Session 4ap: de-code-like'd prose, added iteration-timeline figure Fig. 1; Session 4aq: M-1c/M-1d/M-1e moved to Results**) — **awaiting owner review**
+- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; crystallinity MT-1..MT-4 still to draft)
 - [ ] sections/05_conclusion.tex (placeholder)
 - [ ] sections/02_introduction.tex (placeholder)
 - [ ] sections/06_ack_dataavail.tex (placeholder)
@@ -50,7 +50,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Owner reviewed M-1d figure + revised claim wording (Session 4ab).
 - [x] Commit Session 4ab milestone (extractor, figure script, JSON, CLAIMS M-1d + Figures table, VERSIONS, LOG).
 - [x] Draft sections/03_methods.tex (global-optimization method, XRD + CNA/RDF crystallinity analysis) — **DRAFTED Session 4ao, awaiting owner review (block-and-wait gate).**
-- [ ] Draft sections/04_results.tex (crystallinity MT-1..MT-4 + efficiency M-1c).
+- [ ] Draft sections/04_results.tex (crystallinity MT-1..MT-4 + efficiency R-1c).
 - [ ] SHC placeholder: **dropped from paper** (Session 4t) — no SHC section to fill.
 - [ ] Build figure scripts → analysis/figures (partial RDF g_PtP/g_PP as standard figure; crystalline-fraction vs cell bar/line) — done for crystallinity 3-panel + explore/exploit + iteration-timeline (Fig. 1); stage into papers/paper1/figures/ at compile.
 - NEXT: owner reviews sections/03_methods.tex; on approval, draft sections/04_results.tex.
