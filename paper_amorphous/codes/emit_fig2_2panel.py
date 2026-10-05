@@ -18,7 +18,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.1"
 
 import json
 import os
@@ -90,11 +90,13 @@ def main():
     g_pp = np.asarray(s["g_PP"])
     ax1.plot(r, g_ptp, color="tab:red", label=r"$g_{\mathrm{Pt-P}}(r)$")
     ax1.plot(r, g_pp, color="tab:purple", label=r"$g_{\mathrm{P-P}}(r)$")
-    ax1.set_xlabel(r"$r$ (\AA)")
+    ax1.set_xlabel(r"$r$ (Å)")
     ax1.set_ylabel(r"$g(r)$")
     ax1.set_xlim(0, 5.0)
     ax1.legend(frameon=False)
-    ax1.set_title("(a) Partial RDF (Pt,P)", loc="left")
+    # panel label at bottom-center, just below the axes (paper convention)
+    ax1.text(0.5, -0.22, "(a)", transform=ax1.transAxes, ha="center",
+             va="bottom", fontsize=12)
 
     # ---- Panel (b): crystalline fraction vs cell expansion ----
     x = np.arange(len(cells))
@@ -111,7 +113,9 @@ def main():
     ax2.set_ylabel("crystalline fraction")
     ax2.set_ylim(0, 1.1)
     ax2.legend(frameon=False, ncol=3, loc="upper right")
-    ax2.set_title("(b) Crystalline fraction vs cell", loc="left")
+    # panel label at bottom-center, just below the axes (paper convention)
+    ax2.text(0.5, -0.22, "(b)", transform=ax2.transAxes, ha="center",
+             va="bottom", fontsize=12)
 
     out = os.path.join(OUTDIR, "fig2_2panel.png")
     fig.savefig(out, bbox_inches="tight")

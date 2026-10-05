@@ -18,7 +18,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import json
 import os
@@ -89,7 +89,7 @@ def main():
              label=r"$g_{\mathrm{Pt-P}}(r)$")
     ax1.plot(r, np.asarray(s["g_PP"]), color="tab:purple",
              label=r"$g_{\mathrm{P-P}}(r)$")
-    ax1.set_xlabel(r"$r$ (\AA)")
+    ax1.set_xlabel(r"$r$ (Å)")
     ax1.set_ylabel(r"$g(r)$")
     ax1.set_xlim(0, 5.0)
     ax1.legend(frameon=False)

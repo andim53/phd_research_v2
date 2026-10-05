@@ -955,6 +955,75 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 
 **Time:** 2026-10-05 JST
 
+## Session 4ak — 2026-10-05 (fig2_2panel panel-label convention)
+**Owner request:** standardize the paper's multi-panel figure panel labels on bottom-center just below the axes (lowercase `(a) (b) (c)`, regular weight, same size as axis labels); update the `scientific-paper-writing` skill with this preference, then fix the one deviating figure.
+
+**Actions taken:**
+1. **Skill update** (`scientific-paper-writing`): added a panel-label preference under Phase E "Figures:" — lowercase `(a) (b) (c)`, regular weight, same size as axis tick labels, bottom-center just below the axes (`ax.text(0.5, -0.22, "(a)", transform=ax.transAxes, ha="center", va="bottom")`); stated preference (overridable per figure), keep placement uniform across a paper (don't mix with top-left `set_title`).
+2. **`codes/emit_fig2_2panel.py` v1.0.0 -> v1.1.0:** moved panel labels from top-left `set_title("(a) ...", loc="left")` to bottom-center just below the axes, matching the other three main figures (crystallinity 3-panel, surrogate_perf, explore_exploit).
+3. **`VERSIONS.md`** bumped to 1.1.0.
+
+**Verified:** script compiles (lint ok); figure regenerates cleanly → `analysis/figures/fig2_2panel.png`.
+
+**Decorations / pending:**
+- [ ] Commit this milestone (fig2_2panel v1.1.0 + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
+
+## Session 4al — 2026-10-05 (Angstrom label fix: `\AA` → Unicode `Å`)
+**Owner request:** the `\AA` in the RDF xlabel didn't render as Å; fix it (Option B: Unicode `Å`) and update the `scientific-paper-writing` skill to use Unicode `Å` for Angstrom in matplotlib figure labels.
+
+**Actions taken:**
+1. **Root cause:** `\AA` was written outside math mode (`r"$r$ (\AA)"`); matplotlib mathtext only parses `\AA` inside `$...$`, so it rendered literally as `\AA`/`AA`.
+2. **`codes/emit_fig2_2panel.py` v1.1.0 -> v1.1.1** and **`codes/emit_fig_crystallinity_3panel.py` v1.0.0 -> v1.0.1:** xlabel `r"$r$ (\AA)"` → `r"$r$ (Å)"`.
+3. **Skill update** (`scientific-paper-writing`, Phase E "Figures:" block): added rule — use Unicode `Å` in matplotlib labels (e.g. `r"$r$ (Å)"`), never `\AA` outside math mode; note that `\AA` is correct in LaTeX prose.
+4. **`VERSIONS.md`** bumped to 1.1.1 / 1.0.1.
+
+**Verified:** both scripts parse; both figures regenerate cleanly → `analysis/figures/fig2_2panel.png`, `fig_crystallinity_3panel.png`.
+
+**Decorations / pending:**
+- [ ] Commit this milestone (fig2_2panel v1.1.1 + fig_crystallinity_3panel v1.0.1 + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
+
+## Session 4am — 2026-10-05 (title inconsistency fix: drop SHC from title)
+**Owner request:** fix the title inconsistency (main.tex still said "...and Spin Hall Conductivity" despite SHC being dropped in Session 4t) and inspect for other inconsistencies.
+
+**Actions taken:**
+1. **`papers/paper1/main.tex`:** title → *"Amorphous Pt(P) from GOFEE/AGOX Global Optimization: Structure and Crystallinity"* (dropped "and Spin Hall Conductivity").
+2. **`papers/paper1/supplementary/article.tex`:** SI title updated to match; commented keywords line dropped "Spin Hall conductivity"; SI placeholder comment dropped "SHC details".
+3. **`papers/paper1/sections/03_methods.tex` + `04_results.tex`:** removed stale "SHC (FLAPW) step is a placeholder" / "SHC subsection stays empty" comments.
+
+**Inconsistency audit (other findings):**
+- **NOT inconsistent:** `CLAIMS.md:231,246` mention "giant spin Hall effect" only as context for why the β-Ta/W phase is experimentally relevant (SI-1/M-3 reference-dependence) — they do not claim we compute SHC. Left unchanged.
+- **Stale docs (NOT edited — AGENTS.md rule 3 requires owner command for other notes):** `AGENTS.md` (lines 6,8,9,28,32) and `README.md` (many lines) still frame SHC as the in-progress goal / placeholder section. These contradict the Session 4t decision but are "other notes" — flagged for owner, not auto-edited.
+
+**Verified:** both `main.tex` and `supplementary/article.tex` compile cleanly with tectonic; no remaining SHC title refs in the manuscript.
+
+**Decorations / pending:**
+- [ ] Owner decides whether to update stale SHC framing in `AGENTS.md` + `README.md`.
+- [ ] Commit this milestone (title fix + section comments + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
+
+## Session 4an — 2026-10-05 (update AGENTS.md + README.md: SHC out of scope)
+**Owner request:** update the stale SHC framing in `AGENTS.md` and `README.md` (flagged in Session 4am) to reflect that FLAPW SHC is dropped from the paper (Session 4t).
+
+**Actions taken:**
+1. **`AGENTS.md`:** Topic/working title → "structure and crystallinity" (dropped SHC); Status → crystallinity analysis complete, claims frozen in CLAIMS.md v4, SHC dropped from paper; paper-writing rule → "SHC is out of scope for the manuscript"; Environment FLAPW/SHC line → "out of scope, infrastructure only".
+2. **`README.md`:** updated framing in the header, Status, Purpose, both "SHC workflow (in progress)" sections → "(infrastructure only — out of scope for this manuscript)", Expected inputs/outputs (dropped "SHC results (pending)"), Error handling, and Pitfalls. Kept accurate infrastructure references (file layout, `hpc_runs/shc/`, `tmp/` FLAPW example, `flapw_2` env).
+
+**Verified:** no stale "in progress" / "placeholder" SHC framing remains in either file; all remaining SHC mentions are correctly scoped as infrastructure/out-of-scope.
+
+**Decorations / pending:**
+- [ ] Commit this milestone (title fix + section comments + AGENTS + README + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
+
 ## Session 4aj — 2026-10-05 (CLAIMS cleanup: remove non-claim sections)
 **Owner request:** inspect CLAIMS for information that should not be there; perform (a) — remove the Methodological diagnostics + Future work sections, fix stale version refs, fix stale M-1e sign-off.
 

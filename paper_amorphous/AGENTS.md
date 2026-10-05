@@ -3,10 +3,10 @@
 Governing rules for any AI agent working in this project. Read this first.
 
 ## Project
-- **Topic:** Amorphous Pt(P) via GOFEE/AGOX global optimization, with spin Hall conductivity (SHC) from FLAPW. Working title: *Amorphous Pt(P) from GOFEE/AGOX: structure, crystallinity, and spin Hall conductivity*.
+- **Topic:** Amorphous Pt(P) via GOFEE/AGOX global optimization, with crystallinity (Steinhardt q6 + XRD) as the structural descriptor. Working title: *Amorphous Pt(P) from GOFEE/AGOX: structure and crystallinity*.
 - **Authors:** Andi Muhammad Nur Fitrah Syamsul, Kohji Nakamura (Mie University).
-- **Layout:** `papers/paper1/` = main manuscript (RevTeX 4.2) + `supplementary/` (SPIE class). `codes/` = figure/analysis code. `analysis/` = regenerated figures/JSON. `data/` = raw AGOX/GPAW results (read-only reference). `tmp/` = FLAPW install + SHC example (read-only reference).
-- **Status:** Amorphous generation complete (Pt(P), 20/30% P, cell +0/+3/+5%). SHC calculation **in progress** — paper1 has a placeholder SHC section to fill once results land.
+- **Layout:** `papers/paper1/` = main manuscript (RevTeX 4.2) + `supplementary/` (SPIE class). `codes/` = figure/analysis code. `analysis/` = regenerated figures/JSON. `data/` = raw AGOX/GPAW results (read-only reference). `tmp/` = FLAPW install + SHC example (read-only reference, out of scope for the manuscript).
+- **Status:** Amorphous generation complete (Pt(P), 20/30% P, cell +0/+3/+5%). Crystallinity analysis (CNA/RDF + XRD) complete; claims frozen in `CLAIMS.md` v4. **FLAPW SHC is dropped from the paper** (Session 4t) — the contribution is the cheap, reference-anchored screening → structural-verification pipeline. The `hpc_runs/` SHC pipeline exists but is out of scope for this manuscript.
 
 ## Operating rules
 1. **Clarify before every step.** Confirm task/approach/outputs with the owner before writing/running code. Batch independent questions.
@@ -25,10 +25,10 @@ Governing rules for any AI agent working in this project. Read this first.
 - **Citations:** never hallucinate; fetch/verify programmatically; mark `[CITATION NEEDED]`. `\cite{key}` must match `.bib` key byte-for-byte.
 - **Claims:** every number traces to a source file; figures/results come from `analysis/` by reference. `CLAIMS.md` freezes the claim list; drafting must not introduce claims outside it.
 - **Reuse rule:** produce paper-needed graphs in `codes/`/`analysis/`, then reference them; do not duplicate.
-- **SHC section is a placeholder** until the FLAPW SHC results exist; do not draft SHC numbers or claims before the calculation is done.
+- **SHC is out of scope for the manuscript** (Session 4t): the paper makes no SHC claims. The `hpc_runs/` SHC pipeline and `tmp/` FLAPW example exist as infrastructure but are not part of this paper; do not draft SHC numbers or claims.
 
 ## Environment
 - Local analysis/compile env: `agox_v2` (`/home/think/miniconda3/envs/agox_v2/bin/python`). Set `matplotlib.use('Agg')` before plotting (headless).
-- FLAPW/SHC env: `flapw_2` conda env (see `tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW/job_genkai_mpi.sh`); runs on HPC via pjsub.
+- FLAPW/SHC env: `flapw_2` conda env (see `tmp/SHC Calculation/HEA_SHC_Auto_Python_FLAPW/job_genkai_mpi.sh`); runs on HPC via pjsub. **Out of scope for this manuscript** — infrastructure only.
 - LaTeX: no system TeX; use `~/.local/bin/tectonic` (0.17.0).
 - Figure style must match `_analysist` rcParams (serif 12, ticks-in all sides, no grid, dpi 300, autolayout) and the `iteration >= 10` filter convention.
