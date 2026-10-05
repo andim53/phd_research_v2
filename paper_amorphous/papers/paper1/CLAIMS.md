@@ -1,9 +1,9 @@
 # CLAIMS.md — paper1 (frozen claim list)
 
-Freeze the claims before drafting. Any new claim requires bumping this file to v3 first. Numbers must trace to a source file; figures/results come from `analysis/` by reference. **v3 adds the Method claims (M-1..M-2, M-1b..M-1d); the manuscript and the mermaid flowchart (M-1b) must trace to them.**
+Freeze the claims before drafting. Any new claim requires bumping this file to v4 first. Numbers must trace to a source file; figures/results come from `analysis/` by reference. **v4 promotes reference-dependence from a limitation to a first-class method component: adds M-3 (reference-anchored search) and MT-5 (reference-dependence as the defining feature), reframes the "reference-biased search" limitation as a design choice, and updates the M-1b flowchart to show the reference-anchored seeding. The manuscript and the mermaid flowchart (M-1b) must trace to them.**
 
-## One-sentence contribution — CONFIRMED (owner, Session 4; reframed Session 4b/4c/4d; **reference-dependence reframe Session 4t**)
-We present a cheap, **reference-dependent** route to model amorphous alloys: a GOFEE/AGOX global-optimization screening (Oganov-style fingerprint descriptor) enumerates the low-energy amorphous basin around a chosen crystalline reference, and the Steinhardt q6 crystalline-fraction order parameter confirms amorphization. Applied to Pt(P) — whose fcc reference is its only stable phase — the screening finds 20–30 at% P as the onset of structural amorphization, saturating in concentration and modestly increasing under +3/+5% cell expansion. The reference-dependence is the key feature: for polymorphic hosts (Ta, W) the reference state is a physical choice, and we demonstrate the method from the **α (bcc) reference** while experiments stabilize the metastable **β** phase (SI-1).
+## One-sentence contribution — CONFIRMED (owner, Session 4; reframed Session 4b/4c/4d; **reference-dependence reframe Session 4t; promoted to method component Session 4ad/v4**)
+We present a cheap, **reference-anchored** route to model amorphous alloys: the method's defining component is that it models the amorphous state as the low-energy basin around a chosen crystalline reference — a GOFEE/AGOX global-optimization screening (Oganov-style fingerprint descriptor) enumerates that basin, and the Steinhardt q6 crystalline-fraction order parameter confirms amorphization. Applied to Pt(P) — whose fcc reference is its only stable phase — the screening finds 20–30 at% P as the onset of structural amorphization, saturating in concentration and modestly increasing under +3/+5% cell expansion. The reference is a *physical choice* the user controls: for polymorphic hosts (Ta, W) the reference state is a genuine choice, and we demonstrate the method from the **α (bcc) reference** while experiments stabilize the metastable **β** phase (M-3, SI-1).
 
 > Scope decision (owner, Session 4t): **FLAPW SHC is dropped entirely from the paper** — the contribution is the cheap, reference-dependent screening → structural verification pipeline. No SHC claims are made.
 >
@@ -40,13 +40,20 @@ We present a cheap, **reference-dependent** route to model amorphous alloys: a G
 - **Source:** `analysis/cna_rdf/*/cna_rdf.json`.
 - **Verified:** yes.
 
+### MT-5 — Reference-dependence is the method's defining feature
+- **Claim:** The method is *reference-anchored*: it models the amorphous state as the low-energy basin around a chosen crystalline reference, and the search is deliberately seeded from that reference topology. This is a design feature, not a bias — it targets the physically relevant basin (the reference is the host's stable phase) and makes the reference a *physical choice* the user controls.
+- **Evidence:** The amorphous randomizer seeds the search from the reference P-interstitial alloy (M-1), so the enumerated basin is anchored to the reference topology. For Pt the reference is unique (fcc, its only stable phase); for polymorphic Ta/W the reference is a genuine choice — we demonstrate from the α (bcc) reference while experiments stabilize the metastable β phase (M-3, SI-1).
+- **Framing:** stated as the method's core design principle, not a caveat. The honest note that the search is not a uniform random search over all amorphous configurations is a *scope* statement of the method (M-3), not a limitation.
+- **Source:** `data/17_PPt/`, `data/11_bTa/`, `data/16_bW/`; \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
+- **Verified:** yes.
+
 ## Method claims (M) — pipeline that the manuscript must trace to
 > These freeze the *methodological* claims (how the results were produced), so
 > the manuscript sections and the mermaid flowchart (M-1b, in this file) trace
 > to them the same way MT-1..MT-3 trace to `analysis/`. The mermaid flowchart
 > lives in this CLAIMS (M-1b) and is the source of truth (the old
 > `codes/methods_flowchart.mmd` figure was removed). Any new method claim bumps
-> this file to v3 first.
+> this file to v4 first.
 
 ### M-1 — Global-optimization search (GOFEE/AGOX)
 - **Claim:** Low-energy amorphous Pt(P) is enumerated by a GOFEE/AGOX
@@ -89,6 +96,7 @@ We present a cheap, **reference-dependent** route to model amorphous alloys: a G
 
 ```mermaid
 flowchart TD
+    Ref["<b>Reference-anchored seeding</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Choose crystalline reference<br/>• Build P-interstitial alloy from it<br/>• Amorphous randomizer displaces atoms<br/>• Search explores the reference basin (M-3)</div>"]
     Init["Initialize the search<br/>iteration (i = 0)"]
     D1{"0 ≤ i < 10"}
     D2{"10 ≤ i < 25"}
@@ -106,6 +114,7 @@ flowchart TD
     DFT["DFT evaluate M<br/>candidates"]
     DB["Database"]
 
+    Ref --> Init
     Init --> D1
     D1 -->|Y| P1
     D1 -->|N| D2
@@ -198,9 +207,31 @@ flowchart TD
   `data/17_PPt/DISCUSSION.md`;
   \cite{steinhardt1983,pymatgen2013,ase2017}.
 
+### M-3 — Reference-anchored search (the defining method component)
+- **Claim:** The method is *reference-anchored*: it models the amorphous state
+  as the low-energy basin around a chosen crystalline reference, and the search
+  is deliberately seeded from that reference topology. This is a design feature,
+  not a bias — it targets the physically relevant basin (the reference is the
+  host's stable phase) and makes the reference a *physical choice* the user
+  controls.
+- **Reference as a physical choice:** Pt has a single stable phase (fcc), so its
+  reference is unique; Ta and W are polymorphic (α-bcc equilibrium vs
+  β-metastable tetragonal/A15), so the reference is a genuine choice — we
+  demonstrate from the α (bcc) reference while experiments stabilize the
+  metastable β phase (the spintronically relevant phase, giant spin Hall effect).
+- **Scope (design choice, not a limitation):** because the search is seeded from
+  the reference topology, it is not a uniform random search over all amorphous
+  configurations — it explores configurations *near the reference basin* first.
+  This is intentional: it targets the relevant basin for a design tool. The
+  first ~10 iterations are surrogate-building (exploration) and are excluded
+  from analysis (iteration ≥ 10 filter, M-1b).
+- **Source:** `data/17_PPt/`, `data/11_bTa/`, `data/16_bW/`;
+  \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
+
 ## Supplementary claims (SI)
-### SI-1 — Reference-dependence and polymorphism (Ta, W)
-- **Claim:** The method is reference-dependent: it models the amorphous state as the low-energy basin around a chosen crystalline reference. Pt has a single stable phase (fcc), so its reference is unique; Ta and W are polymorphic (α-bcc equilibrium vs β-metastable tetragonal/A15), so the reference state is a physical choice.
+### SI-1 — Reference-dependence and polymorphism (Ta, W) — demonstration detail
+> The core reference-anchored claim lives in **M-3** (method) and **MT-5** (main text). SI-1 carries the *polymorphism demonstration* that makes the reference a physical choice.
+- **Claim:** For polymorphic hosts the reference state is a genuine physical choice, and the choice matters. Pt has a single stable phase (fcc), so its reference is unique; Ta and W are polymorphic (α-bcc equilibrium vs β-metastable tetragonal/A15), so the reference is a choice.
 - **Our demonstration (α reference):** we seed the bTa and bW searches from the **α (bcc)** reference — 3×3×3 BCC Ta/W, 54 host atoms, B interstitials 0 → ~8–10 at% (Ta: 0/1/3/5 B; W: 0/1/3/6 B). Same GOFEE/AGOX pipeline as Pt(P).
 - **Experimental contrast (β reference):** experiments routinely stabilize the metastable **β** phase instead — β-Ta (tetragonal) and β-W (A15), which are the spintronically relevant phases (giant spin Hall effect) \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
 - **Source:** `data/11_bTa/`, `data/16_bW/`; \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}.
@@ -214,7 +245,7 @@ flowchart TD
 ## Limitations
 - **Concentration framing vs experiment:** our amorphization claim is structural (interstitial GOFEE/AGOX route, Steinhardt q6 order parameter). It does **not** assert an absolute experimental P threshold. Shashank et al. 2025 \cite{shashank2025} amorphizes Pt(P) by ion dose+energy; a box-model dose→at% conversion (range ~17 nm @30 keV) maps their transport onset to **~35–66 at% P**, above our 20–30 at%. This gap reflects different synthesis routes (interstitial optimization vs ion bombardment) and is a stated caveat, not a contradiction — see `hpc_runs/convert_dose_concentration.py` (box-model estimates; replace with SI-S3 SRIM profiles if a numeric comparison is reported).
 - **Supercell size (finite-size):** all results use a single 3×3×3 supercell (Pt₁₀₈, ~12 Å edge, ~135–154 atoms); the +0/+3/+5\ % differ by cell \emph{volume} at fixed occupancy (a free-volume probe, MT-3), not by a same-physics supercell-size convergence sweep. Per best practice for amorphous modeling \cite{setten2026}, the cell is near the lower edge of sizes needed to fully suppress artificial periodicity / resolve medium-range order — a reviewer may request a 2×2×2 vs 3×3×3 check. Stated as a limitation, not a claim.
-- **Reference-biased search:** the GOFEE/AGOX search is seeded from the P-interstitial reference alloy structure (amorphous randomizer), so it explores configurations *near the reference topology* first — it is not a uniform random search over all amorphous configurations. This is appropriate for a design tool (it targets the relevant basin) but should be stated so the search is not read as unbiased. The first ~10 iterations are surrogate-building (exploration) and are excluded from analysis (iteration ≥ 10 filter).
+- **Reference-anchored search (design choice, not a limitation):** the GOFEE/AGOX search is seeded from the P-interstitial reference alloy structure (amorphous randomizer), so it explores configurations *near the reference topology* first — it is not a uniform random search over all amorphous configurations. This is the method's core design principle (M-3, MT-5): it targets the physically relevant basin (the reference is the host's stable phase) and makes the reference a physical choice. The first ~10 iterations are surrogate-building (exploration) and are excluded from analysis (iteration ≥ 10 filter).
 - All structures DFT-relaxed in a fixed supercell with fixed P count — none is truly bulk-amorphous; expect modest order change vs experiment.
 - **Force-under-relaxation of P-doped geometries (applies to MT-1..MT-4):** the geometries backing the crystalline-fraction claims are not force-converged for the P leaves. The AGOX evaluator runs `optimizer_run_kwargs={"fmax": 0.05, "steps": 1}` — a single DFT step after surrogate relaxation — so the stored forces are snapshots. Measured across the retained ensemble (`iteration >= 10`, per-leaf `e_max < 0.3 eV/atom`): 0P leaves reach max|F| down to 0.006–0.012 eV/Å (51–66% of retained structures below 0.05; low energy and low force coincide); every 20P/30P leaf has max|F| pinned at ~0.7–3 eV/Å (median 1.5–2.4, min never below 0.70, up to ~40 in the tail), and the per-leaf *global energy minimum* structure itself sits at max|F| = 0.71–1.65 eV/Å. The amorphization signal (crystalline fraction q6) is therefore computed on geometries 0.7–1.65 eV/Å from force equilibrium for the P leaves only. This is a property of the *search* (surrogate-relaxed + 1 DFT step), not evidence about physical Pt(P) relaxation; the structural claims are stated as energetics-based and must be re-checked against force-converged re-relaxations (see Future work) before any force-based property is trusted. Source: `analysis/energy_vs_force/*.json`, `analysis/energy_vs_force/energy_vs_force.csv` (per-structure ΔE, max|F|), `codes/probe_forces_e003.py`, fig `analysis/figures/fig_energy_vs_force{,_3x3}.png`.
 
@@ -302,9 +333,10 @@ flowchart TD
   energy-vs-force figures are methodological diagnostics for future work — do not draft
   them into the manuscript unless/when promoted by the owner.
 
-## Sign-off (owner, Session 4 + 4b + 4t)
+## Sign-off (owner, Session 4 + 4b + 4t + 4ad)
 - ✅ Contribution framing confirmed (reframed Session 4b: cheap screening→SHC pipeline; **Session 4t: FLAPW SHC dropped entirely** — contribution is the reference-dependent screening → structural verification pipeline).
 - ✅ Experimental anchoring + refs approved (Shashank/Yang/Shi verified, added to `references.bib`).
 - ✅ Claim list confirmed (MT-1..MT-3 reviewed; capped numbers + reference-dependence reframe approved).
 - ✅ Method claims M-1..M-2 confirmed (v3; the manuscript must trace to them).
 - ✅ SI-1 confirmed (reference-dependence + polymorphism; α-reference demonstration, β experimental contrast; 5 refs verified, thome1984 removed).
+- ✅ **v4 (Session 4ad): reference-dependence promoted from limitation to method component** — M-3 (reference-anchored search) + MT-5 (defining feature) added; "reference-biased search" limitation reframed as a design choice; M-1b flowchart shows reference-anchored seeding; SI-1 demoted to the polymorphism demonstration detail. **Awaiting owner sign-off on v4.**

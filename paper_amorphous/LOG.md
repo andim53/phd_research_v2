@@ -833,3 +833,24 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: draft sections/03_methods.tex per paper_status.md.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ad — 2026-10-05 (CLAIMS v4: reference-dependence promoted to method component)
+**Owner request:** change reference-dependence from a limitation to one of the main components of the methodology.
+
+**Actions taken (CLAIMS.md bumped to v4):**
+1. **New M-3 — Reference-anchored search (the defining method component):** the method models the amorphous state as the low-energy basin around a chosen crystalline reference, seeded from that reference topology. Reframed as a design feature, not a bias; the "not a uniform random search" note is now a *scope* statement, not a limitation.
+2. **New MT-5 — Reference-dependence is the method's defining feature:** main-text claim the Results/Methods prose can trace to.
+3. **Reframed the "Reference-biased search" limitation** (was line ~217) as "Reference-anchored search (design choice, not a limitation)" — kept the honest caveat but led with the design principle.
+4. **Contribution sentence** now leads with "reference-anchored" as the headline method contribution.
+5. **M-1b flowchart** updated: added a "Reference-anchored seeding" node feeding the search init (choose reference → build P-interstitial alloy → amorphous randomizer → explore reference basin).
+6. **SI-1 demoted** to the polymorphism demonstration detail (Ta/W α vs β), with the core claim deferred to M-3/MT-5.
+7. Sign-off block: added v4 line, marked **awaiting owner sign-off**.
+
+**Verified:** M-3/MT-5/SI-1 all present; no stale "reference-biased" limitation; mermaid block balanced; historical v3/reference-dependent records kept intact.
+
+**Decorations / pending:**
+- [ ] Owner reviews + signs off CLAIMS v4.
+- [ ] Commit this milestone (CLAIMS v4 + LOG).
+- NEXT: after owner sign-off → commit; then draft sections/03_methods.tex (which now traces to M-3 reference-anchored search).
+
+**Time:** 2026-10-05 JST
