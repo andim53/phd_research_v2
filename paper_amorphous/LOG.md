@@ -914,3 +914,26 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: after owner review -> commit; then draft sections/03_methods.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ah — 2026-10-05 (fig_surrogate_perf v2.0.0: ground-up remake)
+**Owner request:** remake the surrogate-perf figure from the ground up — simple MAE + GPR uncertainty across 0-0.3 eV/atom, using all 9 leaves.
+
+**Actions taken:**
+1. `codes/emit_fig_surrogate_perf.py` v1.0.1 -> v2.0.0 (ground-up rewrite):
+   - 2 panels (was 3): (a) MAE vs $E_i - E_{\rm glob}$, (b) mean GPR sigma vs $E_i - E_{\rm glob}$.
+   - Dropped the Spearman-rho panel and the uncertainty-calibration scatter.
+   - All 9 leaves pooled per P loading (n-weighted across +0/+3/+5 cells) — was +0-cell only.
+   - x-axis 0-0.3 eV/atom.
+2. `CLAIMS.md`: M-1e claim + figure table updated to the 2-panel, 9-leaf-pooled design and new numbers.
+3. `VERSIONS.md` bumped to 2.0.0.
+
+**Key numbers (pooled, 0-0.1 window):** MAE 0.011/0.031/0.055 (0P/20P/30P); GPR sigma 0.022/0.030/0.045. Both rise with distance from minimum and with P loading -> predicted uncertainty tracks actual error (validates LCB, kappa=2).
+
+**Verified:** script compiles; figure regenerates cleanly (valid PNG).
+
+**Decorations / pending:**
+- [ ] Owner reviews the remade figure.
+- [ ] Commit this milestone (fig script v2.0.0 + CLAIMS + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST

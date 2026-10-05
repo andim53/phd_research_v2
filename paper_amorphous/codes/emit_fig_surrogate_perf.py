@@ -3,25 +3,21 @@
 
 Serves M-1e (GPR surrogate predictive performance) from
 analysis/surrogate_perf/surrogate_perf.json (produced by
-codes/extract_surrogate_perf.py):
+codes/extract_surrogate_perf.py).
 
-  (a) MAE vs relative energy — mean absolute error (eV/atom) binned across the
-      0 -> 0.3 eV/atom range, line per P loading. Carries the headline: surrogate
-      error grows with distance from the minimum and with P loading.
-  (b) Spearman rho vs relative energy — rank correlation per window, line per P
-      loading. Carries the selection-relevance claim: the surrogate ranks
-      candidates well near the minimum (where selection matters).
-  (c) Uncertainty calibration — mean |error| vs mean GPR sigma per window, line
-      per P loading (1:1 dashed). Carries the claim that the GPR uncertainty
-      tracks the error (validates the LCB acquisition, kappa=2).
+Two panels, all 9 leaves pooled per P loading (n-weighted across the +0/+3/+5
+cells), x-axis 0 -> 0.3 eV/atom:
+
+  (a) MAE vs E_i - E_glob — mean absolute error (eV/atom) per 0.1 eV/atom
+      window, line per P loading. Carries the headline: surrogate error grows
+      with distance from the minimum and with P loading.
+  (b) GPR uncertainty vs E_i - E_glob — mean GPR sigma (eV/atom) per window,
+      line per P loading. Carries the predicted-uncertainty story (what the LCB
+      acquisition uses). Comparing (a) and (b) shows whether the predicted
+      uncertainty tracks the actual error.
 
 Relative-energy axis: E_i - E_glob (eV/atom), where E_glob is the energy of the
-leaf's global minimum (defined in the CLAIMS figure caption). Panels (a) and (b)
-are scaled to 0 -> 0.3 eV/atom (the low-energy regime where selection matters).
-
-Per-window R^2 is NOT plotted: within 0.1 eV/atom windows the energy variance is
-tiny relative to the error, so R^2 is negative and uninformative (noted in
-CLAIMS M-1e). MAE and Spearman rho are the meaningful metrics.
+leaf's global minimum (defined in the CLAIMS figure caption).
 
 Writes analysis/figures/fig_surrogate_perf.png (paper-standard figure).
 
@@ -30,10 +26,11 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.1"
+__version__ = "2.0.0"
 
 import json
 import os
+from collections import defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
@@ -51,8 +48,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ANALYSIS = os.path.join(ROOT, "analysis")
 OUTDIR = os.path.join(ANALYSIS, "figures")
 
-# representative +0-cell leaves, one per P loading
-LEAVES = ["1_plus0cell/0_0P", "1_plus0cell/2_20P", "1_plus0cell/3_30P"]
+P_ORDER = ["0P", "20P", "30P"]
 COLORS = {"0P": "tab:blue", "20P": "tab:orange", "30P": "tab:green"}
 
 XLABEL = r"$E_i - E_{\rm glob}$ (eV/atom)"
@@ -61,32 +57,47 @@ XMAX = 0.3  # eV/atom, low-energy regime
 
 def load():
     d = json.load(open(os.path.join(ANALYSIS, "surrogate_perf", "surrogate_perf.json")))
-    return {l["leaf"]: l for l in d["leaves"]}
+    return d["leaves"]
+
+
+def pool_by_p(leaves):
+    """n-weighted pool of per-window MAE and GPR sigma across all leaves of a P loading."""
+    # by_p[P][window_lo] = [n, mae_sum, sigma_sum]
+    by_p = {p: defaultdict(lambda: [0, 0.0, 0.0]) for p in P_ORDER}
+    for l in leaves:
+        p = l["P_loading"]
+        for w in l["windows"]:
+            lo = w["window_lo_eV_per_atom"]
+            if lo >= XMAX:
+                continue
+            acc = by_p[p][lo]
+            acc[0] += w["n"]
+            acc[1] += w["n"] * w["mae_eV_per_atom"]
+            acc[2] += w["n"] * w["mean_sigma_eV_per_atom"]
+    out = {}
+    for p in P_ORDER:
+        wins = sorted(by_p[p].keys())
+        out[p] = {
+            "x": [lo + 0.05 for lo in wins],
+            "mae": [by_p[p][lo][1] / by_p[p][lo][0] for lo in wins],
+            "sigma": [by_p[p][lo][2] / by_p[p][lo][0] for lo in wins],
+            "n": [by_p[p][lo][0] for lo in wins],
+        }
+    return out
 
 
 def main():
     os.makedirs(OUTDIR, exist_ok=True)
-    data = load()
+    leaves = load()
+    pooled = pool_by_p(leaves)
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(13.5, 4.2), layout="constrained")
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 4.2), layout="constrained")
 
-    for leaf in LEAVES:
-        rec = data[leaf]
-        p = rec["P_loading"]
+    for p in P_ORDER:
         c = COLORS[p]
-        wins = rec["windows"]
-        x = [(w["window_lo_eV_per_atom"] + w["window_hi_eV_per_atom"]) / 2 for w in wins]
-        mae = [w["mae_eV_per_atom"] for w in wins]
-        rho = [w["spearman_rho"] for w in wins]
-        sig = [w["mean_sigma_eV_per_atom"] for w in wins]
-        abserr = [w["mean_abs_err_eV_per_atom"] for w in wins]
-
-        # (a) MAE vs relative energy
-        ax1.plot(x, mae, color=c, lw=1.6, marker="o", ms=3, label=p)
-        # (b) Spearman rho vs relative energy
-        ax2.plot(x, rho, color=c, lw=1.6, marker="o", ms=3, label=p)
-        # (c) uncertainty calibration: mean |error| vs mean sigma
-        ax3.plot(sig, abserr, color=c, lw=1.6, marker="o", ms=3, label=p)
+        d = pooled[p]
+        ax1.plot(d["x"], d["mae"], color=c, lw=1.6, marker="o", ms=3, label=p)
+        ax2.plot(d["x"], d["sigma"], color=c, lw=1.6, marker="o", ms=3, label=p)
 
     ax1.set_xlabel(XLABEL)
     ax1.set_ylabel(r"MAE (eV/atom)")
@@ -94,30 +105,22 @@ def main():
     ax1.text(0.5, -0.22, "(a)", transform=ax1.transAxes, ha="center", va="bottom", fontsize=12)
 
     ax2.set_xlabel(XLABEL)
-    ax2.set_ylabel(r"Spearman $\rho$")
+    ax2.set_ylabel(r"mean GPR $\sigma$ (eV/atom)")
     ax2.set_xlim(0, XMAX)
-    ax2.set_ylim(-1.05, 1.05)
-    ax2.axhline(0, color="k", lw=0.8, ls=":")
     ax2.text(0.5, -0.22, "(b)", transform=ax2.transAxes, ha="center", va="bottom", fontsize=12)
 
-    ax3.set_xlabel(r"mean GPR $\sigma$ (eV/atom)")
-    ax3.set_ylabel(r"mean $|$error$|$ (eV/atom)")
-    lim = max(ax3.get_xlim()[1], ax3.get_ylim()[1])
-    ax3.plot([0, lim], [0, lim], color="k", lw=0.8, ls="--", label="1:1")
-    ax3.set_xlim(0, lim)
-    ax3.set_ylim(0, lim)
-    ax3.text(0.5, -0.22, "(c)", transform=ax3.transAxes, ha="center", va="bottom", fontsize=12)
-
-    for ax in (ax1, ax2, ax3):
+    for ax in (ax1, ax2):
         ax.legend(frameon=False, fontsize=10, loc="best")
 
     out = os.path.join(OUTDIR, "fig_surrogate_perf.png")
     fig.savefig(out)
     plt.close(fig)
     print("figures ->", out)
-    for leaf in LEAVES:
-        o = data[leaf]["overall_0_1_eV_per_atom"]
-        print(f"  {leaf}: MAE={o['mae_eV_per_atom']:.4f} R2={o['r2']:.3f} rho={o['spearman_rho']:.3f}")
+    for p in P_ORDER:
+        d = pooled[p]
+        print(f"  {p}: n={sum(d['n']):,}  "
+              f"MAE@0-0.1={d['mae'][0]:.4f} sigma@0-0.1={d['sigma'][0]:.4f}  "
+              f"MAE@0.2-0.3={d['mae'][-1]:.4f} sigma@0.2-0.3={d['sigma'][-1]:.4f}")
 
 
 if __name__ == "__main__":
