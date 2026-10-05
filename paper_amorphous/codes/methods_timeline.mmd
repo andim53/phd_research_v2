@@ -2,7 +2,6 @@
 %% Source of truth for Fig. in sections/03_methods.tex (Iteration timeline).
 %% Render: npx @mermaid-js/mermaid-cli -i methods_timeline.mmd -o ../analysis/figures/methods_timeline.png
 flowchart TD
-    Ref["<b>Reference-anchored seeding</b><div style='text-align: left; min-width: 260px; padding: 4px;'>• Choose crystalline reference<br/>• Build P-interstitial alloy from it<br/>• Amorphous randomizer displaces atoms<br/>• Search explores the reference basin (M-3)</div>"]
     Init["Initialize the search<br/>iteration (i = 0)"]
     D1{"0 ≤ i < 10"}
     D2{"10 ≤ i < 25"}
@@ -20,7 +19,6 @@ flowchart TD
     DFT["DFT evaluate M<br/>candidates"]
     DB["Database"]
 
-    Ref --> Init
     Init --> D1
     D1 -->|Y| P1
     D1 -->|N| D2
