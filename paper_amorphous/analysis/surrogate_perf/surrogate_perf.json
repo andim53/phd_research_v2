@@ -1,0 +1,1091 @@
+{
+  "description": {
+    "name": "GPR surrogate predictive performance (M-1e)",
+    "version": "1.0.0",
+    "produced_by": "codes/extract_surrogate_perf.py",
+    "purpose": "citable per-window surrogate predictive-performance data (MAE/RMSE/R2/Spearman/uncertainty-calibration) the surrogate-performance figure imports",
+    "filters": {
+      "iteration_min": 10,
+      "e_max_eV_per_atom": 1.0,
+      "window_eV_per_atom": 0.1,
+      "reference": "per-leaf global energy minimum",
+      "units": {
+        "energy": "eV/atom relative to leaf E_min",
+        "error": "model_energy - DFT energy, eV/atom"
+      }
+    },
+    "caveats": [
+      "model_energy/uncertainty are stored at selection time (before the candidate is DFT-scored) -> out-of-sample predictions",
+      "DFT ground truth for P leaves is on under-relaxed geometries (single-DFT-step evaluator); measured error includes that noise",
+      "early surrogate-building iterations (< 10) excluded"
+    ]
+  },
+  "leaves": [
+    {
+      "leaf": "1_plus0cell/0_0P",
+      "cell": "+0",
+      "P_loading": "0P",
+      "natoms": 108,
+      "n_retained": 1279,
+      "global_min_eV": -653.8059397383421,
+      "overall_0_1_eV_per_atom": {
+        "n": 1279,
+        "mae_eV_per_atom": 0.04018,
+        "rmse_eV_per_atom": 0.11585,
+        "r2": 0.5678,
+        "spearman_rho": 0.827
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 893,
+          "mae_eV_per_atom": 0.01539,
+          "rmse_eV_per_atom": 0.11042,
+          "r2": -21.2225,
+          "spearman_rho": 0.5571,
+          "mean_sigma_eV_per_atom": 0.0231,
+          "mean_abs_err_eV_per_atom": 0.01539
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 156,
+          "mae_eV_per_atom": 0.03525,
+          "rmse_eV_per_atom": 0.0482,
+          "r2": -1.5195,
+          "spearman_rho": 0.6159,
+          "mean_sigma_eV_per_atom": 0.12385,
+          "mean_abs_err_eV_per_atom": 0.03525
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 38,
+          "mae_eV_per_atom": 0.06784,
+          "rmse_eV_per_atom": 0.08261,
+          "r2": -9.1974,
+          "spearman_rho": 0.367,
+          "mean_sigma_eV_per_atom": 0.23334,
+          "mean_abs_err_eV_per_atom": 0.06784
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 50,
+          "mae_eV_per_atom": 0.14075,
+          "rmse_eV_per_atom": 0.15681,
+          "r2": -26.8581,
+          "spearman_rho": 0.5047,
+          "mean_sigma_eV_per_atom": 0.89399,
+          "mean_abs_err_eV_per_atom": 0.14075
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 78,
+          "mae_eV_per_atom": 0.17832,
+          "rmse_eV_per_atom": 0.18483,
+          "r2": -41.3779,
+          "spearman_rho": 0.5448,
+          "mean_sigma_eV_per_atom": 2.66997,
+          "mean_abs_err_eV_per_atom": 0.17832
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 35,
+          "mae_eV_per_atom": 0.12027,
+          "rmse_eV_per_atom": 0.13951,
+          "r2": -21.877,
+          "spearman_rho": -0.3077,
+          "mean_sigma_eV_per_atom": 2.64266,
+          "mean_abs_err_eV_per_atom": 0.12027
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 16,
+          "mae_eV_per_atom": 0.1073,
+          "rmse_eV_per_atom": 0.1506,
+          "r2": -34.6326,
+          "spearman_rho": 0.3378,
+          "mean_sigma_eV_per_atom": 1.96955,
+          "mean_abs_err_eV_per_atom": 0.1073
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 9,
+          "mae_eV_per_atom": 0.15343,
+          "rmse_eV_per_atom": 0.16777,
+          "r2": -28.8924,
+          "spearman_rho": -0.4874,
+          "mean_sigma_eV_per_atom": 2.4013,
+          "mean_abs_err_eV_per_atom": 0.15343
+        },
+        {
+          "window_lo_eV_per_atom": 0.8,
+          "window_hi_eV_per_atom": 0.9,
+          "n": 3,
+          "mae_eV_per_atom": 0.31512,
+          "rmse_eV_per_atom": 0.32905,
+          "r2": -65.705,
+          "spearman_rho": -0.5,
+          "mean_sigma_eV_per_atom": 1.24408,
+          "mean_abs_err_eV_per_atom": 0.31512
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 1,
+          "mae_eV_per_atom": 0.37089,
+          "rmse_eV_per_atom": 0.37089,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.32794,
+          "mean_abs_err_eV_per_atom": 0.37089
+        }
+      ]
+    },
+    {
+      "leaf": "1_plus0cell/2_20P",
+      "cell": "+0",
+      "P_loading": "20P",
+      "natoms": 135,
+      "n_retained": 820,
+      "global_min_eV": -704.2371336361273,
+      "overall_0_1_eV_per_atom": {
+        "n": 816,
+        "mae_eV_per_atom": 0.07166,
+        "rmse_eV_per_atom": 0.1255,
+        "r2": 0.3542,
+        "spearman_rho": 0.9242
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 460,
+          "mae_eV_per_atom": 0.03409,
+          "rmse_eV_per_atom": 0.03731,
+          "r2": -1.2045,
+          "spearman_rho": 0.811,
+          "mean_sigma_eV_per_atom": 0.03187,
+          "mean_abs_err_eV_per_atom": 0.03409
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 148,
+          "mae_eV_per_atom": 0.06535,
+          "rmse_eV_per_atom": 0.07102,
+          "r2": -4.7346,
+          "spearman_rho": 0.5897,
+          "mean_sigma_eV_per_atom": 0.07708,
+          "mean_abs_err_eV_per_atom": 0.06535
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 93,
+          "mae_eV_per_atom": 0.08707,
+          "rmse_eV_per_atom": 0.09919,
+          "r2": -9.7029,
+          "spearman_rho": 0.5169,
+          "mean_sigma_eV_per_atom": 0.1696,
+          "mean_abs_err_eV_per_atom": 0.08707
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 54,
+          "mae_eV_per_atom": 0.13042,
+          "rmse_eV_per_atom": 0.15394,
+          "r2": -31.1583,
+          "spearman_rho": 0.1405,
+          "mean_sigma_eV_per_atom": 0.3391,
+          "mean_abs_err_eV_per_atom": 0.13042
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 26,
+          "mae_eV_per_atom": 0.21075,
+          "rmse_eV_per_atom": 0.25632,
+          "r2": -87.7255,
+          "spearman_rho": 0.0869,
+          "mean_sigma_eV_per_atom": 0.48953,
+          "mean_abs_err_eV_per_atom": 0.21075
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 15,
+          "mae_eV_per_atom": 0.26293,
+          "rmse_eV_per_atom": 0.34085,
+          "r2": -129.0196,
+          "spearman_rho": 0.4844,
+          "mean_sigma_eV_per_atom": 0.6656,
+          "mean_abs_err_eV_per_atom": 0.26293
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 9,
+          "mae_eV_per_atom": 0.37361,
+          "rmse_eV_per_atom": 0.45896,
+          "r2": -210.8138,
+          "spearman_rho": 0.2667,
+          "mean_sigma_eV_per_atom": 0.49297,
+          "mean_abs_err_eV_per_atom": 0.37361
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 8,
+          "mae_eV_per_atom": 0.51999,
+          "rmse_eV_per_atom": 0.65559,
+          "r2": -697.3725,
+          "spearman_rho": -0.0714,
+          "mean_sigma_eV_per_atom": 0.74981,
+          "mean_abs_err_eV_per_atom": 0.51999
+        },
+        {
+          "window_lo_eV_per_atom": 0.8,
+          "window_hi_eV_per_atom": 0.9,
+          "n": 1,
+          "mae_eV_per_atom": 0.22376,
+          "rmse_eV_per_atom": 0.22376,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.3522,
+          "mean_abs_err_eV_per_atom": 0.22376
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 2,
+          "mae_eV_per_atom": 0.40664,
+          "rmse_eV_per_atom": 0.46714,
+          "r2": -19903.148,
+          "spearman_rho": -1.0,
+          "mean_sigma_eV_per_atom": 0.66123,
+          "mean_abs_err_eV_per_atom": 0.40664
+        }
+      ]
+    },
+    {
+      "leaf": "1_plus0cell/3_30P",
+      "cell": "+0",
+      "P_loading": "30P",
+      "natoms": 154,
+      "n_retained": 1122,
+      "global_min_eV": -644.2845444649289,
+      "overall_0_1_eV_per_atom": {
+        "n": 1112,
+        "mae_eV_per_atom": 0.09929,
+        "rmse_eV_per_atom": 0.1434,
+        "r2": 0.2675,
+        "spearman_rho": 0.8909
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 406,
+          "mae_eV_per_atom": 0.04795,
+          "rmse_eV_per_atom": 0.05103,
+          "r2": -2.9463,
+          "spearman_rho": 0.7629,
+          "mean_sigma_eV_per_atom": 0.04305,
+          "mean_abs_err_eV_per_atom": 0.04795
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 345,
+          "mae_eV_per_atom": 0.07936,
+          "rmse_eV_per_atom": 0.0845,
+          "r2": -8.2309,
+          "spearman_rho": 0.539,
+          "mean_sigma_eV_per_atom": 0.08304,
+          "mean_abs_err_eV_per_atom": 0.07936
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 163,
+          "mae_eV_per_atom": 0.12666,
+          "rmse_eV_per_atom": 0.13528,
+          "r2": -19.1323,
+          "spearman_rho": 0.3897,
+          "mean_sigma_eV_per_atom": 0.17346,
+          "mean_abs_err_eV_per_atom": 0.12666
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 75,
+          "mae_eV_per_atom": 0.13356,
+          "rmse_eV_per_atom": 0.14968,
+          "r2": -35.6559,
+          "spearman_rho": 0.309,
+          "mean_sigma_eV_per_atom": 0.34723,
+          "mean_abs_err_eV_per_atom": 0.13356
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 55,
+          "mae_eV_per_atom": 0.17374,
+          "rmse_eV_per_atom": 0.19522,
+          "r2": -45.5438,
+          "spearman_rho": 0.2985,
+          "mean_sigma_eV_per_atom": 0.49133,
+          "mean_abs_err_eV_per_atom": 0.17374
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 27,
+          "mae_eV_per_atom": 0.2381,
+          "rmse_eV_per_atom": 0.29228,
+          "r2": -83.297,
+          "spearman_rho": -0.1349,
+          "mean_sigma_eV_per_atom": 0.57214,
+          "mean_abs_err_eV_per_atom": 0.2381
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 19,
+          "mae_eV_per_atom": 0.27576,
+          "rmse_eV_per_atom": 0.3368,
+          "r2": -133.9785,
+          "spearman_rho": -0.0754,
+          "mean_sigma_eV_per_atom": 0.67931,
+          "mean_abs_err_eV_per_atom": 0.27576
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 9,
+          "mae_eV_per_atom": 0.37236,
+          "rmse_eV_per_atom": 0.43176,
+          "r2": -326.7492,
+          "spearman_rho": -0.2333,
+          "mean_sigma_eV_per_atom": 0.81737,
+          "mean_abs_err_eV_per_atom": 0.37236
+        },
+        {
+          "window_lo_eV_per_atom": 0.8,
+          "window_hi_eV_per_atom": 0.9,
+          "n": 8,
+          "mae_eV_per_atom": 0.72324,
+          "rmse_eV_per_atom": 0.77676,
+          "r2": -721.5952,
+          "spearman_rho": 0.119,
+          "mean_sigma_eV_per_atom": 0.92306,
+          "mean_abs_err_eV_per_atom": 0.72324
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 5,
+          "mae_eV_per_atom": 0.50755,
+          "rmse_eV_per_atom": 0.56949,
+          "r2": -429.0794,
+          "spearman_rho": -0.9,
+          "mean_sigma_eV_per_atom": 0.87219,
+          "mean_abs_err_eV_per_atom": 0.50755
+        }
+      ]
+    },
+    {
+      "leaf": "2_plus3cell/0_0P",
+      "cell": "+3",
+      "P_loading": "0P",
+      "natoms": 108,
+      "n_retained": 892,
+      "global_min_eV": -642.899980149523,
+      "overall_0_1_eV_per_atom": {
+        "n": 892,
+        "mae_eV_per_atom": 0.02337,
+        "rmse_eV_per_atom": 0.09033,
+        "r2": 0.1222,
+        "spearman_rho": 0.772
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 748,
+          "mae_eV_per_atom": 0.00907,
+          "rmse_eV_per_atom": 0.08027,
+          "r2": -24.6322,
+          "spearman_rho": 0.6792,
+          "mean_sigma_eV_per_atom": 0.01865,
+          "mean_abs_err_eV_per_atom": 0.00907
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 60,
+          "mae_eV_per_atom": 0.0539,
+          "rmse_eV_per_atom": 0.06102,
+          "r2": -5.0949,
+          "spearman_rho": 0.4151,
+          "mean_sigma_eV_per_atom": 0.19243,
+          "mean_abs_err_eV_per_atom": 0.0539
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 50,
+          "mae_eV_per_atom": 0.10233,
+          "rmse_eV_per_atom": 0.12668,
+          "r2": -16.8355,
+          "spearman_rho": 0.2265,
+          "mean_sigma_eV_per_atom": 0.26936,
+          "mean_abs_err_eV_per_atom": 0.10233
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 25,
+          "mae_eV_per_atom": 0.13628,
+          "rmse_eV_per_atom": 0.15983,
+          "r2": -34.6795,
+          "spearman_rho": 0.3028,
+          "mean_sigma_eV_per_atom": 0.28084,
+          "mean_abs_err_eV_per_atom": 0.13628
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 6,
+          "mae_eV_per_atom": 0.27559,
+          "rmse_eV_per_atom": 0.29135,
+          "r2": -79.4089,
+          "spearman_rho": -0.7537,
+          "mean_sigma_eV_per_atom": 0.3939,
+          "mean_abs_err_eV_per_atom": 0.27559
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 2,
+          "mae_eV_per_atom": 0.30607,
+          "rmse_eV_per_atom": 0.37593,
+          "r2": -310.4381,
+          "spearman_rho": 1.0,
+          "mean_sigma_eV_per_atom": 0.45619,
+          "mean_abs_err_eV_per_atom": 0.30607
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 1,
+          "mae_eV_per_atom": 0.03844,
+          "rmse_eV_per_atom": 0.03844,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.41253,
+          "mean_abs_err_eV_per_atom": 0.03844
+        }
+      ]
+    },
+    {
+      "leaf": "2_plus3cell/2_20P",
+      "cell": "+3",
+      "P_loading": "20P",
+      "natoms": 135,
+      "n_retained": 752,
+      "global_min_eV": -762.4304332124411,
+      "overall_0_1_eV_per_atom": {
+        "n": 747,
+        "mae_eV_per_atom": 0.07352,
+        "rmse_eV_per_atom": 0.1245,
+        "r2": 0.2874,
+        "spearman_rho": 0.9127
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 410,
+          "mae_eV_per_atom": 0.02934,
+          "rmse_eV_per_atom": 0.03255,
+          "r2": -0.7198,
+          "spearman_rho": 0.857,
+          "mean_sigma_eV_per_atom": 0.02796,
+          "mean_abs_err_eV_per_atom": 0.02934
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 147,
+          "mae_eV_per_atom": 0.07006,
+          "rmse_eV_per_atom": 0.07427,
+          "r2": -5.6598,
+          "spearman_rho": 0.5841,
+          "mean_sigma_eV_per_atom": 0.081,
+          "mean_abs_err_eV_per_atom": 0.07006
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 84,
+          "mae_eV_per_atom": 0.11171,
+          "rmse_eV_per_atom": 0.11952,
+          "r2": -15.6673,
+          "spearman_rho": 0.4568,
+          "mean_sigma_eV_per_atom": 0.18586,
+          "mean_abs_err_eV_per_atom": 0.11171
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 55,
+          "mae_eV_per_atom": 0.16113,
+          "rmse_eV_per_atom": 0.18901,
+          "r2": -39.4753,
+          "spearman_rho": 0.0335,
+          "mean_sigma_eV_per_atom": 0.35093,
+          "mean_abs_err_eV_per_atom": 0.16113
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 28,
+          "mae_eV_per_atom": 0.16183,
+          "rmse_eV_per_atom": 0.19316,
+          "r2": -46.5053,
+          "spearman_rho": 0.2093,
+          "mean_sigma_eV_per_atom": 0.49762,
+          "mean_abs_err_eV_per_atom": 0.16183
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 11,
+          "mae_eV_per_atom": 0.30611,
+          "rmse_eV_per_atom": 0.36984,
+          "r2": -175.3868,
+          "spearman_rho": 0.2455,
+          "mean_sigma_eV_per_atom": 0.56375,
+          "mean_abs_err_eV_per_atom": 0.30611
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 5,
+          "mae_eV_per_atom": 0.3395,
+          "rmse_eV_per_atom": 0.37546,
+          "r2": -202.4889,
+          "spearman_rho": 0.7,
+          "mean_sigma_eV_per_atom": 0.88359,
+          "mean_abs_err_eV_per_atom": 0.3395
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 3,
+          "mae_eV_per_atom": 0.71684,
+          "rmse_eV_per_atom": 0.71838,
+          "r2": -270.4279,
+          "spearman_rho": 0.5,
+          "mean_sigma_eV_per_atom": 0.60705,
+          "mean_abs_err_eV_per_atom": 0.71684
+        },
+        {
+          "window_lo_eV_per_atom": 0.8,
+          "window_hi_eV_per_atom": 0.9,
+          "n": 3,
+          "mae_eV_per_atom": 0.57622,
+          "rmse_eV_per_atom": 0.7308,
+          "r2": -970.4859,
+          "spearman_rho": 0.5,
+          "mean_sigma_eV_per_atom": 1.04232,
+          "mean_abs_err_eV_per_atom": 0.57622
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 1,
+          "mae_eV_per_atom": 0.87418,
+          "rmse_eV_per_atom": 0.87418,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.61289,
+          "mean_abs_err_eV_per_atom": 0.87418
+        }
+      ]
+    },
+    {
+      "leaf": "2_plus3cell/3_30P",
+      "cell": "+3",
+      "P_loading": "30P",
+      "natoms": 154,
+      "n_retained": 618,
+      "global_min_eV": -766.2468646592326,
+      "overall_0_1_eV_per_atom": {
+        "n": 617,
+        "mae_eV_per_atom": 0.10728,
+        "rmse_eV_per_atom": 0.14091,
+        "r2": 0.1063,
+        "spearman_rho": 0.9023
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 230,
+          "mae_eV_per_atom": 0.06073,
+          "rmse_eV_per_atom": 0.06346,
+          "r2": -6.6142,
+          "spearman_rho": 0.723,
+          "mean_sigma_eV_per_atom": 0.04778,
+          "mean_abs_err_eV_per_atom": 0.06073
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 184,
+          "mae_eV_per_atom": 0.08417,
+          "rmse_eV_per_atom": 0.08861,
+          "r2": -10.2951,
+          "spearman_rho": 0.5888,
+          "mean_sigma_eV_per_atom": 0.09118,
+          "mean_abs_err_eV_per_atom": 0.08417
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 83,
+          "mae_eV_per_atom": 0.11782,
+          "rmse_eV_per_atom": 0.12584,
+          "r2": -16.9813,
+          "spearman_rho": 0.3768,
+          "mean_sigma_eV_per_atom": 0.16755,
+          "mean_abs_err_eV_per_atom": 0.11782
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 57,
+          "mae_eV_per_atom": 0.1563,
+          "rmse_eV_per_atom": 0.1739,
+          "r2": -34.9718,
+          "spearman_rho": 0.145,
+          "mean_sigma_eV_per_atom": 0.38092,
+          "mean_abs_err_eV_per_atom": 0.1563
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 36,
+          "mae_eV_per_atom": 0.23421,
+          "rmse_eV_per_atom": 0.25533,
+          "r2": -86.9063,
+          "spearman_rho": -0.0017,
+          "mean_sigma_eV_per_atom": 0.50716,
+          "mean_abs_err_eV_per_atom": 0.23421
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 16,
+          "mae_eV_per_atom": 0.3248,
+          "rmse_eV_per_atom": 0.34493,
+          "r2": -224.7648,
+          "spearman_rho": 0.2529,
+          "mean_sigma_eV_per_atom": 0.61188,
+          "mean_abs_err_eV_per_atom": 0.3248
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 6,
+          "mae_eV_per_atom": 0.27262,
+          "rmse_eV_per_atom": 0.32467,
+          "r2": -113.1044,
+          "spearman_rho": 0.0,
+          "mean_sigma_eV_per_atom": 0.4495,
+          "mean_abs_err_eV_per_atom": 0.27262
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 4,
+          "mae_eV_per_atom": 0.46202,
+          "rmse_eV_per_atom": 0.52079,
+          "r2": -2312.9898,
+          "spearman_rho": 0.2,
+          "mean_sigma_eV_per_atom": 1.05259,
+          "mean_abs_err_eV_per_atom": 0.46202
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 1,
+          "mae_eV_per_atom": 0.93497,
+          "rmse_eV_per_atom": 0.93497,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.8377,
+          "mean_abs_err_eV_per_atom": 0.93497
+        }
+      ]
+    },
+    {
+      "leaf": "0_plus5cell/3_3x3_0P",
+      "cell": "+5",
+      "P_loading": "0P",
+      "natoms": 108,
+      "n_retained": 1143,
+      "global_min_eV": -628.2177260243816,
+      "overall_0_1_eV_per_atom": {
+        "n": 1143,
+        "mae_eV_per_atom": 0.02747,
+        "rmse_eV_per_atom": 0.08486,
+        "r2": 0.0896,
+        "spearman_rho": 0.843
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 893,
+          "mae_eV_per_atom": 0.0091,
+          "rmse_eV_per_atom": 0.06612,
+          "r2": -7.9814,
+          "spearman_rho": 0.9033,
+          "mean_sigma_eV_per_atom": 0.02324,
+          "mean_abs_err_eV_per_atom": 0.0091
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 138,
+          "mae_eV_per_atom": 0.06219,
+          "rmse_eV_per_atom": 0.08753,
+          "r2": -9.8581,
+          "spearman_rho": 0.3094,
+          "mean_sigma_eV_per_atom": 0.14163,
+          "mean_abs_err_eV_per_atom": 0.06219
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 87,
+          "mae_eV_per_atom": 0.09256,
+          "rmse_eV_per_atom": 0.11964,
+          "r2": -21.6868,
+          "spearman_rho": 0.21,
+          "mean_sigma_eV_per_atom": 0.19162,
+          "mean_abs_err_eV_per_atom": 0.09256
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 20,
+          "mae_eV_per_atom": 0.24385,
+          "rmse_eV_per_atom": 0.26271,
+          "r2": -130.8347,
+          "spearman_rho": -0.1076,
+          "mean_sigma_eV_per_atom": 0.22279,
+          "mean_abs_err_eV_per_atom": 0.24385
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 3,
+          "mae_eV_per_atom": 0.31474,
+          "rmse_eV_per_atom": 0.3154,
+          "r2": -126.1603,
+          "spearman_rho": 0.866,
+          "mean_sigma_eV_per_atom": 0.32762,
+          "mean_abs_err_eV_per_atom": 0.31474
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 1,
+          "mae_eV_per_atom": 0.33639,
+          "rmse_eV_per_atom": 0.33639,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.33758,
+          "mean_abs_err_eV_per_atom": 0.33639
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 1,
+          "mae_eV_per_atom": 0.48257,
+          "rmse_eV_per_atom": 0.48257,
+          "r2": null,
+          "spearman_rho": null,
+          "mean_sigma_eV_per_atom": 0.33758,
+          "mean_abs_err_eV_per_atom": 0.48257
+        }
+      ]
+    },
+    {
+      "leaf": "0_plus5cell/1_3x3_20P",
+      "cell": "+5",
+      "P_loading": "20P",
+      "natoms": 135,
+      "n_retained": 896,
+      "global_min_eV": -780.9334784814527,
+      "overall_0_1_eV_per_atom": {
+        "n": 893,
+        "mae_eV_per_atom": 0.07702,
+        "rmse_eV_per_atom": 0.14167,
+        "r2": 0.0452,
+        "spearman_rho": 0.8597
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 501,
+          "mae_eV_per_atom": 0.02981,
+          "rmse_eV_per_atom": 0.03327,
+          "r2": -0.9581,
+          "spearman_rho": 0.7924,
+          "mean_sigma_eV_per_atom": 0.02858,
+          "mean_abs_err_eV_per_atom": 0.02981
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 206,
+          "mae_eV_per_atom": 0.07524,
+          "rmse_eV_per_atom": 0.08218,
+          "r2": -7.2025,
+          "spearman_rho": 0.4241,
+          "mean_sigma_eV_per_atom": 0.09718,
+          "mean_abs_err_eV_per_atom": 0.07524
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 85,
+          "mae_eV_per_atom": 0.13159,
+          "rmse_eV_per_atom": 0.1548,
+          "r2": -35.8479,
+          "spearman_rho": 0.4501,
+          "mean_sigma_eV_per_atom": 0.25078,
+          "mean_abs_err_eV_per_atom": 0.13159
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 50,
+          "mae_eV_per_atom": 0.16935,
+          "rmse_eV_per_atom": 0.2245,
+          "r2": -56.1318,
+          "spearman_rho": 0.0439,
+          "mean_sigma_eV_per_atom": 0.44353,
+          "mean_abs_err_eV_per_atom": 0.16935
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 24,
+          "mae_eV_per_atom": 0.30989,
+          "rmse_eV_per_atom": 0.37563,
+          "r2": -203.4871,
+          "spearman_rho": -0.2022,
+          "mean_sigma_eV_per_atom": 0.642,
+          "mean_abs_err_eV_per_atom": 0.30989
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 11,
+          "mae_eV_per_atom": 0.32112,
+          "rmse_eV_per_atom": 0.44007,
+          "r2": -592.7568,
+          "spearman_rho": -0.0182,
+          "mean_sigma_eV_per_atom": 0.69196,
+          "mean_abs_err_eV_per_atom": 0.32112
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 7,
+          "mae_eV_per_atom": 0.32266,
+          "rmse_eV_per_atom": 0.39105,
+          "r2": -326.4864,
+          "spearman_rho": 0.2857,
+          "mean_sigma_eV_per_atom": 0.79295,
+          "mean_abs_err_eV_per_atom": 0.32266
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 3,
+          "mae_eV_per_atom": 0.22062,
+          "rmse_eV_per_atom": 0.23816,
+          "r2": -69.2238,
+          "spearman_rho": 0.5,
+          "mean_sigma_eV_per_atom": 1.01418,
+          "mean_abs_err_eV_per_atom": 0.22062
+        },
+        {
+          "window_lo_eV_per_atom": 0.8,
+          "window_hi_eV_per_atom": 0.9,
+          "n": 3,
+          "mae_eV_per_atom": 0.84266,
+          "rmse_eV_per_atom": 0.87165,
+          "r2": -4246.1458,
+          "spearman_rho": -1.0,
+          "mean_sigma_eV_per_atom": 0.6691,
+          "mean_abs_err_eV_per_atom": 0.84266
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 3,
+          "mae_eV_per_atom": 0.75939,
+          "rmse_eV_per_atom": 0.89132,
+          "r2": -2836.2705,
+          "spearman_rho": -0.5,
+          "mean_sigma_eV_per_atom": 0.76986,
+          "mean_abs_err_eV_per_atom": 0.75939
+        }
+      ]
+    },
+    {
+      "leaf": "0_plus5cell/2_3x3_30P",
+      "cell": "+5",
+      "P_loading": "30P",
+      "natoms": 154,
+      "n_retained": 988,
+      "global_min_eV": -820.5698175112703,
+      "overall_0_1_eV_per_atom": {
+        "n": 985,
+        "mae_eV_per_atom": 0.10838,
+        "rmse_eV_per_atom": 0.14871,
+        "r2": 0.127,
+        "spearman_rho": 0.8773
+      },
+      "windows": [
+        {
+          "window_lo_eV_per_atom": 0.0,
+          "window_hi_eV_per_atom": 0.1,
+          "n": 361,
+          "mae_eV_per_atom": 0.05887,
+          "rmse_eV_per_atom": 0.06234,
+          "r2": -7.6318,
+          "spearman_rho": 0.5756,
+          "mean_sigma_eV_per_atom": 0.04665,
+          "mean_abs_err_eV_per_atom": 0.05887
+        },
+        {
+          "window_lo_eV_per_atom": 0.1,
+          "window_hi_eV_per_atom": 0.2,
+          "n": 297,
+          "mae_eV_per_atom": 0.0818,
+          "rmse_eV_per_atom": 0.08704,
+          "r2": -7.9828,
+          "spearman_rho": 0.5876,
+          "mean_sigma_eV_per_atom": 0.09,
+          "mean_abs_err_eV_per_atom": 0.0818
+        },
+        {
+          "window_lo_eV_per_atom": 0.2,
+          "window_hi_eV_per_atom": 0.3,
+          "n": 149,
+          "mae_eV_per_atom": 0.11866,
+          "rmse_eV_per_atom": 0.12828,
+          "r2": -18.4704,
+          "spearman_rho": 0.4605,
+          "mean_sigma_eV_per_atom": 0.18487,
+          "mean_abs_err_eV_per_atom": 0.11866
+        },
+        {
+          "window_lo_eV_per_atom": 0.3,
+          "window_hi_eV_per_atom": 0.4,
+          "n": 72,
+          "mae_eV_per_atom": 0.14327,
+          "rmse_eV_per_atom": 0.16501,
+          "r2": -34.1963,
+          "spearman_rho": -0.0111,
+          "mean_sigma_eV_per_atom": 0.32738,
+          "mean_abs_err_eV_per_atom": 0.14327
+        },
+        {
+          "window_lo_eV_per_atom": 0.4,
+          "window_hi_eV_per_atom": 0.5,
+          "n": 47,
+          "mae_eV_per_atom": 0.21771,
+          "rmse_eV_per_atom": 0.23913,
+          "r2": -58.0326,
+          "spearman_rho": -0.0895,
+          "mean_sigma_eV_per_atom": 0.44013,
+          "mean_abs_err_eV_per_atom": 0.21771
+        },
+        {
+          "window_lo_eV_per_atom": 0.5,
+          "window_hi_eV_per_atom": 0.6,
+          "n": 27,
+          "mae_eV_per_atom": 0.31167,
+          "rmse_eV_per_atom": 0.34356,
+          "r2": -182.718,
+          "spearman_rho": 0.2729,
+          "mean_sigma_eV_per_atom": 0.59003,
+          "mean_abs_err_eV_per_atom": 0.31167
+        },
+        {
+          "window_lo_eV_per_atom": 0.6,
+          "window_hi_eV_per_atom": 0.7,
+          "n": 17,
+          "mae_eV_per_atom": 0.42551,
+          "rmse_eV_per_atom": 0.48828,
+          "r2": -424.4902,
+          "spearman_rho": -0.2794,
+          "mean_sigma_eV_per_atom": 0.68533,
+          "mean_abs_err_eV_per_atom": 0.42551
+        },
+        {
+          "window_lo_eV_per_atom": 0.7,
+          "window_hi_eV_per_atom": 0.8,
+          "n": 8,
+          "mae_eV_per_atom": 0.47772,
+          "rmse_eV_per_atom": 0.4871,
+          "r2": -297.7916,
+          "spearman_rho": -0.119,
+          "mean_sigma_eV_per_atom": 0.62405,
+          "mean_abs_err_eV_per_atom": 0.47772
+        },
+        {
+          "window_lo_eV_per_atom": 0.8,
+          "window_hi_eV_per_atom": 0.9,
+          "n": 4,
+          "mae_eV_per_atom": 0.5892,
+          "rmse_eV_per_atom": 0.60143,
+          "r2": -319.0231,
+          "spearman_rho": -1.0,
+          "mean_sigma_eV_per_atom": 0.65367,
+          "mean_abs_err_eV_per_atom": 0.5892
+        },
+        {
+          "window_lo_eV_per_atom": 0.9,
+          "window_hi_eV_per_atom": 1.0,
+          "n": 3,
+          "mae_eV_per_atom": 0.38409,
+          "rmse_eV_per_atom": 0.38553,
+          "r2": -427.7459,
+          "spearman_rho": 1.0,
+          "mean_sigma_eV_per_atom": 1.32538,
+          "mean_abs_err_eV_per_atom": 0.38409
+        }
+      ]
+    }
+  ]
+}

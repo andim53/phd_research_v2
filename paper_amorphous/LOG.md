@@ -854,3 +854,22 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: after owner sign-off → commit; then draft sections/03_methods.tex (which now traces to M-3 reference-anchored search).
 
 **Time:** 2026-10-05 JST
+
+## Session 4ae — 2026-10-05 (M-1e: surrogate predictive performance)
+**Owner request:** add new data — the machine-learning (GPR surrogate) predictive performance from 0 to 1 eV/atom. Followed my recommended metrics: MAE/RMSE + R² (headline) + Spearman ρ (selection relevance) + uncertainty calibration.
+
+**Actions taken:**
+1. Wrote `codes/extract_surrogate_perf.py` v1.0.0 — pairs each retained structure's DFT energy (ground truth) with the surrogate's out-of-sample prediction (model_energy) and GPR uncertainty (sigma), both stored at selection time in the AGOX DBs. Bins by per-leaf relative energy (0→1 eV/atom, 0.1 windows) and reports MAE/RMSE/R²/Spearman ρ/uncertainty-calibration per window + overall. → `analysis/surrogate_perf/surrogate_perf.json` (9 leaves, 61 seeds).
+2. Wrote `codes/emit_fig_surrogate_perf.py` v1.0.0 → `analysis/figures/fig_surrogate_perf.png` (3-panel: MAE vs relative energy, Spearman ρ vs relative energy, uncertainty calibration; line per P loading, +0-cell leaves).
+3. **Key numbers:** overall MAE 0.02–0.04 (0P), 0.07 (20P), 0.10–0.11 (30P) eV/atom; Spearman ρ 0.77–0.92 across all leaves. MAE rises monotonically with relative energy and with P loading; ρ highest near the minimum (0.55–0.81 in 0–0.1 window), degrades at high energy. GPR σ tracks the error (calibration ≈ 1 in low-energy regime).
+4. **Metric finding:** per-window R² is negative/uninformative (narrow windows → tiny energy variance vs error) — dropped from the figure and noted in the claim. MAE + Spearman ρ are the meaningful metrics.
+5. Updated `CLAIMS.md` (new M-1e + figure in Figures table + sign-off line), `VERSIONS.md` (2 new code files).
+
+**Verified:** extractor runs on all 61 seeds; figure is a valid PNG; M-1e numbers trace to `analysis/surrogate_perf/surrogate_perf.json`.
+
+**Decorations / pending:**
+- [ ] Owner reviews M-1e claim wording + figure.
+- [ ] Commit this milestone (extractor, figure script, JSON, PNG, CLAIMS M-1e + Figures table, VERSIONS, LOG).
+- NEXT: after owner review → commit; then draft sections/03_methods.tex (traces to M-1..M-1e, M-2, M-3).
+
+**Time:** 2026-10-05 JST

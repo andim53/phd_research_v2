@@ -188,6 +188,16 @@ flowchart TD
   `codes/extract_explore_exploit.py`); fig
   `analysis/figures/fig_explore_exploit.png`; \cite{gofee2022}.
 
+### M-1e — Surrogate predictive performance (energy-resolved)
+- **Claim:** The GPR surrogate predicts the DFT energy accurately enough to drive the search, and its error grows with distance from the minimum and with P loading. The surrogate ranks candidates well near the minimum — where selection matters.
+- **Numbers (retained ensemble, iteration ≥ 10, per-leaf relative energy 0→1 eV/atom):** overall MAE 0.02–0.04 eV/atom (0P), 0.07 (20P), 0.10–0.11 (30P); Spearman ρ 0.77–0.92 across all leaves. Energy-resolved: MAE rises monotonically with relative energy (e.g. 20P +0%: 0.034 eV/atom in the 0–0.1 window → 0.52 in the 0.7–0.8 window), and Spearman ρ is highest near the minimum (0.55–0.81 in the 0–0.1 window) and degrades at high energy. The GPR uncertainty tracks the error (calibration slope ≈ 1 in the low-energy regime), validating the LCB acquisition (κ=2).
+- **Metric note:** per-window R² is not reported — within 0.1 eV/atom windows the energy variance is tiny relative to the error, so R² is negative and uninformative. MAE and Spearman ρ are the meaningful metrics.
+- **Caveat:** the DFT ground truth for P leaves is on under-relaxed geometries (single-DFT-step evaluator), so the measured error includes that noise — the surrogate error is an upper bound on the true model error.
+- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
+  `analysis/surrogate_perf/surrogate_perf.json` (produced by
+  `codes/extract_surrogate_perf.py`); fig
+  `analysis/figures/fig_surrogate_perf.png`; \cite{gofee2022}.
+
 ### M-2 — Crystallinity verification (XRD + Steinhardt q4/q6 + partial radial distribution functions)
 - **Claim:** Amorphization is quantified by two complementary metrics — XRD
   crystallinity indices and a per-atom Steinhardt bond-orientational order
@@ -266,6 +276,7 @@ flowchart TD
 | `fig_energy_vs_force.png` | — (diagnostic, NOT paper) | Hexbin ΔE vs max\|F\|, 3 panels by P loading. | `codes/emit_fig_energy_vs_force.py` v1.1.1 | `analysis/energy_vs_force/*.json` (per-structure ΔE, max\|F\|), produced by `codes/extract_energy_force.py` v1.0.0 |
 | `fig_energy_vs_force_3x3.png` | — (diagnostic, NOT paper) | Hexbin ΔE vs max\|F\|, 3×3 (rows=cell, cols=P). | `codes/emit_fig_energy_vs_force_3x3.py` v1.1.1 | `analysis/energy_vs_force/*.json`, produced by `codes/extract_energy_force.py` v1.0.0 |
 | `fig_explore_exploit.png` | M-1d | 2-panel exploration-to-exploitation transition. **(a) DFT energy vs iteration** — per-iteration mean/min lines for a representative P leaf (1_plus0cell/2_20P, seed_0), iteration-10 phase boundary shaded (exploration vs exploitation), global-min marker. **(b) Acquisition value vs DFT energy** (exploitation phase) with Pearson |r| reported. Carries the sharp energy drop at LCB switch-on and the surrogate-selects-low-energy claim. | `codes/emit_fig_explore_exploit.py` v1.0.0 | `analysis/explore_exploit/explore_exploit.json`, produced by `codes/extract_explore_exploit.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
+| `fig_surrogate_perf.png` | M-1e | 3-panel surrogate predictive performance (line per P loading, +0-cell leaves). **(a) MAE vs relative energy** — mean absolute error (eV/atom) binned across 0→1 eV/atom; carries the headline that surrogate error grows with distance from the minimum and with P loading. **(b) Spearman ρ vs relative energy** — rank correlation per window; carries the selection-relevance claim (surrogate ranks well near the minimum). **(c) Uncertainty calibration** — mean \|error\| vs mean GPR σ per window with 1:1 dashed; carries the claim that the GPR uncertainty tracks the error (validates LCB, κ=2). Per-window R² not plotted (uninformative in narrow windows). | `codes/emit_fig_surrogate_perf.py` v1.0.0 | `analysis/surrogate_perf/surrogate_perf.json`, produced by `codes/extract_surrogate_perf.py` v1.0.0 from `data/17_PPt/*/*/seed_*/1_db/db_*.db` |
 
 ## Methodological diagnostics — energy-vs-force figure (discussion + numbers; NOT for the paper)
 > Analysis of `analysis/figures/fig_energy_vs_force{,_3x3}.png` (data:
@@ -340,3 +351,4 @@ flowchart TD
 - ✅ Method claims M-1..M-2 confirmed (v3; the manuscript must trace to them).
 - ✅ SI-1 confirmed (reference-dependence + polymorphism; α-reference demonstration, β experimental contrast; 5 refs verified, thome1984 removed).
 - ✅ **v4 (Session 4ad): reference-dependence promoted from limitation to method component** — M-3 (reference-anchored search) + MT-5 (defining feature) added; "reference-biased search" limitation reframed as a design choice; M-1b flowchart shows reference-anchored seeding; SI-1 demoted to the polymorphism demonstration detail. **Awaiting owner sign-off on v4.**
+- ✅ **M-1e added (Session 4ae): surrogate predictive performance** — energy-resolved MAE/Spearman ρ/uncertainty-calibration from `analysis/surrogate_perf/surrogate_perf.json` + `fig_surrogate_perf.png`. **Awaiting owner sign-off.**
