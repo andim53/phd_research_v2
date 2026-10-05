@@ -28,8 +28,8 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/probe_forces_e003.py` | 1.0.0 | Force-convergence probe: per-leaf min max\|F\|, count near-min, E@min-F vs E_min → `analysis/force_convergence_probe.json` |
 | `codes/extract_energy_force.py` | 1.0.0 | Persist per-structure (ΔE, max\|F\|, seed, iteration) to `analysis/energy_vs_force/<leaf>.json` + `energy_vs_force.csv` (7,415 rows). Citable source the figures import |
 | `codes/emit_fig2_2panel.py` | 1.0.0 | Crystallinity 2-panel figure (partial RDF + crystalline-fraction vs cell) → `analysis/figures/fig2_2panel.png` |
-| `codes/emit_fig_energy_vs_force.py` | 1.1.1 | Hexbin ΔE vs max\|F\|, 3 panels by P loading. v1.1.0 plots from JSON (not DBs); v1.1.1 fixes sub-unity y-tick labels |
-| `codes/emit_fig_energy_vs_force_3x3.py` | 1.1.1 | Hexbin ΔE vs max\|F\|, 3×3 (rows=cell, cols=P). v1.1.0 plots from JSON; v1.1.1 fixes sub-unity y-tick labels |
+| `codes/emit_fig_energy_vs_force.py` | 1.1.2 | Hexbin ΔE vs max\|F\|, 3 panels by P loading. v1.1.0 plots from JSON (not DBs); v1.1.1 fixes sub-unity y-tick labels; v1.1.2 x-axis title → `$E_i - E_{\rm glob}$ (eV/atom)` |
+| `codes/emit_fig_energy_vs_force_3x3.py` | 1.1.2 | Hexbin ΔE vs max\|F\|, 3×3 (rows=cell, cols=P). v1.1.0 plots from JSON; v1.1.1 fixes sub-unity y-tick labels; v1.1.2 x-axis title → `$E_i - E_{\rm glob}$ (eV/atom)` |
 | `codes/emit_fig_crystallinity_3panel.py` | 1.0.0 | Crystallinity 3-panel figure (partial RDF + crystalline-fraction vs cell + relative cell-expansion effect) → `analysis/figures/fig_crystallinity_3panel.png`. Serves MT-1..MT-4; panel titles live in CLAIMS |
 | `codes/extract_explore_exploit.py` | 1.0.0 | M-1d robustness: per-seed exploration/exploitation mean energy, global-min iteration, acquisition–energy Pearson r, per-iteration series → `analysis/explore_exploit/explore_exploit.json` (61 seeds, 13 leaves) |
 | `codes/extract_surrogate_perf.py` | 1.0.0 | M-1e: per-window surrogate predictive performance (MAE/RMSE/R²/Spearman ρ/uncertainty-calibration) from model_energy+uncertainty vs DFT energy → `analysis/surrogate_perf/surrogate_perf.json` |

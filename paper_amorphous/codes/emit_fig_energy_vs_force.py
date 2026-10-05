@@ -105,7 +105,7 @@ def main():
         ax.set_xlim(0, E_MAX)
         ax.set_ylim(np.log10(0.005), np.log10(60))
         ax.yaxis.set_major_formatter(logfmt)
-        ax.set_xlabel(r"$\Delta E$ (eV/atom)")
+        ax.set_xlabel(r"$E_i - E_{\rm glob}$ (eV/atom)")
     axes[0].set_ylabel(r"max $|\mathbf{F}|$ (eV/Å)")
     axes[0].text(0.29, np.log10(FMAX) + 0.15, r"fmax = 0.05", color="red",
                  fontsize=9, ha="right", va="bottom")

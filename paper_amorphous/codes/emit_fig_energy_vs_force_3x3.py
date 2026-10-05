@@ -104,7 +104,7 @@ def main():
             if c == 0:
                 ax.set_ylabel(f"{cell}% cell\nmax $|\\mathbf{{F}}|$ (eV/Å)")
             if r == 2:
-                ax.set_xlabel(r"$\Delta E$ (eV/atom)")
+                ax.set_xlabel(r"$E_i - E_{\rm glob}$ (eV/atom)")
     for row in axes:
         for ax in row:
             ax.yaxis.set_major_formatter(logfmt)

@@ -892,3 +892,25 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: after owner review -> commit; then draft sections/03_methods.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ag — 2026-10-05 (unify relative-energy axis title across all figures)
+**Owner request:** inspect the other figures used in CLAIMS; check the energy metrics; use the x title `$E_i - E_{\rm glob}$ (eV/atom)` for the relative-energy axis everywhere.
+
+**Actions taken:**
+1. Audited all figure scripts in the CLAIMS Figures table for relative-energy axes:
+   - `fig_surrogate_perf.png` (M-1e) — already `$E_i - E_{\rm glob}$` (Session 4af).
+   - `fig_energy_vs_force.png` + `fig_energy_vs_force_3x3.png` (diagnostics) — were `$\Delta E$ (eV/atom)`; **updated to `$E_i - E_{\rm glob}$ (eV/atom)`** (v1.1.1 -> v1.1.2).
+   - `fig_crystallinity_3panel.png` (MT-1..MT-4) — no relative-energy axis (r, cell expansion, crystalline fraction) — no change.
+   - `fig_explore_exploit.png` (M-1d) — absolute DFT energy (eV), not relative — no change.
+2. `VERSIONS.md`: both energy-vs-force scripts bumped to 1.1.2.
+3. `CLAIMS.md` figure table: both diagnostic rows updated (title + producing-script version).
+
+**Note:** the two energy-vs-force figures are diagnostics (NOT paper figures) but now share the same relative-energy axis title as the paper figure, so the convention is consistent across the repo.
+
+**Verified:** both scripts compile; both figures regenerate cleanly.
+
+**Decorations / pending:**
+- [ ] Commit this milestone (2 fig scripts v1.1.2 + CLAIMS + VERSIONS + LOG).
+- NEXT: after owner review -> commit; then draft sections/03_methods.tex.
+
+**Time:** 2026-10-05 JST
