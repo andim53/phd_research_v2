@@ -1160,3 +1160,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4av — 2026-10-05 (fix legend overlaps in Fig 3 and Fig 4(b))
+**Owner request:** Fig 3 legend (upper right) was cut off by the tall 30P bars; Fig 4(b) legend (upper right) was cut through by the top 0P line. Move them.
+
+**Actions taken:**
+1. **`codes/emit_fig_surrogate_perf.py` v3.0.0 → v3.0.1:** legend `upper right` → `upper left` + `ncol=2` (clear of the short 0P bars; compact 6-entry legend). Regenerated `fig_surrogate_perf.png`.
+2. **`codes/emit_fig_crystallinity_3panel.py` v1.0.1 → v1.0.2:** panel (b) legend `upper right` → `center right` (the empty middle band, clear of both the top 0P line and the bottom 20P/30P lines). Regenerated `fig_crystallinity_3panel.png`.
+3. Staged both PNGs into `papers/paper1/figures/`. VERSIONS.md updated.
+
+**Verified:** both figures regenerate with no layout warning; `tectonic main.tex` compiles clean.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST

@@ -18,7 +18,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 import json
 import os
@@ -109,7 +109,7 @@ def main():
     ax2.set_xlabel("cell expansion")
     ax2.set_ylabel("crystalline fraction")
     ax2.set_ylim(0, 1.1)
-    ax2.legend(frameon=False, ncol=3, loc="upper right")
+    ax2.legend(frameon=False, ncol=3, loc="center right")
     # panel label at bottom-middle (title moved to CLAIMS)
     ax2.text(0.5, -0.22, "(b)", transform=ax2.transAxes, ha="center",
              va="bottom", fontsize=12)

@@ -26,7 +26,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 
 import json
 import os
@@ -119,7 +119,7 @@ def main():
                               hatch=CELL_HATCH[c], label=f"{c}% cell")
                 for c in CELL_ORDER]
     for ax in (ax1, ax2):
-        ax.legend(handles=handles, frameon=False, fontsize=9, loc="upper right")
+        ax.legend(handles=handles, frameon=False, fontsize=9, ncol=2, loc="upper left")
 
     out = os.path.join(OUTDIR, "fig_surrogate_perf.png")
     fig.savefig(out)
