@@ -1205,3 +1205,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+## Session 4ay — 2026-10-05 (remove negative 'R² is not reported' content from Results)
+**Owner request:** remove content about metrics that are not included, being forced in — specifically the "R² is not reported..." passage in the surrogate-performance Results.
+
+**Actions taken:**
+1. **04_results.tex:** deleted the sentence "R² is not reported: within the 0.1 eV/atom window the energy variance is tiny relative to the error, so R² is negative and uninformative; MAE and GPR σ are the meaningful metrics." The paragraph now flows from "validating the LCB acquisition" directly to the under-relaxation caveat.
+
+**Verified:** `tectonic main.tex` compiles clean.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-05 JST
