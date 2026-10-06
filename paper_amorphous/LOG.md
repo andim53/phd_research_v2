@@ -1322,3 +1322,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bg — 2026-10-06 (Methods: drop melt-quench contrast from opening)
+**Owner request:** remove "rather than by melt-quench molecular dynamics" from the reference-anchored global-optimization opening in Methods.
+
+**Actions taken:**
+1. **03_methods.tex:** removed the phrase; the sentence now reads "…enumerate that basin with a surrogate-guided global-optimization search \cite{gofee2020,gofee2022,agox2022}." The melt-quench contrast remains in Results (R-1c) and the Conclusion, so nothing is lost.
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
