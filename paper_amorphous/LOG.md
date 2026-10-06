@@ -1615,3 +1615,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-10 — 2026-10-06 (Introduction v9: "cheap, reference-anchored" in closing paragraph)
+**Owner request:** the closing paragraph should use the "cheap, reference-anchored…" descriptor. Apply Option A.
+
+**Actions taken:**
+1. **sections/02_introduction.tex P4:** reworded the contribution sentence to make the method the subject: "In this work, we successfully demonstrated that a cheap, reference-anchored global-optimization screening identifies amorphous minima in an interstitial alloy, enabling the prediction of the structural amorphization onset of Pt(P) at 20–30 at.% P…". Uses the phrase without re-announcing the method (avoids the earlier P3/P4 echo); roadmap unchanged.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); page 3 renders the full sentence with the descriptor.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
