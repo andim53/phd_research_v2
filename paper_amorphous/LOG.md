@@ -1510,3 +1510,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-3 — 2026-10-06 (Introduction v3: power-consumption factor + equation)
+**Owner request:** include a discussion of the amorphous power-consumption factor (with an equation) in the Introduction — not only when the system becomes amorphous, but the concentration impact on SHC, in-plane conductivity, and resistivity.
+
+**Actions taken:**
+1. **references.bib:** added `yoon2025` (Yoon et al., APL Materials 13, 021101, 2025, doi:10.1063/5.0250349) — verified via DOI BibTeX content negotiation. Introduces the SOT-MRAM energy-efficiency figure of merit ξ = ρ/θ_SH².
+2. **sections/02_introduction.tex (P1):** added the power-consumption-factor discussion + Eq. (eq:power-factor): ξ = ρ/θ_SH² = σ_xx/σ_SH² \cite{yoon2025}. Frames the useful composition as the one minimizing ξ (balancing SHC vs in-plane conductivity vs resistivity), so "when amorphous" is only half the design question.
+- NOTE: motivation-only; no SHC/transport results claim (consistent with Session 4t scope).
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); fresh-build `.bbl` contains yoon2025 (1×); eq:power-factor label registered in `.aux`.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST

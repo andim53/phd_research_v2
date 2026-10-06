@@ -19,7 +19,20 @@ candidate system becomes amorphous --- and over what composition range --- is
 central to designing such films. Designing an amorphous host for spin Hall
 conductivity is itself a challenge: the transport tensor must be averaged
 over the many inequivalent disordered configurations that represent the
-amorphous state \cite{turek2019,shashank2025}.
+amorphous state \cite{turek2019,shashank2025}. The concentration that matters
+for a device is not simply the one that maximizes the spin Hall conductivity:
+because the write energy of a spin-orbit-torque device scales with the ratio
+of the resistivity to the square of the spin Hall angle,
+\begin{equation}
+  \xi = \frac{\rho}{\theta_{\mathrm{SH}}^2}
+      = \frac{\sigma_{xx}}{\sigma_{\mathrm{SH}}^2},
+  \label{eq:power-factor}
+\end{equation}
+\cite{yoon2025}, the useful composition is the one that minimizes this
+power-consumption factor, balancing the spin Hall conductivity against the
+in-plane conductivity and resistivity. Knowing when a system becomes
+amorphous is therefore only half the design question; the concentration
+dependence of these transport coefficients is the other half.
 
 Predicting structure across that regime is, however, costly. Generating an
 amorphous configuration is conventionally done by first-principles melt-quench
