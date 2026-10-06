@@ -1540,3 +1540,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-5 — 2026-10-06 (Introduction v5: remove repeated "when/loading" phrasing)
+**Owner request:** the Introduction repeated the "when does it become amorphous / at what composition" idea three times (P1 motivation, P1-end after the ξ equation, P2-end gap) — felt odd.
+
+**Actions taken:**
+1. **sections/02_introduction.tex P1-end:** removed the "Knowing when a system becomes amorphous is therefore only half the design question; the concentration dependence of these transport coefficients is the other half." sentence — the point is already made by the preceding "useful composition minimizes ξ" sentence. The ξ paragraph now ends on the transport tradeoff.
+2. **sections/02_introduction.tex P2-end:** reworded the gap from "a practical route to ask 'does this interstitial alloy amorphize, and at what loading?' remains open" → "a practical route to predict the amorphous onset of an interstitial alloy from first principles remains open" (drops the "when/loading" echo).
+- Net: three distinct beats — why it matters (P1), what composition is useful (P1 ξ), the gap we fill (P2) — with no repeated "when/loading" phrasing.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); "half the design question" and "at what loading" both absent from 02_introduction.tex.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
