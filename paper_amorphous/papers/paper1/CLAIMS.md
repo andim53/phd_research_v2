@@ -211,7 +211,7 @@ flowchart LR
 ### R-1d — Exploration-to-exploitation transition
 - **Claim:** The search transitions sharply from a surrogate-building
   (exploration) phase to LCB-guided exploitation at iteration 10.
-- **Numbers (multi-seed, 61 seeds across 13 leaves):** the mean DFT energy of
+- **Numbers (multi-seed, 60 seeds across 12 leaves):** the mean DFT energy of
   retained structures drops sharply at the iteration-10 LCB switch-on, and the
   drop is universal across every seed. Per-leaf median drop (exploitation mean
   minus exploration mean): 0P −156 to −218 eV, 20P −256 to −306 eV, 30P −320
@@ -223,7 +223,7 @@ flowchart LR
   0.2–0.7), confirming the surrogate selects low-energy candidates rather than
   noise. The per-leaf global minimum is typically reached in the latter half
   of the 100-iteration budget (P-leaf medians 80–99; range 10–100).
-- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
+- **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (60 seeds, 4×4 leaf excluded);
   `analysis/explore_exploit/explore_exploit.json` (produced by
   `codes/extract_explore_exploit.py`); fig
   `analysis/figures/fig_explore_exploit.png`; \cite{gofee2022}.

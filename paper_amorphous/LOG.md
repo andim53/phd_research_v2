@@ -1378,3 +1378,20 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bk — 2026-10-06 (exclude 4×4 leaf from explore-exploit; 61→60 seeds, 13→12 systems)
+**Owner request:** the Results mentions "across 61 seeds" with no prior context; on reconciling the system counts, owner directed to exclude the 4×4 systems from the explore-exploit analysis.
+
+**Actions taken:**
+1. **codes/extract_explore_exploit.py v1.0.0 → 1.1.0:** added `--exclude` filter (repeatable substring match on leaf path). Re-ran with `--exclude 4x4` → `analysis/explore_exploit/explore_exploit.json` now **60 seeds across 12 leaves** (was 61/13).
+2. **Verified the per-P median-drop ranges are unchanged** by the exclusion (the 4×4 leaf was a 20P leaf whose drop fell inside the existing 20P range): 0P −156 to −218, 20P −256 to −306, 30P −320 to −356 eV. Representative-leaf numbers unchanged. (Note: 30P max is −356.7, truncated to −356 in the manuscript — pre-existing, unaffected by this change.)
+3. **04_results.tex:** "Across 61 seeds and 13 systems" → "Across 60 seeds and 12 systems".
+4. **CLAIMS.md R-1d, paper_status.md, VERSIONS.md, emit_fig_explore_exploit.py docstring:** updated counts to 60 seeds / 12 leaves (4×4 excluded). Figure itself unchanged (uses representative leaf).
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
