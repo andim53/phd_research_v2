@@ -1629,3 +1629,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-11 — 2026-10-06 (Methods: define A, B, C in the interstitial-count equation)
+**Owner request:** in Methods, the equation B = CA/(1−C) is introduced but it's unclear which symbol is which. Apply the lighter-touch alternative.
+
+**Actions taken:**
+1. **sections/03_methods.tex (Reference-anchored global optimization):** added a parenthetical defining the symbols: "we add $B$ P interstitials to a target atomic fraction $C$ via $B = C A / (1 - C)$ (where $A = 108$ is the number of host atoms and $C$ the target P atomic fraction)". A and B now named; C's definition retained.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); page 3 renders "we add B P interstitials to a target atomic fraction C via B = CA/(1−C) (where A = 108 is the number of host atoms and C the target P atomic fraction)".
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
