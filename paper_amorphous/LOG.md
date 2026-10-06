@@ -1350,3 +1350,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bi — 2026-10-06 (Methods: 'seeds' → 'starts')
+**Owner request:** "This seeds the search near the reference topology" — "seeds" is ambiguous (RNG-seed connotation); replace with plain language.
+
+**Actions taken:**
+1. **03_methods.tex:** "This seeds the search near the reference topology." → "This starts the search near the reference topology." (Option A, per owner.)
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
