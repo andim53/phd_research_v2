@@ -1308,3 +1308,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bf — 2026-10-06 (Conclusion → single paragraph; drop future-work clause)
+**Owner request:** condense the Conclusion to one paragraph; drop the final clause about force-converged re-relaxation / polymorphic-host future work.
+
+**Actions taken:**
+1. **05_conclusion.tex:** merged the three paragraphs into one; removed the orphaned "leaving the expensive property calculation…" motivation and the "surrogate drives the search reliably…" sentence (already covered in Results); dropped the closing future-work clause. The conclusion now ends at "…all at a fraction of the cost of first-principles melt-quench molecular dynamics."
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (959 KiB).
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
