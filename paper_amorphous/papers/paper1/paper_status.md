@@ -42,7 +42,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] sections/03_methods.tex (DRAFTED Session 4ao — traces M-1, M-1b, M-2, M-3; 19 cites all resolve; compiles clean; **Session 4ap: de-code-like'd prose, added iteration-timeline figure Fig. 1; Session 4aq: M-1c/M-1d/M-1e moved to Results**) — **awaiting owner review**
 - [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3; Session 4bn: MT-6 comparative-validation subsection + Table 1 + Fig. 6**) — **APPROVED (Session 4bd)**
 - [x] sections/05_conclusion.tex (DRAFTED Session 4bd — mirrors contribution sentence; no new claims; MT-6 validation sentence added Session 4bp) — **APPROVED (Session 4bq)**
-- [ ] sections/02_introduction.tex (placeholder)
+- [x] sections/02_introduction.tex (DRAFTED Session 4bq — motivation: SHC + cost + amorphous examples; power-consumption factor; reference-anchored approach; femgo-style closing + roadmap; **APPROVED (Session 4bq)**)
 - [ ] sections/06_ack_dataavail.tex (placeholder)
 - [ ] sections/01_abstract.tex (placeholder — draft after all sections approved)
 - [ ] E2: compile the manuscript (first PDF review)
@@ -53,7 +53,8 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Draft sections/03_methods.tex (global-optimization method, XRD + CNA/RDF crystallinity analysis) — **DRAFTED Session 4ao, awaiting owner review (block-and-wait gate).**
 - [x] Draft sections/04_results.tex (crystallinity MT-1..MT-4 + efficiency R-1c) — **DONE Session 4ar** (crystallinity drafted; efficiency R-1c drafted Session 4aq). **APPROVED Session 4bd.**
 - [x] Draft sections/05_conclusion.tex — **DONE Session 4bd** (mirrors contribution sentence; no new claims). **APPROVED Session 4bq.**
-- [ ] Draft sections/02_introduction.tex — **IN PROGRESS Session 4bq** (motivation + approach + contribution sentence, grounded in CLAIMS v7).
+- [x] Draft sections/02_introduction.tex — **DONE Session 4bq** (motivation SHC/cost/amorphous examples + power-consumption factor + reference-anchored approach + femgo-style closing/roadmap). **APPROVED Session 4bq.**
+- [ ] Draft sections/06_ack_dataavail.tex — **IN PROGRESS Session 4bq** (acknowledgments + data availability).
 - [ ] SHC placeholder: **dropped from paper** (Session 4t) — no SHC section to fill.
 - [ ] Build figure scripts → analysis/figures (partial RDF g_PtP/g_PP as standard figure; crystalline-fraction vs cell bar/line) — done for crystallinity 3-panel + explore/exploit + iteration-timeline (Fig. 1); stage into papers/paper1/figures/ at compile.
-- NEXT: owner approved sections/05_conclusion.tex (Session 4bq); introduction is being drafted. After Introduction approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+- NEXT: owner approved sections/02_introduction.tex (Session 4bq); 06_ack_dataavail.tex is being drafted. After 06 approval, draft 01_abstract.tex, then E2 first-PDF review.
