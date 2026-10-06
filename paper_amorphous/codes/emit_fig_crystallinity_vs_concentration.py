@@ -20,7 +20,7 @@ Usage (agox_v2):
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import json
 import os
@@ -30,6 +30,7 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as patheffects
 
 # --- figure style (match _analysist + emit_cna_rdf.py) ---
 plt.rcParams.update({
@@ -81,8 +82,11 @@ def main():
     ax.axvspan(SHASHANK_BAND[0], SHASHANK_BAND[1], color="tab:red",
                alpha=0.12, label="Shashank amorphization regime")
     ax.axvline(SHASHANK_ONSET_AT, color="tab:red", ls="--", lw=1.5)
+    # white outline so the onset label pops over the shaded band / lines
+    outline = [patheffects.withStroke(linewidth=3, foreground="white")]
     ax.text(SHASHANK_ONSET_AT + 0.5, 0.95, "Shashank onset\n(~36 at% P)",
-            color="tab:red", fontsize=9, va="top", ha="left")
+            color="tab:red", fontsize=9, va="top", ha="left",
+            path_effects=outline)
 
     # crystalline fraction vs P concentration, one line per cell
     x = [P_AT[p] for p in P_ORDER]

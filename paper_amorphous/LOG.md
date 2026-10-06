@@ -1447,3 +1447,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex + new MT-6 comparison subsection (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bo — 2026-10-06 (Fig 4: white outline on Shashank onset label)
+**Owner request:** in the comparative-validation figure, give the "Shashank onset" text a white outline, matching Fig 2(a)'s phase labels.
+
+**Actions taken:**
+1. **codes/emit_fig_crystallinity_vs_concentration.py v1.0.0 → 1.0.1:** added `matplotlib.patheffects` and `path_effects=[withStroke(linewidth=3, foreground="white")]` to the "Shashank onset (~36 at% P)" label. Re-rendered `analysis/figures/fig_crystallinity_vs_concentration.png` and staged into `papers/paper1/figures/`.
+
+**Verified:** figure re-rendered (valid PNG); `tectonic main.tex` compiles clean.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex + MT-6 comparison subsection (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
