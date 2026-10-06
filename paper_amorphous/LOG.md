@@ -1294,3 +1294,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4be — 2026-10-06 (remove orphaned all-electron motivation from Conclusion)
+**Owner request:** the conclusion's opening clause "so that the expensive all-electron step of a downstream property calculation need only run on the few structures it selects" appears nowhere else in the manuscript and references the SHC step that is dropped from the paper (Session 4t). Owner chose option 1 (remove).
+
+**Actions taken:**
+1. **05_conclusion.tex:** removed the orphaned "so that the expensive all-electron step…" clause. The conclusion now opens "We have shown that a cheap, reference-anchored global-optimization screening identifies amorphous minima in an interstitial alloy." and mirrors what the paper actually does (screening → structural verification), consistent with the SHC-dropped scope.
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (960 KiB).
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
