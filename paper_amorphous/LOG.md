@@ -1643,3 +1643,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-12 — 2026-10-06 (Title: "Cheap reference-anchored screening of amorphous Pt(P)")
+**Owner request:** the text uses "cheap reference-anchored" repeatedly but the title never mentioned it. Apply Option C.
+
+**Actions taken:**
+1. **main.tex:** title "Amorphous Pt(P) from surrogate-guided global optimization" → "Cheap reference-anchored screening of amorphous Pt(P)". Matches the exact phrase used in the Introduction/Conclusion.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); page 1 renders the new title.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
