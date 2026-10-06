@@ -1233,3 +1233,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
 
 **Time:** 2026-10-05 JST
+
+**Time:** 2026-10-06 JST
+
+## Session 4ba — 2026-10-06 (strip support-claim annotations from references.bib)
+**Owner request:** remove the "additional notes" in the bibliography — the `(supports MT-3 free-volume rationale)` / `(supports Methods efficiency framing)` style traceability annotations.
+
+**Actions taken:**
+1. **references.bib:** stripped the parenthetical support-claim annotations from the `note` field of three `@misc` entries — `yang2025` (MT-3 free-volume rationale), `setten2026` (Methods/limitations), `meltquench2026` (Methods efficiency framing). Kept each entry's leading descriptive clause. Verified no `supports`/`MT-`/`framing`/`rationale` annotations remain.
+
+**Verified:** `search_files` over references.bib shows only the three clean descriptive `note` fields; no traceability annotations remain.
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
