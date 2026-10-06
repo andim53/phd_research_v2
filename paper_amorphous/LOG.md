@@ -1585,3 +1585,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-8 — 2026-10-06 (Introduction v8: drop redundant method clause in closing paragraph)
+**Owner request:** P3 ("Here we take a cheap, reference-anchored global-optimization screening approach…") and the closing paragraph both announced the same method — repetitive. Apply Option B.
+
+**Actions taken:**
+1. **sections/02_introduction.tex P4:** removed the "by implementing a cheap, reference-anchored global-optimization screening" clause from the closing paragraph; it now opens directly with the contribution: "In this work, we successfully demonstrated the identification of amorphous minima in an interstitial alloy, enabling the prediction of the structural amorphization onset of Pt(P) at 20–30 at.% P…". The method is introduced once (P3) and echoed in the Conclusion; the roadmap is unchanged.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); "by implementing" absent from 02_introduction.tex.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
