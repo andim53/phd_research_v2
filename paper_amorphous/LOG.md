@@ -1395,3 +1395,20 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bl — 2026-10-06 (Methods: ground seed concept + full system set)
+**Owner request:** "60 seeds and 12 systems" appears in Results with no prior context; owner approved both suggestions — (1) ground the seed concept in Methods, (2) state the full system set.
+
+**Actions taken:**
+1. **03_methods.tex (iteration timeline):** added "Each system is searched from multiple independent seeds, each run for 100 iterations."
+2. **03_methods.tex (search setup):** stated the full system set — "the undoped Pt$_{108}$ host and a 10 at.% P system are also considered" alongside the 20/30 at% P systems, across the three cell families (0P/10P/20P/30P × +0/+3/+5 = 12 systems).
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written. R-1d "12 systems" now consistent with Methods.
+
+**Flagged (next decision):** R-1c "six Pt(P) systems" and R-1e "all nine systems" are now inconsistent with the 12-system set — pending owner direction on reconciling.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: reconcile R-1c/R-1e system counts; on conclusion approval, draft 02_introduction.tex.
