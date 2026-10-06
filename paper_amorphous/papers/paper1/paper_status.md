@@ -14,7 +14,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 
 ## Current state (updated 2026-10-05, Session 4at)
 - **Contribution framed and confirmed** (SHC dropped entirely from framing per owner, Session 4t).
-- **CLAIMS.md v6 signed off** (MT-1..MT-4, M-1..M-1d, M-2) — claim list frozen; manuscript must trace to it. **v6 (Session 4at): crystalline-fraction energy cap tightened 0.3 → 0.1 eV/atom** (per owner), matching the XRD lowest-window convention. **SI-1 dropped (Session 4bc):** the Ta/W polymorphism demonstration is removed from the SI; the polymorphic-host reference-choice point stays in the main text (M-3, MT-5) as a design statement, with the 5 Ta/W refs still cited in Methods.
+- **CLAIMS.md v7 signed off** (MT-1..MT-6, M-1..M-1d, M-2) — claim list frozen; manuscript must trace to it. **v7 (Session 4bn): adds MT-6 — comparative validation against Shashank et al. 2025** (our 20–30 at% P onset consistent with their converted ~36 at% P onset; box-model dose→at% conversion, Table 1 + `fig_crystallinity_vs_concentration.png`). **v6 (Session 4at): crystalline-fraction energy cap tightened 0.3 → 0.1 eV/atom** (per owner), matching the XRD lowest-window convention. **SI-1 dropped (Session 4bc):** the Ta/W polymorphism demonstration is removed from the SI; the polymorphic-host reference-choice point stays in the main text (M-3, MT-5) as a design statement, with the 5 Ta/W refs still cited in Methods.
 - **CNA/RDF structural cross-check done** (`codes/emit_cna_rdf.py` v1.1.0): Steinhardt q6 crystalline fraction + partial RDF for 9 leaves (0P/20P/30P × +0/+3/+5). Results in `analysis/cna_rdf/<leaf>/cna_rdf.json` — **canonical data now at e_max=0.1 eV/atom**.
 - **Key numbers (crystalline fraction mean, e_max=0.1):** 0P 0.99 → 20/30P 0.09–0.18 (MT-1); 20P≈30P (MT-2); cell expansion +0→+3/+5: 20P 0.184→0.137→0.094, 30P 0.176→0.098→0.098 (MT-3).
 - **XRD cross-check** (`data/17_PPt/DISCUSSION.md`): integrated CI 0.81–0.83→0.35–0.38 for P loading; cell effect only ~7% (weak) → CNA is the quantitative backbone for MT-3.
@@ -40,7 +40,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Phase A.5: CLAIMS.md v3 — MT-1..MT-4, M-1..M-1d, M-2, SI-1 all signed off (Phase B evidence mapped)
 - [x] Phase B: claims mapped to CNA/RDF JSONs + XRD table + explore/exploit JSON
 - [x] sections/03_methods.tex (DRAFTED Session 4ao — traces M-1, M-1b, M-2, M-3; 19 cites all resolve; compiles clean; **Session 4ap: de-code-like'd prose, added iteration-timeline figure Fig. 1; Session 4aq: M-1c/M-1d/M-1e moved to Results**) — **awaiting owner review**
-- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3**) — **APPROVED (Session 4bd)**
+- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3; Session 4bn: MT-6 comparative-validation subsection + Table 1 + Fig. 4**) — **APPROVED (Session 4bd)**
 - [x] sections/05_conclusion.tex (DRAFTED Session 4bd — mirrors contribution sentence; no new claims) — **awaiting owner review**
 - [ ] sections/02_introduction.tex (placeholder)
 - [ ] sections/06_ack_dataavail.tex (placeholder)

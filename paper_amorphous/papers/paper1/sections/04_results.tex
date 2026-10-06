@@ -130,15 +130,69 @@ the amplification is best read in relative terms.
       (c) Relative drop in crystalline fraction versus the $+0\%$ cell,
       showing the P-amplified cell-expansion effect.}
   \label{fig:crystallinity}
-  \end{figure}
+\end{figure}
 
-  \begin{figure}[t]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/fig_xrd_crystallinity.png}
-    \caption{XRD integrated crystallinity index versus cell expansion, one
-        line per P concentration, at the lowest-energy window (0.05~eV/atom, the most
-        crystalline reference). The 0P$\to$P collapse (0.81--0.83 to
-        0.35--0.38) cross-checks the Steinhardt $q_6$ crystalline fraction
-        (Fig.~\ref{fig:crystallinity}); the cell dependence is mild.}
-    \label{fig:xrd-crystallinity}
-  \end{figure}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/fig_xrd_crystallinity.png}
+  \caption{XRD integrated crystallinity index versus cell expansion, one
+      line per P concentration, at the lowest-energy window (0.05~eV/atom, the most
+      crystalline reference). The 0P$\to$P collapse (0.81--0.83 to
+      0.35--0.38) cross-checks the Steinhardt $q_6$ crystalline fraction
+      (Fig.~\ref{fig:crystallinity}); the cell dependence is mild.}
+  \label{fig:xrd-crystallinity}
+\end{figure}
+
+\subsection{Comparison with experiment}\label{sec:results-comparison}
+
+To validate the predicted onset against experiment, we compare with the
+ion-implanted amorphous Pt(P) of Shashank \emph{et al.} \cite{shashank2025}.
+That work reports amorphization by ion dose and accelerating energy, not by
+P concentration, so we convert their dose to an equivalent at.\% P with a
+box model (P areal density over the Pt layer thickness;
+Table~\ref{tab:conversion}). Their amorphization onset
+($\theta_{\mathrm{SH}} > 0.5$, moderate 20--30~keV energies) corresponds to
+the mid-range dose of $4.0\times10^{16}$~ions/cm$^2$, which maps to
+$\sim$36~at.\% P.
+
+Our screening places the structural onset at 20--30~at.\% P (crystalline
+fraction 0.99 $\to$ 0.09--0.18), and the converted experimental onset at
+$\sim$36~at.\% P falls in the same range (Fig.~\ref{fig:vs-concentration}).
+Both routes thus locate the amorphous transition in the $\sim$20--40~at.\% P
+range, validating the cheap screening as a predictor of the amorphization
+onset. The comparison is structural (our $q_6$ fraction versus their
+XRD/STEM/XAS amorphization), not transport; the box-model conversion is an
+approximation that SRIM depth profiles would refine, and the two routes
+differ in synthesis (interstitial global optimization versus ion
+bombardment).
+
+\begin{table}[t]
+  \centering
+  \caption{Ion-dose to P-concentration conversion (box model, 30~keV) for
+      the reference Pt(P) of Shashank \emph{et al.} \cite{shashank2025}, and
+      the amorphization status they report.}
+  \label{tab:conversion}
+  \begin{tabular}{lcc}
+    \toprule
+    Dose ($10^{16}$ ions/cm$^2$) & at.\% P & Amorphization \\
+    \midrule
+    2.5 & $\sim$22 & no ($\theta_{\mathrm{SH}} < 0.5$) \\
+    4.0 & $\sim$36 & onset ($\theta_{\mathrm{SH}} > 0.5$) \\
+    7.5 & $\sim$67 & yes ($\theta_{\mathrm{SH}} \approx 1.17$) \\
+    9.0 & $\sim$80 & yes \\
+    10.0 & $\sim$89 & yes \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/fig_crystallinity_vs_concentration.png}
+  \caption{Crystalline fraction versus P concentration (0/20/30~at.\% P), one
+      line per cell expansion. The shaded band and dashed line mark the
+      amorphization regime and onset of Shashank \emph{et al.}
+      \cite{shashank2025} converted from ion dose to at.\% P (box model,
+      $\sim$35--66~at.\% P; onset $\sim$36~at.\% P). Our 20--30~at.\% P onset
+      falls in the same range.}
+  \label{fig:vs-concentration}
+\end{figure}

@@ -21,7 +21,7 @@ Prints conversions for the reference's dose set and our compositions.
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import argparse
 
@@ -55,7 +55,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dose", type=float, default=None, help="ions/cm^2")
     ap.add_argument("--kev", type=float, default=DEFAULT_KEV)
-    ap.add_argument("--at", type=float, default=None, help="at% P to invert to dose")
+    ap.add_argument("--at", type=float, default=None, help="at%% P to invert to dose")
     ap.add_argument("--all", action="store_true", help="print the full reference table")
     args = ap.parse_args()
 

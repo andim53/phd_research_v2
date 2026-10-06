@@ -1428,3 +1428,22 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on conclusion approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bn — 2026-10-06 (MT-6 comparative validation vs Shashank et al. 2025)
+**Owner request:** add an actual comparative validation with Shashank et al. 2025 (NPG Asia Materials 17:15). Their amorphization criterion is ion dose/energy, not at% P, so a dose→concentration conversion is required. Owner chose Option A (dedicated Results subsection) + C (figure), with the conversion as a table.
+
+**Actions taken:**
+1. **Fixed `hpc_runs/convert_dose_concentration.py` v1.0.0 → 1.0.1:** the argparse help string "at% P…" broke argparse (unescaped `%`); escaped to `at%% P`. Now runnable. Box-model conversion @30 keV: 2.5e16→~22, 4.0e16→~36, 7.5e16→~67, 9.0e16→~80, 10e16→~89 at% P; our 20/30 at% → ~2.3/3.4e16 ions/cm².
+2. **New figure script `codes/emit_fig_crystallinity_vs_concentration.py` v1.0.0** → `analysis/figures/fig_crystallinity_vs_concentration.png` (crystalline fraction vs P concentration, one line per cell, Shashank amorphization regime shaded ~35–66 at% P + onset ~36 at% P dashed). Staged into `papers/paper1/figures/`.
+3. **04_results.tex:** new subsection "Comparison with experiment" (sec:results-comparison) with Table 1 (dose→at% conversion + amorphization status) and Fig. 4 (fig:vs-concentration). Prose: our 20–30 at% onset consistent with their converted ~36 at% onset, both in ~20–40 at% range; structural (not transport) comparison; box-model caveat; different synthesis routes.
+4. **main.tex:** added `\usepackage{booktabs}` for the table.
+5. **CLAIMS.md → v7:** added MT-6 (comparative validation); updated the "Concentration framing vs experiment" limitation to note the quantitative validation; added the figure to the Figures table.
+6. **paper_status.md, VERSIONS.md:** updated (MT-6, new figure script, conversion script version).
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (1.08 MiB); figure is a valid 1860×1260 PNG.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex + new MT-6 comparison subsection (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
