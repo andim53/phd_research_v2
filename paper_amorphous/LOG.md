@@ -1364,3 +1364,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bj — 2026-10-06 (Methods: unify generator name → 'permutation generator')
+**Owner request:** use "permutation generator" consistently (figure, caption, and prose) instead of "interstitial-permutation generator".
+
+**Actions taken:**
+1. **03_methods.tex:** the defining paragraph now reads "\emph{permutation generator}" (was "interstitial-permutation generator"). The figure box and caption already used "permutation generator", so the term is now consistent everywhere.
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
