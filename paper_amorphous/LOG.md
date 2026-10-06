@@ -1526,3 +1526,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-4 — 2026-10-06 (Introduction v4: bookend terminology consistency)
+**Owner request:** the Conclusion opens with "cheap, reference-anchored global-optimization screening" but the Introduction never used that exact descriptor — inconsistent bookends.
+
+**Actions taken:**
+1. **sections/02_introduction.tex (P3):** opened with "Here we take a cheap, reference-anchored global-optimization screening approach:" — the exact phrase the Conclusion uses, so the method name is defined at first use and echoed in the Conclusion. (Option A; consistent-terminology convention.)
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); the phrase "cheap, reference-anchored global-optimization screening" now appears in both 02_introduction.tex and 05_conclusion.tex.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
