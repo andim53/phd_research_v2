@@ -1672,3 +1672,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-14 — 2026-10-06 (06_ack_dataavail drafted; Introduction APPROVED)
+**Owner request:** approve the Introduction; continue with 06_ack_dataavail.tex.
+
+**Actions taken:**
+1. **sections/02_introduction.tex:** recorded owner approval (head block `**APPROVED 2026-10-06**`). No prose change.
+2. **sections/06_ack_dataavail.tex:** drafted — Acknowledgments (JSPS KAKENHI 25K07225; Center for Spintronics Research Network, Osaka U; MEXT X-NICS, Tohoku U; facilities at Kyushu U + ISSP U Tokyo) provided by owner; Data availability left as [DATA AVAILABILITY STATEMENT] placeholder per owner.
+3. **paper_status.md / AGENTS.md:** Introduction APPROVED; 06 drafted (awaiting review); NEXT → on 06 approval, draft 01_abstract.tex then E2.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); Acknowledgments + Data availability render before the bibliography.
+
+**Decorations / pending:**
+- [ ] Owner review of 06_ack_dataavail.tex (block-and-wait gate).
+- NEXT: on approval, draft 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
