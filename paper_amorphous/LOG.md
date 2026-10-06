@@ -1247,3 +1247,18 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bb — 2026-10-06 (yang2025: arXiv preprint → published Chem. Mater. article)
+**Owner request:** confirm the arXiv `yang2025` (Design principles for amorphous solid-state electrolytes) is the same work as the ACS Chemistry of Materials article, then cite the published version.
+
+**Actions taken:**
+1. **Verified via Crossref** (`10.1021/acs.chemmater.6c00692`): identical title, identical 8 authors (Q. Yang, X. Fu, X. Gong, J. Lian, L. Wang, R. Xiao, Y.-S. Hu, H. Li), identical abstract. Published: *Chem. Mater.* 38(18), 9194–9204 (2026-08-27).
+2. **references.bib:** converted `yang2025` from `@misc` (arXiv:2510.23251) to `@article` (Chem. Mater. 38, 18, 9194–9204, 2026, DOI 10.1021/acs.chemmater.6c00692). Key unchanged → `\cite{yang2025}` still resolves.
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (958 KiB). (First-pass "undefined citation" natbib warnings are normal multi-pass artifacts, resolved on rerun.)
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
