@@ -1,4 +1,48 @@
-% 02_introduction.tex — Introduction (placeholder)
-% Content moved to papers/paper1/CLAIMS.md (Session 4s). Draft after
-% Methods/Results.
-% [PLACEHOLDER — no prose yet.]
+% 02_introduction.tex — Introduction
+% Drafted Session 4bq — block-and-wait review gate.
+% **DRAFT v1 — awaiting owner review.**
+
+\section{Introduction}\label{sec:introduction}
+
+Amorphous heavy-metal alloys are of growing interest in spintronics, where
+their ability to generate spin--orbit torque from a structural, rather than a
+chemical, order makes them attractive spin-current sources. Ion-implanted
+amorphous Pt(P), for example, exhibits a giant spin Hall effect and
+spin--orbit torque that can exceed those of crystalline heavy metals
+\cite{shashank2025}, and amorphous materials more broadly are emerging across
+electronics applications as their properties are tuned by disorder rather
+than by composition alone \cite{shi2025,madanchi2024}. Because these
+properties depend on the atomic-scale structure, knowing {\em when} a
+candidate system becomes amorphous --- and over what composition range --- is
+central to designing such films.
+
+Predicting structure across that regime is, however, costly. Generating an
+amorphous configuration is conventionally done by first-principles melt-quench
+molecular dynamics, which is prohibitively expensive at the level of accuracy
+needed for a multi-element alloy \cite{meltquench2026,madanchi2024}, and the
+tens of thousands of reference calculations that a general machine-learned
+interatomic potential demands are out of reach for exploratory screening
+\cite{activemlp2020}. Evolutionary and machine-learning-assisted sampling
+have lowered the barrier \cite{artrith2018,nahas2016,valladares2011}, but a
+practical route to ask ``does this interstitial alloy amorphize, and at what
+loading?'' remains open.
+
+Here we take a reference-anchored approach. Rather than melting and quenching,
+we model the amorphous state as the low-energy basin around a chosen
+crystalline reference and enumerate that basin with a surrogate-guided
+global-optimization search
+\cite{gofee2020,gofee2022,agox2022}. The crystalline reference is a physical
+choice the user controls --- unique for a host with a single stable phase, and
+a genuine design choice for a polymorphic one. Amorphization is then confirmed
+structurally with the Steinhardt $q_6$ bond-orientational order parameter
+\cite{steinhardt1983}, cross-checked against simulated X-ray diffraction.
+Because the surrogate guides the search, the basin is sampled at a small
+fraction of the cost of melt-quench dynamics \cite{artrith2018}.
+
+Applied to interstitial platinum phosphide (Pt(P)), whose fcc host has a
+single stable phase, the screening locates the onset of structural
+amorphization at 20--30~at.\\% P, saturates with further loading, and is
+mildly promoted by cell expansion --- a prediction consistent with the
+experimental amorphization onset of ion-implanted Pt(P) \cite{shashank2025}.
+The reference-anchored screening thus offers a cheap, structurally verified
+route to the onset of amorphization in interstitial alloys.

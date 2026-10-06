@@ -1476,3 +1476,20 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex + MT-6 comparison subsection (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+## Session 4bq — 2026-10-06 (Conclusion APPROVED; Introduction drafted)
+**Owner request:** approve the Conclusion; begin drafting the Introduction.
+
+**Actions taken:**
+1. **05_conclusion.tex:** recorded owner approval (head block `**APPROVED 2026-10-06**`). No prose change.
+2. **paper_status.md:** conclusion row → APPROVED (Session 4bq); add in-progress row for 02_introduction.tex; NEXT → draft 06_ack_dataavail + 01_abstract after Introduction approval.
+3. **AGENTS.md:** Status line updated (CLAIMS v4 → v7; drafting state Methods/Results/Conclusion approved, Introduction in progress).
+4. **sections/02_introduction.tex:** drafted (motivation: amorphous heavy-metal alloys for spintronics; gap: first-principles melt-quench cost; approach: reference-anchored surrogate-guided global optimization + Steinhardt q6 verification; contribution sentence). Block-and-wait gate open for owner review.
+
+**Verified:** `tectonic main.tex` compiles clean.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
