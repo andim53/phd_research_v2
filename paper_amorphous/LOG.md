@@ -1461,3 +1461,18 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex + MT-6 comparison subsection (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bp — 2026-10-06 (Fig 6 number fix + Conclusion validation sentence)
+**Owner request:** the new comparative-validation figure is Fig 6 (not Fig 4 as labeled in docs); update the reference. Also update the Conclusion to reflect the new MT-6 content.
+
+**Actions taken:**
+1. **paper_status.md:** "Fig. 4" → "Fig. 6" for the MT-6 comparative-validation figure.
+2. **05_conclusion.tex:** added a sentence to the single-paragraph conclusion — "The predicted onset is consistent with experiment: the ion-implanted amorphous Pt(P) of Shashank et al. locates the amorphization onset at ~36 at% P (converted from ion dose), in the same ~20–40 at% range as our 20–30 at% prediction." (mirrors MT-6; keeps the conclusion one paragraph).
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (1.09 MiB).
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex + MT-6 comparison subsection (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
