@@ -1,4 +1,33 @@
-% 05_conclusion.tex — Conclusion (placeholder)
-% Content moved to papers/paper1/CLAIMS.md (Session 4s): efficiency
-% discussion. Mirror the contribution sentence once framing is confirmed.
-% [PLACEHOLDER — no prose yet.]
+% 05_conclusion.tex — Conclusion
+% Drafted Session 4bd — block-and-wait review gate.
+
+\section{Conclusion}\label{sec:conclusion}
+
+We have shown that a cheap, reference-anchored global-optimization screening
+identifies amorphous minima in an interstitial alloy, so that the expensive
+all-electron step of a downstream property calculation need only run on the
+few structures it selects. The method models the amorphous state as the
+low-energy basin around a chosen crystalline reference, enumerates that basin
+with a surrogate-guided search, and confirms amorphization with the Steinhardt
+$q_6$ crystalline fraction. The reference is a physical choice the user
+controls --- unique for a host with a single stable phase, a genuine choice
+for a polymorphic host.
+
+Applied to interstitial Pt(P), the screening finds that 20--30~at.\% P marks
+the onset of structural amorphization: the crystalline fraction collapses from
+0.99 in the undoped host to 0.09--0.18, a trend cross-checked by the XRD
+integrated crystallinity index. The effect saturates with concentration (the
+20P and 30P systems are indistinguishable) and is mildly promoted by cell
+expansion, which adds free volume and acts synergistically with the
+P-induced frustration of fcc packing. The candidate ensemble is enumerated at
+a fraction of the cost of first-principles melt-quench molecular dynamics, and
+the surrogate drives the search reliably in the low-energy regime that matters
+for selection.
+
+The reference-anchored screening thus offers a practical route to the
+structural verification of amorphous alloys, leaving the expensive property
+calculation to the few amorphous minima it identifies. Because the structural
+claims rest on energetics from a single-DFT-step evaluator, a force-converged
+re-relaxation of the P-doped minima is a natural next step before any
+force-based property is computed; extending the approach to polymorphic hosts,
+where the reference is a genuine choice, is a further direction.

@@ -1278,3 +1278,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bd — 2026-10-06 (draft Conclusion; approve Methods + Results)
+**Owner request:** approve the Methods and Results sections and continue with the Conclusion.
+
+**Actions taken:**
+1. **Owner approved** `03_methods.tex` + `04_results.tex` (against CLAIMS v6).
+2. **05_conclusion.tex:** drafted (3 paragraphs) — mirrors the contribution sentence (reference-anchored screening → structural verification pipeline), summarizes the key findings (20–30 at% P onset of amorphization, saturation, mild cell-expansion effect, screening efficiency), and closes with future work (force-converged re-relaxation; polymorphic hosts). No new claims, no CLAIMS IDs, no code-like terms.
+3. **paper_status.md:** marked 04_results APPROVED; 05_conclusion DRAFTED (awaiting review); NEXT = draft 02_introduction.tex on approval.
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (960 KiB).
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.

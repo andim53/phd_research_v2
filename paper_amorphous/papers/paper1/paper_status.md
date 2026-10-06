@@ -40,8 +40,8 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Phase A.5: CLAIMS.md v3 — MT-1..MT-4, M-1..M-1d, M-2, SI-1 all signed off (Phase B evidence mapped)
 - [x] Phase B: claims mapped to CNA/RDF JSONs + XRD table + explore/exploit JSON
 - [x] sections/03_methods.tex (DRAFTED Session 4ao — traces M-1, M-1b, M-2, M-3; 19 cites all resolve; compiles clean; **Session 4ap: de-code-like'd prose, added iteration-timeline figure Fig. 1; Session 4aq: M-1c/M-1d/M-1e moved to Results**) — **awaiting owner review**
-- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3**)
-- [ ] sections/05_conclusion.tex (placeholder)
+- [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3**) — **APPROVED (Session 4bd)**
+- [x] sections/05_conclusion.tex (DRAFTED Session 4bd — mirrors contribution sentence; no new claims) — **awaiting owner review**
 - [ ] sections/02_introduction.tex (placeholder)
 - [ ] sections/06_ack_dataavail.tex (placeholder)
 - [ ] sections/01_abstract.tex (placeholder — draft after all sections approved)
@@ -51,7 +51,8 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Owner reviewed M-1d figure + revised claim wording (Session 4ab).
 - [x] Commit Session 4ab milestone (extractor, figure script, JSON, CLAIMS M-1d + Figures table, VERSIONS, LOG).
 - [x] Draft sections/03_methods.tex (global-optimization method, XRD + CNA/RDF crystallinity analysis) — **DRAFTED Session 4ao, awaiting owner review (block-and-wait gate).**
-- [ ] Draft sections/04_results.tex (crystallinity MT-1..MT-4 + efficiency R-1c) — **DONE Session 4ar** (crystallinity drafted; efficiency R-1c drafted Session 4aq).
+- [x] Draft sections/04_results.tex (crystallinity MT-1..MT-4 + efficiency R-1c) — **DONE Session 4ar** (crystallinity drafted; efficiency R-1c drafted Session 4aq). **APPROVED Session 4bd.**
+- [x] Draft sections/05_conclusion.tex — **DONE Session 4bd** (mirrors contribution sentence; no new claims). **Awaiting owner review (block-and-wait gate).**
 - [ ] SHC placeholder: **dropped from paper** (Session 4t) — no SHC section to fill.
 - [ ] Build figure scripts → analysis/figures (partial RDF g_PtP/g_PP as standard figure; crystalline-fraction vs cell bar/line) — done for crystallinity 3-panel + explore/exploit + iteration-timeline (Fig. 1); stage into papers/paper1/figures/ at compile.
-- NEXT: owner reviews sections/03_methods.tex; on approval, draft sections/04_results.tex.
+- NEXT: owner reviews sections/05_conclusion.tex; on approval, draft sections/02_introduction.tex.
