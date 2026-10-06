@@ -8,7 +8,7 @@
 The surrogate-guided search enumerates the amorphous Pt(P) candidate
 ensemble at a fraction of the cost of conventional first-principles
 melt-quench molecular dynamics \cite{meltquench2026,artrith2018,nahas2016,activemlp2020}.
-Approximately $5.8\times10^{3}$ DFT relaxations across the six Pt(P) systems
+Approximately $5.8\times10^{3}$ DFT relaxations across the six 20 and 30 at.\% P systems
 ($\sim$2--3$\times10^{2}$ per seed) produce $\sim$5.2$\times10^{3}$ retained
 candidate structures, stored in a compact, indexable database ($\sim$8--12~MB
 per system). This is the same efficiency regime as evolutionary and
@@ -53,7 +53,7 @@ systems reach it at iterations 80--99; range 10--100) \cite{gofee2022}.
 The GPR surrogate predicts the DFT energy accurately enough to drive the
 search in the low-energy regime that matters for selection --- structures
 within 0.1~eV/atom of the system's global minimum (Fig.~\ref{fig:surrogate-perf}).
-Over the retained ensemble (all nine systems), the mean absolute error (MAE) in
+Over the retained ensemble (the nine 0P, 20P, and 30P systems), the mean absolute error (MAE) in
 the 0--0.1~eV/atom window is 0.009--0.015 (0P), 0.029--0.034 (20P), and
 0.048--0.061 (30P)~eV/atom across the three cells; the GPR uncertainty
 $\sigma$ in the same window is 0.019--0.023 (0P), 0.028--0.032 (20P), and
@@ -69,8 +69,8 @@ an upper bound on the true model error \cite{gofee2022}.
   \includegraphics[width=\textwidth]{figures/fig_surrogate_perf.png}
   \caption{Surrogate predictive performance at the 0--0.1~eV/atom window
       (structures within 0.1~eV/atom of the system's global minimum), one bar
-      per system (all nine), grouped by P concentration and colored by P
-      concentration with a distinct hatch per cell expansion.
+      per system (the nine 0P, 20P, and 30P systems), grouped by P concentration
+      and colored by P concentration with a distinct hatch per cell expansion.
       (a) Mean absolute error (MAE) between the surrogate prediction and the
       DFT energy. (b) GPR uncertainty $\sigma$. Comparing (a) and (b) shows
       the predicted uncertainty tracks the actual error; both rise with P

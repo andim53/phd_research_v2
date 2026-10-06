@@ -1412,3 +1412,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: reconcile R-1c/R-1e system counts; on conclusion approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bm — 2026-10-06 (reconcile R-1c/R-1e system counts)
+**Owner request:** verify the actual R-1c cost coverage and propose exact wording for R-1c and R-1e; owner approved.
+
+**Actions taken:**
+1. **Verified R-1c coverage:** the "six Pt(P) systems" = the 6 P-doped systems (20P/30P × 3 cells): 5,844 relaxations ≈ 5.8×10³, 5,196 iteration≥10 ≈ 5.2×10³ retained — numbers correct, just the scope was ambiguous.
+2. **04_results.tex:** R-1c "six Pt(P) systems" → "six 20 and 30 at.% P systems"; R-1e "all nine systems" → "the nine 0P, 20P, and 30P systems" (prose + caption). Fixed a caption typo introduced during editing.
+3. **CLAIMS.md:** R-1c "six Pt(P) leaves" → "six 20 and 30 at.% P leaves"; R-1e "all 9 leaves" → "the nine 0P/20P/30P leaves".
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written; no leftover typos.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on conclusion approval, draft 02_introduction.tex.

@@ -198,7 +198,7 @@ flowchart LR
 - **Claim:** The surrogate-guided search enumerates the amorphous Pt(P)
   candidate ensemble at a fraction of the cost of conventional first-principles
   melt-quench molecular dynamics.
-- **Numbers:** ~5.8×10³ DFT relaxations across the six Pt(P) leaves
+- **Numbers:** ~5.8×10³ DFT relaxations across the six 20 and 30 at.% P leaves
   (~2–3×10² per seed) produce ~5.2×10³ retained candidate structures, stored
   in a compact, indexable database (~8–12 MB per leaf). This is the same
   efficiency regime as evolutionary/ML-assisted amorphous sampling in other
@@ -230,7 +230,7 @@ flowchart LR
 
 ### R-1e — Surrogate predictive performance (low-energy regime)
 - **Claim:** The GPR surrogate predicts the DFT energy accurately enough to drive the search in the low-energy regime that matters for selection — structures within 0.1 eV/atom of the leaf's global minimum. The surrogate's predicted uncertainty (GPR σ) tracks the actual error in this regime, validating the LCB acquisition.
-- **Numbers (retained ensemble, iteration ≥ 10, all 9 leaves, per-leaf relative energy 0→0.1 eV/atom):** MAE in the 0–0.1 eV/atom window is 0.009–0.015 (0P), 0.029–0.034 (20P), 0.048–0.061 (30P) eV/atom across the three cells; GPR σ in the same window is 0.019–0.023 (0P), 0.028–0.032 (20P), 0.043–0.048 (30P). Both MAE and σ rise with P loading, and the predicted uncertainty tracks the actual error — validating the LCB acquisition (κ=2).
+- **Numbers (retained ensemble, iteration ≥ 10, the nine 0P/20P/30P leaves, per-leaf relative energy 0→0.1 eV/atom):** MAE in the 0–0.1 eV/atom window is 0.009–0.015 (0P), 0.029–0.034 (20P), 0.048–0.061 (30P) eV/atom across the three cells; GPR σ in the same window is 0.019–0.023 (0P), 0.028–0.032 (20P), 0.043–0.048 (30P). Both MAE and σ rise with P loading, and the predicted uncertainty tracks the actual error — validating the LCB acquisition (κ=2).
 - **Metric note:** R² is not reported — within the 0.1 eV/atom window the energy variance is tiny relative to the error, so R² is negative and uninformative. MAE and GPR σ are the meaningful metrics.
 - **Caveat:** the DFT ground truth for P leaves is on under-relaxed geometries (single-DFT-step evaluator), so the measured error includes that noise — the surrogate error is an upper bound on the true model error.
 - **Source:** `data/17_PPt/*/*/seed_*/1_db/db_*.db` (61 seeds);
