@@ -9,12 +9,17 @@ their ability to generate spin--orbit torque from a structural, rather than a
 chemical, order makes them attractive spin-current sources. Ion-implanted
 amorphous Pt(P), for example, exhibits a giant spin Hall effect and
 spin--orbit torque that can exceed those of crystalline heavy metals
-\cite{shashank2025}, and amorphous materials more broadly are emerging across
-electronics applications as their properties are tuned by disorder rather
-than by composition alone \cite{shi2025,madanchi2024}. Because these
+\cite{shashank2025}, and comparably large spin Hall effects are reported in
+amorphous binary alloys and in amorphous tungsten
+\cite{fritz2018,liao2019}. Amorphous materials more broadly are emerging
+across electronics applications as their properties are tuned by disorder
+rather than by composition alone \cite{shi2025,madanchi2024}. Because these
 properties depend on the atomic-scale structure, knowing {\em when} a
 candidate system becomes amorphous --- and over what composition range --- is
-central to designing such films.
+central to designing such films. Designing an amorphous host for spin Hall
+conductivity is itself a challenge: the transport tensor must be averaged
+over the many inequivalent disordered configurations that represent the
+amorphous state \cite{turek2019,shashank2025}.
 
 Predicting structure across that regime is, however, costly. Generating an
 amorphous configuration is conventionally done by first-principles melt-quench
@@ -22,10 +27,14 @@ molecular dynamics, which is prohibitively expensive at the level of accuracy
 needed for a multi-element alloy \cite{meltquench2026,madanchi2024}, and the
 tens of thousands of reference calculations that a general machine-learned
 interatomic potential demands are out of reach for exploratory screening
-\cite{activemlp2020}. Evolutionary and machine-learning-assisted sampling
-have lowered the barrier \cite{artrith2018,nahas2016,valladares2011}, but a
-practical route to ask ``does this interstitial alloy amorphize, and at what
-loading?'' remains open.
+\cite{activemlp2020}. Estimating a disorder-averaged transport property, such
+as the spin Hall conductivity of a model amorphous alloy
+\cite{turek2019}, multiplies this cost further, because the value must be
+averaged over many inequivalent structures. Evolutionary and
+machine-learning-assisted sampling have lowered the barrier
+\cite{artrith2018,nahas2016,valladares2011}, but a practical route to ask
+``does this interstitial alloy amorphize, and at what loading?'' remains
+open.
 
 Here we take a reference-anchored approach. Rather than melting and quenching,
 we model the amorphous state as the low-energy basin around a chosen

@@ -1493,3 +1493,20 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-2 — 2026-10-06 (Introduction v2: SHC-motivation + cost refs + amorphous examples)
+**Owner request:** Introduction should also touch that designing amorphous for SHC calculation is a challenge; include more computational-cost references and more amorphous heavy-metal examples with high spin Hall effect.
+
+**Actions taken:**
+1. **references.bib:** added 3 verified entries (DOI content negotiation): `fritz2018` (Fritz et al., PRB 98 094433 — large SHE in amorphous binary alloy W–Hf); `liao2019` (Liao et al., pss RRL 13 — amorphous α-W high SHC current-induced switching); `turek2019` (Turek et al., PRB 100 134435 — ab initio spin-dependent conductivity/SHE in random alloys). Verified exact metadata against DOI BibTeX fetch.
+2. **sections/02_introduction.tex:** P1 — added amorphous W–Hf + amorphous-W SHE examples \cite{fritz2018,liao2019} and an SHC-design-challenge sentence (transport tensor averaged over configurational disorder) \cite{turek2019,shashank2025}; P2 — added that a disorder-averaged transport property multiplies the sampling cost \cite{turek2019}.
+3. **paper_status.md:** Citations count 25 → 28 with the three new keys.
+- NOTE: SHC stays **motivation-only** (no SHC results claim; consistent with the Session 4t scope decision).
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); fresh-build `.bbl` contains fritz2018, liao2019, turek2019 (each 1×).
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
