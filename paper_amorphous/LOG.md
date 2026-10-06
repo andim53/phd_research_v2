@@ -1556,3 +1556,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-6 — 2026-10-06 (Introduction v6: power-consumption factor inline)
+**Owner request:** prefer the power-consumption-factor equation inline rather than as a display equation.
+
+**Actions taken:**
+1. **sections/02_introduction.tex P1:** converted the display `\begin{equation}...\end{equation}` (ξ = ρ/θ_SH² = σ_xx/σ_SH²) to inline math `$\xi = \rho/\theta_{\mathrm{SH}}^2 = \sigma_{xx}/\sigma_{\mathrm{SH}}^2$`. Dropped the `\label{eq:power-factor}` (never referenced).
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); inline equation renders on page 2.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
