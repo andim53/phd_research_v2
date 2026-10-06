@@ -149,8 +149,15 @@ To validate the predicted onset against experiment, we compare with the
 ion-implanted amorphous Pt(P) of Shashank \emph{et al.} \cite{shashank2025}.
 That work reports amorphization by ion dose and accelerating energy, not by
 P concentration, so we convert their dose to an equivalent at.\% P with a
-box model (P areal density over the Pt layer thickness;
-Table~\ref{tab:conversion}). Their amorphization onset
+box model, treating the implanted P areal density as a uniform atomic
+fraction over the Pt layer of thickness $t$:
+\begin{equation}
+  C = \frac{\text{Dose}}{\rho_{\mathrm{Pt}}\,t}\times 100,
+  \label{eq:dose-conversion}
+\end{equation}
+where $\rho_{\mathrm{Pt}} = 6.62\times10^{22}$~atoms/cm$^3$ is the fcc Pt
+atomic density and $t \approx 17$~nm is the SRIM projected range of P in Pt
+at 30~keV (Table~\ref{tab:conversion}). Their amorphization onset
 ($\theta_{\mathrm{SH}} > 0.5$, moderate 20--30~keV energies) corresponds to
 the mid-range dose of $4.0\times10^{16}$~ions/cm$^2$, which maps to
 $\sim$36~at.\% P.

@@ -1657,3 +1657,18 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-13 — 2026-10-06 (Results: add dose→at% conversion equation + parameters)
+**Owner request:** the Results uses the converted experimental onset but never shows the conversion equation/parameters. Apply Option A.
+
+**Actions taken:**
+1. **sections/04_results.tex (Comparison with experiment):** added the box-model conversion equation C = Dose/(ρ_Pt·t)×100 (Eq. eq:dose-conversion) with ρ_Pt = 6.62×10²² atoms/cm³ (fcc Pt) and t ≈ 17 nm (SRIM projected range of P in Pt at 30 keV), replacing the bare "box model (P areal density over the Pt layer thickness)" phrase. Numbers verified against `hpc_runs/convert_dose_concentration.py` (4.0×10¹⁶ → ~35.5 ≈ 36 at%).
+2. Fixed escaped-percent/backslash drift introduced during the edit (at.\% P, Table~\ref) — verified via od.
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); page 10 renders the equation and parameters.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
