@@ -1570,3 +1570,18 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-7 — 2026-10-06 (Introduction v7: femgo-style closing paragraph + roadmap)
+**Owner request:** write the Introduction's last paragraph in the style of paper_femgo paper2's closing paragraph ("In this work, by implementing [method], we successfully demonstrated [contribution], enabling [result] and revealing [result]. This paper is organized as follows. In Sec. II…").
+
+**Actions taken:**
+1. **sections/02_introduction.tex P4:** replaced the results-preview + closing sentence with the femgo-style two-part paragraph: (a) "In this work, by implementing a cheap, reference-anchored global-optimization screening, we successfully demonstrated the identification of amorphous minima in an interstitial alloy, enabling the prediction of the structural amorphization onset of Pt(P) at 20–30 at.% P and revealing its saturation with concentration and its mild promotion by cell expansion, consistent with the experimental onset of ion-implanted Pt(P)"; (b) roadmap "This paper is organized as follows. In Sec. II, we present the reference-anchored global-optimization method and the crystallinity verification. In Sec. III, we first discuss the computational cost and search dynamics of the screening, and subsequently introduce the crystallinity of the Pt(P) systems and their comparison with experiment. We summarize our work in Sec. IV."
+- Kept the "cheap, reference-anchored global-optimization screening" descriptor (bookend consistency with Conclusion).
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); compiled section numbers I=Introduction, II=Methods, III=Results, IV=Conclusion match the roadmap.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
