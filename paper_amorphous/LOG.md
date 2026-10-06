@@ -1688,3 +1688,21 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-15 — 2026-10-06 (06_ack_dataavail APPROVED; Abstract drafted)
+**Owner request:** approve 06; continue with the abstract.
+
+**Actions taken:**
+1. **sections/06_ack_dataavail.tex:** recorded owner approval (head block `**APPROVED 2026-10-06**`). No prose change.
+2. **sections/01_abstract.tex:** drafted — single-paragraph summary of the contribution (cheap reference-anchored screening; q6 + XRD verification; Pt(P) onset 20–30 at% P, crystalline fraction 0.99→0.09–0.18, saturation, mild cell-expansion promotion; consistency with ~36 at% experimental onset via box-model conversion; fraction of the cost of melt-quench MD).
+3. Fixed escaped-percent/backslash drift in the new abstract (`at.\% P`, `$\sim$`) — verified via grep/od.
+4. **paper_status.md / AGENTS.md:** 06 APPROVED; Abstract drafted (awaiting review); NEXT → on abstract approval, E2 first-PDF review.
+
+**Verified:** `tectonic main.tex` compiles clean (1.10 MiB); abstract renders with full content (on page 2 due to the pre-existing page-1-blank layout issue, separate from drafting).
+
+**Decorations / pending:**
+- [ ] Owner review of 01_abstract.tex (block-and-wait gate).
+- NEXT: on approval, E2 first-PDF review.
+- NOTE: the page-1-blank / title-page layout issue (abstract on page 2, empty title page) remains open and should be addressed at/around E2.
+
+**Time:** 2026-10-06 JST

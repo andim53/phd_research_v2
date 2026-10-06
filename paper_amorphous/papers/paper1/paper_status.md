@@ -43,8 +43,8 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] sections/04_results.tex (DRAFTED Session 4aq — traces R-1c, R-1d, R-1e; **Session 4ar: crystallinity MT-1..MT-4 drafted + Fig. 2; Session 4as: XRD cross-check figure Fig. 3; Session 4bn: MT-6 comparative-validation subsection + Table 1 + Fig. 6**) — **APPROVED (Session 4bd)**
 - [x] sections/05_conclusion.tex (DRAFTED Session 4bd — mirrors contribution sentence; no new claims; MT-6 validation sentence added Session 4bp) — **APPROVED (Session 4bq)**
 - [x] sections/02_introduction.tex (DRAFTED Session 4bq — motivation: SHC + cost + amorphous examples; power-consumption factor; reference-anchored approach; femgo-style closing + roadmap; **APPROVED (Session 4bq)**)
-- [x] sections/06_ack_dataavail.tex (DRAFTED Session 4bq — acknowledgments: JSPS KAKENHI 25K07225, CSpnRN Osaka U, MEXT X-NICS Tohoku U, Kyushu U + ISSP U Tokyo facilities; data availability placeholder) — **awaiting owner review**
-- [ ] sections/01_abstract.tex (placeholder — draft after all sections approved)
+- [x] sections/06_ack_dataavail.tex (DRAFTED Session 4bq — acknowledgments: JSPS KAKENHI 25K07225, CSpnRN Osaka U, MEXT X-NICS Tohoku U, Kyushu U + ISSP U Tokyo facilities; data availability placeholder) — **APPROVED (Session 4bq)**
+- [x] sections/01_abstract.tex (DRAFTED Session 4bq — summary of contribution: cheap reference-anchored screening, q6 + XRD, 20–30 at% P onset 0.99→0.09–0.18, saturation, cell expansion, ~36 at% experimental consistency, cost) — **awaiting owner review**
 - [ ] E2: compile the manuscript (first PDF review)
 
 ## Open decisions / next step
@@ -54,7 +54,8 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 - [x] Draft sections/04_results.tex (crystallinity MT-1..MT-4 + efficiency R-1c) — **DONE Session 4ar** (crystallinity drafted; efficiency R-1c drafted Session 4aq). **APPROVED Session 4bd.**
 - [x] Draft sections/05_conclusion.tex — **DONE Session 4bd** (mirrors contribution sentence; no new claims). **APPROVED Session 4bq.**
 - [x] Draft sections/02_introduction.tex — **DONE Session 4bq** (motivation SHC/cost/amorphous examples + power-consumption factor + reference-anchored approach + femgo-style closing/roadmap). **APPROVED Session 4bq.**
-- [x] Draft sections/06_ack_dataavail.tex — **DONE Session 4bq** (acknowledgments: JSPS KAKENHI 25K07225, CSpnRN Osaka U, MEXT X-NICS Tohoku U, Kyushu U/ISSP U Tokyo facilities; data availability placeholder). **Awaiting owner review.**
+- [x] Draft sections/06_ack_dataavail.tex — **DONE Session 4bq** (acknowledgments: JSPS KAKENHI 25K07225, CSpnRN Osaka U, MEXT X-NICS Tohoku U, Kyushu U/ISSP U Tokyo facilities; data availability placeholder). **APPROVED Session 4bq.**
+- [x] Draft sections/01_abstract.tex — **DONE Session 4bq** (summary of contribution). **Awaiting owner review.**
 - [ ] SHC placeholder: **dropped from paper** (Session 4t) — no SHC section to fill.
 - [ ] Build figure scripts → analysis/figures (partial RDF g_PtP/g_PP as standard figure; crystalline-fraction vs cell bar/line) — done for crystallinity 3-panel + explore/exploit + iteration-timeline (Fig. 1); stage into papers/paper1/figures/ at compile.
-- NEXT: owner approves 06_ack_dataavail.tex; then draft 01_abstract.tex, then E2 first-PDF review.
+- NEXT: owner approves 01_abstract.tex; then E2 first-PDF review.
