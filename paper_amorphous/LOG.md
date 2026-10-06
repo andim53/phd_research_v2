@@ -1599,3 +1599,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 - NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
 
 **Time:** 2026-10-06 JST
+
+## Session 4bq-9 — 2026-10-06 (Introduction v8 fix: escaped-percent bug cut the closing paragraph)
+**Owner request:** the last update cut content — the closing paragraph rendered as "20–30 at." then jumped to "with concentration", dropping "P and revealing its saturation".
+
+**Root cause:** the Option B patch wrote `at.\\% P` (double backslash) instead of `at.\% P`. In LaTeX `\\` is a line break and `%` starts a comment, so everything after `%` on that line ("P and revealing its saturation") was swallowed as a comment.
+
+**Actions taken:**
+1. **sections/02_introduction.tex P4:** `at.\\% P` → `at.\% P` (single escaped percent). Verified via `od -c` (single `\` byte before `%`).
+
+**Verified:** `tectonic main.tex` compiles clean (1.09 MiB); page 3 now renders "20–30 at.% P and revealing its saturation with concentration…" in full.
+
+**Decorations / pending:**
+- [ ] Owner review of 02_introduction.tex (block-and-wait gate).
+- NEXT: on approval, draft 06_ack_dataavail.tex, then 01_abstract.tex, then E2 first-PDF review.
+
+**Time:** 2026-10-06 JST
