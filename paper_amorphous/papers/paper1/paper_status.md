@@ -14,7 +14,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 
 ## Current state (updated 2026-10-05, Session 4at)
 - **Contribution framed and confirmed** (SHC dropped entirely from framing per owner, Session 4t).
-- **CLAIMS.md v6 signed off** (MT-1..MT-4, M-1..M-1d, M-2, SI-1) — claim list frozen; manuscript must trace to it. **v6 (Session 4at): crystalline-fraction energy cap tightened 0.3 → 0.1 eV/atom** (per owner), matching the XRD lowest-window convention.
+- **CLAIMS.md v6 signed off** (MT-1..MT-4, M-1..M-1d, M-2) — claim list frozen; manuscript must trace to it. **v6 (Session 4at): crystalline-fraction energy cap tightened 0.3 → 0.1 eV/atom** (per owner), matching the XRD lowest-window convention. **SI-1 dropped (Session 4bc):** the Ta/W polymorphism demonstration is removed from the SI; the polymorphic-host reference-choice point stays in the main text (M-3, MT-5) as a design statement, with the 5 Ta/W refs still cited in Methods.
 - **CNA/RDF structural cross-check done** (`codes/emit_cna_rdf.py` v1.1.0): Steinhardt q6 crystalline fraction + partial RDF for 9 leaves (0P/20P/30P × +0/+3/+5). Results in `analysis/cna_rdf/<leaf>/cna_rdf.json` — **canonical data now at e_max=0.1 eV/atom**.
 - **Key numbers (crystalline fraction mean, e_max=0.1):** 0P 0.99 → 20/30P 0.09–0.18 (MT-1); 20P≈30P (MT-2); cell expansion +0→+3/+5: 20P 0.184→0.137→0.094, 30P 0.176→0.098→0.098 (MT-3).
 - **XRD cross-check** (`data/17_PPt/DISCUSSION.md`): integrated CI 0.81–0.83→0.35–0.38 for P loading; cell effect only ~7% (weak) → CNA is the quantitative backbone for MT-3.
@@ -32,7 +32,7 @@ Cheap LCAO-DFT global-optimization screening — using the Steinhardt q6 crystal
 | XRD CI supports MT-1 | data/17_PPt/DISCUSSION.md | 0.81–0.83 → 0.35–0.38 | yes |
 
 ## Citations (Phase D)
-- `references.bib` populated (25 verified): `shashank2025`, `shi2025`, `yang2025`, `greer1993`, `gofee2020`, `gofee2022`, `agox2022`, `oganov2009`, `gpaw2010`, `ase2017`, `pymatgen2013`, `steinhardt1983`, `artrith2018`, `biswas2017`, `valladares2011`, `madanchi2024`, `setten2026`, `nahas2016`, `meltquench2026`, `activemlp2020` (20 main) + `colin2017`, `kozhukhovska2026`, `barmak2017`, `liubarmak2016`, `chattaraj2020` (5 SI-1). All fetched via DOI/arXiv content negotiation. Wire into prose at the per-section review gate.
+- `references.bib` populated (25 verified): `shashank2025`, `shi2025`, `yang2025`, `greer1993`, `gofee2020`, `gofee2022`, `agox2022`, `oganov2009`, `gpaw2010`, `ase2017`, `pymatgen2013`, `steinhardt1983`, `artrith2018`, `biswas2017`, `valladares2011`, `madanchi2024`, `setten2026`, `nahas2016`, `meltquench2026`, `activemlp2020` (20 main) + `colin2017`, `kozhukhovska2026`, `barmak2017`, `liubarmak2016`, `chattaraj2020` (5 polymorphic-host refs, cited in Methods). All fetched via DOI/arXiv content negotiation. Wire into prose at the per-section review gate.
 
 ## Drafting progress (Phase E — LaTeX-native, block-and-wait)
 - [x] Project + paper1 scaffold (Session 1)

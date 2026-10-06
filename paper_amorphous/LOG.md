@@ -1262,3 +1262,19 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
 - NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bc — 2026-10-06 (drop SI-1 Ta/W demonstration; keep polymorphic-host wording + refs)
+**Owner request:** drop the Supplementary Information on Ta/W polymorphism, but keep the wording that reference choice is necessary for a polymorphic host, and keep the 5 Ta/W references.
+
+**Actions taken:**
+1. **03_methods.tex:** removed the "which we return to in the Supplementary Information" pointer; the polymorphic-host sentence now reads "...a genuine choice for a polymorphic host (Ta, W) \cite{colin2017,kozhukhovska2026,barmak2017,liubarmak2016,chattaraj2020}." — the 5 refs stay cited in Methods to support the "Ta, W are polymorphic" factual claim.
+2. **CLAIMS.md:** removed SI-1 (Ta/W polymorphism demonstration detail); trimmed the contribution sentence (dropped "we demonstrate the method from the α (bcc) reference while experiments stabilize the metastable β phase (M-3, SI-1)"); added a note recording the SI-1 removal. MT-5/M-3 Source lines keep the 5 refs.
+3. **paper_status.md:** claim list now MT-1..MT-4, M-1..M-1d, M-2 (SI-1 dropped); citation note updated — the 5 Ta/W refs are now "polymorphic-host refs, cited in Methods" (count stays 25).
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written (958 KiB).
+
+**Decorations / pending:**
+- [ ] Owner review of 03_methods.tex + 04_results.tex + CLAIMS v6.
+- NEXT: on approval, draft 05_conclusion.tex / 02_introduction.tex.
