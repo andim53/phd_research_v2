@@ -1336,3 +1336,17 @@ numbers trace to `analysis/explore_exploit/explore_exploit.json`.
 **Decorations / pending:**
 - [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
 - NEXT: on approval, draft 02_introduction.tex.
+
+**Time:** 2026-10-06 JST
+
+## Session 4bh — 2026-10-06 (Methods: remove repeated 1.5 Å radius)
+**Owner request:** the 1.5 Å value appears twice in the reference-anchored global-optimization section ("all applying displacements up to 1.5 Å" and "inside a sphere of radius 1.5 Å"); remove the repetition.
+
+**Actions taken:**
+1. **03_methods.tex:** amorphous randomizer now reads "…up to 500 random displacements inside a sphere (uniform-volume sampling)…" — the 1.5 Å magnitude is stated once in the general generator sentence.
+
+**Verified:** `tectonic main.tex` compiles clean; `main.pdf` written.
+
+**Decorations / pending:**
+- [ ] Owner review of 05_conclusion.tex (block-and-wait gate).
+- NEXT: on approval, draft 02_introduction.tex.
