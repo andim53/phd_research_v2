@@ -17,6 +17,9 @@ from .generator import DeltaZGenerator
 from .gpr_training import load_all_seeds, build_gpr, validate_gpr
 from .utils import K_B
 from .thermodynamics import reweight_2d, E_min_curve
+from .parallel_wl_2d import (
+    build_shared_accessible, run_parallel_walkers_2d, reweight_per_walker,
+    align_and_average)
 
 __all__ = [
     "WangLandau2DSampler",
@@ -27,4 +30,8 @@ __all__ = [
     "K_B",
     "reweight_2d",
     "E_min_curve",
+    "build_shared_accessible",
+    "run_parallel_walkers_2d",
+    "reweight_per_walker",
+    "align_and_average",
 ]

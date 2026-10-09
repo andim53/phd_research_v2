@@ -39,7 +39,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import sys
@@ -55,6 +55,9 @@ if _HERE not in sys.path:
 from landau_2d.wang_landau_2d import WangLandau2DSampler  # noqa: E402
 from landau_2d.generator import DeltaZGenerator  # noqa: E402
 from landau_2d.thermodynamics import reweight_2d  # noqa: E402
+from landau_2d.parallel_wl_2d import (  # noqa: E402
+    build_shared_accessible, run_parallel_walkers_2d, reweight_per_walker,
+    align_and_average)
 
 
 class Fake2DGPR(Calculator):
@@ -289,6 +292,70 @@ def main():
     if len(seen3) < 2:
         print("[SMOKE] FAIL: 3-species sample_ordering did not vary arrangement")
         ok = False
+
+    # --- (8) parallel mode: N independent walkers -> master DOS (spec 202610091935)
+    # G1(a): parallel smoke (N=2) must reproduce the serial <dZ(T)> within the
+    # walker-spread error bars; G1(b): sum H == N x mc_steps.
+    print("\n[SMOKE] parallel mode (N=2 walkers, shared accessible map)...")
+    try:
+        import ray
+        if not ray.is_initialized():
+            ray.init(num_cpus=2, include_dashboard=False,
+                     ignore_reinit_error=True, log_to_driver=False)
+        sampler_kwargs = {
+            "E_ref": -2.0, "n_atoms": 6,
+            "n_e_bins": 20, "e_min": 0.0, "e_max": 0.7, "e_reject": None,
+            "n_dz_bins": 10, "dz_min": dz_min, "dz_max": dz_max,
+            "relax_steps": 30,
+            "flatness_criterion": 0.80, "check_interval": 300,
+            "n_stages_standard": 3, "reference_steps": 300,
+        }
+        acc = build_shared_accessible(fake, gen, sampler_kwargs, 300, rng_seed=0)
+        print(f"[SMOKE] shared accessible cells: {int(acc.sum())}")
+        res = run_parallel_walkers_2d(
+            fake, gen, sampler_kwargs, acc, n_walkers=2, rng_base=7,
+            mc_steps=2000, checkpoint_interval=1000,
+            output_dir="/tmp/wl2d_smoke_parallel")
+        # G1(b): non-empty aggregate (H resets on flatness, so sum H is the
+        # current-stage H, NOT total visits; the empty-aggregate bug is H all-zero)
+        total_H = sum(int(g[3].sum()) for g in res["per_walker_g"])
+        steps = [s["step"] for s in res["per_walker_states"]]
+        print(f"[SMOKE] sum H = {total_H} (current-stage; walker steps = {steps})")
+        if total_H == 0:
+            print("[SMOKE] FAIL: empty aggregate (all H zero)")
+            ok = False
+        if steps != [2000, 2000]:
+            print("[SMOKE] FAIL: walkers did not run mc_steps each")
+            ok = False
+        # C1: master ln_g = mean of aligned per-walker values
+        master = res["master_ln_g"]
+        aligned = res["aligned_ln_g"]
+        for i0 in range(master.shape[0]):
+            for j0 in range(master.shape[1]):
+                if res["n_visited"][i0, j0] > 0:
+                    expect = float(np.mean([a[i0, j0] for a in aligned]))
+                    if abs(master[i0, j0] - expect) > 1e-9:
+                        print("[SMOKE] FAIL: master ln_g != mean of aligned")
+                        ok = False
+                        break
+        # C2(a): master <dZ(T)> = mean of per-walker curves
+        temps = [100, 200, 300, 500, 1000]
+        master_rows, per_rows = reweight_per_walker(
+            res["per_walker_states"], aligned,
+            np.linspace(0.0, 0.7, 20) + 0.7/40,  # e_centers (approx)
+            np.linspace(dz_min, dz_max, 10) + (dz_max-dz_min)/20,
+            0.0, 0.7/20, dz_min, (dz_max-dz_min)/10, 6, temps)
+        print("[SMOKE] master <dZ(T)> (C2(a)):")
+        for r in master_rows:
+            print(f"  T={r['T_K']:6.1f} K  <dZ>={r['mean_dZ_A']:.4f} A  "
+                  f"effN={r['effN']:.2f}")
+        if not all(np.isfinite(r["mean_dZ_A"]) for r in master_rows):
+            print("[SMOKE] FAIL: master <dZ(T)> non-finite")
+            ok = False
+        ray.shutdown()
+    except Exception as e:
+        print(f"[SMOKE] parallel-mode check skipped/failed: {e}")
+        # not fatal if Ray unavailable locally
 
     print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1

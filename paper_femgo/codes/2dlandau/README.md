@@ -82,6 +82,7 @@ pjsub j_2dlandau.sh
 | `--temperatures` | `100,200,300,500,1000` | Reweighting temperatures (K). |
 | `--output` | `./output` | Output dir. |
 | `--rng` | `42` | Seed. |
+| `--n-walkers` | `1` | Number of independent WL walkers. `1` = serial (unchanged). `N>1` runs Ray-parallel: each walker flattens its own `g(E,dZ)`, then all are collected into a master DOS (normalised-average of `ln_g` with per-cell spread as error). `--mc-steps` is **per walker** when `N>1`. |
 
 #### Checkpoint / resume (crash-resilience)
 
@@ -111,6 +112,36 @@ two runs writing to the same dir race `checkpoint.json`/`ensemble.traj` and
 corrupt them. Use a separate `--output` per run (e.g. per job slot). A stale
 `checkpoint.json` is also what triggers resume, so to *start over* on the same
 dir, delete the checkpoint/traj (or use a fresh `--output`).
+
+#### Parallel mode (`--n-walkers N>1`)
+
+Runs **N independent Wang-Landau walkers** (Ray), each flattening its own
+`g(E,dZ)`, then collects all N into one master DOS. Design (spec 202610091935):
+
+- **One shared accessible map** — a single reference pass on the driver (fixed
+  seed) is broadcast to all walkers (the map is a property of generator + GPR,
+  not the RNG seed). Saves N−1 redundant passes.
+- **Master DOS** = offset-aligned average of the per-walker `ln_g` (C1: each
+  walker's `ln_g` is known only up to an additive constant; align via the overlap
+  region = cells accessible in ALL walkers), with per-cell spread (std over
+  visiting walkers) as the error map.
+- **Master `⟨dZ(T)⟩`** = average of per-walker reweighted curves (C2(a)) — each
+  walker's own ensemble reweighted with its own aligned `ln_g`, giving per-walker
+  error bars on the observable.
+- **Per-walker shards** `--output/shard{i}/` each hold their own
+  `checkpoint.json` + `ensemble.traj` (multi-run resume: only unfinished shards
+  re-run) and full per-walker diagnostics.
+- `--mc-steps` is **per walker** when `N>1` (total = `N × mc_steps`); for `N=1`
+  it stays the absolute total target (unchanged).
+- Ray specifics: `@ray.remote(num_cpus=0)`, sized to the real node
+  (`ray.cluster_resources()`, not the PJM header); wall-time benefit saturates at
+  ~#cores.
+
+```bash
+# 4 independent walkers, 100k steps each (400k total bin visits)
+$PY main.py --dataset ../data/femgo --n-walkers 4 --mc-steps 100000 \
+    --relax-steps 300 --reference-steps 5000 --output ./output_par --rng 42
+```
 
 ## 4. Algorithm (2D generalisation of d_landauPlus)
 

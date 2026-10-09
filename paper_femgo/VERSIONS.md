@@ -24,13 +24,14 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/2dlandau/landau_2d/gpr_training.py` | 1.0.0 | GPR surrogate training for 2dlandau |
 | `codes/2dlandau/landau_2d/thermodynamics.py` | 1.1.0 | + `effN` effective-sample-size; removed `dF_flat_island` (no flat/island label) |
 | `codes/2dlandau/landau_2d/utils.py` | 1.0.0 | utility functions (2dlandau) |
-| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.5.0 | `fe_*`→`mobile_*` rename; removed `flat_island_spread_aa` + `label()` + ΔF; (prev: configurable `fmax` stall-drop, spec 202610012247) |
-| `codes/2dlandau/landau_2d/__init__.py` | 1.0.0 | package init |
-| `codes/2dlandau/main.py` | 1.5.0 | + `--mobile-symbols`/`--sample-ordering`; `--contact-gap` auto (global-min); removed `--flat-island-spread`; rel-E print + effN gate (spec 202610091605) |
+| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.6.0 | + `set_accessible` hook (skip reference pass, parallel mode M1); (prev: `fe_*`→`mobile_*` rename, spec 202610091605) |
+| `codes/2dlandau/landau_2d/parallel_wl_2d.py` | 1.0.0 | NEW: N independent WL walkers → master DOS (Ray); shared accessible map, C1 offset-align + avg, C2(a) per-walker reweight (spec 202610091935) |
+| `codes/2dlandau/landau_2d/__init__.py` | 1.0.0 | package init (+ parallel exports) |
+| `codes/2dlandau/main.py` | 1.6.0 | + `--n-walkers` (Ray-parallel independent walkers → master DOS); `_run_parallel` + `_sampler_kwargs` (spec 202610091935) |
 | `codes/2dlandau/make_examples.py` | 1.1.1 | `fe_*`→`mobile_*` rename (spec 202610091605) |
 | `codes/2dlandau/map_accessible.py` | 1.1.1 | `fe_*`→`mobile_*` rename (spec 202610091605) |
 | `codes/2dlandau/real_gpr_check.py` | 1.0.1 | `fe_*`→`mobile_*` rename (spec 202610091605) |
-| `codes/2dlandau/smoke_test_2dlandau.py` | 1.4.0 | + two-species Fe/Co + 3-species B motif; `sample_ordering` assertion; effN check (spec 202610091605) |
+| `codes/2dlandau/smoke_test_2dlandau.py` | 1.5.0 | + parallel-mode case (N=2, shared map, C1/C2(a)/G1 checks) (spec 202610091935) |
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |
 | `codes/draw_wet_landscape.py` | 1.4.0 | Fig_wetLandscape two-panel PCA+Δz landscape; flat/island mode dashed lines (white shadow) |

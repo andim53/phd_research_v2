@@ -35,7 +35,7 @@ volume) — see the spec Assumption 1. Ensemble is reweightable.
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 from typing import List, Optional
 
@@ -117,6 +117,7 @@ class WangLandau2DSampler:
         self.switched_to_1_over_t = False
         self.step_at_switch = 0
         self.step = 0
+        self._has_accessible = False
 
         # Stall counters (spec 202610012247): n_stalled_trials counts each
         # individual stalled attempt; n_proposals_dropped counts proposals
@@ -198,8 +199,8 @@ class WangLandau2DSampler:
         cell[2, 2] = (z_ceil - z_floor) + 1e-6
         corner = np.array([0.0, 0.0, z_floor])
         box = BoxConstraint(confinement_cell=cell, confinement_corner=corner,
-                            indices=self.gen.mobile_indices,
-                            pbc=[True, True, False])
+                             indices=self.gen.mobile_indices,
+                             pbc=[True, True, False])
         return box
 
     def _relax(self, atoms: Atoms, dZ_target: float):
@@ -335,9 +336,26 @@ class WangLandau2DSampler:
                   f"({dropped}/{self.reference_steps} proposals dropped); "
                   f"the accessible map may be very sparse (spec m1).")
 
+    def set_accessible(self, accessible_map):
+        """Inject a precomputed accessible map (parallel mode, spec M1).
+
+        Sets ``self.accessible`` and marks the map as present so ``initialize()``
+        skips its own ``_reference_pass()`` (the map is a property of generator +
+        GPR, not the RNG seed, so one shared map is valid across walkers). The
+        serial path (never calling this) is unchanged.
+        """
+        self.accessible = np.asarray(accessible_map, dtype=bool).reshape(
+            (self.n_e_bins, self.n_dz_bins))
+        self._has_accessible = True
+
     def initialize(self):
-        """Set ``cur`` to the first accepted structure's bin."""
-        self._reference_pass()
+        """Set ``cur`` to the first accepted structure's bin.
+
+        Runs the reference pass only if no accessible map was injected via
+        ``set_accessible`` (parallel mode skips it — the map is shared).
+        """
+        if not self._has_accessible:
+            self._reference_pass()
         # walker starts at the first proposal that lands in an accessible cell
         t0 = time.perf_counter()
         for k in range(100):

@@ -28,7 +28,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 import argparse
 import json
@@ -50,6 +50,8 @@ from landau_2d.gpr_training import load_all_seeds, build_gpr, validate_gpr
 from landau_2d.generator import DeltaZGenerator
 from landau_2d.wang_landau_2d import WangLandau2DSampler
 from landau_2d.thermodynamics import reweight_2d, E_min_curve
+from landau_2d.parallel_wl_2d import (
+    build_shared_accessible, run_parallel_walkers_2d, reweight_per_walker)
 
 DATA_DIR = os.path.join(_HERE, "..", "data", "femgo")
 CHECKPOINT_NAME = "checkpoint.json"
@@ -306,6 +308,140 @@ def _plot_dz_distribution(rows, out, suffix=""):
 
 # -- Driver -------------------------------------------------------------------
 
+def _run_parallel(args, gpr, gen, sampler, dz_min, dz_max):
+    """Parallel mode (--n-walkers N>1): N independent walkers -> master DOS.
+
+    Builds one shared accessible map (M3, fixed seed), spawns N workers, collects
+    their flattened histograms, offset-aligns + averages (C1), reweights per
+    walker (C2(a)), and emits master + per-walker outputs.
+    """
+    import ray
+    print("=" * 70)
+    print(f"PARALLEL MODE: {args.n_walkers} independent WL walkers (Ray)")
+    print(f"  --mc-steps {args.mc_steps} is PER WALKER; total = "
+          f"{args.n_walkers * args.mc_steps} bin visits")
+
+    # M3: one shared reference pass (fixed seed) -> broadcast accessible map.
+    print("\nBuilding shared accessible map (single reference pass)...")
+    accessible = build_shared_accessible(
+        gpr, gen, _sampler_kwargs(args, sampler), args.reference_steps,
+        rng_seed=args.rng)
+    print(f"  shared accessible cells: {int(accessible.sum())} / "
+          f"{accessible.size}")
+
+    out = Path(args.output)
+    out.mkdir(parents=True, exist_ok=True)
+
+    res = run_parallel_walkers_2d(
+        gpr, gen, _sampler_kwargs(args, sampler), accessible,
+        n_walkers=args.n_walkers, rng_base=args.rng,
+        mc_steps=args.mc_steps, checkpoint_interval=args.checkpoint_interval,
+        output_dir=str(out))
+
+    # --- master + per-walker outputs --------------------------------------
+    e_centers = sampler.e_centers_rel
+    dz_centers = sampler.dz_centers
+    temps = [float(t) for t in args.temperatures.split(",") if t.strip()]
+
+    # C2(a): per-walker reweight, master = mean of curves.
+    master_rows, per_walker_rows = reweight_per_walker(
+        res["per_walker_states"], res["aligned_ln_g"],
+        e_centers, dz_centers, sampler.e_min, sampler.e_width,
+        sampler.dz_min, sampler.dz_width, sampler.n_atoms, temps)
+
+    # master g_of_E_dZ.json (averaged ln_g + spread + n_visited)
+    payload = {
+        "e_min": sampler.e_min, "e_max": sampler.e_max,
+        "n_e_bins": sampler.n_e_bins,
+        "e_edges": (sampler.e_min + sampler.e_width *
+                    np.arange(sampler.n_e_bins + 1)).tolist(),
+        "dz_min": sampler.dz_min, "dz_max": sampler.dz_max,
+        "n_dz_bins": sampler.n_dz_bins,
+        "dz_edges": (sampler.dz_min + sampler.dz_width *
+                     np.arange(sampler.n_dz_bins + 1)).tolist(),
+        "ln_g": np.nan_to_num(res["master_ln_g"]).tolist(),
+        "spread": np.nan_to_num(res["spread"]).tolist(),
+        "n_visited": res["n_visited"].tolist(),
+        "n_walkers": args.n_walkers,
+        "rng": args.rng,
+        "temperatures_K": temps,
+        "n_atoms": sampler.n_atoms,
+        "fmax": float(sampler.fmax),
+    }
+    _atomic_write_json(out / "g_of_E_dZ.json", payload)
+
+    # master delta_z_distribution.csv (C2(a) averaged curves)
+    with open(out / "delta_z_distribution.csv", "w") as f:
+        f.write("T_K,mean_dZ_A,std_dZ_A,effN\n")
+        for r in master_rows:
+            f.write(f"{r['T_K']:.1f},{r['mean_dZ_A']:.6f},"
+                    f"{r['std_dZ_A']:.6f},{r['effN']:.3f}\n")
+    print(f"  Wrote delta_z_distribution.csv (master, N={args.n_walkers})")
+
+    # per-walker diagnostics in each shard dir
+    for i, (state, g) in enumerate(zip(res["per_walker_states"],
+                                       res["per_walker_g"])):
+        shard = out / f"shard{i}"
+        shard.mkdir(parents=True, exist_ok=True)
+        ln_g, H, acc = g[2], g[3], g[4]
+        sp = {
+            "e_min": sampler.e_min, "e_max": sampler.e_max,
+            "n_e_bins": sampler.n_e_bins,
+            "dz_min": sampler.dz_min, "dz_max": sampler.dz_max,
+            "n_dz_bins": sampler.n_dz_bins,
+            "ln_g": ln_g.tolist(), "H": H.tolist(),
+            "accessible": acc.astype(int).tolist(),
+            "step": state["step"], "stage": state["stage"],
+            "switched_to_1_over_t": state["switched_to_1_over_t"],
+            "rng": args.rng + i,
+        }
+        _atomic_write_json(shard / "g_of_E_dZ.json", sp)
+        with open(shard / "delta_z_distribution.csv", "w") as f:
+            f.write("T_K,mean_dZ_A,std_dZ_A,effN\n")
+            for r in per_walker_rows[i]:
+                f.write(f"{r['T_K']:.1f},{r['mean_dZ_A']:.6f},"
+                        f"{r['std_dZ_A']:.6f},{r['effN']:.3f}\n")
+        print(f"  shard{i}: step {state['step']}, stage {state['stage']}, "
+              f"1/t={state['switched_to_1_over_t']}")
+
+    # m3: flag + warn on un-flattened walkers
+    n_flat = sum(1 for s in res["per_walker_states"]
+                 if s["switched_to_1_over_t"])
+    print(f"\n  {n_flat}/{args.n_walkers} walkers reached the 1/t switch")
+    if n_flat < args.n_walkers:
+        print("  [WARN] some walkers did not flatten (m3); their DOS is "
+              "included but flagged.")
+
+    print("\nIsland-height distribution <dZ(T)> (master, C2(a)):")
+    print("  T(K)     <dZ>(A)    std(A)   effN")
+    for r in master_rows:
+        print(f"  {r['T_K']:6.1f}  {r['mean_dZ_A']:9.4f}  "
+              f"{r['std_dZ_A']:7.4f}  {r['effN']:7.2f}")
+    print(f"\nDone. Master + per-walker results in {out}")
+
+
+def _sampler_kwargs(args, sampler):
+    """Reconstruct the sampler constructor kwargs from args (for workers)."""
+    return {
+        "E_ref": sampler.E_ref,
+        "n_atoms": sampler.n_atoms,
+        "n_e_bins": args.n_e_bins,
+        "e_min": args.e_min,
+        "e_max": args.e_max,
+        "e_reject": args.e_reject,
+        "n_dz_bins": args.n_dz_bins,
+        "dz_min": sampler.dz_min,
+        "dz_max": sampler.dz_max,
+        "relax_steps": args.relax_steps,
+        "fmax": args.fmax,
+        "flatness_criterion": args.flatness_criterion,
+        "check_interval": args.check_interval,
+        "n_stages_standard": args.n_stages_standard,
+        "reference_steps": args.reference_steps,
+        "progress_interval": args.progress_interval,
+    }
+
+
 def main():
     p = argparse.ArgumentParser(
         description="2D Wang-Landau g(E,dZ) sampling on a GPR surrogate "
@@ -370,6 +506,12 @@ def main():
     p.add_argument("--output", default=os.path.join(_HERE, "output"),
                    help="Output directory")
     p.add_argument("--rng", type=int, default=42)
+    p.add_argument("--n-walkers", type=int, default=1,
+                   help="Number of independent WL walkers (default 1 = serial). "
+                        "N>1 runs Ray-parallel: each walker flattens its own "
+                        "g(E,dZ), then all are collected into a master DOS "
+                        "(normalised-average of ln_g with per-cell spread as "
+                        "error). --mc-steps is per walker when N>1.")
     p.add_argument("--use-ray", action="store_true")
     args = p.parse_args()
 
@@ -473,6 +615,11 @@ def main():
         progress_interval=args.progress_interval,
         rng=np.random.default_rng(args.rng + 1),
     )
+
+    # --- 3b. Parallel mode (--n-walkers N>1) --------------------------------
+    if args.n_walkers > 1:
+        _run_parallel(args, gpr, gen, sampler, dz_min, dz_max)
+        return
 
     # --- 4. Resume or fresh run ---------------------------------------------
     out = Path(args.output)

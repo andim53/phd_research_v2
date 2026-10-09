@@ -259,3 +259,46 @@ NOT touch the paper's `_analysist` flat/island *mode* terminology.
   stall-drop 39 stalled/4 dropped unchanged.
 - **fecomgo GPR trains** (1500-dim Fingerprint, 742 structs, ~58 s, no error); rel-E p99 ≈ 0.68.
 - **`fecobmgo/seed_8` → `stop_8`** (owner rename) — glob now skips the truncated seed (fold G3).
+
+## 2026-10-09 — Ray-parallel independent walkers → master DOS (spec 202610091935, v7 approved)
+
+Added a Ray-parallel mode to `2dlandau`: **N independent Wang-Landau walkers**, each
+flattening its own `g(E,dZ)`, collected into one master DOS. Built from the
+clarify-me + inspect-me spec (`$SPEC_PATH/202610091935-2dlandau-parallel-wl-ray.md`,
+v7), with every finding folded (C1, C2(a), M1, M2, M3, m1, m2, m3, G1, G2, G3, G4).
+
+### Changes
+- **wang_landau_2d.py 1.5.0→1.6.0**: + `set_accessible(map)` hook (M1) — sets
+  `self.accessible` + `_has_accessible`; `initialize()` skips `_reference_pass()`
+  when a map is present. Non-breaking (serial path unchanged).
+- **parallel_wl_2d.py 1.0.0 (NEW)**: `WangLandau2DWorker` (`@ray.remote(num_cpus=0)`),
+  `run_parallel_walkers_2d` driver, `build_shared_accessible` (M3, fixed seed),
+  `align_and_average` (C1 offset-align + m2 spread), `reweight_per_walker` (C2(a)).
+  Per-walker shard checkpoint/resume (M2), G2 resource sizing, G4 fail-fast.
+- **main.py 1.5.0→1.6.0**: + `--n-walkers N` (default 1 = serial); `_run_parallel`
+  + `_sampler_kwargs`; master `g_of_E_dZ.json` (avg ln_g + spread + n_visited),
+  master `delta_z_distribution.csv` (C2(a) averaged curves), per-walker shard
+  diagnostics; m3 flag/warn on un-flattened walkers.
+- **smoke_test_2dlandau.py 1.4.0→1.5.0**: + parallel-mode case (N=2, shared map,
+  C1 master=mean-of-aligned, C2(a) master <dZ(T)>, G1 non-empty aggregate).
+
+### Verification (real execution, agox_v2)
+- `py_compile` clean on all modules.
+- **smoke_test_2dlandau.py → PASS**: parallel mode runs 2 walkers × 2000 steps,
+  shared accessible map (29 cells), non-empty aggregate (sum H=700 current-stage,
+  walker steps [2000,2000]), master <dZ(T)> finite + T-dependent (4.50→4.46 Å),
+  C1 master = mean of aligned per-walker ln_g.
+- **main.py --n-walkers 2 end-to-end** (real GPR 1297 structs, tiny steps): shard
+  dirs created, workers spawned; full completion confirmed via background run.
+
+### Fixes during the build (AGENTS rule 4)
+1. **`build_shared_accessible` double `reference_steps`.** Passed `reference_steps`
+   both explicitly and via `**sampler_kwargs` → `TypeError: multiple values`. Fix:
+   copy kwargs, override `reference_steps` in the dict, pass once.
+2. **G1(b) `sum H == N×mc_steps` check was wrong.** H resets on every flatness
+   stage, so `sum H` is the current-stage H, not total visits. The real
+   empty-aggregate symptom is H all-zero. Fix: check `sum H > 0` + walker
+   `step == mc_steps` instead.
+
+Version bumps: wang_landau_2d.py 1.5.0→1.6.0; main.py 1.5.0→1.6.0;
+smoke_test_2dlandau.py 1.4.0→1.5.0; parallel_wl_2d.py 1.0.0 (new).
