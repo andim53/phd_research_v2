@@ -6,8 +6,8 @@ of the Fe/MgO flat<->island transition on an AGOX GPR surrogate. No DFT.
 Loads every seed database in data/femgo, trains a single GPR surrogate, then
 runs WangLandau2DSampler (generator-based jump proposal -> dZ-ceiling GPR relax
 -> 2D WL accept) to compute the joint inherent-structure g_IS(E, dZ), and from
-it the island-height distribution <dZ(T)> and flat<->island free-energy
-difference at a set of temperatures.
+it the island-height distribution <dZ(T)> (the primary observable; the
+flat<->island transition is read directly off this shift).
 
 Crash-resilient (spec 202609271240, v8): every ``--checkpoint-interval`` MC
 steps it writes ``--output/checkpoint.json`` (full WL state + config header) and
@@ -28,7 +28,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import argparse
 import json
@@ -121,6 +121,7 @@ def _config_header(sampler, args, dz_min, dz_max, dataset_dir) -> dict:
         "n_atoms": int(sampler.n_atoms),
         "E_ref": float(sampler.E_ref),
         "contact_gap": float(args.contact_gap),
+        "mobile_symbols": list(args.mobile_symbols),
         "fmax": float(sampler.fmax),
         "dataset": str(Path(dataset_dir).resolve()),
     }
@@ -184,7 +185,7 @@ def _emit_outputs(sampler, args, out: Path, tag=None):
     rows = reweight_2d(
         sampler.ensemble_rows, ln_g, e_centers, dz_centers,
         sampler.e_min, sampler.e_width, sampler.dz_min, sampler.dz_width,
-        sampler.n_atoms, temps, flat_island_spread_aa=args.flat_island_spread)
+        sampler.n_atoms, temps)
 
     # 1) geometries FIRST, then checkpoint.json = authoritative commit (M1)
     traj_path = out / TRAJ_NAME
@@ -236,16 +237,16 @@ def _emit_outputs(sampler, args, out: Path, tag=None):
     print(f"  Wrote g_of_E_dZ{suffix}.csv")
 
     with open(out / f"delta_z_distribution{suffix}.csv", "w") as f:
-        f.write("T_K,mean_dZ_A,std_dZ_A,dF_flat_island_eV\n")
+        f.write("T_K,mean_dZ_A,std_dZ_A,effN\n")
         for r in rows:
             f.write(f"{r['T_K']:.1f},{r['mean_dZ_A']:.6f},"
-                    f"{r['std_dZ_A']:.6f},{r['dF_flat_island_eV']:.6f}\n")
+                    f"{r['std_dZ_A']:.6f},{r['effN']:.3f}\n")
     print(f"  Wrote delta_z_distribution{suffix}.csv")
 
     ens = []
-    for (E_total, E_rel, dz, i, j, lab) in sampler.ensemble_rows:
+    for (E_total, E_rel, dz, i, j) in sampler.ensemble_rows:
         ens.append({"E_total_eV": E_total, "E_rel_eV_per_atom": E_rel,
-                    "dZ_A": dz, "E_bin": i, "dZ_bin": j, "label": lab})
+                    "dZ_A": dz, "E_bin": i, "dZ_bin": j})
     _atomic_write_json(out / f"ensemble{suffix}.json", ens)
     print(f"  Wrote ensemble{suffix}.json ({len(ens)} accepted structures)")
 
@@ -253,10 +254,15 @@ def _emit_outputs(sampler, args, out: Path, tag=None):
     _plot_dz_distribution(rows, out, suffix)
 
     print("Island-height distribution <dZ(T)>:")
-    print("  T(K)     <dZ>(A)    std(A)   dF_flat-island(eV)")
+    print("  T(K)     <dZ>(A)    std(A)   effN")
     for r in rows:
+        flag = "  <-- DEGENERATE" if r["effN"] < 2.0 else ""
         print(f"  {r['T_K']:6.1f}  {r['mean_dZ_A']:9.4f}  "
-              f"{r['std_dZ_A']:7.4f}  {r['dF_flat_island_eV']:9.4f}")
+              f"{r['std_dZ_A']:7.4f}  {r['effN']:7.2f}{flag}")
+    if any(r["effN"] < 2.0 for r in rows):
+        print("  [WARN] effN < 2 at some T: the reweighted ensemble is "
+              "near-degenerate (one/few structures carry ~all weight) — not a "
+              "physical Boltzmann spread (fold G1).")
     print(f"  stall stats: {sampler.n_stalled_trials} stalled trials, "
           f"{sampler.n_proposals_dropped} proposals dropped "
           f"(fmax {sampler.fmax})")
@@ -334,12 +340,18 @@ def main():
                         "structure only counts as an inherent structure if its "
                         "final max-force <= fmax; stalled quenches are "
                         "re-generated (up to 4 attempts) then dropped.")
-    p.add_argument("--flat-island-spread", type=float, default=1.0,
-                   help="Fe z-spread threshold (A) for flat vs island labelling, "
-                        "default 1.0")
-    p.add_argument("--contact-gap", type=float, default=2.08,
-                   help="Adsorption height of bottom Fe above MgO surface (A), "
-                        "default 2.08")
+    p.add_argument("--mobile-symbols", default="Fe",
+                   help="Comma-separated mobile film species (default 'Fe'); "
+                        "any species NOT listed is treated as the fixed "
+                        "substrate. e.g. 'Fe,Co' (fecomgo), 'Fe,Co,B' (fecobmgo)")
+    p.add_argument("--sample-ordering", action="store_true",
+                   help="Uniformly re-shuffle the mobile species labels across "
+                        "the fixed in-plane sites each proposal (marginalise "
+                        "over orderings)")
+    p.add_argument("--contact-gap", type=float, default=None,
+                   help="Adsorption height of the bottom mobile atom above the "
+                        "substrate (A). Default: auto-derived from the "
+                        "global-min structure's minimum mobile-atom height.")
     p.add_argument("--flatness-criterion", type=float, default=0.80)
     p.add_argument("--check-interval", type=int, default=5000)
     p.add_argument("--n-stages-standard", type=int, default=14)
@@ -369,28 +381,74 @@ def main():
     print(f"  Composition: {structures[0].get_chemical_formula()} "
           f"({len(structures[0])} atoms)")
     print(f"  E range: {energies.min():.4f} .. {energies.max():.4f} eV")
+    n_a = len(structures[0])
+    rel_all = (energies - energies.min()) / n_a
+    pct = np.percentile(rel_all, [50, 90, 99])
+    print(f"  rel-E (eV/at): p50 {pct[0]:.3f}  p90 {pct[1]:.3f}  "
+          f"p99 {pct[2]:.3f}  max {rel_all.max():.3f}")
+    if pct[2] > args.e_max:
+        print(f"  [WARN] p99 rel-E ({pct[2]:.3f}) > --e-max ({args.e_max}); the "
+              f"physical basin may be truncated — raise --e-max or rely on "
+              f"e_reject (fold G2).")
 
     # --- 2. Train the GPR surrogate -----------------------------------------
     print("\nTraining GPR on combined dataset...")
     gpr = build_gpr(structures, use_ray=args.use_ray)
     validate_gpr(gpr, structures, energies)
 
-    # --- 3. Build the generator + sampler -----------------------------------
+    # --- 3. Resolve mobile species + dZ anchors, then build the sampler -----
+    mobile_symbols = tuple(s.strip() for s in args.mobile_symbols.split(",")
+                           if s.strip())
+    if not mobile_symbols:
+        raise SystemExit("[ABORT] --mobile-symbols parsed to an empty set.")
+    args.mobile_symbols = mobile_symbols
+
+    i_min = int(np.argmin(energies))
+    gm = structures[i_min]
+    gsyms = np.asarray(gm.get_chemical_symbols())
+    gmob = np.isin(gsyms, list(mobile_symbols))
+    gm_sub_top = gm.positions[~gmob, 2].max()
+    if args.contact_gap is not None:
+        contact_gap = args.contact_gap
+    else:
+        # auto-derive the contact gap from the global-min structure (fold M3):
+        # its minimum mobile-atom height above the substrate.
+        contact_gap = float(gm.positions[gmob, 2].min() - gm_sub_top)
+    args.contact_gap = contact_gap
+    print(f"  mobile symbols: {mobile_symbols}; contact gap = {contact_gap:.4f} A "
+          f"(from global-min)")
+
+    # per-species trained z-support (fold m1 / Assumption 7): the z range each
+    # mobile species actually occupies in the loaded pool, relative to the
+    # substrate top — a manifold-coverage guard that no species is generated
+    # outside where the GPR was trained.
+    print("  per-species trained z-support (rel. substrate top, A):")
+    for sym in mobile_symbols:
+        lo = float("inf")
+        hi = float("-inf")
+        for a in structures:
+            sm = a.get_chemical_symbols()
+            zs = a.positions[[i for i, x in enumerate(sm) if x == sym], 2]
+            if len(zs):
+                lo = min(lo, float(zs.min()))
+                hi = max(hi, float(zs.max()))
+        print(f"    {sym}: [{lo - gm_sub_top:.3f}, {hi - gm_sub_top:.3f}]")
+
     print("\nBuilding DeltaZGenerator + WangLandau2DSampler...")
-    gen = DeltaZGenerator(structures[0], z_contact=None,
-                          contact_gap=args.contact_gap,
+    gen = DeltaZGenerator(structures[0], mobile_symbols=mobile_symbols,
+                          z_contact=None, contact_gap=contact_gap,
+                          sample_ordering=args.sample_ordering,
                           rng=np.random.default_rng(args.rng))
     print(f"  z_contact = {gen.z_contact:.4f} A (substrate top "
-          f"{gen.substrate_top_z:.4f}, gap {args.contact_gap})")
+          f"{gen.substrate_top_z:.4f}, gap {contact_gap:.4f})")
 
-    # dZ range in film height: flat monolayer ~ contact gap, top = the natural
-    # island height (the global-min structure's film height).
-    dz_min = args.dz_min if args.dz_min is not None else args.contact_gap
+    # dZ range in film height: contact gap (flat) -> natural island height
+    # (the global-min structure's film height).
+    dz_min = args.dz_min if args.dz_min is not None else contact_gap
     if args.dz_max is not None:
         dz_max = args.dz_max
     else:
-        i_min = int(np.argmin(energies))
-        dz_max = gen.fe_film_height(structures[i_min])
+        dz_max = gen.film_height(structures[i_min])
     print(f"  dZ range (film height): [{dz_min:.3f}, {dz_max:.3f}] A "
           f"(natural island height {dz_max:.3f})")
 
@@ -408,7 +466,6 @@ def main():
         dz_max=dz_max,
         relax_steps=args.relax_steps,
         fmax=args.fmax,
-        flat_island_spread_aa=args.flat_island_spread,
         flatness_criterion=args.flatness_criterion,
         check_interval=args.check_interval,
         n_stages_standard=args.n_stages_standard,

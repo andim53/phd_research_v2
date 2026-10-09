@@ -21,7 +21,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import argparse
 import os
@@ -62,7 +62,7 @@ def _relax(gpr, gen, atoms, dz_target, relax_steps, fmax):
     cell[2, 2] = (z_ceil - z_floor) + 1e-6
     box = BoxConstraint(confinement_cell=cell,
                         confinement_corner=np.array([0.0, 0.0, z_floor]),
-                        indices=gen.fe_indices, pbc=[True, True, False])
+                        indices=gen.mobile_indices, pbc=[True, True, False])
     fix = FixAtoms(indices=list(map(int, gen.substrate_indices)))
     r = atoms.copy()
     r.set_constraint([box, fix])
@@ -101,7 +101,7 @@ def main():
 
     dz_min = gen.z_contact - gen.substrate_top_z      # contact gap (~2.08)
     i_min = int(np.argmin(energies))
-    dz_max = gen.fe_film_height(structures[i_min])     # natural island (~5.73)
+    dz_max = gen.film_height(structures[i_min])     # natural island (~5.73)
     print(f"dZ range (film height): [{dz_min:.3f}, {dz_max:.3f}] A")
 
     targets = np.linspace(dz_min, dz_max, args.n)
@@ -114,23 +114,23 @@ def main():
 
     for h in targets:
         trial = gen(h)
-        h_gen = gen.fe_film_height(trial)
+        h_gen = gen.film_height(trial)
         ase_write(os.path.join(_OUTDIR, f"gen_dz_{h:.2f}.xsf"),
                   _strip_constraints(trial))
         print(f"  gen h={h:.3f} -> film height {h_gen:.3f} A "
-              f"(spread {gen.fe_z_spread(trial):.3f}), "
+              f"(spread {gen.z_spread(trial):.3f}), "
               f"E = {gpr.predict_energy(trial):.3f} eV")
 
         relaxed, es = _relax(gpr, gen, trial, h, args.relax_steps, args.fmax)
         traj[h] = es
-        h_rel = gen.fe_film_height(relaxed)
+        h_rel = gen.film_height(relaxed)
         E_rel = gpr.predict_energy(relaxed)
         rel_eV = (E_rel - E_ref) / n_atoms
-        lab = "flat" if gen.fe_z_spread(relaxed) < 1.0 else "island"
+        lab = "flat" if gen.z_spread(relaxed) < 1.0 else "island"
         ase_write(os.path.join(_OUTDIR, f"relax_dz_{h:.2f}.xsf"),
                   _strip_constraints(relaxed))
         print(f"  relax h={h:.3f} -> film height {h_rel:.3f} A "
-              f"(spread {gen.fe_z_spread(relaxed):.3f}), "
+              f"(spread {gen.z_spread(relaxed):.3f}), "
               f"E = {E_rel:.3f} eV (rel {rel_eV:.4f}), {lab} "
               f"after {len(es)-1} steps")
         rows.append((h, h_gen, h_rel, E_rel, rel_eV, lab))

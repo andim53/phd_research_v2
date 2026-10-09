@@ -218,3 +218,44 @@ Verification (real execution, agox_v2, real GPR 1297 structs):
 Version bumps: wang_landau_2d.py 1.3.0→1.4.0; main.py 1.3.0→1.4.0;
 make_examples.py 1.0.0→1.1.0; map_accessible.py 1.0.0→1.1.0;
 smoke_test_2dlandau.py 1.2.0→1.3.0.
+
+## 2026-10-09 — multispecies (Fe-Co / Fe-Co-B) extension (spec 202610091605, v8 approved)
+
+Extended the sampler from Fe/MgO-only to an arbitrary **mobile-species set**, so the
+same `main.py → DeltaZGenerator → WangLandau2DSampler → reweight_2d` pipeline runs on
+`data/fecomgo` (Fe₁₈Co₇) and `data/fecobmgo` (B₃Fe₁₈Co₇). Built from the clarify-me +
+inspect-me spec (`$SPEC_PATH/202610091605-2dlandau-multispecies-feco-fecob.md`), with every
+inspect finding folded (C1, M1-retracted, M2, M3, m1, m2, m3-retired, G1, G2; G3 owner-renamed).
+
+### Changes
+- **generator.py 1.2.1→1.3.0**: `fe_symbols` → `mobile_symbols` list (substrate = not mobile);
+  `fe_indices`/`fe_film_height`/`fe_z_spread` → `mobile_indices`/`film_height`/`z_spread`;
+  + `sample_ordering` (uniform composition-preserving shuffle of mobile labels each proposal).
+- **wang_landau_2d.py 1.4.0→1.5.0**: `fe_*`→`mobile_*`; **removed** `flat_island_spread_aa`,
+  `label()`, and `ΔF_flat_island` (no more flat/island label — see below). `ensemble_rows`
+  is now a 5-tuple `(E_total, E_rel, dZ, i, j)`.
+- **thermodynamics.py 1.0.0→1.1.0**: `reweight_2d` drops `dF_flat_island`, adds `effN =
+  1/Σw_norm²` (degeneracy gate, fold G1).
+- **main.py 1.4.0→1.5.0**: + `--mobile-symbols` (default `Fe`), `--sample-ordering`;
+  `--contact-gap` default `None` → auto-derived from the **global-min** structure's
+  min mobile-z (fold M3); removed `--flat-island-spread`; emits rel-E p50/p90/p99/max (fold G2)
+  and an effN<2 degenerate warning; config header gains `mobile_symbols` + resolved `contact_gap`.
+- **Siblings** (Fix B rename): `make_examples.py` 1.1.1, `map_accessible.py` 1.1.1,
+  `real_gpr_check.py` 1.0.1, `probe_inbetween_fmax.py` 1.0.0 (new) — `fe_*`→`mobile_*`.
+- **smoke_test_2dlandau.py 1.3.0→1.4.0**: two-species (Fe+Co) motif + 3-species (Fe/Co/B)
+  path; `sample_ordering` arrangement assertion; effN>1 check (replaces the dF check).
+
+### Behavior change (owner decision, spec v7)
+The flat/island **label** and `ΔF_flat_island(T)` are removed from the 2D sampler for **all**
+datasets (Fe/MgO included). The primary observable is now `⟨ΔZ(T)⟩` + the `g(ΔZ)` ΔZ-marginal;
+the transition is read off the weighted ΔZ-distribution shift. This is a **breaking change** to
+the Fe/MgO 2dlandau `delta_z_distribution.csv` (loses the `dF_flat_island_eV` column) but does
+NOT touch the paper's `_analysist` flat/island *mode* terminology.
+
+### Verification (real execution, agox_v2)
+- `py_compile` clean on all modules.
+- **smoke_test_2dlandau.py → PASS** (1.4.0): Fe/Co arrangement varies (2 orderings), 3-species
+  B path yields 6 orderings, `⟨ΔZ(T)⟩` T-dependent (4.50→2.62 Å), effN 31/51/38/35/3 (all >1),
+  stall-drop 39 stalled/4 dropped unchanged.
+- **fecomgo GPR trains** (1500-dim Fingerprint, 742 structs, ~58 s, no error); rel-E p99 ≈ 0.68.
+- **`fecobmgo/seed_8` → `stop_8`** (owner rename) — glob now skips the truncated seed (fold G3).

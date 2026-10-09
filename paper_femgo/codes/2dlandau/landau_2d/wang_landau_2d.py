@@ -35,7 +35,7 @@ volume) — see the spec Assumption 1. Ensemble is reweightable.
 
 from __future__ import annotations
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 from typing import List, Optional
 
@@ -64,7 +64,6 @@ class WangLandau2DSampler:
         dz_max: float = 5.73,
         relax_steps: int = 300,
         fmax: float = 0.1,
-        flat_island_spread_aa: float = 1.0,
         flatness_criterion: float = 0.80,
         check_interval: int = 5000,
         n_stages_standard: int = 14,
@@ -103,8 +102,6 @@ class WangLandau2DSampler:
         print(f"[WL2D] extrapolation guard: reject rel E > {self.e_reject:.4f} "
               f"eV/atom")
 
-        self.flat_island_spread_aa = float(flat_island_spread_aa)
-
         # Wang-Landau state: 2D arrays [E bin, dZ bin].
         self.flatness_criterion = float(flatness_criterion)
         self.check_interval = int(check_interval)
@@ -132,7 +129,7 @@ class WangLandau2DSampler:
 
         # Ensemble of accepted (relaxed) structures.
         self.ensemble_structs: List[Atoms] = []
-        self.ensemble_rows = []   # (E_total, E_rel, dZ, i, j, label)
+        self.ensemble_rows = []   # (E_total, E_rel, dZ, i, j)
 
         print(f"[WL2D] E bins={self.n_e_bins} over [{e_min}, {e_max}] "
               f"(width {self.e_width:.4f})")
@@ -153,13 +150,9 @@ class WangLandau2DSampler:
         E = self.gpr.predict_energy(atoms)
         return (E - self.E_ref) / self.n_atoms
 
-    def fe_axis(self, atoms: Atoms) -> float:
-        """Film height max(z_Fe) - z_substrate_top — the dZ axis."""
-        return self.gen.fe_film_height(atoms)
-
-    def fe_z_spread(self, atoms: Atoms) -> float:
-        """Fe z-spread (max - min) — kept for flat/island labelling."""
-        return self.gen.fe_z_spread(atoms)
+    def film_height(self, atoms: Atoms) -> float:
+        """Film height max(z_mobile) - z_substrate_top — the dZ axis."""
+        return self.gen.film_height(atoms)
 
     def get_e_bin(self, rel: float) -> int:
         """0-indexed E bin; -1 if below floor. Above e_max caps to top bin."""
@@ -172,11 +165,6 @@ class WangLandau2DSampler:
         """0-indexed dZ bin; clamp into [0, n_dz_bins-1]."""
         b = int((dz - self.dz_min) / self.dz_width)
         return min(max(b, 0), self.n_dz_bins - 1)
-
-    def label(self, atoms: Atoms) -> str:
-        """Label by Fe z-spread (flat monolayer < threshold <= island)."""
-        return "flat" if self.fe_z_spread(atoms) < self.flat_island_spread_aa \
-            else "island"
 
     @staticmethod
     def _fmt_dur(seconds: float) -> str:
@@ -210,7 +198,7 @@ class WangLandau2DSampler:
         cell[2, 2] = (z_ceil - z_floor) + 1e-6
         corner = np.array([0.0, 0.0, z_floor])
         box = BoxConstraint(confinement_cell=cell, confinement_corner=corner,
-                            indices=self.gen.fe_indices,
+                            indices=self.gen.mobile_indices,
                             pbc=[True, True, False])
         return box
 
@@ -303,7 +291,7 @@ class WangLandau2DSampler:
             E = self.gpr.predict_energy(trial)
             rel = (E - self.E_ref) / self.n_atoms if np.isfinite(E) \
                 else float("nan")
-            dz = self.fe_axis(trial)
+            dz = self.film_height(trial)
             if not np.isfinite(rel) or abs(E) > 1e4:
                 return trial, -1, -1, float("nan"), dz
             e_bin = self.get_e_bin(rel)
@@ -358,8 +346,7 @@ class WangLandau2DSampler:
                 self.bin_current = (e_bin, dz_bin)
                 self._record(trial, rel, dz, e_bin, dz_bin)
                 print(f"[WL2D] init: rel E = {rel:.4f} eV/atom (E bin "
-                      f"{e_bin}), dZ = {dz:.3f} A (dZ bin {dz_bin}) "
-                      f"({self.label(trial)})")
+                      f"{e_bin}), dZ = {dz:.3f} A (dZ bin {dz_bin})")
                 print(f"  init walker selected after {k + 1} proposal(s) in "
                       f"{self._fmt_dur(time.perf_counter() - t0)}", flush=True)
                 return
@@ -370,7 +357,7 @@ class WangLandau2DSampler:
         self.ensemble_structs.append(atoms.copy())
         E = float(self.gpr.predict_energy(atoms))
         self.ensemble_rows.append(
-            (E, float(rel), float(dz), i, j, self.label(atoms)))
+            (E, float(rel), float(dz), i, j))
 
     # -- Checkpointing (spec 202609271240, v8) ------------------------------
 

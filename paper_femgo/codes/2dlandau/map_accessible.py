@@ -17,7 +17,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import argparse
 import os
@@ -60,7 +60,7 @@ def main():
     # dZ range = film height [flat ~ contact gap, natural island height]
     dz_min = gen.z_contact - gen.substrate_top_z      # = contact gap
     i_min = int(np.argmin(energies))
-    dz_max = gen.fe_film_height(structures[i_min])
+    dz_max = gen.film_height(structures[i_min])
     print(f"dZ range (film height): [{dz_min:.3f}, {dz_max:.3f}] A")
 
     e_width = args.e_max / args.n_e_bins
@@ -77,7 +77,7 @@ def main():
         cell[2, 2] = (z_ceil - z_floor) + 1e-6
         box = BoxConstraint(confinement_cell=cell,
                             confinement_corner=np.array([0.0, 0.0, z_floor]),
-                            indices=gen.fe_indices, pbc=[True, True, False])
+                            indices=gen.mobile_indices, pbc=[True, True, False])
         fix = FixAtoms(indices=list(map(int, gen.substrate_indices)))
         r = atoms.copy()
         r.set_constraint([box, fix])
@@ -99,7 +99,7 @@ def main():
         r = relax(trial, target)
         E = gpr.predict_energy(r)
         rel = (E - E_ref) / n_atoms
-        dz = gen.fe_film_height(r)
+        dz = gen.film_height(r)
         if np.isfinite(rel) and abs(E) < 1e4 and rel <= 5 * args.e_max:
             rel_E.append(rel)
             dZ.append(dz)

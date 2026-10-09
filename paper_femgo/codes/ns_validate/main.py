@@ -19,7 +19,7 @@ Run with the agox_v2 conda env:
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import argparse
 import json
@@ -60,11 +60,66 @@ def run_stage1(args, out: Path):
     E_ref = float(energies.min())
     n_atoms = len(structures[0])
 
-    # 2. Build the generator
-    gen = DeltaZGenerator(structures[0], z_contact=None,
-                          contact_gap=args.contact_gap,
+    # rel-E guard (fold M1): WARN when the dataset's p99 rel-E exceeds e_max, so
+    # the Fe/MgO-calibrated default doesn't silently truncate an alloy basin.
+    rel_all = (energies - E_ref) / n_atoms
+    pct = np.percentile(rel_all, [50, 90, 99])
+    print(f"  rel-E (eV/at): p50 {pct[0]:.3f}  p90 {pct[1]:.3f}  "
+          f"p99 {pct[2]:.3f}  max {rel_all.max():.3f}")
+    if pct[2] > args.e_max:
+        print(f"  [WARN] p99 rel-E ({pct[2]:.3f}) > --e-max ({args.e_max}); the "
+              f"physical basin may be truncated — raise --e-max.")
+
+    # 2. Resolve mobile species + dZ anchors, then build the generator
+    mobile_symbols = tuple(s.strip() for s in args.mobile_symbols.split(",")
+                           if s.strip())
+    if not mobile_symbols:
+        raise SystemExit("[ABORT] --mobile-symbols parsed to an empty set.")
+    args.mobile_symbols = mobile_symbols
+
+    i_min = int(np.argmin(energies))
+    gm = structures[i_min]
+    gsyms = np.asarray(gm.get_chemical_symbols())
+    gmob = np.isin(gsyms, list(mobile_symbols))
+    gm_sub_top = gm.positions[~gmob, 2].max()
+    if args.contact_gap is not None:
+        contact_gap = args.contact_gap
+    else:
+        # auto-derive from the global-min structure (fold M3): its minimum
+        # mobile-atom height above the substrate.
+        contact_gap = float(gm.positions[gmob, 2].min() - gm_sub_top)
+    args.contact_gap = contact_gap
+    print(f"  mobile symbols: {mobile_symbols}; contact gap = {contact_gap:.4f} A "
+          f"(from global-min)")
+
+    # per-species trained z-support (fold G2): the z range each mobile species
+    # actually occupies in the loaded pool, relative to the substrate top — a
+    # manifold-coverage guard against generating a species outside its trained range.
+    print("  per-species trained z-support (rel. substrate top, A):")
+    for sym in mobile_symbols:
+        lo = float("inf")
+        hi = float("-inf")
+        for a in structures:
+            sm = a.get_chemical_symbols()
+            zs = a.positions[[i for i, x in enumerate(sm) if x == sym], 2]
+            if len(zs):
+                lo = min(lo, float(zs.min()))
+                hi = max(hi, float(zs.max()))
+        print(f"    {sym}: [{lo - gm_sub_top:.3f}, {hi - gm_sub_top:.3f}]")
+
+    gen = DeltaZGenerator(structures[0], mobile_symbols=mobile_symbols,
+                          z_contact=None, contact_gap=contact_gap,
+                          sample_ordering=args.sample_ordering,
                           rng=np.random.default_rng(args.rng))
-    print(f"  z_contact={gen.z_contact:.4f} A, substrate_top={gen.substrate_top_z:.4f} A")
+    print(f"  z_contact={gen.z_contact:.4f} A, substrate_top={gen.substrate_top_z:.4f} A "
+          f"(gap {contact_gap:.4f})")
+
+    # dZ range in film height: contact gap (flat) -> natural island height
+    # (the global-min structure's film height) — fold C1.
+    dz_min = args.dz_min if args.dz_min is not None else contact_gap
+    dz_max = args.dz_max if args.dz_max is not None else gen.film_height(gm)
+    print(f"  dZ range (film height): [{dz_min:.3f}, {dz_max:.3f}] A "
+          f"(natural island height {dz_max:.3f})")
 
     # 3. Run nested sampling
     sampler = NestedSampler(
@@ -72,7 +127,7 @@ def run_stage1(args, out: Path):
         n_live=args.n_live, n_iterations=args.n_iterations,
         e_min=args.e_min, e_max=args.e_max, n_e_bins=args.n_e_bins,
         relax_steps=args.relax_steps, fmax=args.fmax,
-        dz_min=args.dz_min, dz_max=args.dz_max,
+        dz_min=dz_min, dz_max=dz_max,
         dz_retry=args.dz_retry,
         progress_every=args.progress_every,
         rng=np.random.default_rng(args.rng + 1),
@@ -233,11 +288,27 @@ def main():
     p.add_argument("--relax-steps", type=int, default=300)
     p.add_argument("--fmax", type=float, default=0.1,
                    help="Relax convergence tolerance (empirical default 0.1)")
-    p.add_argument("--dz-min", type=float, default=2.08)
-    p.add_argument("--dz-max", type=float, default=5.73)
+    p.add_argument("--dz-min", type=float, default=None,
+                   help="Lower dZ edge (A, film height). Default: contact gap "
+                        "(flat monolayer).")
+    p.add_argument("--dz-max", type=float, default=None,
+                   help="Upper dZ edge (A, film height). Default: the natural "
+                        "island height (global-min structure's film height).")
     p.add_argument("--dz-retry", type=int, default=5,
                    help="Total proposal attempts per NS step (each draws a fresh dZ)")
-    p.add_argument("--contact-gap", type=float, default=2.08)
+    p.add_argument("--mobile-symbols", default="Fe",
+                   help="Comma-separated mobile film species (default 'Fe'); "
+                        "any species NOT listed is treated as the fixed "
+                        "substrate. e.g. 'Fe,Co' (fecomgo), 'Fe,Co,B' (fecobmgo), "
+                        "'Fe,B' (febmgo)")
+    p.add_argument("--sample-ordering", action="store_true",
+                   help="Uniformly re-shuffle the mobile species labels across "
+                        "the fixed in-plane sites each proposal (marginalise "
+                        "over orderings)")
+    p.add_argument("--contact-gap", type=float, default=None,
+                   help="Adsorption height of the bottom mobile atom above the "
+                        "substrate (A). Default: auto-derived from the global-min "
+                        "structure's minimum mobile-atom height.")
     p.add_argument("--progress-every", type=int, default=20)
     p.add_argument("--temperatures", default="298,573,623,673,773",
                    help="Comma-separated temperatures (K) for dF_flat_island")

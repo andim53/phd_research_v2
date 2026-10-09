@@ -13,6 +13,8 @@ Run: /home/think/miniconda3/envs/agox_v2/bin/python probe_inbetween_fmax.py
 import os, sys, time
 import numpy as np
 
+__version__ = "1.0.0"
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 sys.path.insert(0, os.path.join(_HERE, "landau_2d"))
@@ -76,7 +78,7 @@ def main():
             cell = gen.cell.copy(); cell[2, 2] = (z_ceil - z_floor) + 1e-6
             box = BoxConstraint(confinement_cell=cell,
                                 confinement_corner=np.array([0., 0., z_floor]),
-                                indices=gen.fe_indices, pbc=[True, True, False])
+                                indices=gen.mobile_indices, pbc=[True, True, False])
             fix = FixAtoms(indices=list(map(int, gen.substrate_indices)))
             relaxed = trial.copy()
             relaxed.set_constraint([box, fix])
@@ -91,8 +93,8 @@ def main():
             E = float(gpr.predict_energy(relaxed))
             rel = (E - E_ref) / n_atoms
             n_steps = opt.nsteps if hasattr(opt, 'nsteps') else '?'
-            h_rel = gen.fe_film_height(relaxed)
-            spread = gen.fe_z_spread(relaxed)
+            h_rel = gen.film_height(relaxed)
+            spread = gen.z_spread(relaxed)
             lab = "flat" if spread < FLAT_SPREAD else "island"
             passed = fn <= FMAX_THRESH
             n_pass += passed

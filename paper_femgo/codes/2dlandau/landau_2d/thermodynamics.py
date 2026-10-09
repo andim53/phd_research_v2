@@ -6,9 +6,12 @@ weight 1/g_IS(E_i, dZ_i). Reweight to a canonical ensemble at temperature T by
 ``w_i(T) = exp(-E_total_i / k_B T) / g_IS(E_i, dZ_i)`` where E_total is the
 TOTAL (per-structure) energy (E_rel * n_atoms; using per-atom E would mis-scale
 T by n_atoms). From the weights:
-  - <dZ(T)> and std(dZ(T)): the island-height distribution vs T;
-  - dF_flat_island(T) = -k_B T ln( sum_flat w / sum_island w ): the two-state
-    flat(<1A) vs island free-energy difference.
+  - <dZ(T)> and std(dZ(T)): the film-height distribution vs T — the primary
+    observable; the flat<->island transition is read directly off this shift
+    (no two-state label);
+  - effN(T) = 1 / sum(w_norm^2): the effective sample size of the reweighted
+    weights — a run with effN ~ 1 is degenerate (one structure carries ~all the
+    weight) and is the acceptance gate for a "physical" result.
 
 g_IS is defined up to a multiplicative constant (additive in ln_g), so only
 free-energy *differences* are physical.
@@ -16,7 +19,7 @@ free-energy *differences* are physical.
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import numpy as np
 
@@ -24,20 +27,19 @@ from .utils import K_B, _logsumexp
 
 
 def reweight_2d(ensemble_rows, ln_g, e_centers_rel, dz_centers,
-                e_min, e_width, dz_min, dz_width, n_atoms, temperatures,
-                flat_island_spread_aa=1.0):
+                e_min, e_width, dz_min, dz_width, n_atoms, temperatures):
     """Reweight the accepted ensemble to canonical observables at each T.
 
     Parameters
     ----------
-    ensemble_rows : list of (E_total, E_rel, dZ, i, j, label)
+    ensemble_rows : list of (E_total, E_rel, dZ, i, j)
     ln_g : 2D array [E bin, dZ bin]  (log density of states)
     e_centers_rel, dz_centers : bin centers (rel eV/atom; Angstrom)
     temperatures : list of float (K)
 
     Returns
     -------
-    rows : list of dict {T, <dZ>, std(dZ), dF_flat_island}
+    rows : list of dict {T, <dZ>, std(dZ), effN}
     """
     # Work entirely in log-space: w_i = exp(-beta E_total - ln_g[i,j]) up to an
     # additive constant in ln_g, which cancels in every ratio below. Direct
@@ -48,14 +50,11 @@ def reweight_2d(ensemble_rows, ln_g, e_centers_rel, dz_centers,
         beta = 1.0 / (K_B * T)
         logw = []
         dzs = []
-        labels = []
-        for (E_total, E_rel, dz, i, j, lab) in ensemble_rows:
+        for (E_total, E_rel, dz, i, j) in ensemble_rows:
             logw.append(-beta * E_total - ln_g[i, j])
             dzs.append(dz)
-            labels.append(lab)
         logw = np.asarray(logw, dtype=float)
         dzs = np.asarray(dzs, dtype=float)
-        labels = np.asarray(labels)
 
         lse = _logsumexp(logw)
         w_norm = np.exp(logw - lse)
@@ -63,17 +62,13 @@ def reweight_2d(ensemble_rows, ln_g, e_centers_rel, dz_centers,
         mean_dz = float(np.sum(w_norm * dzs))
         var_dz = float(np.sum(w_norm * (dzs - mean_dz) ** 2))
         std_dz = float(np.sqrt(max(var_dz, 0.0)))
-
-        flat = labels == "flat"
-        w_flat = _logsumexp(logw[flat]) if flat.any() else -np.inf
-        w_isl = _logsumexp(logw[~flat]) if (~flat).any() else -np.inf
-        dF_flat_island = -K_B * T * (w_flat - w_isl)
+        effN = float(1.0 / np.sum(w_norm ** 2))
 
         out.append({
             "T_K": float(T),
             "mean_dZ_A": mean_dz,
             "std_dZ_A": std_dz,
-            "dF_flat_island_eV": dF_flat_island,
+            "effN": effN,
         })
     return out
 

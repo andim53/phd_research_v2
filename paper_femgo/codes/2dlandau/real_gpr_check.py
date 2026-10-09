@@ -13,7 +13,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import argparse
 import os
@@ -62,7 +62,7 @@ def main():
     # film-height range: flat ~ contact gap, top = natural island height
     dz_min = gen.z_contact - gen.substrate_top_z
     i_min = int(np.argmin(energies))
-    dz_max = gen.fe_film_height(structures[i_min])
+    dz_max = gen.film_height(structures[i_min])
     print(f"[check] dZ range (film height): [{dz_min:.3f}, {dz_max:.3f}] A")
 
     # --- M3: GPR prediction spread on dZ-extreme generated structures -------

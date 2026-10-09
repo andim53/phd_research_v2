@@ -4,27 +4,34 @@ Cheap local smoke test for the 2D Landau sampler on a FAKE "GPR" surrogate.
 
 Validates the real `WangLandau2DSampler` code path — DeltaZGenerator jump
 proposal, dZ-ceiling GPR relax (FixAtoms + BoxConstraint), 2D Wang-Landau
-acceptance, Torbrügge accessible-cell mapping, flat/island labelling, 2D
-reweighting to <dZ(T)> and dF — with NO DFT and NO real AGOX surrogate.
+acceptance, Torbrügge accessible-cell mapping, 2D reweighting to <dZ(T)> and its
+effective sample size effN — with NO DFT and NO real AGOX surrogate. There is
+**no flat/island label**; the transition is read off <dZ(T)> directly.
 
-The toy is a 2-Fe motif on a fixed Mg/O substrate (Fe are indices 0,1; the
-substrate atoms sit at z=10.0, indices 2..5). The **dZ axis is the film height**
-``h = z_Fe_top - z_substrate_top`` (substrate at 10.0; the top Fe atom is index
-1, always >= the bottom by construction since dZ >= contact gap). The fake
-energy is:
+The toy is a **two-species (Fe + Co)** motif on a fixed Mg/O substrate (mobile
+indices 0,1; substrate at z=10.0, indices 2..5). The **dZ axis is the film
+height** ``h = z_mobile_top - z_substrate_top`` (substrate at 10.0; the top
+mobile atom is index 1, always >= the bottom by construction since dZ >= contact
+gap). The fake energy is:
   - an *asymmetric double well in the film height* h (flat at hf, island at hi,
     island the global min via -m*h), so <dZ(T)> is genuinely T-dependent (the
-    2D analogue of d_landauPlus's T-dependent-F check); and
-  - a *weak harmonic in the mean Fe height* zbar = (z0+z1)/2, giving a second
-    energy-varying degree of freedom per film height (a smooth, well-conditioned
-    E-width per dZ).
+    2D analogue of d_landauPlus's T-dependent check); and
+  - a *weak harmonic in the mean mobile height* zbar = (z0+z1)/2, giving a
+    second energy-varying degree of freedom per film height (a smooth,
+    well-conditioned E-width per dZ).
 
 Full-rank analytic forces (no argmax/argmin singularity, no quartic barrier),
-so BFGS stays well-conditioned.
+so BFGS stays well-conditioned. The fake GPR is species-agnostic (a function of
+positions only), so it is unchanged by the Fe<->Co permutation.
 
-Also verifies the stall-drop inherent-structure logic (spec 202610012247) in a
-Ray-free way: a deliberately tight fmax forces stalled quenches, and the run
-must complete without crashing with n_proposals_dropped > 0.
+Also verifies:
+  - the `sample_ordering` permutation move: a generator with ``sample_ordering``
+    must actually vary the Fe/Co arrangement across proposals (and a 3-species
+    Fe/Co/B generator must vary its arrangement too);
+  - the stall-drop inherent-structure logic (spec 202610012247): a deliberately
+    tight fmax forces stalled quenches; the run completes with
+    n_proposals_dropped > 0; and
+  - the effN degeneracy gate (fold G1): effN must be > 1 at every reported T.
 
 Run:
     /home/think/miniconda3/envs/agox_v2/bin/python smoke_test_2dlandau.py
@@ -32,7 +39,7 @@ Run:
 
 from __future__ import annotations
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -55,9 +62,10 @@ class Fake2DGPR(Calculator):
 
     E(h, zbar) = A*(h-hf)^2*(h-hi)^2 - m*h + B*(zbar - zbar0)^2
 
-    h = z1 - 10.0 (film height; atom 1 is the top Fe, substrate at 10.0),
-    zbar = (z0+z1)/2 (mean Fe height). -m*h makes the island (large h) the
+    h = z1 - 10.0 (film height; atom 1 is the top mobile, substrate at 10.0),
+    zbar = (z0+z1)/2 (mean mobile height). -m*h makes the island (large h) the
     global min; the B harmonic in zbar is the second DOF (smooth E-width per h).
+    Species-agnostic: depends on z0/z1 only, so Fe<->Co swaps are invisible.
     """
 
     implemented_properties = ["energy", "forces"]
@@ -68,7 +76,7 @@ class Fake2DGPR(Calculator):
         self.zbar0, self.B = zbar0, B
 
     def _h(self, atoms):
-        # film height: top Fe (index 1) above the substrate surface (z=10.0)
+        # film height: top mobile (index 1) above the substrate surface (z=10.0)
         return float(atoms.positions[1, 2] - 10.0)
 
     def _energy(self, atoms):
@@ -101,14 +109,30 @@ class Fake2DGPR(Calculator):
 
 
 def make_system():
-    """2 mobile Fe (indices 0,1) on a 4-atom Mg/O substrate (indices 2..5, z=10)."""
-    syms = ["Fe", "Fe", "Mg", "Mg", "O", "O"]
+    """2 mobile (Fe bottom index 0, Co top index 1) on a 4-atom Mg/O substrate
+    (indices 2..5, z=10)."""
+    syms = ["Fe", "Co", "Mg", "Mg", "O", "O"]
     cell = np.diag([8.0, 8.0, 30.0])
     pos = np.zeros((6, 3))
     pos[0] = [3.0, 3.0, 12.0]        # bottom Fe (z_contact = substrate + 2.0)
-    pos[1] = [3.0, 4.0, 13.0]        # top Fe
+    pos[1] = [3.0, 4.0, 13.0]        # top Co
     pos[2:6, :2] = [[2.5, 3.5], [3.5, 3.5], [3.0, 2.5], [3.0, 4.5]]
     pos[2:6, 2] = 10.0
+    return Atoms(symbols=syms, positions=pos, cell=cell,
+                 pbc=[True, True, False])
+
+
+def make_system_3():
+    """3 mobile (Fe bottom 0, Co top 1, B middle 2) on a 3-atom Mg/O substrate
+    (indices 3..5, z=10) — exercises the 3-species path."""
+    syms = ["Fe", "Co", "B", "Mg", "O", "O"]
+    cell = np.diag([8.0, 8.0, 30.0])
+    pos = np.zeros((6, 3))
+    pos[0] = [3.0, 3.0, 12.0]        # bottom Fe
+    pos[1] = [3.0, 4.0, 13.0]        # top Co
+    pos[2] = [3.0, 2.0, 12.5]        # middle B
+    pos[3:6, :2] = [[2.5, 3.5], [3.5, 3.5], [3.0, 4.5]]
+    pos[3:6, 2] = 10.0
     return Atoms(symbols=syms, positions=pos, cell=cell,
                  pbc=[True, True, False])
 
@@ -116,7 +140,8 @@ def make_system():
 def main():
     ref = make_system()
     fake = Fake2DGPR()
-    gen = DeltaZGenerator(ref, z_contact=12.0, in_plane_jitter=0.0,
+    gen = DeltaZGenerator(ref, mobile_symbols=("Fe", "Co"), z_contact=12.0,
+                          in_plane_jitter=0.0, sample_ordering=False,
                           rng=np.random.default_rng(0))
 
     # contact gap = 2.0 (z_contact 12 - substrate 10); film-height range
@@ -133,7 +158,7 @@ def main():
         gpr=fake, generator=gen, E_ref=-2.0, n_atoms=6,
         n_e_bins=20, e_min=0.0, e_max=0.7, e_reject=None,
         n_dz_bins=10, dz_min=dz_min, dz_max=dz_max,
-        relax_steps=30, flat_island_spread_aa=1.0,
+        relax_steps=30,
         flatness_criterion=0.80, check_interval=300,
         n_stages_standard=3, reference_steps=300,
         rng=np.random.default_rng(7),
@@ -142,18 +167,18 @@ def main():
     # --- (1) generator realises the target film height ----------------------
     for target in [2.2, 3.0, 4.5]:
         a = gen(target)
-        h = gen.fe_film_height(a)
+        h = gen.film_height(a)
         if abs(h - target) > 1e-6:
             print(f"[SMOKE] FAIL: generator film height {h:.4f} != target {target}")
             ok = False
     print("[SMOKE] generator realises target film height exactly")
 
-    # --- (2) relax descends in energy, ceiling holds max Fe z ----------------
+    # --- (2) relax descends in energy, ceiling holds max mobile z -------------
     trial = gen(3.0)
     E_before = fake.predict_energy(trial)
     relaxed, final_fmax = sampler._relax(trial, 3.0)
     E_after = fake.predict_energy(relaxed)
-    zmax_after = relaxed.positions[gen.fe_indices, 2].max()
+    zmax_after = relaxed.positions[gen.mobile_indices, 2].max()
     z_ceil = gen.substrate_top_z + 3.0
     print(f"[SMOKE] relax: E {E_before:.4f} -> {E_after:.4f} eV, "
           f"max z {zmax_after:.3f} <= ceil {z_ceil:.3f}, "
@@ -169,7 +194,22 @@ def main():
         print("[SMOKE] FAIL: final fmax not finite")
         ok = False
 
-    # --- (3) short WL run: 2D histogram non-trivial --------------------------
+    # --- (3) sample_ordering varies the Fe/Co arrangement --------------------
+    gen_order = DeltaZGenerator(ref, mobile_symbols=("Fe", "Co"),
+                                sample_ordering=True, z_contact=12.0,
+                                rng=np.random.default_rng(5))
+    seen = set()
+    for _ in range(20):
+        a = gen_order(3.0)
+        seen.add(tuple(a.get_chemical_symbols()[i]
+                       for i in gen_order.mobile_indices))
+    print(f"[SMOKE] sample_ordering produced {len(seen)} distinct Fe/Co "
+          f"arrangements: {sorted(seen)}")
+    if len(seen) < 2:
+        print("[SMOKE] FAIL: sample_ordering did not vary the Fe/Co arrangement")
+        ok = False
+
+    # --- (4) short WL run: 2D histogram non-trivial --------------------------
     sampler.initialize()
     sampler.run(n_steps=2000, progress_every=1000)
     e_centers, dz_centers, ln_g, H, accessible = sampler.g_of_E_dZ()
@@ -184,32 +224,32 @@ def main():
         print("[SMOKE] FAIL: ln_g constant (sampler did not move)")
         ok = False
 
-    # --- (4) reweighting: T-dependent <dZ(T)> --------------------------------
+    # --- (5) reweighting: T-dependent <dZ(T)>, effN > 1 (fold G1) -------------
     temps = [100, 200, 300, 500, 1000]
     rows = reweight_2d(
         sampler.ensemble_rows, ln_g, e_centers, dz_centers,
         0.0, sampler.e_width, sampler.dz_min, sampler.dz_width,
-        sampler.n_atoms, temps, flat_island_spread_aa=1.0)
+        sampler.n_atoms, temps)
     means = [r["mean_dZ_A"] for r in rows]
     print("[SMOKE] <dZ(T)> vs T:")
     for r in rows:
         print(f"  T={r['T_K']:6.1f} K  <dZ>={r['mean_dZ_A']:.4f} A  "
-              f"std={r['std_dZ_A']:.4f}  dF={r['dF_flat_island_eV']:.4f} eV")
+              f"std={r['std_dZ_A']:.4f}  effN={r['effN']:.2f}")
     if np.ptp(means) < 1e-3:
         print("[SMOKE] FAIL: <dZ(T)> constant across T (degenerate 2D DOS)")
         ok = False
-    if not all(np.isfinite(r["dF_flat_island_eV"]) for r in rows):
-        print("[SMOKE] FAIL: non-finite dF_flat_island")
+    if not all(np.isfinite(r["effN"]) and r["effN"] > 1.0 for r in rows):
+        print("[SMOKE] FAIL: effN <= 1 or non-finite (collapsed ensemble)")
         ok = False
 
-    # --- (5) stall-drop inherent-structure logic (G1(a), Ray-free) -----------
+    # --- (6) stall-drop inherent-structure logic (Ray-free) -------------------
     # A deliberately tight fmax forces stalled quenches; the run must complete
     # without crashing and report n_proposals_dropped > 0.
     tight = WangLandau2DSampler(
         gpr=fake, generator=gen, E_ref=-2.0, n_atoms=6,
         n_e_bins=20, e_min=0.0, e_max=0.7, e_reject=None,
         n_dz_bins=10, dz_min=dz_min, dz_max=dz_max,
-        relax_steps=30, fmax=1e-6, flat_island_spread_aa=1.0,
+        relax_steps=30, fmax=1e-6,
         flatness_criterion=0.80, check_interval=300,
         n_stages_standard=3, reference_steps=20,
         rng=np.random.default_rng(11),
@@ -220,6 +260,34 @@ def main():
           f"{tight.n_proposals_dropped} proposals dropped (fmax 1e-6)")
     if tight.n_proposals_dropped <= 0:
         print("[SMOKE] FAIL: tight fmax did not produce any dropped proposal")
+        ok = False
+
+    # --- (7) 3-species (Fe/Co/B) generator + ordering -------------------------
+    ref3 = make_system_3()
+    gen3 = DeltaZGenerator(ref3, mobile_symbols=("Fe", "Co", "B"),
+                           sample_ordering=True, z_contact=12.0,
+                           rng=np.random.default_rng(9))
+    if list(gen3.mobile_indices) != [0, 1, 2]:
+        print("[SMOKE] FAIL: 3-species mobile indices wrong: "
+              f"{list(gen3.mobile_indices)}")
+        ok = False
+    if list(gen3.substrate_indices) != [3, 4, 5]:
+        print("[SMOKE] FAIL: 3-species substrate indices wrong: "
+              f"{list(gen3.substrate_indices)}")
+        ok = False
+    h3 = gen3.film_height(gen3(3.5))
+    if abs(h3 - 3.5) > 1e-6:
+        print(f"[SMOKE] FAIL: 3-species film height {h3:.4f} != 3.5")
+        ok = False
+    seen3 = set()
+    for _ in range(30):
+        a = gen3(3.5)
+        seen3.add(tuple(a.get_chemical_symbols()[i]
+                        for i in gen3.mobile_indices))
+    print(f"[SMOKE] 3-species sample_ordering produced {len(seen3)} distinct "
+          f"arrangements")
+    if len(seen3) < 2:
+        print("[SMOKE] FAIL: 3-species sample_ordering did not vary arrangement")
         ok = False
 
     print("\n[SMOKE] RESULT: " + ("PASS" if ok else "FAIL"))

@@ -20,18 +20,24 @@ Per-file `__version__` manifest. Bump patch on any edit, minor on behavior chang
 | `codes/emit_fig_env_vesta.py` | 1.0.0 | Fig S1 (Fig_env) reference structure → .vesta (canonical writer, darkening off) |
 | `codes/emit_fig_env_png.py` | 1.0.0 | Fig S1 panels from VESTA renders: Fig_env_a/b.png (crop→flatten→300 dpi; tracked) |
 | `codes/2dlandau/render_structures.py` | 2.0.0 | 2dlandau .vesta via canonical writer (standard colors, darkening off) |
-| `codes/2dlandau/landau_2d/generator.py` | 1.2.1 | defensive `top_z=max(top_z,z_contact)` clamp (dz-min crash fix) |
+| `codes/2dlandau/landau_2d/generator.py` | 1.3.0 | `mobile_symbols` list + `fe_*`→`mobile_*` rename; + `sample_ordering` shuffle (spec 202610091605) |
 | `codes/2dlandau/landau_2d/gpr_training.py` | 1.0.0 | GPR surrogate training for 2dlandau |
-| `codes/2dlandau/landau_2d/thermodynamics.py` | 1.0.0 | thermodynamics helpers |
+| `codes/2dlandau/landau_2d/thermodynamics.py` | 1.1.0 | + `effN` effective-sample-size; removed `dF_flat_island` (no flat/island label) |
 | `codes/2dlandau/landau_2d/utils.py` | 1.0.0 | utility functions (2dlandau) |
-| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.4.0 | + configurable `fmax` (default 0.1) as BFGS target + stall/inherent-structure threshold; final fmax recomputed from ending geometry; 4-attempt stall-drop in `_propose`; stall counters in state (spec 202610012247) |
+| `codes/2dlandau/landau_2d/wang_landau_2d.py` | 1.5.0 | `fe_*`→`mobile_*` rename; removed `flat_island_spread_aa` + `label()` + ΔF; (prev: configurable `fmax` stall-drop, spec 202610012247) |
 | `codes/2dlandau/landau_2d/__init__.py` | 1.0.0 | package init |
-| `codes/2dlandau/main.py` | 1.4.0 | + `--fmax` (default 0.1) threaded to sampler; fmax in config header; stall counters in output JSON (spec 202610012247) |
-| `codes/2dlandau/make_examples.py` | 1.1.0 | + `--fmax` (default 0.1) replaces hardcoded 0.05 as BFGS target |
-| `codes/2dlandau/map_accessible.py` | 1.1.0 | + `--fmax` (default 0.1) replaces hardcoded 0.05 as BFGS target |
-| `codes/2dlandau/real_gpr_check.py` | 1.0.0 | real-data GPR sanity check |
-| `codes/2dlandau/smoke_test_2dlandau.py` | 1.3.0 | + stall-drop G1(a) check (tight fmax → n_proposals_dropped>0); `_relax` returns (relaxed, final_fmax) |
+| `codes/2dlandau/main.py` | 1.5.0 | + `--mobile-symbols`/`--sample-ordering`; `--contact-gap` auto (global-min); removed `--flat-island-spread`; rel-E print + effN gate (spec 202610091605) |
+| `codes/2dlandau/make_examples.py` | 1.1.1 | `fe_*`→`mobile_*` rename (spec 202610091605) |
+| `codes/2dlandau/map_accessible.py` | 1.1.1 | `fe_*`→`mobile_*` rename (spec 202610091605) |
+| `codes/2dlandau/real_gpr_check.py` | 1.0.1 | `fe_*`→`mobile_*` rename (spec 202610091605) |
+| `codes/2dlandau/smoke_test_2dlandau.py` | 1.4.0 | + two-species Fe/Co + 3-species B motif; `sample_ordering` assertion; effN check (spec 202610091605) |
 | `codes/emit_wetting_modes.py` | 1.3.0 | mode-gap + PCA landscape (Fe/MgO vs Fe-B/MgO); pooled, no LOOCV; + branch modes in landscape |
 | `codes/draw_wetting_modes.py` | 1.2.0 | Fig_wetModes four-curve overlay + mode markers + top gap arrows; framed legend box |
 | `codes/draw_wet_landscape.py` | 1.4.0 | Fig_wetLandscape two-panel PCA+Δz landscape; flat/island mode dashed lines (white shadow) |
-| `codes/2dlandau/landau_2d/generator.py` | 1.2.1 | defensive `top_z=max(top_z,z_contact)` clamp (dz-min crash fix) |
+| `codes/ns_validate/main.py` | 1.2.0 | + `--mobile-symbols`/`--sample-ordering`; auto `--contact-gap`/`--dz-min`/`--dz-max`; rel-E p99 guard + per-species z-support (spec 202610091851) |
+| `codes/ns_validate/ns_validate/generator.py` | 1.3.0 | `mobile_symbols` + `fe_*`→`mobile_*` rename + `sample_ordering` (spec 202610091851) |
+| `codes/ns_validate/ns_validate/nested_sampler.py` | 1.2.0 | `fe_*`→`mobile_*` rename (spec 202610091851) |
+| `codes/ns_validate/ns_validate/gpr_training.py` | 1.0.0 | GPR surrogate training (reused d_landauPlus) |
+| `codes/ns_validate/ns_validate/utils.py` | 1.0.0 | K_B, _logsumexp |
+| `codes/ns_validate/ns_validate/__init__.py` | 1.0.0 | package init |
+| `codes/ns_validate/smoke_multi_species.py` | 1.0.0 | multi-species generator smoke check (spec 202610091851 fold M2) |

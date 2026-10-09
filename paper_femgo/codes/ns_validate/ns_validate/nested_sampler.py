@@ -21,7 +21,7 @@ NS weights: w_i = alpha^(i-1) - alpha^i, alpha = (K-1)/K (Skilling / Partay).
 
 from __future__ import annotations
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import time
 from typing import List, Optional
@@ -131,7 +131,7 @@ class NestedSampler:
         cell[2, 2] = (z_ceil - z_floor) + 1e-6
         box = BoxConstraint(confinement_cell=cell,
                             confinement_corner=np.array([0.0, 0.0, z_floor]),
-                            indices=self.gen.fe_indices, pbc=[True, True, False])
+                            indices=self.gen.mobile_indices, pbc=[True, True, False])
         fix = FixAtoms(indices=list(map(int, self.gen.substrate_indices)))
 
         relaxed = atoms.copy()
@@ -202,7 +202,7 @@ class NestedSampler:
                     self.live_structures.append(relaxed)
                     self.live_energies.append(E)
                     self.live_rel.append(rel)
-                    self.live_dz.append(self.gen.fe_film_height(relaxed))
+                    self.live_dz.append(self.gen.film_height(relaxed))
                     break
                 else:
                     self.n_relax_gate_fail += 1
@@ -233,7 +233,7 @@ class NestedSampler:
         self.live_structures[worst_idx] = relaxed
         self.live_energies[worst_idx] = E
         self.live_rel[worst_idx] = rel
-        self.live_dz[worst_idx] = self.gen.fe_film_height(relaxed)
+        self.live_dz[worst_idx] = self.gen.film_height(relaxed)
         self.iteration += 1
 
     # -- Run -----------------------------------------------------------------

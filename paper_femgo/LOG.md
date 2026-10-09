@@ -403,3 +403,18 @@
 **Not in scope:** existing `hpc_runs/2dlandau`/`2dlandau_ckpt`/`hpc_results/4_2dlandau` copies unchanged; generator reachability (C2) fix not done here; no HPC submission.
 
 **Open items:** [ ] commit Session 19.
+
+## Session 20 — 2026-10-09 (ns_validate → multi-species parity with 2dlandau)
+**Goal (owner, via /clarify-me spec `202610091851-ns-validate-multi-species-parity.md`, approved + folded C1/M1/M2/m1/m2/G1/G2/G3):** bring `codes/ns_validate/` to full generator parity with `codes/2dlandau/` so the 1D nested-sampling validation can target the CoFe / CoFeB / FeB alloy systems (`fecomgo` / `fecobmgo` / `febmgo`), not just Fe/MgO. Mechanism inspection confirmed the ΔZ generator + relax force constraint already matched 2dlandau; the only gap was Fe-only-hardcoding of the generator.
+
+**Actions taken:**
+1. `ns_validate/ns_validate/generator.py` 1.2.1→1.3.0: port to `mobile_symbols`-configurable generator (matches 2dlandau v1.3.0) — `mobile_symbols`/`mobile_indices`/`mobile_sites_xy`, `sample_ordering` (order-preserving `get_atomic_numbers → shuffle → set_atomic_numbers`), `film_height()`/`z_spread()` renamed from `fe_*`; added `from ase.data import atomic_numbers`.
+2. `ns_validate/ns_validate/nested_sampler.py` 1.1.0→1.2.0: `fe_indices`→`mobile_indices`, `fe_film_height`→`film_height`; relax routine (already mechanism-correct) otherwise unchanged.
+3. `ns_validate/main.py` 1.1.0→1.2.0: added `--mobile-symbols` (default `Fe`) + `--sample-ordering`; `--contact-gap`/`--dz-min`/`--dz-max` defaults → `None` (auto-derived from global-min structure: contact gap = min mobile height, dz_min = contact gap, dz_max = film_height); added rel-E p99 vs `--e-max` WARN + per-species trained z-support diagnostic.
+4. `ns_validate/smoke_multi_species.py` 1.0.0 (new): loads one structure per dataset, asserts composition-preserving `sample_ordering` + finite `film_height`/`z_spread`.
+
+**Results:** `py_compile` clean on all `ns_validate/*.py` + `main.py`; `--help` OK. Smoke: femgo (Fe, 25 mobile), fecomgo (Fe-Co, 25), fecobmgo (Fe-Co-B, 28), febmgo (Fe-B, 28) all pass — `sample_ordering` reshuffles (≥2 orderings for multi-species), composition preserved, film height finite. No full GPR train / no NS run (out of scope).
+
+**Not in scope:** three `probe_optionA*.py` scripts still reference the removed `fe_*` generator attrs (exploratory throwaways, not part of the package); untouched per scope. No Stage-1/Stage-2 alloy NS runs.
+
+**Open items:** [ ] commit Session 20.
